@@ -1,0 +1,25 @@
+{
+  "name" : "candyengineall",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "7b30311f0a79d395bf2d933d82fec1853c6a4e77",
+  "dependencies" : [ {
+    "name" : "glfw3",
+    "version>=" : "3.3.8#2",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(glfw3 CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE glfw)\n"
+  }, {
+    "name" : "boost-dynamic-bitset",
+    "version>=" : "1.82.0#1"
+  }, {
+    "name" : "libsndfile",
+    "version>=" : "1.2.0",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(SndFile CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE SndFile::sndfile)\n"
+  }, {
+    "name" : "portaudio",
+    "version>=" : "19.7#4",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(portaudio CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE portaudio)\n"
+  }, {
+    "name" : "fmt",
+    "version>=" : "9.1.0#1",
+    "$comment" : "    find_package(fmt CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE fmt::fmt)\n"
+  } ]
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://raw.githubusercontent.com/spdx/spdx-spec/v2.2.1/schemas/spdx-schema.json",
+  "spdxVersion": "SPDX-2.2",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "documentNamespace": "https://spdx.org/spdxdocs/libsndfile-x64-windows-1.2.0-895abfee-e999-432a-b637-8e0d04065f87",
+  "name": "libsndfile:x64-windows@1.2.0 3973ae0a56919c30a74a27408e866f0f5d9a44d115fa8aff7721a2c99d89c306",
+  "creationInfo": {
+    "creators": [
+      "Tool: vcpkg-664f8bb619b752430368d0f30a8289b761f5caba"
+    ],
+    "created": "2023-05-17T18:12:47Z"
+  },
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "GENERATES",
+      "relatedSpdxElement": "SPDXRef-binary"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-0"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-1"
+    },
+    {
+      "spdxElementId": "SPDXRef-binary",
+      "relationshipType": "GENERATED_FROM",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-0",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-1",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-1",
+      "relationshipType": "DEPENDENCY_MANIFEST_OF",
+      "relatedSpdxElement": "SPDXRef-port"
+    }
+  ],
+  "packages": [
+    {
+      "name": "libsndfile",
+      "SPDXID": "SPDXRef-port",
+      "versionInfo": "1.2.0",
+      "downloadLocation": "git+https://github.com/Microsoft/vcpkg@50c34624e4951e4b4919717f63b8f4fcbdacf088",
+      "homepage": "https://github.com/erikd/libsndfile",
+      "licenseConcluded": "LGPL-2.1-or-later",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "description": "A library for reading and writing audio files",
+      "comment": "This is the port (recipe) consumed by vcpkg."
+    },
+    {
+      "name": "libsndfile:x64-windows",
+      "SPDXID": "SPDXRef-binary",
+      "versionInfo": "3973ae0a56919c30a74a27408e866f0f5d9a44d115fa8aff7721a2c99d89c306",
+      "downloadLocation": "NONE",
+      "licenseConcluded": "LGPL-2.1-or-later",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "This is a binary package built by vcpkg."
+    },
+    {
+      "SPDXID": "SPDXRef-resource-1",
+      "name": "libsndfile/libsndfile",
+      "downloadLocation": "git+https://github.com/libsndfile/libsndfile@1.2.0",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "58d2567a4eb67f9af7a472ae02f62ce64bb6f54687bf670c84335a4d1c194d3e8d6933089ae9e2603137a035155447df4b0f59c054731d74d9814c1b757c833a"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "fileName": "./portfile.cmake",
+      "SPDXID": "SPDXRef-file-0",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "a65bcbef69aef2f1df4c55491bab06ef690ef6c981cf7ff2d857d9be4ab8a7db"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": "./vcpkg.json",
+      "SPDXID": "SPDXRef-file-1",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "f6f1c1c6c0142ae04b286215595f3613e67c770dd4977ad6fae55dfa54b26b89"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ]
+}

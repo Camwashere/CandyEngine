@@ -1,0 +1,293 @@
+Package: boost-uninstall
+Version: 1.82.0
+Port-Version: 1
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 796a3658c86ffa131cc901f3f7b4a8cc3a56da96bf456ea172056ddc15724705
+Description: Internal vcpkg port used to uninstall Boost
+Status: install ok installed
+
+Package: boost-vcpkg-helpers
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-uninstall
+Architecture: x64-windows
+Multi-Arch: same
+Abi: e6379f38832a2978a3f11d74d4938b5dc77ab7fd23b6feb785dd87e4a483d48c
+Description: Internal vcpkg port used to modularize Boost
+Status: install ok installed
+
+Package: boost-config
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 6d73834edc7a217f220416200e4cb40f16db50587d960459f668ae7ad3eb4f54
+Description: Boost config module
+Status: install ok installed
+
+Package: boost-assert
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-config, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: d5bc4b7e7cc0a596ee490d8ff19342b34fa912f0f219e05039900c795a51bf9e
+Description: Boost assert module
+Status: install ok installed
+
+Package: boost-throw-exception
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-assert, boost-config, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: fec5f14d9ad31131e7f5025c21e85ae31dbda1dee297ec22df8cef13c272a3d4
+Description: Boost throw_exception module
+Status: install ok installed
+
+Package: boost-static-assert
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-config, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: b4afcafab0049972048871376224669121f7f7909cd194162e353973befe7272
+Description: Boost static_assert module
+Status: install ok installed
+
+Package: boost-move
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-config, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: a787fffd36db5ad33fa32ed6fbb3f040c568b56cc534502b39f1cca1b4edaba8
+Description: Boost move module
+Status: install ok installed
+
+Package: boost-type-traits
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-config, boost-static-assert, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: e0bd94ec779b09a3e32482741ead99df7bb003efd61159ab8089ed372b20b39b
+Description: Boost type_traits module
+Status: install ok installed
+
+Package: boost-core
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-assert, boost-config, boost-static-assert, boost-throw-exception, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ea6bef7a0bafff9b8d1412b8113e81298310d699c65fdb9d99fc5e2f0b44a856
+Description: Boost core module
+Status: install ok installed
+
+Package: boost-integer
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-assert, boost-config, boost-core, boost-static-assert, boost-throw-exception, boost-type-traits, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 4bac608d70a06d80d0aff0ebe566381be16fb878e58d5d5210b53172b5f76800
+Description: Boost integer module
+Status: install ok installed
+
+Package: boost-mp11
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 9cb1781fd00b0e60b50accd9d929b41423b7995826d1e48bb3663e91217a7ea5
+Description: Boost mp11 module
+Status: install ok installed
+
+Package: boost-describe
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-mp11, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 25c35562d3605895b4b1dd860a4cb749482e360fb1ba69b996618ee857dfc6e3
+Description: Boost describe module
+Status: install ok installed
+
+Package: boost-container-hash
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-config, boost-describe, boost-mp11, boost-type-traits, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 5f8afea0310024a08b03d978dd0186f7ee4c76e824dbfddae47c757429ccc084
+Description: Boost container_hash module
+Status: install ok installed
+
+Package: boost-dynamic-bitset
+Version: 1.82.0
+Port-Version: 1
+Depends: boost-assert, boost-config, boost-container-hash, boost-core, boost-integer, boost-move, boost-static-assert, boost-throw-exception, boost-vcpkg-helpers
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 40f9f130c73db522e131f9a989fc42f5410f4a728bc7a7d90843ec5acc94e5fc
+Description: Boost dynamic_bitset module
+Status: install ok installed
+
+Package: vcpkg-cmake-config
+Version: 2022-02-06
+Port-Version: 1
+Architecture: x64-windows
+Multi-Arch: same
+Abi: d6a687289b0f45352cd9a5a75b7acba01d5a03bd999957c13f439d513cad47fd
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2022-12-22
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 6e91968db07e84618e6ddddf34876011238b6137ba68381d6e99b734f6ea8b6d
+Status: install ok installed
+
+Package: fmt
+Version: 9.1.0
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: a0b7ea9b9ddb0176274816fa72ac7d00596d4ea81c16c1025b6caf5739c93c26
+Description: Formatting library for C++. It can be used as a safe alternative to printf or as a fast alternative to IOStreams.
+Status: install ok installed
+
+Package: glfw3
+Version: 3.3.8
+Port-Version: 2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: a7dc6ea409e16904fea3cea95a611b44cdffbf97f0b6c40a335036b2ffcbf117
+Description: GLFW is a free, Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development. It provides a simple, platform-independent API for creating windows, contexts and surfaces, reading input, handling events, etc.
+Status: install ok installed
+
+Package: yasm
+Version: 1.3.0
+Port-Version: 5
+Depends: vcpkg-cmake, vcpkg-cmake-config, yasm
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 8602346bc65db1306ea340d2f2c391d2f59d2faf1a935d3d68eb242e74e7e2aa
+Description: Yasm is a complete rewrite of the NASM assembler under the new BSD License.
+Status: install ok installed
+
+Package: yasm
+Feature: tools
+Architecture: x64-windows
+Multi-Arch: same
+Description: Build yasm tools
+Status: install ok installed
+
+Package: yasm-tool-helper
+Version: 2020-03-11
+Port-Version: 1
+Depends: yasm
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 2f376f1289760830e6db2ffb8a76919bb0d15bb8daf780f741677d8edfe33e3d
+Description: Backfill that depends on yasm:host
+Status: install ok installed
+
+Package: mpg123
+Version: 1.31.3
+Depends: vcpkg-cmake, vcpkg-cmake-config, yasm-tool-helper
+Architecture: x64-windows
+Multi-Arch: same
+Abi: edc3a6621947d6312751af84465764d76ad0a495832d166cf7b298b0d836b473
+Description: mpg123 is a real time MPEG 1.0/2.0/2.5 audio player/decoder for layers 1, 2 and 3 (MPEG 1.0 layer 3 also known as MP3).
+Status: install ok installed
+
+Package: mp3lame
+Version: 3.100
+Port-Version: 10
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 9c86f81e25a3100714bbd26f0565e9cdffeca5c5672febac84830baad8958ce4
+Description: LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the LGPL.
+Status: install ok installed
+
+Package: opus
+Version: 1.4
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: cd5f99b7fe017ab8f989f290af2b73ccaf8739c0560d5518bfda4b40b5bc5cff
+Description: Totally open, royalty-free, highly versatile audio codec
+Status: install ok installed
+
+Package: libogg
+Version: 1.3.5
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 9b00f369a1d1c22cc05b3388b853fb1bebc60e9b790e2d55577bbd90f5472154
+Description: Ogg is a multimedia container format, and the native file and stream format for the Xiph.org multimedia codecs.
+Status: install ok installed
+
+Package: libvorbis
+Version: 1.3.7
+Port-Version: 2
+Depends: libogg, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 3dd3434539c0d4b2b7f92e4fa2d2fc82a7a7da50b944a1f31797eaf15087938a
+Description: Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format
+Status: install ok installed
+
+Package: libflac
+Version: 1.4.2
+Depends: libogg, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 16078db49ed1ffb3a4c5433b67e1a90f3432c8a7bfa0148b48e2b51458042f75
+Description: Library for manipulating FLAC files
+Status: install ok installed
+
+Package: libsndfile
+Version: 1.2.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 3973ae0a56919c30a74a27408e866f0f5d9a44d115fa8aff7721a2c99d89c306
+Description: A library for reading and writing audio files
+Default-Features: external-libs, mpeg
+Status: install ok installed
+
+Package: libsndfile
+Feature: external-libs
+Depends: libflac, libvorbis, opus
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable FLAC, Vorbis, and Opus codecs
+Status: install ok installed
+
+Package: libsndfile
+Feature: mpeg
+Depends: mp3lame, mpg123
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable MPEG codecs
+Status: install ok installed
+
+Package: portaudio
+Version: 19.7
+Port-Version: 4
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 5471b6e49c20560e09cd48acb1a8758cd35a6e240be7372def33b2dd1e7aafc1
+Description: PortAudio Portable Cross-platform Audio I/O API PortAudio is a free, cross-platform, open-source, audio I/O library.  It lets you write simple audio programs in 'C' or C++ that will compile and run on many platforms including Windows, Macintosh OS X, and Unix (OSS/ALSA). It is intended to promote the exchange of audio software between developers on different platforms. Many applications use PortAudio for Audio I/O.
+Status: install ok installed
+

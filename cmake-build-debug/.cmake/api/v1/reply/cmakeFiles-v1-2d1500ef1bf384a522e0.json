@@ -1,0 +1,288 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.25.2/CMakeSystem.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeDependentOption.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.25.2/CMakeCCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.25.2/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.25.2/CMakeRCCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeRCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-windres.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C-ABI.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX-ABI.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"path" : "vcpkg.json"
+		},
+		{
+			"path" : "candy/CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-targets-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-targets-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindOpenGL.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageMessage.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3ConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-release.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileConfig.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-release.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-release.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Program Files/Mono/bin/mono-2.0-sgen.dll"
+		},
+		{
+			"path" : "candy/lib/glad/CMakeLists.txt"
+		},
+		{
+			"path" : "sandbox/CMakeLists.txt"
+		},
+		{
+			"path" : "sugar/CMakeLists.txt"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug",
+		"source" : "C:/Users/perso/CLionProjects/CandyEngineAll"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

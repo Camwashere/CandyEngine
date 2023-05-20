@@ -1,0 +1,27 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake
+C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindOpenGL.cmake
+C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/JetBrains/CLion 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageMessage.cmake
+C:/Program Files/Mono/bin/mono-2.0-sgen.dll
+C:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileConfig.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileConfigVersion.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-debug.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-release.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/SndFile/SndFileTargets.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-config-version.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-config.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-targets-debug.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-targets-release.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/fmt/fmt-targets.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3ConfigVersion.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-debug.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-release.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/glfw3/glfw3Targets.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioConfig.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioConfigVersion.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-debug.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-release.cmake
+C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio/portaudioTargets.cmake

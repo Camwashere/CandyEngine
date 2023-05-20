@@ -1,0 +1,13 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/../include
+
+Name: libout123
+Description: A streaming audio output API derived from mpg123
+Requires: 
+Version: 1.31.3
+Libs: "-L${libdir}" -lout123
+Libs.private:  
+Cflags: "-I${includedir}" 
+

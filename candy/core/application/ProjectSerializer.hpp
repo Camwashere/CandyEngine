@@ -1,0 +1,15 @@
+#pragma once
+#include "Project.hpp"
+
+namespace Candy{
+    class ProjectSerializer
+    {
+    private:
+        SharedPtr<Project> project;
+    
+    public:
+        ProjectSerializer(SharedPtr<Project> projectValue);
+        bool Serialize(const std::filesystem::path& filepath);
+        bool Deserialize(const std::filesystem::path& filepath);
+    };
+}

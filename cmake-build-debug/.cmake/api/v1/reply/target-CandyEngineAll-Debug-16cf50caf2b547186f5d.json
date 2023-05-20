@@ -1,0 +1,282 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "CandyEngineAll.exe"
+		},
+		{
+			"path" : "CandyEngineAll.pdb"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"_add_executable",
+			"add_executable",
+			"target_link_libraries"
+		],
+		"files" : 
+		[
+			"C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"CMakeLists.txt",
+			"sugar/CMakeLists.txt",
+			"sandbox/CMakeLists.txt",
+			"candy/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 10,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 592,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 12,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 9,
+				"parent" : 4
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 12,
+				"parent" : 6
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 2,
+				"file" : 4,
+				"line" : 89,
+				"parent" : 8
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -std=c++23 -g -fdiagnostics-color=always"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 3,
+					"define" : "FMT_SHARED"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "GLFW_DLL"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/candy/include"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "Candy::@a1136d39aa0871c148d2"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "glad::@03dfe718c1d4e46c961b"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "Sandbox::@e49c0a52b1bf699b6c68"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "Sugar::@ef82296988d35bfc9814"
+		}
+	],
+	"id" : "CandyEngineAll::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-std=c++23 -g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "--enable-llvm",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "sugar\\libSugar.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "sandbox\\libSandbox.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "candy\\libCandy.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\fmtd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\glfw3dll.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "candy\\lib\\glad\\libglad.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\sndfile.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\portaudio.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lwinmm",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-ldsound",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lole32",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-luuid",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lsetupapi",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lole32",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-luuid",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lsetupapi",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "\"C:\\Program Files\\Mono\\bin\\mono-2.0-sgen.dll\"",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "CandyEngineAll",
+	"nameOnDisk" : "CandyEngineAll.exe",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "sugar/src/SugarApp.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

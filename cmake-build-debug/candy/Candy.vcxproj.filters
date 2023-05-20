@@ -1,0 +1,690 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\CandyString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\UUID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\Stopwatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2Int.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3Int.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\quaternion\Quaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\Matrix4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\geometry\2d\Rectangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\noise\PerlinNoise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\ProjectSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Project.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSV.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\Layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\LayerStack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\UILayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\model\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RendererAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RenderCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\GraphicsContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\PixelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\KeyEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\MouseEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\WindowEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\input\Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\entity\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\scene\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptGlue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorPane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\Block.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockTypeManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\VoxelData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\Chunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\ChunkManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\structure\VoxelOctree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\AudioManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\Mixer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\VolumePlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\EntryPoint.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\CandyAssert.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\CandyConcepts.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\CandyCoreBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\CandyString.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\PrimitiveTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\UUID.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\RawBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Logger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\KeyCodes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Log.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Profiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\MouseCodes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\Stopwatch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\FileSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\IDManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\MultiArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\HeapArray3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\Array2D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\Array3D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\MathOps.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\LinalgForwardDef.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\base\VectorBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\base\VectorExpression.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\VectorAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\LinalgAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2Int.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3Int.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\quaternion\Quaternion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\Matrix4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Random.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Range.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Limit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\base\Matrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\MatrixAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\MathGeneralAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\geometry\2d\Rectangle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\geometry\GeometryAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\noise\PerlinNoise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Project.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\ProjectSerializer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Application.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color32.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSL.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSV.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorForwardDef.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\Layer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\LayerStack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\UILayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\LayersAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\model\Mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RendererAPI.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RenderCommand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Material.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\GraphicsContext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\camera\Camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexArray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\UniformBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\IndexBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\FrameBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\RenderingMode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\BufferLayout.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\RenderingDataAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\Texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\PixelManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\TextureAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RenderingAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\Event.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\EventDispatcher.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\IEventLIstener.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\KeyEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\MouseEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\WindowEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\input\Input.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\entity\Entity.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\entity\ScriptableEntity.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\component\BaseComponents.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\EntityManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\ComponentManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\InternalBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\Registry.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\System.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\SystemManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\scene\Scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptEngine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptGlue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\base\UINode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\base\WidgetBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\button\Button.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\button\ButtonAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorEdit3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorEdit4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorPicker.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorWidgetAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragBaseN.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragDouble.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragFloat.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragInt.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragVector2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragVector3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragVector4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragWidgetAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\misc\Spacer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\WidgetAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorPane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\Block.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockType.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockTypeManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\VoxelData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\Chunk.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\ChunkAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\ChunkManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\structure\VoxelOctree.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\AudioManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\Mixer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\MixingPlugin.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\VolumePlugin.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\PluginsAll.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Collections.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\App.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Noise.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\ECS.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Graphics.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Math.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Events.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\CandyEngineCore.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\CandyEngineBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\UI.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\CandyEngine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Voxel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch\FileWatch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5815C5C6-DA47-31CF-93B1-7D3685EF0A3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0B9FC599-CDD5-3450-8855-51FD0C622F2A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

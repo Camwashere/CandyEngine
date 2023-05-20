@@ -1,0 +1,1 @@
+project(SandboxProject LANGUAGES CSharp)

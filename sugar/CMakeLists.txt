@@ -1,0 +1,9 @@
+project(Sugar)
+
+set(SUGAR_SOURCES src/EditorLayer.hpp src/EditorLayer.cpp src/panels/ContentBrowserPanel.hpp src/panels/SceneHierarchyPanel.hpp src/panels/SceneHierarchyPanel.cpp src/panels/ContentBrowserPanel.cpp)
+
+add_library(${PROJECT_NAME} STATIC ${SUGAR_SOURCES})
+
+
+
+target_link_libraries(${PROJECT_NAME} PUBLIC Sandbox)

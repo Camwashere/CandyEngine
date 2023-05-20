@@ -1,0 +1,6 @@
+x64-windows/
+x64-windows/share/
+x64-windows/share/yasm-tool-helper/
+x64-windows/share/yasm-tool-helper/vcpkg.spdx.json
+x64-windows/share/yasm-tool-helper/vcpkg_abi_info.txt
+x64-windows/share/yasm-tool-helper/yasm-tool-helper.cmake

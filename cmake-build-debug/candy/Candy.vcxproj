@@ -1,0 +1,605 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{04E0F8DA-73CA-3356-AE59-67E3000B0947}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <VcpkgEnabled>false</VcpkgEnabled>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>Candy</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="do_not_import_user.props" Condition="exists('do_not_import_user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Candy.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Candy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Candy.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Candy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Candy.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Candy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Candy.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Candy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include" -std=c++23 -std=c++23</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR="Debug";Candy_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR=\"Debug\";Candy_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/Debug/Candy.dll -installedDir C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/debug/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\vcpkg_installed\x64-windows\debug\lib\glfw3dll.lib;lib\glad\Debug\glad.lib;..\vcpkg_installed\x64-windows\debug\lib\sndfile.lib;..\vcpkg_installed\x64-windows\debug\lib\portaudio.lib;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;winmm.lib;dsound.lib;ole32.lib;uuid.lib;setupapi.lib;ole32.lib;uuid.lib;setupapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/Debug/Candy.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/Debug/Candy.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include" -std=c++23 -std=c++23</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR="Release";Candy_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR=\"Release\";Candy_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/Release/Candy.dll -installedDir C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\vcpkg_installed\x64-windows\lib\glfw3dll.lib;lib\glad\Release\glad.lib;..\vcpkg_installed\x64-windows\lib\sndfile.lib;..\vcpkg_installed\x64-windows\lib\portaudio.lib;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;winmm.lib;dsound.lib;ole32.lib;uuid.lib;setupapi.lib;ole32.lib;uuid.lib;setupapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/Release/Candy.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/Release/Candy.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include" -std=c++23 -std=c++23</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR="MinSizeRel";Candy_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR=\"MinSizeRel\";Candy_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/MinSizeRel/Candy.dll -installedDir C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\vcpkg_installed\x64-windows\lib\glfw3dll.lib;lib\glad\MinSizeRel\glad.lib;..\vcpkg_installed\x64-windows\lib\sndfile.lib;..\vcpkg_installed\x64-windows\lib\portaudio.lib;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;winmm.lib;dsound.lib;ole32.lib;uuid.lib;setupapi.lib;ole32.lib;uuid.lib;setupapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/MinSizeRel/Candy.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/MinSizeRel/Candy.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include" -std=c++23 -std=c++23</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR="RelWithDebInfo";Candy_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;FMT_HEADER_ONLY=1;GLFW_DLL;CMAKE_INTDIR=\"RelWithDebInfo\";Candy_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\perso\CLionProjects\CandyEngineAll\candy\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\glad\include;C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch;C:\Program Files\Mono\include\mono-2.0;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/RelWithDebInfo/Candy.dll -installedDir C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>..\vcpkg_installed\x64-windows\lib\glfw3dll.lib;lib\glad\RelWithDebInfo\glad.lib;..\vcpkg_installed\x64-windows\lib\sndfile.lib;..\vcpkg_installed\x64-windows\lib\portaudio.lib;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;winmm.lib;dsound.lib;ole32.lib;uuid.lib;setupapi.lib;ole32.lib;uuid.lib;setupapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/RelWithDebInfo/Candy.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/RelWithDebInfo/Candy.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -SC:/Users/perso/CLionProjects/CandyEngineAll -BC:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug --check-stamp-file C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindOpenGL.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageMessage.cmake;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config-version.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3ConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -SC:/Users/perso/CLionProjects/CandyEngineAll -BC:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug --check-stamp-file C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindOpenGL.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageMessage.cmake;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config-version.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3ConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -SC:/Users/perso/CLionProjects/CandyEngineAll -BC:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug --check-stamp-file C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindOpenGL.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageMessage.cmake;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config-version.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3ConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -SC:/Users/perso/CLionProjects/CandyEngineAll -BC:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug --check-stamp-file C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindOpenGL.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\share\cmake-3.25\Modules\FindPackageMessage.cmake;C:\Program Files\Mono\bin\mono-2.0-sgen.dll;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\SndFile\SndFileTargets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config-version.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\fmt\fmt-targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Config.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3ConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\glfw3\glfw3Targets.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfig.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioConfigVersion.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-debug.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets-release.cmake;C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\vcpkg_installed\x64-windows\share\portaudio\portaudioTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\EntryPoint.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\CandyAssert.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\CandyConcepts.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\general\CandyCoreBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\CandyString.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\CandyString.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\PrimitiveTypes.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\UUID.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\UUID.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\RawBuffer.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Logger.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\KeyCodes.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Log.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Log.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\debug\Profiler.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\base\primitive\MouseCodes.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\Stopwatch.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\Stopwatch.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\FileSystem.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\FileSystem.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\utils\IDManager.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\MultiArray.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\HeapArray3D.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\Array2D.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\collections\Array3D.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\MathOps.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\LinalgForwardDef.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\base\VectorBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\base\VectorExpression.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\VectorAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\LinalgAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector4.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector4.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2Int.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3Int.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector2Int.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\vector\Vector3Int.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\quaternion\Quaternion.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\quaternion\Quaternion.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\Matrix4.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\Matrix4.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Random.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Random.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Range.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\Limit.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\base\Matrix.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\linalg\matrix\MatrixAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\general\MathGeneralAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction2.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction2.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction3.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\direction\Direction3.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\geometry\2d\Rectangle.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\geometry\2d\Rectangle.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\math\geometry\GeometryAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\noise\PerlinNoise.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\noise\PerlinNoise.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Project.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\ProjectSerializer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\ProjectSerializer.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Project.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Application.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Window.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Application.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\application\Window.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color32.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color32.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorBase.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSL.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSV.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorForwardDef.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorAll.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSL.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\ColorHSV.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\color\Color.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\Layer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\Layer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\LayerStack.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\LayerStack.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\UILayer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\UILayer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\layers\LayersAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\model\Mesh.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\model\Mesh.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Shader.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Shader.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RendererAPI.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RendererAPI.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Renderer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Renderer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RenderCommand.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RenderCommand.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\Material.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\GraphicsContext.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\GraphicsContext.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\camera\Camera.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\camera\Camera.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexBuffer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexBuffer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexArray.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\VertexArray.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\UniformBuffer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\UniformBuffer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\IndexBuffer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\IndexBuffer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\FrameBuffer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\FrameBuffer.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\RenderingMode.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\BufferLayout.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\RenderingDataAll.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\Texture.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\Texture.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\PixelManager.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\PixelManager.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\data\texture\TextureAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\graphics\rendering\RenderingAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\Event.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\EventDispatcher.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\IEventLIstener.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\KeyEvent.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\MouseEvent.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\WindowEvent.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\KeyEvent.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\MouseEvent.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\events\WindowEvent.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\input\Input.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\event\input\Input.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\entity\Entity.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\entity\Entity.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\entity\ScriptableEntity.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\component\BaseComponents.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\EntityManager.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\ComponentManager.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\InternalBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\Registry.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\System.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\internal\SystemManager.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\scene\Scene.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\ecs\scene\Scene.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptEngine.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptEngine.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptGlue.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\scripting\ScriptGlue.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\base\UINode.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\base\WidgetBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\button\Button.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\button\ButtonAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorEdit3.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorEdit4.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorPicker.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\color\ColorWidgetAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragBaseN.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragDouble.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragFloat.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragInt.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragVector2.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragVector3.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragVector4.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\drag\DragWidgetAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\misc\Spacer.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\core\widget\WidgetAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorPane.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorPane.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorLayout.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\ui\editor\EditorAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\Block.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\Block.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockType.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockType.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockTypeManager.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\BlockTypeManager.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\VoxelData.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\block\VoxelData.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\Chunk.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\Chunk.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\ChunkAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\ChunkManager.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\chunk\ChunkManager.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\structure\VoxelOctree.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\voxel\structure\VoxelOctree.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\AudioManager.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\AudioManager.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\Mixer.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\Mixer.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\MixingPlugin.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\VolumePlugin.hpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\VolumePlugin.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\core\audio\mixing\plugins\PluginsAll.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Collections.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\App.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Noise.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Utils.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\ECS.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Graphics.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Math.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Events.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\CandyEngineCore.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\CandyEngineBase.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\UI.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\CandyEngine.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\include\Candy\Voxel.hpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb\stb_image.h" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\stb\stb_image.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imstb_truetype.h" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imstb_textedit.h" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imstb_rectpack.h" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_glfw.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_glfw.h" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_opengl3.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_impl_opengl3.h" />
+    <ClCompile Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\imgui\imgui_tables.cpp" />
+    <ClInclude Include="C:\Users\perso\CLionProjects\CandyEngineAll\candy\lib\filewatch\FileWatch.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\ZERO_CHECK.vcxproj">
+      <Project>{26E1C35C-69D4-3BDA-92DB-BEBADDA554C7}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\glad\glad.vcxproj">
+      <Project>{6F3FC275-9C71-3773-BD9E-DE2348A6853F}</Project>
+      <Name>glad</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
