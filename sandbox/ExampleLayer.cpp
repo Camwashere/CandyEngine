@@ -7,9 +7,9 @@ using namespace Math;
 using namespace std;
 
 ExampleLayer::ExampleLayer()
-        : Layer("ExampleLayer"), camera(Vector3(0.f, 0.f, 3.27)), chunkRenderer(), editor("Dockspace")
+        : Layer("ExampleLayer"), camera(), chunkRenderer(), editor("Dockspace")
 {
-    CreateShaderResources();
+    /*CreateShaderResources();
     
     Mesh chunkMesh = chunkRenderer.ToMesh();
     Mesh lightMesh = Mesh::CreateCubeMesh();
@@ -19,13 +19,13 @@ ExampleLayer::ExampleLayer()
     
     //RenderCommand::SetRenderingMode(Candy::Graphics::RenderingMode::WIREFRAME);
     editor.GetRightPane().AddWidget(new UI::Button("Wireframe", Vector2(0, 0), Vector2(50, 50), Color::blue, Color::green, Color::red));
-    editor.GetRightPane().AddWidget(new UI::DragVector3("Light Position", &light.position));
+    editor.GetRightPane().AddWidget(new UI::DragVector3("Light position", &light.position));
     editor.GetRightPane().AddWidget(new UI::ColorPicker("Light Color", &light.color));
     editor.GetRightPane().AddWidget(new UI::DragFloat("Light Ambient", &light.ambientStrength, 0.01f, 0.0f, 1.0f));
     editor.GetRightPane().AddSpacer();
     editor.GetRightPane().AddWidget(new UI::DragFloat("Metallic", &material.metallic, 0.01f, 0.0f, 1.0f));
     editor.GetRightPane().AddWidget(new UI::DragFloat("Specular", &material.specular, 0.01f, 0.0f, Math::MAX_FLOAT));
-    editor.GetRightPane().AddWidget(new UI::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, Math::MAX_FLOAT));
+    editor.GetRightPane().AddWidget(new UI::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, Math::MAX_FLOAT));*/
     
 }
 void ExampleLayer::CreateShaderResources()
@@ -40,7 +40,7 @@ void ExampleLayer::CreateShaderResources()
 
 void ExampleLayer::InitializeLightingShader(const Candy::Graphics::Mesh& mesh)
 {
-    SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(mesh.GetArray(), mesh.GetArraySize());
+    /*SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(mesh.GetArray(), mesh.GetArraySize());
     BufferLayout layout = {
             {Graphics::ShaderDataType::Float3, "aPos"},
             {Graphics::ShaderDataType::Float3, "aNormal"},
@@ -58,7 +58,7 @@ void ExampleLayer::InitializeLightingShader(const Candy::Graphics::Mesh& mesh)
     light.position.Set(1.2f, 1.0f, 2.0f);
     Matrix4 projection = Matrix4::Perspective(ToRadians(camera.zoom), Application::AspectRatio(), 0.1f, 100.f);
     lightShader->SetMatrix4("projection", projection);
-    lightShader->SetMatrix4("view", camera.GetViewMatrix());
+    lightShader->SetMatrix4("view", camera.GetViewMatrix());*/
     
     
 }
@@ -66,7 +66,7 @@ void ExampleLayer::InitializeLightingShader(const Candy::Graphics::Mesh& mesh)
 void ExampleLayer::InitializePrimaryShader(const Mesh& mesh)
 {
     
-    SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(mesh.GetArray(), mesh.GetArraySize());
+    /*SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(mesh.GetArray(), mesh.GetArraySize());
     BufferLayout layout = {
             {Graphics::ShaderDataType::Float3, "aPos"},
             {Graphics::ShaderDataType::Float3, "aNormal"},
@@ -88,7 +88,7 @@ void ExampleLayer::InitializePrimaryShader(const Mesh& mesh)
     
     Matrix4 projection = Matrix4::Perspective(ToRadians(camera.zoom), Application::AspectRatio(), 0.1f, 100.f);
     shader->SetMatrix4("projection", projection);
-    shader->SetMatrix4("view", camera.GetViewMatrix());
+    shader->SetMatrix4("view", camera.GetViewMatrix());*/
 }
 
 
@@ -106,7 +106,7 @@ void ExampleLayer::OnDetach()
 
 void ExampleLayer::OnUpdate()
 {
-    camera.OnUpdate();
+    /*camera.OnUpdate();
     RenderCommand::SetClearColor(Color(0.1f, 0.1f, 0.1f));
     RenderCommand::Clear();
     Renderer::BeginScene(camera);
@@ -128,15 +128,15 @@ void ExampleLayer::OnUpdate()
     lightTransform = Matrix4::Scaled(lightTransform, Vector3(0.2f));
     Renderer::Submit(lightShader, lightVertexArray, lightTransform);
     
-    Renderer::EndScene();
+    Renderer::EndScene();*/
 }
 
 void ExampleLayer::OnRenderUI()
 {
-    editor.OnRender();
+    //editor.OnRender();
 }
 
 void ExampleLayer::OnEvent(Candy::Events::Event& e)
 {
-    camera.OnEvent(e);
+    //camera.OnEvent(e);
 }

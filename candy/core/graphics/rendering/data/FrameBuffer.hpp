@@ -76,6 +76,7 @@ namespace Candy::Graphics{
         
         const FrameBufferSpecification& GetSpecification() const  { return specification; }
         
+        static SharedPtr<FrameBuffer> Create(const FrameBufferSpecification& spec);
     };
 }
 #endif //ENGINE_FRAMEBUFFER_H

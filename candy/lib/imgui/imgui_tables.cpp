@@ -1787,7 +1787,7 @@ void ImGui::TableEndRow(ImGuiTable* table)
     if (g.LogEnabled)
         LogRenderedText(NULL, "|");
 
-    // Position cursor at the bottom of our row so it can be used for e.g. clipping calculation. However it is
+    // position cursor at the bottom of our row so it can be used for e.g. clipping calculation. However it is
     // likely that the next call to TableBeginCell() will reposition the cursor to take account of vertical padding.
     window->DC.CursorPos.y = table->RowPosY2;
 

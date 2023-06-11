@@ -261,6 +261,85 @@ namespace Candy::Math{
             }
             return result;
         }
+    
+        bool Matrix4::DecomposeTransform(const Matrix4& transform, Vector3& translation, Vector3& rotation, Vector3& scale)
+        {
+            
+            Matrix4 localMatrix(transform);
+            
+            // Normalize the matrix.
+            if (EpsilonEqual(localMatrix[3,3], static_cast<float>(0), std::numeric_limits<float>::epsilon()))
+                return false;
+            
+            // First, isolate perspective.  This is the messiest.
+            if (
+                    EpsilonNotEqual(localMatrix[0,3], static_cast<float>(0), std::numeric_limits<float>::epsilon()) ||
+                    EpsilonNotEqual(localMatrix[1,3], static_cast<float>(0), std::numeric_limits<float>::epsilon()) ||
+                    EpsilonNotEqual(localMatrix[2,3], static_cast<float>(0), std::numeric_limits<float>::epsilon()))
+            {
+                // Clear the perspective partition
+                localMatrix[0,3] = localMatrix[1,3] = localMatrix[2,3] = static_cast<float>(0);
+                localMatrix[3,3] = static_cast<float>(1);
+            }
+            
+            // Next take care of translation (easy).
+            translation = localMatrix.GetColumn(3);
+            localMatrix.SetColumn(3, Vector4(0, 0, 0, localMatrix.GetColumn(3).w));
+            
+            
+            Vector3 row[3], pdum3;
+            
+            // Now get scale and shear.
+            for (std::size_t i = 0; i < 3; ++i)
+                for (std::size_t j = 0; j < 3; ++j)
+                    row[i][j] = localMatrix[i,j];
+            
+            // Compute X scale factor and normalize first row.
+            
+            scale.x = row[0].Magnitude();
+            row[0].Normalize();
+            scale.y = row[1].Magnitude();
+            row[1].Normalize();
+            scale.z = row[2].Magnitude();
+            row[2].Normalize();
+            
+            // At this point, the matrix (in rows[]) is orthonormal.
+            // Check for a coordinate system flip.  If the determinant
+            // is -1, then negate the matrix and the scaling factors.
+#if 0
+            pdum3 = cross(row[1], row[2]); // v3Cross(row[1], row[2], pdum3);
+		if (dot(row[0], pdum3) < 0)
+		{
+			for (length_t i = 0; i < 3; i++)
+			{
+				scale[i] *= static_cast<T>(-1);
+				row[i] *= static_cast<T>(-1);
+			}
+		}
+#endif
+            
+            rotation.y = Math::Asin(-row[0][2]);
+            if (cos(rotation.y) != 0) {
+                rotation.x = Math::Atan2(row[1][2], row[2][2]);
+                rotation.z = Math::Atan2(row[0][1], row[0][0]);
+            }
+            else {
+                rotation.x = Math::Atan2(-row[2][0], row[1][1]);
+                rotation.z = 0;
+            }
+            
+            
+            return true;
+        }
+    
+        bool Matrix4::EpsilonEqual(float x, float y, float epsilon)
+        {
+            return Math::Abs(x-y) < epsilon;
+        }
+        bool Matrix4::EpsilonNotEqual(float x, float y, float epsilon)
+        {
+            return Math::Abs(x-y) >= epsilon;
+        }
         
         Matrix4 Matrix4::operator+(const Matrix4& other)const
         {

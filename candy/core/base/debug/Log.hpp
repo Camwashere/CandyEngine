@@ -6,12 +6,14 @@ namespace Candy
     class Log
     {
     private:
-        inline static SharedPtr<Logger> coreLogger = CreateSharedPtr<Logger>();
-        inline static SharedPtr<Logger> clientLogger = CreateSharedPtr<Logger>();
+        static SharedPtr<Logger> coreLogger;
+        static SharedPtr<Logger> clientLogger;
         
     public:
         static SharedPtr<Logger> GetCoreLogger(){return coreLogger;}
         static SharedPtr<Logger> GetClientLogger(){return clientLogger;}
+        
+        static void Init();
     };
 }
 

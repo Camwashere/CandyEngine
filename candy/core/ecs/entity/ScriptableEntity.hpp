@@ -1,22 +1,22 @@
 #pragma once
-
 #include "Entity.hpp"
-namespace Candy::ECS{
+
+namespace Candy::ECS
+{
     class ScriptableEntity
     {
     private:
         Entity entity;
         friend class Scene;
-    
+        
     protected:
         virtual void OnCreate(){}
         virtual void OnDestroy(){}
         virtual void OnUpdate(){}
-    
+        
     public:
         virtual ~ScriptableEntity(){}
-    
-    public:
+        
         template<typename T>
         T& GetComponent()
         {
@@ -24,4 +24,3 @@ namespace Candy::ECS{
         }
     };
 }
-

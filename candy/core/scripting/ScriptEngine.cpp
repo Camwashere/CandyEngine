@@ -4,7 +4,6 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include "mono/metadata/mono-debug.h"
-#include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/object.h>
 #include "mono/metadata/tabledefs.h"
 #include <mono/metadata/threads.h>
@@ -26,11 +25,11 @@ namespace Candy::Scripting
                     { "System.UInt32", ScriptFieldType::UInt },
                     { "System.UInt64", ScriptFieldType::ULong },
                     
-                    { "candy.Vector2", ScriptFieldType::Vector2 },
-                    { "candy.Vector3", ScriptFieldType::Vector3 },
-                    { "candy.Vector4", ScriptFieldType::Vector4 },
+                    { "Candy.Vector2", ScriptFieldType::Vector2 },
+                    { "Candy.Vector3", ScriptFieldType::Vector3 },
+                    { "Candy.Vector4", ScriptFieldType::Vector4 },
                     
-                    { "candy.Entity", ScriptFieldType::Entity },
+                    { "Candy.Entity", ScriptFieldType::Entity },
             };
     
     namespace Utils {
@@ -308,7 +307,7 @@ namespace Candy::Scripting
         // ScriptGlue register components
         
         //Retrieve and instantiate class
-        data->entityClass = ScriptClass("candy", "Entity", true);
+        data->entityClass = ScriptClass("Candy", "Entity", true);
     }
     void ScriptEngine::Shutdown()
     {
@@ -351,7 +350,7 @@ namespace Candy::Scripting
         
         //Script glue register components
         
-        data->entityClass = ScriptClass("candy", "Entity", true);
+        data->entityClass = ScriptClass("Candy", "Entity", true);
         
     }
     

@@ -34,6 +34,7 @@ namespace Candy::Events{
             
             inline bool IsModifier(int32 modifier) const { return (bool) (modifiers & modifier); }
             
+            inline bool IsRepeat()const{return repeat>0;}
             inline static EventType GetStaticType() { return EventType::KEY_PRESSED; }
         };
         

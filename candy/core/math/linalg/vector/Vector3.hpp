@@ -301,4 +301,6 @@ namespace Candy::Math{
             int SumCompare(const Vector3 &other) const;
             
         };
+        
+        
 }

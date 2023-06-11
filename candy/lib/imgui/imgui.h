@@ -1926,17 +1926,17 @@ struct ImGuiStyle
     float       DisabledAlpha;              // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
     ImVec2      WindowPadding;              // Padding within a window.
     float       WindowRounding;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
-    float       WindowBorderSize;           // Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+    float       WindowBorderSize;           // thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     ImVec2      WindowMinSize;              // Minimum window size. This is a global setting. If you want to constrain individual windows, use SetNextWindowSizeConstraints().
     ImVec2      WindowTitleAlign;           // Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.
     ImGuiDir    WindowMenuButtonPosition;   // Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.
     float       ChildRounding;              // Radius of child window corners rounding. Set to 0.0f to have rectangular windows.
-    float       ChildBorderSize;            // Thickness of border around child windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+    float       ChildBorderSize;            // thickness of border around child windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     float       PopupRounding;              // Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)
-    float       PopupBorderSize;            // Thickness of border around popup/tooltip windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+    float       PopupBorderSize;            // thickness of border around popup/tooltip windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     ImVec2      FramePadding;               // Padding within a framed rectangle (used by most widgets).
     float       FrameRounding;              // Radius of frame corners rounding. Set to 0.0f to have rectangular frame (used by most widgets).
-    float       FrameBorderSize;            // Thickness of border around frames. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
+    float       FrameBorderSize;            // thickness of border around frames. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).
     ImVec2      ItemSpacing;                // Horizontal and vertical spacing between widgets/lines.
     ImVec2      ItemInnerSpacing;           // Horizontal and vertical spacing between within elements of a composed widget (e.g. a drag and its label).
     ImVec2      CellPadding;                // Padding within a table cell
@@ -1949,7 +1949,7 @@ struct ImGuiStyle
     float       GrabRounding;               // Radius of grabs corners rounding. Set to 0.0f to have rectangular drag grabs.
     float       LogSliderDeadzone;          // The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.
     float       TabRounding;                // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
-    float       TabBorderSize;              // Thickness of border around tabs.
+    float       TabBorderSize;              // thickness of border around tabs.
     float       TabMinWidthForCloseButton;  // Minimum width for close button to appear on an unselected tab when hovered. Set to 0.0f to always show when hovering, set to FLT_MAX to never show close button unless selected.
     ImGuiDir    ColorButtonPosition;        // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
     ImVec2      ButtonTextAlign;            // Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).
@@ -2151,7 +2151,7 @@ struct ImGuiIO
     ImGuiKeyData  KeysData[ImGuiKey_KeysData_SIZE]; // Key state for all known keys. Use IsKeyXXX() functions to access this.
     bool        WantCaptureMouseUnlessPopupClose;   // Alternative to WantCaptureMouse: (WantCaptureMouse == true && WantCaptureMouseUnlessPopupClose == false) when a click over void is expected to close a popup.
     ImVec2      MousePosPrev;                       // Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)
-    ImVec2      MouseClickedPos[5];                 // Position at time of clicking
+    ImVec2      MouseClickedPos[5];                 // position at time of clicking
     double      MouseClickedTime[5];                // Time of last click (used to figure out double-click)
     bool        MouseClicked[5];                    // Mouse button went from !Down to Down (same as MouseClickedCount[x] != 0)
     bool        MouseDoubleClicked[5];              // Has mouse button been double-clicked? (same as MouseClickedCount[x] == 2)
@@ -3104,9 +3104,9 @@ struct ImGuiViewport
 {
     ImGuiID             ID;                     // Unique identifier for the viewport
     ImGuiViewportFlags  Flags;                  // See ImGuiViewportFlags_
-    ImVec2              Pos;                    // Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)
+    ImVec2              Pos;                    // Main Area: position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)
     ImVec2              Size;                   // Main Area: Size of the viewport.
-    ImVec2              WorkPos;                // Work Area: Position of the viewport minus task bars, menus bars, status bars (>= Pos)
+    ImVec2              WorkPos;                // Work Area: position of the viewport minus task bars, menus bars, status bars (>= Pos)
     ImVec2              WorkSize;               // Work Area: Size of the viewport minus task bars, menu bars, status bars (<= Size)
     float               DpiScale;               // 1.0f = 96 DPI = No extra scale.
     ImGuiID             ParentViewportId;       // (Advanced) 0: no parent. Instruct the platform backend to setup a parent/child relationship between platform windows.
@@ -3259,7 +3259,7 @@ struct ImGuiPlatformMonitor
 struct ImGuiPlatformImeData
 {
     bool    WantVisible;        // A widget wants the IME to be visible
-    ImVec2  InputPos;           // Position of the input cursor
+    ImVec2  InputPos;           // position of the input cursor
     float   InputLineHeight;    // Line height
 
     ImGuiPlatformImeData() { memset(this, 0, sizeof(*this)); }

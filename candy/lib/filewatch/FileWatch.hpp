@@ -147,6 +147,7 @@ namespace filewatch {
                 return FILEWATCH_TO_STRING(Event::renamed_new);
         }
         assert(false);
+        return nullptr;
     }
 
     template<typename StringType>

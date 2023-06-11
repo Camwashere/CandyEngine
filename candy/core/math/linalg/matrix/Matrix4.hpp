@@ -89,8 +89,11 @@ namespace Candy::Math{
             static Matrix4 CreateFromColumns(const Vector4& c0, const Vector4& c1, const Vector4& c2, const Vector4& c3);
             
             static Matrix4 Transpose(const Matrix4 &matrix);
+            
+            static bool DecomposeTransform(const Matrix4& transform, Vector3& translation, Vector3& rotation, Vector3& scale);
         
-        
+            static bool EpsilonEqual(float x, float y, float epsilon);
+            static bool EpsilonNotEqual(float x, float y, float epsilon);
         
         
         

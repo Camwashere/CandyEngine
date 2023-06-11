@@ -1,5 +1,5 @@
 #include "ProjectSerializer.hpp"
-#include <fstream>
+
 
 
 namespace Candy{
@@ -10,18 +10,18 @@ namespace Candy{
     
     bool ProjectSerializer::Serialize(const std::filesystem::path& filepath)
     {
-        const auto& config = project->GetConfig();
+        /*const auto& config = project->GetConfig();
         
-        //YAML::Emitter out;
-        /*{
+        YAML::Emitter out;
+        {
             out << YAML::BeginMap;
-            out << YAML::Key << "project" << YAML::Value;
+            out << YAML::Key << "Project" << YAML::Value;
             {
                 out << YAML::BeginMap; // Project
-                out << YAML::Key << "name" << YAML::Value << config.name.ToStdString();
-                out << YAML::Key << "startScene" << YAML::Value << config.startScene.string();
-                out << YAML::Key << "assetDirectory" << YAML::Value << config.assetDirectory.string();
-                out << YAML::Key << "scriptModulePath" << YAML::Value << config.scriptModulePath.string();
+                out << YAML::Key << "Name" << YAML::Value << config.name.ToStdString();
+                out << YAML::Key << "StartScene" << YAML::Value << config.startScene.string();
+                out << YAML::Key << "AssetDirectory" << YAML::Value << config.assetDirectory.string();
+                out << YAML::Key << "ScriptModulePath" << YAML::Value << config.scriptModulePath.string();
                 out << YAML::EndMap; // Project
             }
             out << YAML::EndMap;
@@ -42,17 +42,17 @@ namespace Candy{
         }
         catch (YAML::ParserException& e)
         {
-            CANDY_CORE_ERROR("Failed to load project file '{0}'\n", e.what());
+            CANDY_CORE_ERROR("Failed to load project file '{0}'\n   {1}", filepath.string(), e.what());
             return false;
         }
-        auto projectNode = data["project"];
+        auto projectNode = data["Project"];
         if (!projectNode)
             return false;
 
-        config.name = projectNode["name"].as<std::string>();
-        config.startScene = projectNode["startScene"].as<std::string>();
-        config.assetDirectory = projectNode["assetDirectory"].as<std::string>();
-        config.scriptModulePath = projectNode["scriptModulePath"].as<std::string>();*/
+        config.name = projectNode["Name"].as<std::string>();
+        config.startScene = projectNode["StartScene"].as<std::string>();
+        config.assetDirectory = projectNode["AssetDirectory"].as<std::string>();
+        config.scriptModulePath = projectNode["ScriptModulePath"].as<std::string>();*/
         return true;
         
     }

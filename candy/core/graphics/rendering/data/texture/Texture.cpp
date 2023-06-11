@@ -1,5 +1,6 @@
 #include "Texture.hpp"
 #include "stb_image.h"
+#include <Candy/Graphics.hpp>
 
 namespace Candy::Graphics {
         Texture::Texture(const std::string &path){
@@ -44,10 +45,15 @@ namespace Candy::Graphics {
             }
             else
             {
-                std::cerr << "Failed to load texture" << std::endl;
+                CANDY_CORE_WARN("Failed to load texture: {}", path.c_str());
+                //std::cerr << "Failed to load texture" << std::endl;
             }
             
             
+        }
+        Texture::Texture(uint32 width, uint32 height)
+        {
+        
         }
         
         Texture::~Texture() {
@@ -60,11 +66,36 @@ namespace Candy::Graphics {
             glActiveTexture(GL_TEXTURE0+slot);
             glBindTexture(GL_TEXTURE_2D, rendererID);
         }
-        
-        
-        
-        SharedPtr<Texture> Texture::Create(const std::string& path)
+    
+    
+    
+    bool Texture::operator==(const Texture& other)const
+    {
+            return rendererID == other.rendererID;
+    }
+    
+    void Texture::SetData(void* data, uint32 size)
+    {
+            uint32 bpp = dataFormat == GL_RGBA ? 4 : 3;
+            CANDY_CORE_ASSERT(size == width * height * bpp, "Data must be entire texture!");
+            glTextureSubImage2D(rendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
+    }
+    
+    SharedPtr<Texture> Texture::Create(uint32 width, uint32 height)
+    {
+        switch (Renderer::GetAPI())
         {
-            return CreateSharedPtr<Texture>(path);
+            case RendererAPI::API::None:    CANDY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return CreateSharedPtr<Texture>(width, height);
         }
+        
+        CANDY_CORE_ASSERT(false, "Unknown RendererAPI!");
+        return nullptr;
+    }
+    
+        
+    SharedPtr<Texture> Texture::Create(const std::string& path)
+    {
+            return CreateSharedPtr<Texture>(path);
+    }
 }

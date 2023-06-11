@@ -15,7 +15,7 @@ namespace Candy::Scripting {
     
     static std::unordered_map<MonoType*, std::function<bool(ECS::Entity)>> entityHasComponentFuncs;
 
-#define CANDY_ADD_INTERNAL_CALL(Name) mono_add_internal_call("candy.InternalCalls::" #Name, (void*)Name)
+#define CANDY_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Candy.InternalCalls::" #Name, (void*)Name)
     
     static void NativeLog(MonoString* string, int parameter)
     {

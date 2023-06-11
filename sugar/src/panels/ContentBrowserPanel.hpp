@@ -5,16 +5,19 @@ namespace Candy {
     
     class ContentBrowserPanel
     {
+    private:
+        std::filesystem::path baseDirectory;
+        std::filesystem::path currentDirectory;
+        
+        SharedPtr<Graphics::Texture> directoryIcon;
+        SharedPtr<Graphics::Texture> fileIcon;
+        
+        
     public:
         ContentBrowserPanel();
         
-        void OnImGuiRender();
-    private:
-        std::filesystem::path m_BaseDirectory;
-        std::filesystem::path m_CurrentDirectory;
-        
-        SharedPtr<Graphics::Texture> m_DirectoryIcon;
-        SharedPtr<Graphics::Texture> m_FileIcon;
+        void OnRenderUI();
+    
     };
     
 }

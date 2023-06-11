@@ -7,3 +7,4 @@
 #include "Math.hpp"
 #include "Noise.hpp"
 #include "Utils.hpp"
+#include "Scripting.hpp"

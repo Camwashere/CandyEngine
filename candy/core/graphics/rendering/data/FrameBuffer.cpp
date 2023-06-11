@@ -1,6 +1,7 @@
 #include "FrameBuffer.hpp"
 
 #include "glad/glad.h"
+#include <Candy/Graphics.hpp>
 namespace Candy::Graphics {
     
     static const uint32_t MaxFrameBufferSize = 8192;
@@ -213,5 +214,19 @@ namespace Candy::Graphics {
         auto& spec = colorAttachmentSpecifications[attachmentIndex];
         glClearTexImage(colorAttachments[attachmentIndex], 0,
                         Utils::FBTextureFormatToGL(spec.textureFormat), GL_INT, &value);
+    }
+    
+    SharedPtr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
+    {
+        switch(Renderer::GetAPI())
+        {
+            case RendererAPI::API::None:
+                CANDY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+                return nullptr;
+            case RendererAPI::API::OpenGL:
+                return CreateSharedPtr<FrameBuffer>(spec);
+        }
+        CANDY_CORE_ASSERT(false, "Unknown RendererAPI");
+        return nullptr;
     }
 }

@@ -104,6 +104,47 @@ namespace Candy::Math{
         float Quaternion::operator[](int index) const {
             return *(&x + index);
         }
+    
+    void Quaternion::operator+=(const Quaternion &other)
+    {
+            x += other.x;
+            y += other.y;
+            z += other.z;
+            w += other.w;
+    }
+    void Quaternion::operator-=(const Quaternion &other)
+    {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        w -= other.w;
+    }
+    void Quaternion::operator*=(const Quaternion &other)
+    {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        w *= other.w;
+    }
+    void Quaternion::operator*=(float scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+        w *= scalar;
+    }
+    void Quaternion::operator/=(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+        w /= scalar;
+    }
+    
+    Quaternion Quaternion::operator-() const
+    {
+            return Quaternion(-x, -y, -z, -w);
+    }
         
         bool Quaternion::operator==(const Quaternion &quaternion) const {
             return (x == quaternion.x) && (y == quaternion.y) && (z == quaternion.z) && (w == quaternion.w);
@@ -159,6 +200,15 @@ namespace Candy::Math{
     Quaternion Quaternion::RotationZ(float radians) {
         float angle = radians * 0.5f;
         return Quaternion(0.0f, 0.0f, Sin(angle), Cos(angle));
+    }
+    
+    Quaternion Quaternion::ToRadians(const Quaternion& vec)
+    {
+        return {Math::ToRadians(vec.x), Math::ToRadians(vec.y), Math::ToRadians(vec.z), Math::ToRadians(vec.w)};
+    }
+    Quaternion Quaternion::ToDegrees(const Quaternion& vec)
+    {
+        return {Math::ToDegrees(vec.x), Math::ToDegrees(vec.y), Math::ToDegrees(vec.z), Math::ToDegrees(vec.w)};
     }
         
         float Quaternion::Dot(const Quaternion &other) const {

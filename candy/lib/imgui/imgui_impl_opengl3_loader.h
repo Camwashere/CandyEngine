@@ -198,7 +198,7 @@ typedef const GLubyte *(APIENTRYP PFNGLGETSTRINGPROC) (GLenum name);
 typedef GLboolean (APIENTRYP PFNGLISENABLEDPROC) (GLenum cap);
 typedef void (APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 #ifdef GL_GLEXT_PROTOTYPES
-GLAPI void APIENTRY glPolygonMode (GLenum face, GLenum mode);
+GLAPI void APIENTRY glPolygonMode (GLenum fade, GLenum mode);
 GLAPI void APIENTRY glScissor (GLint x, GLint y, GLsizei width, GLsizei height);
 GLAPI void APIENTRY glTexParameteri (GLenum target, GLenum pname, GLint param);
 GLAPI void APIENTRY glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);

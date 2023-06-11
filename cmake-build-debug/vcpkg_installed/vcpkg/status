@@ -291,3 +291,13 @@ Abi: 5471b6e49c20560e09cd48acb1a8758cd35a6e240be7372def33b2dd1e7aafc1
 Description: PortAudio Portable Cross-platform Audio I/O API PortAudio is a free, cross-platform, open-source, audio I/O library.  It lets you write simple audio programs in 'C' or C++ that will compile and run on many platforms including Windows, Macintosh OS X, and Unix (OSS/ALSA). It is intended to promote the exchange of audio software between developers on different platforms. Many applications use PortAudio for Audio I/O.
 Status: install ok installed
 
+Package: yaml-cpp
+Version: 0.7.0
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 5af9880de0d875824e6f279986b44de06c416bad90bd754cf8e92d0393d8f65e
+Description: yaml-cpp is a YAML parser and emitter in C++ matching the YAML 1.2 spec.
+Status: purge ok not-installed
+

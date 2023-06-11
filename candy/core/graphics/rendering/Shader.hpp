@@ -21,6 +21,7 @@ namespace Candy::Graphics{
         
         public:
             Shader();
+            Shader(const char* filepath);
             Shader(const char *vertexPath, const char *fragmentPath);
             ~Shader();
         
@@ -94,6 +95,8 @@ namespace Candy::Graphics{
             int PropertyToID(const std::string &name);
             
             uint32 GetRendererID()const{return rendererID;}
+            
+            static SharedPtr<Shader> Create(const std::string& filepath);
             
             static SharedPtr<Shader> Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
         };

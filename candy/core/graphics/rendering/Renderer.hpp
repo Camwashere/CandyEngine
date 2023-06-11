@@ -4,7 +4,7 @@
 #include "data/IndexBuffer.hpp"
 #include "Shader.hpp"
 #include "RendererAPI.hpp"
-#include "camera/Camera.hpp"
+#include "camera/CameraAll.hpp"
 namespace Candy::Graphics{
         class Renderer {
         private:
@@ -17,7 +17,7 @@ namespace Candy::Graphics{
             static void Init();
             static void Shutdown();
             static void OnWindowResize(int width, int height);
-            static void BeginScene(const Camera& camera);
+            static void BeginScene(OrthographicCamera& camera);
             static void EndScene();
             static void Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const Math::Matrix4& transform=Math::Matrix4::Identity);
             static RendererAPI::API GetAPI(){return RendererAPI::GetAPI();}

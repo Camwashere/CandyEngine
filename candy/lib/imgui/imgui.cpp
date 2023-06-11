@@ -340,7 +340,7 @@ CODE
 
     void MyImGuiRenderFunction(ImDrawData* draw_data)
     {
-       // TODO: Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
+       // TODO: Setup render state: alpha-blending enabled, no fade culling, no depth testing, scissor enabled
        // TODO: Setup texture sampling state: sample with bilinear filtering (NOT point/nearest filtering). Use 'io.Fonts->Flags |= ImFontAtlasFlags_NoBakedLines;' to allow point/nearest filtering.
        // TODO: Setup viewport covering draw_data->DisplayPos to draw_data->DisplayPos + draw_data->DisplaySize
        // TODO: Setup orthographic projection matrix cover draw_data->DisplayPos to draw_data->DisplayPos + draw_data->DisplaySize
@@ -1149,17 +1149,17 @@ ImGuiStyle::ImGuiStyle()
     DisabledAlpha           = 0.60f;            // Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.
     WindowPadding           = ImVec2(8,8);      // Padding within a window
     WindowRounding          = 0.0f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.
-    WindowBorderSize        = 1.0f;             // Thickness of border around windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    WindowBorderSize        = 1.0f;             // thickness of border around windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     WindowMinSize           = ImVec2(32,32);    // Minimum window size
     WindowTitleAlign        = ImVec2(0.0f,0.5f);// Alignment for title bar text
-    WindowMenuButtonPosition= ImGuiDir_Left;    // Position of the collapsing/docking button in the title bar (left/right). Defaults to ImGuiDir_Left.
+    WindowMenuButtonPosition= ImGuiDir_Left;    // position of the collapsing/docking button in the title bar (left/right). Defaults to ImGuiDir_Left.
     ChildRounding           = 0.0f;             // Radius of child window corners rounding. Set to 0.0f to have rectangular child windows
-    ChildBorderSize         = 1.0f;             // Thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    ChildBorderSize         = 1.0f;             // thickness of border around child windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     PopupRounding           = 0.0f;             // Radius of popup window corners rounding. Set to 0.0f to have rectangular child windows
-    PopupBorderSize         = 1.0f;             // Thickness of border around popup or tooltip windows. Generally set to 0.0f or 1.0f. Other values not well tested.
+    PopupBorderSize         = 1.0f;             // thickness of border around popup or tooltip windows. Generally set to 0.0f or 1.0f. Other values not well tested.
     FramePadding            = ImVec2(4,3);      // Padding within a framed rectangle (used by most widgets)
     FrameRounding           = 0.0f;             // Radius of frame corners rounding. Set to 0.0f to have rectangular frames (used by most widgets).
-    FrameBorderSize         = 0.0f;             // Thickness of border around frames. Generally set to 0.0f or 1.0f. Other values not well tested.
+    FrameBorderSize         = 0.0f;             // thickness of border around frames. Generally set to 0.0f or 1.0f. Other values not well tested.
     ItemSpacing             = ImVec2(8,4);      // Horizontal and vertical spacing between widgets/lines
     ItemInnerSpacing        = ImVec2(4,4);      // Horizontal and vertical spacing between within elements of a composed widget (e.g. a drag and its label)
     CellPadding             = ImVec2(4,2);      // Padding within a table cell
@@ -1172,7 +1172,7 @@ ImGuiStyle::ImGuiStyle()
     GrabRounding            = 0.0f;             // Radius of grabs corners rounding. Set to 0.0f to have rectangular drag grabs.
     LogSliderDeadzone       = 4.0f;             // The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.
     TabRounding             = 4.0f;             // Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.
-    TabBorderSize           = 0.0f;             // Thickness of border around tabs.
+    TabBorderSize           = 0.0f;             // thickness of border around tabs.
     TabMinWidthForCloseButton = 0.0f;           // Minimum width for close button to appear on an unselected tab when hovered. Set to 0.0f to always show when hovering, set to FLT_MAX to never show close button unless selected.
     ColorButtonPosition     = ImGuiDir_Right;   // Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.
     ButtonTextAlign         = ImVec2(0.5f,0.5f);// Alignment of button text when button is larger than text.
@@ -6838,7 +6838,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
                 window->Pos = g.BeginPopupStack.back().OpenPopupPos;
         }
 
-        // Position child window
+        // position child window
         if (flags & ImGuiWindowFlags_ChildWindow)
         {
             IM_ASSERT(parent_window && parent_window->Active);
@@ -6850,7 +6850,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
 
         const bool window_pos_with_pivot = (window->SetWindowPosVal.x != FLT_MAX && window->HiddenFramesCannotSkipItems == 0);
         if (window_pos_with_pivot)
-            SetWindowPos(window, window->SetWindowPosVal - window->Size * window->SetWindowPosPivot, 0); // Position given a pivot (e.g. for centering)
+            SetWindowPos(window, window->SetWindowPosVal - window->Size * window->SetWindowPosPivot, 0); // position given a pivot (e.g. for centering)
         else if ((flags & ImGuiWindowFlags_ChildMenu) != 0)
             window->Pos = FindBestWindowPosForPopup(window);
         else if ((flags & ImGuiWindowFlags_Popup) != 0 && !window_pos_set_by_api && window_just_appearing_after_hidden_for_resize)
@@ -6929,7 +6929,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
                 // Avoid focusing a window that is created outside of active modal. This will prevent active modal from being closed.
                 // Since window is not focused it would reappear at the same display position like the last time it was visible.
                 // In case of completely new windows it would go to the top (over current modal), but input to such window would still be blocked by modal.
-                // Position window behind a modal that is not a begin-parent of this window.
+                // position window behind a modal that is not a begin-parent of this window.
                 want_focus = false;
                 if (window == window->RootWindow)
                 {
@@ -11247,7 +11247,7 @@ ImVec2 ImGui::FindBestWindowPosForPopup(ImGuiWindow* window)
     }
     if (window->Flags & ImGuiWindowFlags_Tooltip)
     {
-        // Position tooltip (always follows mouse)
+        // position tooltip (always follows mouse)
         float sc = g.Style.MouseCursorScale;
         ImVec2 ref_pos = NavCalcPreferredRefPos();
         ImRect r_avoid;
@@ -12497,7 +12497,7 @@ static void ImGui::NavUpdateWindowing()
     if (!allow_windowing)
         g.NavWindowingTarget = NULL;
 
-    // Fade out
+    // fade out
     if (g.NavWindowingTargetAnim && g.NavWindowingTarget == NULL)
     {
         g.NavWindowingHighlightAlpha = ImMax(g.NavWindowingHighlightAlpha - io.DeltaTime * 10.0f, 0.0f);
@@ -13987,7 +13987,7 @@ static void ImGui::UpdateViewportsNewFrame()
         const bool platform_funcs_available = viewport->PlatformWindowCreated;
         if (viewports_enabled)
         {
-            // Update Position and Size (from Platform Window to ImGui) if requested.
+            // Update position and Size (from Platform Window to ImGui) if requested.
             // We do it early in the frame instead of waiting for UpdatePlatformWindows() to avoid a frame of lag when moving/resizing using OS facilities.
             if (!(viewport->Flags & ImGuiViewportFlags_IsMinimized) && platform_funcs_available)
             {
@@ -14481,7 +14481,7 @@ void ImGui::UpdatePlatformWindows()
             viewport->PlatformWindowCreated = true;
         }
 
-        // Apply Position and Size (from ImGui to Platform/Renderer backends)
+        // Apply position and Size (from ImGui to Platform/Renderer backends)
         if ((viewport->LastPlatformPos.x != viewport->Pos.x || viewport->LastPlatformPos.y != viewport->Pos.y) && !viewport->PlatformRequestMove)
             g.PlatformIO.Platform_SetWindowPos(viewport, viewport->Pos);
         if ((viewport->LastPlatformSize.x != viewport->Size.x || viewport->LastPlatformSize.y != viewport->Size.y) && !viewport->PlatformRequestResize)
@@ -16791,7 +16791,7 @@ void ImGui::DockNodeCalcSplitRects(ImVec2& pos_old, ImVec2& size_old, ImVec2& po
         size_old[axis] = IM_FLOOR(w_avail - size_new[axis]);
     }
 
-    // Position each node
+    // position each node
     if (dir == ImGuiDir_Right || dir == ImGuiDir_Down)
     {
         pos_new[axis] = pos_old[axis] + size_old[axis] + dock_spacing;
@@ -18203,7 +18203,7 @@ void ImGui::BeginDocked(ImGuiWindow* window, bool* p_open)
         return;
     }
 
-    // Position/Size window
+    // position/Size window
     SetNextWindowPos(node->Pos);
     SetNextWindowSize(node->Size);
     g.NextWindowData.PosUndock = false; // Cancel implicit undocking of SetNextWindowPos()

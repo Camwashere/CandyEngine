@@ -10,6 +10,8 @@ namespace Candy::Graphics{
         ~UniformBuffer();
         
         void SetData(const void* data, uint32 size, uint32 offset=0);
+        
+        static SharedPtr<UniformBuffer> Create(uint32 size, uint32 binding);
     };
 }
 

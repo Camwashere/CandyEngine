@@ -9,10 +9,10 @@ namespace Candy{
     
     SharedPtr<Project> Project::Load(const std::filesystem::path& path)
     {
-        SharedPtr<Project> project;
+        SharedPtr<Project> project = CreateSharedPtr<Project>();
         
         ProjectSerializer serializer(project);
-        if (serializer.Serialize(path))
+        if (serializer.Deserialize(path))
         {
             activeProject->projectDirectory = path.parent_path();
             activeProject = project;

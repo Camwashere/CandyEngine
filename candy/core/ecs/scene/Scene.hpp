@@ -1,53 +1,41 @@
 #pragma once
 #include <unordered_map>
-#include "../internal/Registry.hpp"
+#include <Candy/CandyEngineBase.hpp>
+#include <entt/entt.hpp>
+namespace Candy::Graphics{
+    class EditorCamera;
+}
+namespace Candy{
+    class SceneHierarchyPanel;
+}
+
 namespace Candy::ECS{
-    
     class Entity;
     
+    
     class Scene {
-    private:
-        friend class Entity;
-        friend class SceneHierarchyPanel;
+    
         
     private:
-        Internal::Registry registry;
+        entt::registry registry;
         std::unordered_map<UUID, Entity> entityMap;
         uint32 viewportWidth = 0, viewportHeight = 0;
-        bool isRunning;
-        bool isPaused;
+        bool isRunning=false;
+        bool isPaused=true;
         int stepFrames=0;
     
     private:
         template<typename T>
         void OnComponentAdded(Entity entity, T& component);
+        
+        void RenderScene(Graphics::EditorCamera& camera);
+    
     
     public:
         Scene();
         ~Scene();
         
         static SharedPtr<Scene> Copy(SharedPtr<Scene> other);
-    
-    public:
-        void OnRuntimeStart();
-        void OnUpdateRuntime();
-        void OnRuntimeStop();
-        
-        
-        
-        
-        
-        void OnUpdate();
-        void OnFixedUpdate();
-        void OnViewportResize(uint32 width, uint32 height);
-        
-        bool IsRunning()const{return isRunning;}
-        bool IsPaused()const{return isPaused;}
-        void SetPaused(bool paused){isPaused=paused;}
-        
-        void Step(int frames=1);
-        
-        
     
     public:
         Entity CreateEntity(const std::string &name = std::string());
@@ -57,6 +45,35 @@ namespace Candy::ECS{
         Entity FindEntityByName(std::string_view name);
         Entity GetEntityByUUID(UUID uuid);
         Entity GetPrimaryCameraEntity();
+        
+    
+    public:
+        void OnRuntimeStart();
+        void OnUpdateRuntime();
+        void OnRuntimeStop();
+        
+        void OnSimulationStart();
+        void OnUpdateSimulation(Graphics::EditorCamera& camera);
+        void OnSimulationStop();
+        
+        void OnUpdateEditor(Graphics::EditorCamera& camera);
+        
+        void OnViewportResize(uint32 width, uint32 height);
+        
+        bool IsRunning()const;
+        bool IsPaused()const;
+        void SetPaused(bool paused);
+        
+        void Step(int frames=1);
+    
+    private:
+        friend class Entity;
+        friend class SceneSerializer;
+        friend class ::Candy::SceneHierarchyPanel;
+        
+        
+    
+    
         
     
         

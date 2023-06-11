@@ -4,8 +4,21 @@
 #include "../../../../include/Candy/Events.hpp"
 
 namespace Candy::Graphics {
+    
+    class Camera
+    {
+    protected:
+        Math::Matrix4 projectionMatrix;
         
-        class Camera {
+    public:
+        Camera()=default;
+        Camera(const Math::Matrix4& projection) : projectionMatrix(projection){}
+        virtual ~Camera()=default;
+        
+        const Math::Matrix4& GetProjectionMatrix()const{return projectionMatrix;}
+    };
+        
+        /*class Camera {
         
         private:
             static constexpr float YAW         = -90.0f;
@@ -58,6 +71,6 @@ namespace Candy::Graphics {
             
             
             
-        };
+        };*/
 }
 

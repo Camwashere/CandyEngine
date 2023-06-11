@@ -4,7 +4,7 @@
 
 #include <filesystem>
 #include <FileWatch.hpp>
-#include <mono/utils/mono-forward.h>
+
 
 extern "C" {
 typedef struct _MonoClass MonoClass;
@@ -12,6 +12,7 @@ typedef struct _MonoObject MonoObject;
 typedef struct _MonoMethod MonoMethod;
 typedef struct _MonoAssembly MonoAssembly;
 typedef struct _MonoImage MonoImage;
+typedef struct _MonoDomain MonoDomain;
 typedef struct _MonoClassField MonoClassField;
 }
 
@@ -45,9 +46,11 @@ namespace Candy::Scripting
     {
     private:
         uint8 buffer[16]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        ScriptField field;
         friend class ScriptEngine;
         friend class ScriptInstance;
+        
+    public:
+        ScriptField field;
     
     public:
         ScriptFieldInstance()=default;

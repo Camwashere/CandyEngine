@@ -21,6 +21,9 @@ namespace Candy::Math{
             static Quaternion RotationY(float radians);
             
             static Quaternion RotationZ(float radians);
+            
+            static Quaternion ToRadians(const Quaternion& vec);
+            static Quaternion ToDegrees(const Quaternion& vec);
         
         public:
             Quaternion();
@@ -64,15 +67,15 @@ namespace Candy::Math{
             
             void operator+=(const Quaternion &other);
             
-            void operator-=(const Quaternion &Quaternion);
+            void operator-=(const Quaternion &other);
             
-            void operator*=(const Quaternion &Quaternion);
+            void operator*=(const Quaternion &other);
             
             void operator*=(float scalar);
             
             void operator/=(float scalar);
             
-            const Quaternion operator-() const;
+            Quaternion operator-() const;
             
             bool operator==(const Quaternion &quaternion) const;
             
@@ -82,6 +85,10 @@ namespace Candy::Math{
             
             Quaternion Conjugate() const;
             
+            
+            
         };
+    
+    
 }
 

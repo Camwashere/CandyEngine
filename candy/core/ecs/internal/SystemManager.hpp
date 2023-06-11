@@ -7,15 +7,15 @@ namespace Candy::ECS::Internal
     class SystemManager
     {
     private:
-        std::unordered_map <std::size_t, std::shared_ptr<System>> systems;
+        std::unordered_map <std::size_t, System*> systems;
         std::unordered_map <std::size_t, Signature> signatures;
     
     public:
         template<typename T>
-        std::shared_ptr <T> AddSystem()
+        System& AddSystem()
         {
             std::size_t hash = typeid(T).hash_code();
-            auto system = std::make_shared<T>();
+            auto system = new T();
             systems.insert({hash, system});
             return system;
         }
@@ -27,7 +27,7 @@ namespace Candy::ECS::Internal
             signatures.insert({hash, signature});
         }
         
-        void EntityDestroyed(uint32 entity)
+        void EntityDestroyed(std::uint32_t entity)
         {
             for (auto const &pair: systems)
             {
@@ -36,7 +36,7 @@ namespace Candy::ECS::Internal
             }
         }
         
-        void EntitySignatureChanged(uint32 entity, Signature entitySignature)
+        void EntitySignatureChanged(std::uint32_t entity, Signature entitySignature)
         {
             for (auto const &pair: systems)
             {

@@ -98,7 +98,7 @@ namespace Candy{
 
 
         /*ImGui::Begin("Right");
-        ImGui::DragFloat3("Light Position", &light.position[0]);
+        ImGui::DragFloat3("Light position", &light.position[0]);
         ImGui::ColorEdit3("Light Color", &light.color[0]);
         ImGui::DragFloat("Light Ambient", &light.ambientStrength, 0.01f, 0.0f, 1.0f);
         ImGui::Spacing();

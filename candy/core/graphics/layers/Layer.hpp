@@ -17,8 +17,7 @@ namespace Candy {
     protected:
         bool isVisible;
         std::string name;
-    
-    protected:
+        
     
     public:
         explicit Layer(const std::string& layerName, bool visible=true) : name(layerName), isVisible(visible){}

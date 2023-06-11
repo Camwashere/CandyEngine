@@ -7510,9 +7510,9 @@ static void ShowExampleAppSimpleOverlay(bool* p_open)
         ImGui::Text("Simple overlay\n" "(right-click to change position)");
         ImGui::Separator();
         if (ImGui::IsMousePosValid())
-            ImGui::Text("Mouse Position: (%.1f,%.1f)", io.MousePos.x, io.MousePos.y);
+            ImGui::Text("Mouse position: (%.1f,%.1f)", io.MousePos.x, io.MousePos.y);
         else
-            ImGui::Text("Mouse Position: <invalid>");
+            ImGui::Text("Mouse position: <invalid>");
         if (ImGui::BeginPopupContextWindow())
         {
             if (ImGui::MenuItem("Custom",       NULL, location == -1)) location = -1;
@@ -7659,7 +7659,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             static int curve_segments_override_v = 8;
             static ImVec4 colf = ImVec4(1.0f, 1.0f, 0.4f, 1.0f);
             ImGui::DragFloat("Size", &sz, 0.2f, 2.0f, 100.0f, "%.0f");
-            ImGui::DragFloat("Thickness", &thickness, 0.05f, 1.0f, 8.0f, "%.02f");
+            ImGui::DragFloat("thickness", &thickness, 0.05f, 1.0f, 8.0f, "%.02f");
             ImGui::SliderInt("N-gon sides", &ngon_sides, 3, 12);
             ImGui::Checkbox("##circlesegmentoverride", &circle_segments_override);
             ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);

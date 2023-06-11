@@ -112,8 +112,56 @@ CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngine
 //Convert GNU import libraries to MS format (requires Visual Studio)
 CMAKE_GNUtoMS:BOOL=OFF
 
+//User executables (bin)
+CMAKE_INSTALL_BINDIR:PATH=bin
+
+//Read-only architecture-independent data (DATAROOTDIR)
+CMAKE_INSTALL_DATADIR:PATH=
+
+//Read-only architecture-independent data root (share)
+CMAKE_INSTALL_DATAROOTDIR:PATH=share
+
+//Documentation root (DATAROOTDIR/doc/PROJECT_NAME)
+CMAKE_INSTALL_DOCDIR:PATH=
+
+//C header files (include)
+CMAKE_INSTALL_INCLUDEDIR:PATH=include
+
+//Info documentation (DATAROOTDIR/info)
+CMAKE_INSTALL_INFODIR:PATH=
+
+//Object code libraries (lib)
+CMAKE_INSTALL_LIBDIR:PATH=lib
+
+//Program executables (libexec)
+CMAKE_INSTALL_LIBEXECDIR:PATH=libexec
+
+//Locale-dependent data (DATAROOTDIR/locale)
+CMAKE_INSTALL_LOCALEDIR:PATH=
+
+//Modifiable single-machine data (var)
+CMAKE_INSTALL_LOCALSTATEDIR:PATH=var
+
+//Man documentation (DATAROOTDIR/man)
+CMAKE_INSTALL_MANDIR:PATH=
+
+//C header files for non-gcc (/usr/include)
+CMAKE_INSTALL_OLDINCLUDEDIR:PATH=/usr/include
+
 //Install path prefix, prepended onto install directories.
 CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/CandyEngineAll
+
+//Run-time variable data (LOCALSTATEDIR/run)
+CMAKE_INSTALL_RUNSTATEDIR:PATH=
+
+//System admin executables (sbin)
+CMAKE_INSTALL_SBINDIR:PATH=sbin
+
+//Modifiable architecture-independent data (com)
+CMAKE_INSTALL_SHAREDSTATEDIR:PATH=com
+
+//Read-only single-machine data (etc)
+CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 
 //Path to a program.
 CMAKE_LINKER:FILEPATH=C:/msys64/mingw64/bin/ld.exe
@@ -158,6 +206,21 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=CandyEngineAll
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION:STATIC=3.12.0
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_MAJOR:STATIC=3
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_MINOR:STATIC=12
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_PATCH:STATIC=0
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_TWEAK:STATIC=
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=C:/msys64/mingw64/bin/ranlib.exe
@@ -259,6 +322,34 @@ Candy_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
 Candy_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy
+
+//Enable building with documentation.
+ENTT_BUILD_DOCS:BOOL=OFF
+
+//Enable building tests.
+ENTT_BUILD_TESTING:BOOL=OFF
+
+//Add all EnTT headers to the EnTT target.
+ENTT_INCLUDE_HEADERS:BOOL=OFF
+
+//Add EnTT natvis files to the EnTT target.
+ENTT_INCLUDE_NATVIS:BOOL=OFF
+
+//Use libc++ by adding -stdlib=libc++ flag if available.
+ENTT_USE_LIBCPP:BOOL=OFF
+
+//Enable sanitizers by adding -fsanitize=address -fno-omit-frame-pointer
+// -fsanitize=undefined flags if available.
+ENTT_USE_SANITIZER:BOOL=OFF
+
+//Value Computed by CMake
+EnTT_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/lib/entt
+
+//Value Computed by CMake
+EnTT_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+EnTT_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt
 
 //Value Computed by CMake
 Glad_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/lib/glad
@@ -376,6 +467,9 @@ glfw3_DIR:PATH=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcp
 //The directory containing a CMake configuration file for portaudio.
 portaudio_DIR:PATH=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio
 
+//The directory containing a CMake configuration file for yaml-cpp.
+yaml-cpp_DIR:PATH=yaml-cpp_DIR-NOTFOUND
+
 
 ########################
 # INTERNAL cache entries
@@ -464,6 +558,38 @@ CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
 CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/perso/CLionProjects/CandyEngineAll
+//ADVANCED property for variable: CMAKE_INSTALL_BINDIR
+CMAKE_INSTALL_BINDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_DATADIR
+CMAKE_INSTALL_DATADIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_DATAROOTDIR
+CMAKE_INSTALL_DATAROOTDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_DOCDIR
+CMAKE_INSTALL_DOCDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_INCLUDEDIR
+CMAKE_INSTALL_INCLUDEDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_INFODIR
+CMAKE_INSTALL_INFODIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_LIBDIR
+CMAKE_INSTALL_LIBDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_LIBEXECDIR
+CMAKE_INSTALL_LIBEXECDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_LOCALEDIR
+CMAKE_INSTALL_LOCALEDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_LOCALSTATEDIR
+CMAKE_INSTALL_LOCALSTATEDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_MANDIR
+CMAKE_INSTALL_MANDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_OLDINCLUDEDIR
+CMAKE_INSTALL_OLDINCLUDEDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_RUNSTATEDIR
+CMAKE_INSTALL_RUNSTATEDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_SBINDIR
+CMAKE_INSTALL_SBINDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_SHAREDSTATEDIR
+CMAKE_INSTALL_SHAREDSTATEDIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_INSTALL_SYSCONFDIR
+CMAKE_INSTALL_SYSCONFDIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER
 CMAKE_LINKER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS
@@ -479,7 +605,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -551,4 +677,6 @@ Z_VCPKG_POWERSHELL_PATH:INTERNAL=C:/Windows/System32/WindowsPowerShell/v1.0/powe
 Z_VCPKG_ROOT_DIR:INTERNAL=C:/Users/perso/.clion-vcpkg/vcpkg
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
+//CMAKE_INSTALL_PREFIX during last run
+_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/CandyEngineAll
 

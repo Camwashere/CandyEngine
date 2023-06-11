@@ -1,7 +1,6 @@
 #pragma once
-
-#include "../../../include/Candy/Math.hpp"
-
+#include <Candy/Math.hpp>
+#include "../scene/SceneCamera.hpp"
 
 namespace Candy::ECS{
         struct IDComponent {
@@ -23,6 +22,24 @@ namespace Candy::ECS{
             }
         };
         
+        struct CameraComponent
+        {
+            Graphics::SceneCamera camera;
+            bool primary=true;
+            bool fixedAspectRatio=false;
+            
+            CameraComponent()=default;
+            CameraComponent(const CameraComponent&)=default;
+        };
+        
+        struct TestComponent
+        {
+            std::string name;
+            int value;
+        };
+        
+        
+        
         struct ScriptComponent
         {
             std::string className;
@@ -33,12 +50,13 @@ namespace Candy::ECS{
         
         class ScriptableEntity;
         
+        
+        
         struct NativeScriptComponent
         {
             ScriptableEntity* instance = nullptr;
-            ScriptableEntity(*InstantiateScript)();
-            void(*DestroyScript)(NativeScriptComponent*);
-            
+            ScriptableEntity*(*InstantiateScript)()=nullptr;
+            void(*DestroyScript)(NativeScriptComponent*)=nullptr;
             template<typename T>
             void Bind()
             {
@@ -53,6 +71,5 @@ namespace Candy::ECS{
         };
     
     using AllComponents =
-            ComponentGroup<TransformComponent, ScriptComponent,
-                    NativeScriptComponent>;
+            ComponentGroup<TransformComponent, ScriptComponent, NativeScriptComponent>;
 }

@@ -7,7 +7,7 @@ namespace Candy {
     
     namespace Graphics {
         
-        Camera::Camera(Vector3 pos, Vector3 upValue, float yawValue, float pitchValue)
+        /*Camera::Camera(Vector3 pos, Vector3 upValue, float yawValue, float pitchValue)
                 : front(Math::Vector3(0.0f, 0.0f, -1.0f)), firstMouse(true), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), scrollSensitivity(SCROLL_SENSITIVITY), zoom(ZOOM)
         {
             position = pos;
@@ -193,6 +193,6 @@ namespace Candy {
                 ProcessKeyboard(Math::Direction3::UP, deltaTime);
             }
             UpdateCameraVectors();
-        }
+        }*/
     }
 }

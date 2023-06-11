@@ -8,7 +8,7 @@ namespace Candy{
         SharedPtr<Project> project;
     
     public:
-        ProjectSerializer(SharedPtr<Project> projectValue);
+        explicit ProjectSerializer(SharedPtr<Project> projectValue);
         bool Serialize(const std::filesystem::path& filepath);
         bool Deserialize(const std::filesystem::path& filepath);
     };

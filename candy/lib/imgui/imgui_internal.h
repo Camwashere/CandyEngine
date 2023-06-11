@@ -2480,7 +2480,7 @@ struct IMGUI_API ImGuiWindow
     ImGuiID                 ViewportId;                         // We backup the viewport id (since the viewport may disappear or never be created if the window is inactive)
     ImVec2                  ViewportPos;                        // We backup the viewport position (since the viewport may disappear or never be created if the window is inactive)
     int                     ViewportAllowPlatformMonitorExtend; // Reset to -1 every frame (index is guaranteed to be valid between NewFrame..EndFrame), only used in the Appearing frame of a tooltip/popup to enforce clamping to a given monitor
-    ImVec2                  Pos;                                // Position (always rounded-up to nearest pixel)
+    ImVec2                  Pos;                                // position (always rounded-up to nearest pixel)
     ImVec2                  Size;                               // Current size (==SizeFull or collapsed title bar size)
     ImVec2                  SizeFull;                           // Size when non collapsed
     ImVec2                  ContentSize;                        // Size of contents/scrollable client area (calculated from the extents reach of the cursor) from previous frame. Does not include window decoration or window padding.
@@ -2642,7 +2642,7 @@ struct ImGuiTabItem
     ImGuiWindow*        Window;                 // When TabItem is part of a DockNode's TabBar, we hold on to a window.
     int                 LastFrameVisible;
     int                 LastFrameSelected;      // This allows us to infer an ordered list of the last activated tabs with little maintenance
-    float               Offset;                 // Position relative to beginning of tab
+    float               Offset;                 // position relative to beginning of tab
     float               Width;                  // Width currently displayed
     float               ContentWidth;           // Width of label, stored during BeginTabItem() call
     float               RequestedWidth;         // Width optionally requested by caller, -1.0f is unused

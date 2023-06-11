@@ -9,6 +9,11 @@ namespace Candy::Graphics{
         
         
         Shader::Shader() {}
+    
+        Shader::Shader(const char* filepath)
+        {
+        
+        }
         
         Shader::Shader(const char *vertexPath, const char *fragmentPath) {
             Initialize(vertexPath, fragmentPath);
@@ -287,7 +292,10 @@ namespace Candy::Graphics{
             uniformLocationCache[name] = location;
             return location;
         }
-        
+        SharedPtr<Shader> Shader::Create(const std::string& filepath)
+        {
+            return CreateSharedPtr<Shader>(filepath.c_str());
+        }
         SharedPtr<Shader> Shader::Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
         {
             return CreateSharedPtr<Shader>(vertexShaderPath.c_str(), fragmentShaderPath.c_str());

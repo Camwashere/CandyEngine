@@ -50,10 +50,10 @@ cmake_ninja_workdir = C$:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-d
 build cmake_object_order_depends_target_CandyEngineAll: phony || cmake_object_order_depends_target_Candy cmake_object_order_depends_target_Sandbox cmake_object_order_depends_target_Sugar cmake_object_order_depends_target_glad
 
 build CMakeFiles/CandyEngineAll.dir/sugar/src/SugarApp.cpp.obj: CXX_COMPILER__CandyEngineAll_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/src/SugarApp.cpp || cmake_object_order_depends_target_CandyEngineAll
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = CMakeFiles\CandyEngineAll.dir\sugar\src\SugarApp.cpp.obj.d
   FLAGS = -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = CMakeFiles\CandyEngineAll.dir
   OBJECT_FILE_DIR = CMakeFiles\CandyEngineAll.dir\sugar\src
 
@@ -65,10 +65,10 @@ build CMakeFiles/CandyEngineAll.dir/sugar/src/SugarApp.cpp.obj: CXX_COMPILER__Ca
 #############################################
 # Link the executable CandyEngineAll.exe
 
-build CandyEngineAll.exe: CXX_EXECUTABLE_LINKER__CandyEngineAll_Debug CMakeFiles/CandyEngineAll.dir/sugar/src/SugarApp.cpp.obj | sugar/libSugar.a sandbox/libSandbox.a candy/libCandy.a vcpkg_installed/x64-windows/debug/lib/fmtd.lib vcpkg_installed/x64-windows/debug/lib/glfw3dll.lib candy/lib/glad/libglad.a vcpkg_installed/x64-windows/debug/lib/sndfile.lib vcpkg_installed/x64-windows/debug/lib/portaudio.lib C$:/Program$ Files/Mono/bin/mono-2.0-sgen.dll || candy/libCandy.a candy/lib/glad/libglad.a sandbox/libSandbox.a sugar/libSugar.a
+build CandyEngineAll.exe: CXX_EXECUTABLE_LINKER__CandyEngineAll_Debug CMakeFiles/CandyEngineAll.dir/sugar/src/SugarApp.cpp.obj | sugar/libSugar.a sandbox/libSandbox.a candy/libCandy.a vcpkg_installed/x64-windows/debug/lib/glfw3dll.lib candy/lib/glad/libglad.a vcpkg_installed/x64-windows/debug/lib/sndfile.lib vcpkg_installed/x64-windows/debug/lib/portaudio.lib C$:/Program$ Files/Mono/bin/mono-2.0-sgen.dll || candy/libCandy.a candy/lib/glad/libglad.a sandbox/libSandbox.a sugar/libSugar.a
   FLAGS = -std=c++23 -g
   LINK_FLAGS = --enable-llvm
-  LINK_LIBRARIES = sugar/libSugar.a  sandbox/libSandbox.a  candy/libCandy.a  vcpkg_installed/x64-windows/debug/lib/fmtd.lib  vcpkg_installed/x64-windows/debug/lib/glfw3dll.lib  candy/lib/glad/libglad.a  vcpkg_installed/x64-windows/debug/lib/sndfile.lib  vcpkg_installed/x64-windows/debug/lib/portaudio.lib  -lwinmm  -ldsound  -lole32  -luuid  -lsetupapi  -lole32  -luuid  -lsetupapi  "C:/Program Files/Mono/bin/mono-2.0-sgen.dll"  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = sugar/libSugar.a  sandbox/libSandbox.a  candy/libCandy.a  vcpkg_installed/x64-windows/debug/lib/glfw3dll.lib  candy/lib/glad/libglad.a  vcpkg_installed/x64-windows/debug/lib/sndfile.lib  vcpkg_installed/x64-windows/debug/lib/portaudio.lib  -lwinmm  -ldsound  -lole32  -luuid  -lsetupapi  -lole32  -luuid  -lsetupapi  "C:/Program Files/Mono/bin/mono-2.0-sgen.dll"  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\CandyEngineAll.dir
   POST_BUILD = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug && C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/CandyEngineAll.exe -installedDir C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/debug/bin -OutVariable out"
   PRE_LINK = cd .
@@ -99,6 +99,48 @@ build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
 
 build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
+
+#############################################
+# Utility command for list_install_components
+
+build list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build CMakeFiles/install.util: CUSTOM_COMMAND all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -P cmake_install.cmake"
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build install: phony CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build CMakeFiles/install/local.util: CUSTOM_COMMAND all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build install/local: phony CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build CMakeFiles/install/strip.util: CUSTOM_COMMAND all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake"
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build install/strip: phony CMakeFiles/install/strip.util
+
 # =============================================================================
 # Write statements declared in CMakeLists.txt:
 # C:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt
@@ -114,570 +156,618 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 build cmake_object_order_depends_target_Candy: phony || cmake_object_order_depends_target_glad
 
 build candy/CMakeFiles/Candy.dir/core/base/primitive/CandyString.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/base/primitive/CandyString.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\base\primitive\CandyString.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\base\primitive
 
 build candy/CMakeFiles/Candy.dir/core/base/primitive/UUID.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/base/primitive/UUID.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\base\primitive\UUID.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\base\primitive
 
 build candy/CMakeFiles/Candy.dir/core/base/debug/Log.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/base/debug/Log.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\base\debug\Log.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\base\debug
 
 build candy/CMakeFiles/Candy.dir/core/utils/Stopwatch.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/utils/Stopwatch.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\utils\Stopwatch.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\utils
 
 build candy/CMakeFiles/Candy.dir/core/utils/FileSystem.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/utils/FileSystem.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\utils\FileSystem.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\utils
+
+build candy/CMakeFiles/Candy.dir/core/utils/FileDialogs.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/utils/FileDialogs.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\utils\FileDialogs.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\utils
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector2.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/vector/Vector2.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\vector\Vector2.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\vector
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector3.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/vector/Vector3.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\vector\Vector3.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\vector
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector4.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/vector/Vector4.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\vector\Vector4.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\vector
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector2Int.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/vector/Vector2Int.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\vector\Vector2Int.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\vector
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector3Int.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/vector/Vector3Int.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\vector\Vector3Int.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\vector
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/quaternion/Quaternion.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/quaternion/Quaternion.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\quaternion\Quaternion.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\quaternion
 
 build candy/CMakeFiles/Candy.dir/core/math/linalg/matrix/Matrix4.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/linalg/matrix/Matrix4.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\linalg\matrix\Matrix4.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\linalg\matrix
 
 build candy/CMakeFiles/Candy.dir/core/math/general/Random.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/general/Random.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\general\Random.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\general
 
 build candy/CMakeFiles/Candy.dir/core/math/direction/Direction2.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/direction/Direction2.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\direction\Direction2.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\direction
 
 build candy/CMakeFiles/Candy.dir/core/math/direction/Direction3.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/direction/Direction3.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\direction\Direction3.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\direction
 
 build candy/CMakeFiles/Candy.dir/core/math/geometry/2d/Rectangle.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math/geometry/2d/Rectangle.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\math\geometry\2d\Rectangle.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\math\geometry\2d
 
 build candy/CMakeFiles/Candy.dir/core/noise/PerlinNoise.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/noise/PerlinNoise.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\noise\PerlinNoise.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\noise
 
 build candy/CMakeFiles/Candy.dir/core/application/ProjectSerializer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/application/ProjectSerializer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\application\ProjectSerializer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\application
 
 build candy/CMakeFiles/Candy.dir/core/application/Project.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/application/Project.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\application\Project.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\application
 
 build candy/CMakeFiles/Candy.dir/core/application/Application.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/application/Application.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\application\Application.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\application
 
 build candy/CMakeFiles/Candy.dir/core/application/Window.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/application/Window.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\application\Window.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\application
 
 build candy/CMakeFiles/Candy.dir/core/graphics/color/Color32.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/color/Color32.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\color\Color32.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\color
 
 build candy/CMakeFiles/Candy.dir/core/graphics/color/ColorBase.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/color/ColorBase.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\color\ColorBase.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\color
 
 build candy/CMakeFiles/Candy.dir/core/graphics/color/ColorHSL.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/color/ColorHSL.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\color\ColorHSL.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\color
 
 build candy/CMakeFiles/Candy.dir/core/graphics/color/ColorHSV.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/color/ColorHSV.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\color\ColorHSV.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\color
 
 build candy/CMakeFiles/Candy.dir/core/graphics/color/Color.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/color/Color.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\color\Color.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\color
 
 build candy/CMakeFiles/Candy.dir/core/graphics/layers/Layer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/layers/Layer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\layers\Layer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\layers
 
 build candy/CMakeFiles/Candy.dir/core/graphics/layers/LayerStack.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/layers/LayerStack.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\layers\LayerStack.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\layers
 
 build candy/CMakeFiles/Candy.dir/core/graphics/layers/UILayer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/layers/UILayer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\layers\UILayer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\layers
 
 build candy/CMakeFiles/Candy.dir/core/graphics/model/Mesh.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/model/Mesh.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\model\Mesh.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\model
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/Shader.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/Shader.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\Shader.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/RendererAPI.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/RendererAPI.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\RendererAPI.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/Renderer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/Renderer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\Renderer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/RenderCommand.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/RenderCommand.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\RenderCommand.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/GraphicsContext.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/GraphicsContext.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\GraphicsContext.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/Camera.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/camera/Camera.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera\Camera.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/VertexBuffer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/VertexBuffer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\VertexBuffer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/VertexArray.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/VertexArray.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\VertexArray.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/UniformBuffer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/UniformBuffer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\UniformBuffer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/IndexBuffer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/IndexBuffer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\IndexBuffer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/FrameBuffer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/FrameBuffer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\FrameBuffer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/texture/Texture.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/texture/Texture.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\texture\Texture.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\texture
 
 build candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/texture/PixelManager.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/data/texture/PixelManager.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\texture\PixelManager.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\data\texture
 
+build candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/EditorCamera.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/camera/EditorCamera.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera\EditorCamera.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera
+
+build candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/OrthographicCamera.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/camera/OrthographicCamera.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera\OrthographicCamera.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera
+
+build candy/CMakeFiles/Candy.dir/core/graphics/rendering/Renderer2D.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/Renderer2D.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\Renderer2D.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering
+
+build candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/OrthographicCameraController.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/graphics/rendering/camera/OrthographicCameraController.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera\OrthographicCameraController.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\graphics\rendering\camera
+
 build candy/CMakeFiles/Candy.dir/core/event/events/KeyEvent.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/event/events/KeyEvent.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\event\events\KeyEvent.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\event\events
 
 build candy/CMakeFiles/Candy.dir/core/event/events/MouseEvent.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/event/events/MouseEvent.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\event\events\MouseEvent.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\event\events
 
 build candy/CMakeFiles/Candy.dir/core/event/events/WindowEvent.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/event/events/WindowEvent.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\event\events\WindowEvent.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\event\events
 
 build candy/CMakeFiles/Candy.dir/core/event/input/Input.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/event/input/Input.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\event\input\Input.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\event\input
 
-build candy/CMakeFiles/Candy.dir/core/ecs/entity/Entity.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/ecs/entity/Entity.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
-  DEP_FILE = candy\CMakeFiles\Candy.dir\core\ecs\entity\Entity.cpp.obj.d
-  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
-  OBJECT_DIR = candy\CMakeFiles\Candy.dir
-  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\ecs\entity
-
 build candy/CMakeFiles/Candy.dir/core/ecs/scene/Scene.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/ecs/scene/Scene.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\ecs\scene\Scene.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\ecs\scene
+
+build candy/CMakeFiles/Candy.dir/core/ecs/scene/SceneCamera.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/ecs/scene/SceneCamera.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\ecs\scene\SceneCamera.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  OBJECT_DIR = candy\CMakeFiles\Candy.dir
+  OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\ecs\scene
+
+build candy/CMakeFiles/Candy.dir/core/ecs/scene/SceneSerializer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/ecs/scene/SceneSerializer.cpp || cmake_object_order_depends_target_Candy
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
+  DEP_FILE = candy\CMakeFiles\Candy.dir\core\ecs\scene\SceneSerializer.cpp.obj.d
+  FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\ecs\scene
 
 build candy/CMakeFiles/Candy.dir/core/scripting/ScriptEngine.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/scripting/ScriptEngine.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\scripting\ScriptEngine.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\scripting
 
 build candy/CMakeFiles/Candy.dir/core/scripting/ScriptGlue.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/scripting/ScriptGlue.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\scripting\ScriptGlue.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\scripting
 
 build candy/CMakeFiles/Candy.dir/ui/editor/EditorPane.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/ui/editor/EditorPane.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\ui\editor\EditorPane.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\ui\editor
 
 build candy/CMakeFiles/Candy.dir/ui/editor/EditorLayout.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/ui/editor/EditorLayout.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\ui\editor\EditorLayout.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\ui\editor
 
 build candy/CMakeFiles/Candy.dir/voxel/block/Block.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/block/Block.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\block\Block.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\block
 
 build candy/CMakeFiles/Candy.dir/voxel/block/BlockType.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/block/BlockType.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\block\BlockType.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\block
 
 build candy/CMakeFiles/Candy.dir/voxel/block/BlockTypeManager.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/block/BlockTypeManager.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\block\BlockTypeManager.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\block
 
 build candy/CMakeFiles/Candy.dir/voxel/block/VoxelData.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/block/VoxelData.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\block\VoxelData.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\block
 
 build candy/CMakeFiles/Candy.dir/voxel/chunk/Chunk.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/chunk/Chunk.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\chunk\Chunk.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\chunk
 
 build candy/CMakeFiles/Candy.dir/voxel/chunk/ChunkManager.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/chunk/ChunkManager.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\chunk\ChunkManager.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\chunk
 
 build candy/CMakeFiles/Candy.dir/voxel/structure/VoxelOctree.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/voxel/structure/VoxelOctree.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\voxel\structure\VoxelOctree.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\voxel\structure
 
 build candy/CMakeFiles/Candy.dir/core/audio/AudioManager.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/audio/AudioManager.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\audio\AudioManager.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\audio
 
 build candy/CMakeFiles/Candy.dir/core/audio/mixing/Mixer.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/audio/mixing/Mixer.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\audio\mixing\Mixer.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\audio\mixing
 
 build candy/CMakeFiles/Candy.dir/core/audio/mixing/plugins/VolumePlugin.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/core/audio/mixing/plugins/VolumePlugin.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\core\audio\mixing\plugins\VolumePlugin.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\core\audio\mixing\plugins
 
 build candy/CMakeFiles/Candy.dir/lib/stb/stb_image.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb/stb_image.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\stb\stb_image.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\stb
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_widgets.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui_widgets.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui_widgets.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_demo.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui_demo.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui_demo.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_draw.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui_draw.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui_draw.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_impl_glfw.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui_impl_glfw.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui_impl_glfw.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_impl_opengl3.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui_impl_opengl3.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui_impl_opengl3.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
 build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_tables.cpp.obj: CXX_COMPILER__Candy_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui/imgui_tables.cpp || cmake_object_order_depends_target_Candy
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = candy\CMakeFiles\Candy.dir\lib\imgui\imgui_tables.cpp.obj.d
   FLAGS = -std=c++23 -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -I"C:/Program Files/Mono/include/mono-2.0" -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   OBJECT_FILE_DIR = candy\CMakeFiles\Candy.dir\lib\imgui
 
@@ -689,7 +779,7 @@ build candy/CMakeFiles/Candy.dir/lib/imgui/imgui_tables.cpp.obj: CXX_COMPILER__C
 #############################################
 # Link the static library candy\libCandy.a
 
-build candy/libCandy.a: CXX_STATIC_LIBRARY_LINKER__Candy_Debug candy/CMakeFiles/Candy.dir/core/base/primitive/CandyString.cpp.obj candy/CMakeFiles/Candy.dir/core/base/primitive/UUID.cpp.obj candy/CMakeFiles/Candy.dir/core/base/debug/Log.cpp.obj candy/CMakeFiles/Candy.dir/core/utils/Stopwatch.cpp.obj candy/CMakeFiles/Candy.dir/core/utils/FileSystem.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector2.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector3.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector4.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector2Int.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector3Int.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/quaternion/Quaternion.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/matrix/Matrix4.cpp.obj candy/CMakeFiles/Candy.dir/core/math/general/Random.cpp.obj candy/CMakeFiles/Candy.dir/core/math/direction/Direction2.cpp.obj candy/CMakeFiles/Candy.dir/core/math/direction/Direction3.cpp.obj candy/CMakeFiles/Candy.dir/core/math/geometry/2d/Rectangle.cpp.obj candy/CMakeFiles/Candy.dir/core/noise/PerlinNoise.cpp.obj candy/CMakeFiles/Candy.dir/core/application/ProjectSerializer.cpp.obj candy/CMakeFiles/Candy.dir/core/application/Project.cpp.obj candy/CMakeFiles/Candy.dir/core/application/Application.cpp.obj candy/CMakeFiles/Candy.dir/core/application/Window.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/Color32.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/ColorBase.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/ColorHSL.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/ColorHSV.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/Color.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/layers/Layer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/layers/LayerStack.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/layers/UILayer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/model/Mesh.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/Shader.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/RendererAPI.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/Renderer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/RenderCommand.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/GraphicsContext.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/Camera.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/VertexBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/VertexArray.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/UniformBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/IndexBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/FrameBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/texture/Texture.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/texture/PixelManager.cpp.obj candy/CMakeFiles/Candy.dir/core/event/events/KeyEvent.cpp.obj candy/CMakeFiles/Candy.dir/core/event/events/MouseEvent.cpp.obj candy/CMakeFiles/Candy.dir/core/event/events/WindowEvent.cpp.obj candy/CMakeFiles/Candy.dir/core/event/input/Input.cpp.obj candy/CMakeFiles/Candy.dir/core/ecs/entity/Entity.cpp.obj candy/CMakeFiles/Candy.dir/core/ecs/scene/Scene.cpp.obj candy/CMakeFiles/Candy.dir/core/scripting/ScriptEngine.cpp.obj candy/CMakeFiles/Candy.dir/core/scripting/ScriptGlue.cpp.obj candy/CMakeFiles/Candy.dir/ui/editor/EditorPane.cpp.obj candy/CMakeFiles/Candy.dir/ui/editor/EditorLayout.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/Block.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/BlockType.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/BlockTypeManager.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/VoxelData.cpp.obj candy/CMakeFiles/Candy.dir/voxel/chunk/Chunk.cpp.obj candy/CMakeFiles/Candy.dir/voxel/chunk/ChunkManager.cpp.obj candy/CMakeFiles/Candy.dir/voxel/structure/VoxelOctree.cpp.obj candy/CMakeFiles/Candy.dir/core/audio/AudioManager.cpp.obj candy/CMakeFiles/Candy.dir/core/audio/mixing/Mixer.cpp.obj candy/CMakeFiles/Candy.dir/core/audio/mixing/plugins/VolumePlugin.cpp.obj candy/CMakeFiles/Candy.dir/lib/stb/stb_image.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_widgets.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_demo.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_draw.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_impl_glfw.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_impl_opengl3.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_tables.cpp.obj || candy/lib/glad/libglad.a
+build candy/libCandy.a: CXX_STATIC_LIBRARY_LINKER__Candy_Debug candy/CMakeFiles/Candy.dir/core/base/primitive/CandyString.cpp.obj candy/CMakeFiles/Candy.dir/core/base/primitive/UUID.cpp.obj candy/CMakeFiles/Candy.dir/core/base/debug/Log.cpp.obj candy/CMakeFiles/Candy.dir/core/utils/Stopwatch.cpp.obj candy/CMakeFiles/Candy.dir/core/utils/FileSystem.cpp.obj candy/CMakeFiles/Candy.dir/core/utils/FileDialogs.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector2.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector3.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector4.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector2Int.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/vector/Vector3Int.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/quaternion/Quaternion.cpp.obj candy/CMakeFiles/Candy.dir/core/math/linalg/matrix/Matrix4.cpp.obj candy/CMakeFiles/Candy.dir/core/math/general/Random.cpp.obj candy/CMakeFiles/Candy.dir/core/math/direction/Direction2.cpp.obj candy/CMakeFiles/Candy.dir/core/math/direction/Direction3.cpp.obj candy/CMakeFiles/Candy.dir/core/math/geometry/2d/Rectangle.cpp.obj candy/CMakeFiles/Candy.dir/core/noise/PerlinNoise.cpp.obj candy/CMakeFiles/Candy.dir/core/application/ProjectSerializer.cpp.obj candy/CMakeFiles/Candy.dir/core/application/Project.cpp.obj candy/CMakeFiles/Candy.dir/core/application/Application.cpp.obj candy/CMakeFiles/Candy.dir/core/application/Window.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/Color32.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/ColorBase.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/ColorHSL.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/ColorHSV.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/color/Color.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/layers/Layer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/layers/LayerStack.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/layers/UILayer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/model/Mesh.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/Shader.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/RendererAPI.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/Renderer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/RenderCommand.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/GraphicsContext.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/Camera.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/VertexBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/VertexArray.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/UniformBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/IndexBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/FrameBuffer.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/texture/Texture.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/data/texture/PixelManager.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/EditorCamera.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/OrthographicCamera.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/Renderer2D.cpp.obj candy/CMakeFiles/Candy.dir/core/graphics/rendering/camera/OrthographicCameraController.cpp.obj candy/CMakeFiles/Candy.dir/core/event/events/KeyEvent.cpp.obj candy/CMakeFiles/Candy.dir/core/event/events/MouseEvent.cpp.obj candy/CMakeFiles/Candy.dir/core/event/events/WindowEvent.cpp.obj candy/CMakeFiles/Candy.dir/core/event/input/Input.cpp.obj candy/CMakeFiles/Candy.dir/core/ecs/scene/Scene.cpp.obj candy/CMakeFiles/Candy.dir/core/ecs/scene/SceneCamera.cpp.obj candy/CMakeFiles/Candy.dir/core/ecs/scene/SceneSerializer.cpp.obj candy/CMakeFiles/Candy.dir/core/scripting/ScriptEngine.cpp.obj candy/CMakeFiles/Candy.dir/core/scripting/ScriptGlue.cpp.obj candy/CMakeFiles/Candy.dir/ui/editor/EditorPane.cpp.obj candy/CMakeFiles/Candy.dir/ui/editor/EditorLayout.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/Block.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/BlockType.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/BlockTypeManager.cpp.obj candy/CMakeFiles/Candy.dir/voxel/block/VoxelData.cpp.obj candy/CMakeFiles/Candy.dir/voxel/chunk/Chunk.cpp.obj candy/CMakeFiles/Candy.dir/voxel/chunk/ChunkManager.cpp.obj candy/CMakeFiles/Candy.dir/voxel/structure/VoxelOctree.cpp.obj candy/CMakeFiles/Candy.dir/core/audio/AudioManager.cpp.obj candy/CMakeFiles/Candy.dir/core/audio/mixing/Mixer.cpp.obj candy/CMakeFiles/Candy.dir/core/audio/mixing/plugins/VolumePlugin.cpp.obj candy/CMakeFiles/Candy.dir/lib/stb/stb_image.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_widgets.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_demo.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_draw.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_impl_glfw.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_impl_opengl3.cpp.obj candy/CMakeFiles/Candy.dir/lib/imgui/imgui_tables.cpp.obj || candy/lib/glad/libglad.a
   LANGUAGE_COMPILE_FLAGS = -std=c++23 -std=c++23 -g
   OBJECT_DIR = candy\CMakeFiles\Candy.dir
   POST_BUILD = cd .
@@ -719,6 +809,48 @@ build candy/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
   restat = 1
 
 build candy/rebuild_cache: phony candy/CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build candy/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build candy/CMakeFiles/install.util: CUSTOM_COMMAND candy/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -P cmake_install.cmake"
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build candy/install: phony candy/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build candy/CMakeFiles/install/local.util: CUSTOM_COMMAND candy/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build candy/install/local: phony candy/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build candy/CMakeFiles/install/strip.util: CUSTOM_COMMAND candy/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake"
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build candy/install/strip: phony candy/CMakeFiles/install/strip.util
 
 # =============================================================================
 # Write statements declared in CMakeLists.txt:
@@ -780,6 +912,118 @@ build candy/lib/glad/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
 
 build candy/lib/glad/rebuild_cache: phony candy/lib/glad/CMakeFiles/rebuild_cache.util
 
+
+#############################################
+# Utility command for list_install_components
+
+build candy/lib/glad/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build candy/lib/glad/CMakeFiles/install.util: CUSTOM_COMMAND candy/lib/glad/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\glad && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -P cmake_install.cmake"
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build candy/lib/glad/install: phony candy/lib/glad/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build candy/lib/glad/CMakeFiles/install/local.util: CUSTOM_COMMAND candy/lib/glad/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\glad && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build candy/lib/glad/install/local: phony candy/lib/glad/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build candy/lib/glad/CMakeFiles/install/strip.util: CUSTOM_COMMAND candy/lib/glad/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\glad && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake"
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build candy/lib/glad/install/strip: phony candy/lib/glad/CMakeFiles/install/strip.util
+
+# =============================================================================
+# Write statements declared in CMakeLists.txt:
+# C:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt
+# =============================================================================
+
+
+#############################################
+# Utility command for edit_cache
+
+build candy/lib/entt/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\entt && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build candy/lib/entt/edit_cache: phony candy/lib/entt/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build candy/lib/entt/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\entt && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" --regenerate-during-build -SC:\Users\perso\CLionProjects\CandyEngineAll -BC:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug"
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build candy/lib/entt/rebuild_cache: phony candy/lib/entt/CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build candy/lib/entt/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build candy/lib/entt/CMakeFiles/install.util: CUSTOM_COMMAND candy/lib/entt/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\entt && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -P cmake_install.cmake"
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build candy/lib/entt/install: phony candy/lib/entt/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build candy/lib/entt/CMakeFiles/install/local.util: CUSTOM_COMMAND candy/lib/entt/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\entt && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build candy/lib/entt/install/local: phony candy/lib/entt/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build candy/lib/entt/CMakeFiles/install/strip.util: CUSTOM_COMMAND candy/lib/entt/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\candy\lib\entt && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake"
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build candy/lib/entt/install/strip: phony candy/lib/entt/CMakeFiles/install/strip.util
+
 # =============================================================================
 # Write statements declared in CMakeLists.txt:
 # C:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt
@@ -795,18 +1039,18 @@ build candy/lib/glad/rebuild_cache: phony candy/lib/glad/CMakeFiles/rebuild_cach
 build cmake_object_order_depends_target_Sandbox: phony || cmake_object_order_depends_target_Candy cmake_object_order_depends_target_glad
 
 build sandbox/CMakeFiles/Sandbox.dir/ChunkRenderer.cpp.obj: CXX_COMPILER__Sandbox_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/sandbox/ChunkRenderer.cpp || cmake_object_order_depends_target_Sandbox
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = sandbox\CMakeFiles\Sandbox.dir\ChunkRenderer.cpp.obj.d
   FLAGS = -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = sandbox\CMakeFiles\Sandbox.dir
   OBJECT_FILE_DIR = sandbox\CMakeFiles\Sandbox.dir
 
 build sandbox/CMakeFiles/Sandbox.dir/ExampleLayer.cpp.obj: CXX_COMPILER__Sandbox_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/sandbox/ExampleLayer.cpp || cmake_object_order_depends_target_Sandbox
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = sandbox\CMakeFiles\Sandbox.dir\ExampleLayer.cpp.obj.d
   FLAGS = -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = sandbox\CMakeFiles\Sandbox.dir
   OBJECT_FILE_DIR = sandbox\CMakeFiles\Sandbox.dir
 
@@ -849,6 +1093,48 @@ build sandbox/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
 
 build sandbox/rebuild_cache: phony sandbox/CMakeFiles/rebuild_cache.util
 
+
+#############################################
+# Utility command for list_install_components
+
+build sandbox/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build sandbox/CMakeFiles/install.util: CUSTOM_COMMAND sandbox/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\sandbox && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -P cmake_install.cmake"
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build sandbox/install: phony sandbox/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build sandbox/CMakeFiles/install/local.util: CUSTOM_COMMAND sandbox/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\sandbox && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build sandbox/install/local: phony sandbox/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build sandbox/CMakeFiles/install/strip.util: CUSTOM_COMMAND sandbox/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\sandbox && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake"
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build sandbox/install/strip: phony sandbox/CMakeFiles/install/strip.util
+
 # =============================================================================
 # Write statements declared in CMakeLists.txt:
 # C:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt
@@ -864,26 +1150,26 @@ build sandbox/rebuild_cache: phony sandbox/CMakeFiles/rebuild_cache.util
 build cmake_object_order_depends_target_Sugar: phony || cmake_object_order_depends_target_Candy cmake_object_order_depends_target_Sandbox cmake_object_order_depends_target_glad
 
 build sugar/CMakeFiles/Sugar.dir/src/EditorLayer.cpp.obj: CXX_COMPILER__Sugar_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/src/EditorLayer.cpp || cmake_object_order_depends_target_Sugar
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = sugar\CMakeFiles\Sugar.dir\src\EditorLayer.cpp.obj.d
   FLAGS = -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = sugar\CMakeFiles\Sugar.dir
   OBJECT_FILE_DIR = sugar\CMakeFiles\Sugar.dir\src
 
 build sugar/CMakeFiles/Sugar.dir/src/panels/SceneHierarchyPanel.cpp.obj: CXX_COMPILER__Sugar_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/src/panels/SceneHierarchyPanel.cpp || cmake_object_order_depends_target_Sugar
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = sugar\CMakeFiles\Sugar.dir\src\panels\SceneHierarchyPanel.cpp.obj.d
   FLAGS = -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = sugar\CMakeFiles\Sugar.dir
   OBJECT_FILE_DIR = sugar\CMakeFiles\Sugar.dir\src\panels
 
 build sugar/CMakeFiles/Sugar.dir/src/panels/ContentBrowserPanel.cpp.obj: CXX_COMPILER__Sugar_Debug C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/src/panels/ContentBrowserPanel.cpp || cmake_object_order_depends_target_Sugar
-  DEFINES = -DFMT_SHARED -DGLFW_DLL
+  DEFINES = -DFMT_HEADER_ONLY=1 -DGLFW_DLL
   DEP_FILE = sugar\CMakeFiles\Sugar.dir\src\panels\ContentBrowserPanel.cpp.obj.d
   FLAGS = -std=c++23 -g -fdiagnostics-color=always
-  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
+  INCLUDES = -IC:/Users/perso/CLionProjects/CandyEngineAll/sandbox/../sandbox -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/imgui -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/stb -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/include -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/filewatch -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/src -IC:/Users/perso/CLionProjects/CandyEngineAll/candy/include -isystem C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/include
   OBJECT_DIR = sugar\CMakeFiles\Sugar.dir
   OBJECT_FILE_DIR = sugar\CMakeFiles\Sugar.dir\src\panels
 
@@ -926,6 +1212,48 @@ build sugar/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
 
 build sugar/rebuild_cache: phony sugar/CMakeFiles/rebuild_cache.util
 
+
+#############################################
+# Utility command for list_install_components
+
+build sugar/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build sugar/CMakeFiles/install.util: CUSTOM_COMMAND sugar/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\sugar && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -P cmake_install.cmake"
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build sugar/install: phony sugar/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build sugar/CMakeFiles/install/local.util: CUSTOM_COMMAND sugar/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\sugar && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake"
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build sugar/install/local: phony sugar/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build sugar/CMakeFiles/install/strip.util: CUSTOM_COMMAND sugar/all
+  COMMAND = cmd.exe /C "cd /D C:\Users\perso\CLionProjects\CandyEngineAll\cmake-build-debug\sugar && "C:\Program Files\JetBrains\CLion 2021.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake"
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build sugar/install/strip: phony sugar/CMakeFiles/install/strip.util
+
 # =============================================================================
 # Target aliases.
 
@@ -962,7 +1290,14 @@ build all: phony CandyEngineAll.exe candy/all sandbox/all sugar/all
 #############################################
 # Folder: C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy
 
-build candy/all: phony candy/libCandy.a candy/lib/glad/all
+build candy/all: phony candy/libCandy.a candy/lib/glad/all candy/lib/entt/all
+
+# =============================================================================
+
+#############################################
+# Folder: C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/lib/entt
+
+build candy/lib/entt/all: phony
 
 # =============================================================================
 
@@ -992,14 +1327,14 @@ build sugar/all: phony sugar/libSugar.a
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeDependentOption.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindOpenGL.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageMessage.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake C$:/Program$ Files/Mono/bin/mono-2.0-sgen.dll C$:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake C$:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sandbox/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/vcpkg.json CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeRCCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfig.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfigVersion.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-debug.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-release.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config-version.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-debug.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-release.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3ConfigVersion.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-debug.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-release.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfig.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfigVersion.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-debug.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-release.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets.cmake
+build build.ninja: RERUN_CMAKE | C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeDependentOption.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakePackageConfigHelpers.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindOpenGL.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageMessage.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/GNUInstallDirs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/WriteBasicConfigVersionFile.cmake C$:/Program$ Files/Mono/bin/mono-2.0-sgen.dll C$:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake C$:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/cmake/in/EnTTConfig.cmake.in C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/cmake/in/entt.pc.in C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/cmake/modules/JoinPaths.cmake C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sandbox/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/vcpkg.json CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeRCCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfig.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfigVersion.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-debug.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-release.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config-version.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-debug.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-release.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3ConfigVersion.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-debug.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-release.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfig.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfigVersion.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-debug.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-release.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeDependentOption.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindOpenGL.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageMessage.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake C$:/Program$ Files/Mono/bin/mono-2.0-sgen.dll C$:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake C$:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sandbox/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/vcpkg.json CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeRCCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfig.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfigVersion.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-debug.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-release.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config-version.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-debug.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-release.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3ConfigVersion.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-debug.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-release.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfig.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfigVersion.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-debug.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-release.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets.cmake: phony
+build C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeDependentOption.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakePackageConfigHelpers.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindOpenGL.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/FindPackageMessage.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/GNUInstallDirs.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake C$:/Program$ Files/JetBrains/CLion$ 2021.3.4/bin/cmake/win/x64/share/cmake-3.25/Modules/WriteBasicConfigVersionFile.cmake C$:/Program$ Files/Mono/bin/mono-2.0-sgen.dll C$:/Users/perso/.clion-vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake C$:/Users/perso/CLionProjects/CandyEngineAll/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/cmake/in/EnTTConfig.cmake.in C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/cmake/in/entt.pc.in C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/entt/cmake/modules/JoinPaths.cmake C$:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/glad/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sandbox/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/sugar/CMakeLists.txt C$:/Users/perso/CLionProjects/CandyEngineAll/vcpkg.json CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeRCCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfig.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileConfigVersion.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-debug.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets-release.cmake vcpkg_installed/x64-windows/share/SndFile/SndFileTargets.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config-version.cmake vcpkg_installed/x64-windows/share/fmt/fmt-config.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-debug.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets-release.cmake vcpkg_installed/x64-windows/share/fmt/fmt-targets.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3ConfigVersion.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-debug.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets-release.cmake vcpkg_installed/x64-windows/share/glfw3/glfw3Targets.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfig.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioConfigVersion.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-debug.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets-release.cmake vcpkg_installed/x64-windows/share/portaudio/portaudioTargets.cmake: phony
 
 
 #############################################

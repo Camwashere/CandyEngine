@@ -28,7 +28,7 @@ namespace Candy::Noise
         x-= Math::Floor(x);
         y-= Math::Floor(y);
         
-        // Compute Math::Interpolate::Fade curves
+        // Compute Math::Interpolate::fade curves
         float u = Math::Interpolate::Fade(x);
         float v = Math::Interpolate::Fade(y);
         
@@ -49,7 +49,7 @@ namespace Candy::Noise
         x-= Math::Floor(x);
         y-= Math::Floor(y);
         z-= Math::Floor(z);
-        // Compute Math::Interpolate::Fade curves for each of X, Y, Z
+        // Compute Math::Interpolate::fade curves for each of X, Y, Z
         float u = Math::Interpolate::Fade(x);
         float v = Math::Interpolate::Fade(y);
         float w = Math::Interpolate::Fade(z);

@@ -64,6 +64,7 @@ namespace Candy {
         void SubmitToMainThread(const std::function<void()>& function);
         double GetVersion()const{return appData.version;}
         const std::string& GetName()const{return appData.name;}
+        const ApplicationData& GetAppData()const{return appData;}
         UILayer* GetUILayer(){return uiLayer;}
     
     public:

@@ -1,36 +1,37 @@
 #pragma once
 
-#include <Candy/CandyEngine.hpp>
+
 #include "panels/SceneHierarchyPanel.hpp"
 #include "panels/ContentBrowserPanel.hpp"
 
 
 namespace Candy {
     
+    
     class EditorLayer : public Layer
     {
     private:
-        //Hazel::OrthographicCameraController m_CameraController;
+        Graphics::OrthographicCameraController cameraController;
         
         // Temp
-        SharedPtr<VertexArray> squareVA;
-        SharedPtr<Shader> flatColorShader;
-        SharedPtr<FrameBuffer> framebuffer;
+        SharedPtr<Graphics::VertexArray> squareVA;
+        SharedPtr<Graphics::Shader> flatColorShader;
+        SharedPtr<Graphics::FrameBuffer> framebuffer;
         
-        SharedPtr<Scene> activeScene;
-        SharedPtr<Scene> editorScene;
+        SharedPtr<ECS::Scene> activeScene;
+        SharedPtr<ECS::Scene> editorScene;
         std::filesystem::path editorScenePath;
-        Entity squareEntity;
-        Entity cameraEntity;
-        Entity secondCamera;
+        ECS::Entity squareEntity;
+        ECS::Entity cameraEntity;
+        ECS::Entity secondCamera;
         
-        Entity hoveredEntity;
+        ECS::Entity hoveredEntity;
         
         bool primaryCamera = true;
         
-        //EditorCamera editorCamera;
+        Graphics::EditorCamera editorCamera;
         
-        SharedPtr<Texture> checkerboardTexture;
+        SharedPtr<Graphics::Texture> checkerboardTexture;
         
         bool viewportFocused = false, viewportHovered = false;
         Math::Vector2 viewportSize = { 0.0f, 0.0f };
@@ -53,20 +54,20 @@ namespace Candy {
         UniquePtr<ContentBrowserPanel> contentBrowserPanel;
         
         // Editor resources
-        SharedPtr<Texture> iconPlay, iconPause, iconStep, iconSimulate, iconStop;
+        SharedPtr<Graphics::Texture> iconPlay, iconPause, iconStep, iconSimulate, iconStop;
     public:
         EditorLayer();
-        virtual ~EditorLayer() = default;
+        ~EditorLayer() override = default;
         
-        virtual void OnAttach() override;
-        virtual void OnDetach() override;
+        void OnAttach() override;
+        void OnDetach() override;
         
         void OnUpdate() override;
-        virtual void OnRenderUI() override;
-        void OnEvent(Event& e) override;
+        void OnRenderUI() override;
+        void OnEvent(Events::Event& e) override;
     private:
-        bool OnKeyPressed(KeyPressedEvent& e);
-        bool OnMouseButtonPressed(MousePressedEvent& e);
+        bool OnKeyPressed(Events::KeyPressedEvent& e);
+        bool OnMouseButtonPressed(Events::MousePressedEvent& e);
         
         void OnOverlayRender();
         
@@ -81,7 +82,7 @@ namespace Candy {
         void SaveScene();
         void SaveSceneAs();
         
-        void SerializeScene(SharedPtr<Scene> scene, const std::filesystem::path& path);
+        void SerializeScene(SharedPtr<ECS::Scene> scene, const std::filesystem::path& path);
         
         void OnScenePlay();
         void OnSceneSimulate();

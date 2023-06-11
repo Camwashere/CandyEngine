@@ -1,6 +1,7 @@
 #pragma once
 #include "../primitive/PrimitiveTypes.hpp"
 #include <iostream>
+#include <utility>
 #include <fmt/core.h>
 #include <fmt/color.h>
 
@@ -18,6 +19,7 @@ namespace Candy
     {
     private:
         LogLevel logLevel;
+        std::string name="Undefined Logger";
         
     private:
         
@@ -38,6 +40,7 @@ namespace Candy
         
     public:
         Logger() : logLevel(LogLevel::TRACE){}
+        explicit Logger(std::string  loggerName) : logLevel(LogLevel::TRACE), name(std::move(loggerName)){}
         explicit Logger(LogLevel level) : logLevel(level){}
         
     public:
@@ -46,10 +49,10 @@ namespace Candy
         {
             Log(std::move(formatStr), args...);
         }
-        template<typename...T>
-        inline void Info(const fmt::format_string<T...>& formatStr, T&&... args)
+        template<typename S, typename...Args>
+        inline void Info(const S& formatStr, const Args&...args)
         {
-            Log(formatStr, args...);
+            Log(fmt::fg(fmt::color::yellow), formatStr, args...);
         }
         template<typename S, typename...Args>
         inline void Warn(const S& formatStr, const Args&...args)

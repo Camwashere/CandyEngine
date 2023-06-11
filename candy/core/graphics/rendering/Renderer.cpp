@@ -17,7 +17,7 @@ namespace Candy::Graphics {
             
             RenderCommand::SetViewport(0, 0, width, height);
         }
-        void Renderer::BeginScene(const Camera& camera)
+        void Renderer::BeginScene(OrthographicCamera& camera)
         {
             sceneData->viewMatrix = camera.GetViewMatrix();
             
