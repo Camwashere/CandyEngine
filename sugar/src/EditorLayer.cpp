@@ -53,7 +53,7 @@ namespace Candy
         
         editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
         Renderer2D::SetLineWidth(4.0f);
-        CANDY_CORE_INFO("ON ATTACH");
+        
     }
     
     void EditorLayer::OnDetach()
@@ -241,7 +241,7 @@ namespace Candy
         
         sceneHierarchyPanel.OnRenderUI();
         
-        //TODO Content browser panel ui render is broken
+        
         contentBrowserPanel->OnRenderUI();
         
         
@@ -592,7 +592,7 @@ namespace Candy
     }
     
     void EditorLayer::OnSceneStop()
-    {/*
+    {
         CANDY_CORE_ASSERT(sceneState == SceneState::Play || sceneState == SceneState::Simulate);
         
         if (sceneState == SceneState::Play)
@@ -604,7 +604,7 @@ namespace Candy
         
         activeScene = editorScene;
         
-        sceneHierarchyPanel.SetContext(activeScene);*/
+        sceneHierarchyPanel.SetContext(activeScene);
     
     }
     
@@ -618,7 +618,7 @@ namespace Candy
     
     void EditorLayer::OnDuplicateEntity()
     {
-        /*if (sceneState != SceneState::Edit)
+        if (sceneState != SceneState::Edit)
             return;
         
         Entity selectedEntity = sceneHierarchyPanel.GetSelectedEntity();
@@ -626,7 +626,7 @@ namespace Candy
         {
             Entity newEntity = editorScene->DuplicateEntity(selectedEntity);
             sceneHierarchyPanel.SetSelectedEntity(newEntity);
-        }*/
+        }
     
     }
     

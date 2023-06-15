@@ -59,11 +59,7 @@ namespace Candy{
         config.startScene = startScenePath;
         config.assetDirectory = assetDirectoryPath;
         config.scriptModulePath = scriptModulePath;
-        
-        CANDY_CORE_INFO("Project Name: {}", config.name);
-        CANDY_CORE_INFO("Project Start Scene Path: {}", config.startScene.string());
-        CANDY_CORE_INFO("Project Asset Directory Path: {}", config.assetDirectory.string());
-        CANDY_CORE_INFO("Project Script Module Path: {}", config.scriptModulePath.string());
+      
 
         return true;
         

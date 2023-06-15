@@ -21,8 +21,11 @@ namespace Candy::ECS{
                 return Math::Matrix4::Translation(position) * rot * Math::Matrix4::Scaled(scale);
             }
         };
-        
-        struct CameraComponent
+    
+   
+    
+    
+    struct CameraComponent
         {
             Graphics::SceneCamera camera;
             bool primary=true;
@@ -32,11 +35,7 @@ namespace Candy::ECS{
             CameraComponent(const CameraComponent&)=default;
         };
         
-        struct TestComponent
-        {
-            std::string name;
-            int value;
-        };
+        
         
         
         
