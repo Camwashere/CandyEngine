@@ -3,7 +3,7 @@
 namespace Candy{
     struct ProjectConfig
     {
-        String name="Untitled";
+        std::string name="Untitled";
         std::filesystem::path startScene;
         std::filesystem::path assetDirectory;
         std::filesystem::path scriptModulePath;

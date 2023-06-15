@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#define CANDY_DEBUG
+
 #ifdef CANDY_DEBUG
 #if defined(CANDY_PLATFORM_WINDOWS)
 #define CANDY_DEBUGBREAK() __debugbreak()

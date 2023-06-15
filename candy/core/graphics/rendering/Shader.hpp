@@ -13,22 +13,24 @@ namespace Candy::Graphics{
         class Shader {
         private:
             uint32 rendererID;
+            std::string filepath;
+            std::string name;
             std::unordered_map<std::string, int> uniformLocationCache{};
         private:
-            bool CheckCompileErrors(uint32 shader, std::string type);
-            
-            bool CompileShaders(const char *vertexShaderSource, const char *fragmentShaderSource);
+            std::string ReadFile(const std::string& filepath);
+            std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
+            bool CheckCompileErrors(GLuint shader, const std::string& type);
+            void CompileShaders(const char* vertexShaderCode, const char* fragmentShaderCode);
+            void CreateProgram(uint32 vertex, uint32 fragment);
+            void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
         
         public:
             Shader();
-            Shader(const char* filepath);
-            Shader(const char *vertexPath, const char *fragmentPath);
+            explicit Shader(std::string  filepath);
+            Shader(std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
             ~Shader();
         
         public:
-            
-            bool Initialize(const char *vertexPath, const char *fragmentPath);
-            
             void Bind() const;
             
             void Unbind() const;
@@ -98,7 +100,7 @@ namespace Candy::Graphics{
             
             static SharedPtr<Shader> Create(const std::string& filepath);
             
-            static SharedPtr<Shader> Create(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+            static SharedPtr<Shader> Create(const std::string& shaderName, const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
         };
     
 }

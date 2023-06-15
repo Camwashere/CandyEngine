@@ -18,6 +18,7 @@ namespace Candy {
         instance = this;
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
         Graphics::Renderer::Init();
+        Graphics::Renderer2D::Init();
         uiLayer = new UILayer();
         PushOverlay(uiLayer);
         

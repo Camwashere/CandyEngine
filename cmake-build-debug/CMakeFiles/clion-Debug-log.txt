@@ -2,8 +2,8 @@
 -- Running vcpkg install
 Detecting compiler hash for triplet x64-windows...
 All requested packages are currently installed.
-Restored 0 package(s) from C:\Users\perso\AppData\Local\vcpkg\archives in 66.6 us. Use --debug to see more details.
-Total install time: 82.4 us
+Restored 0 package(s) from C:\Users\perso\AppData\Local\vcpkg\archives in 63.5 us. Use --debug to see more details.
+Total install time: 77.3 us
 The package boost is compatible with built-in CMake targets:
 
     find_package(Boost REQUIRED [COMPONENTS <libs>...])
@@ -37,6 +37,12 @@ portaudio provides CMake targets:
     target_link_libraries(main PRIVATE portaudio)
 
 -- Running vcpkg install - done
+-- ryml: using C++ standard: C++11
+-- ryml: setting C++ standard: 11
+-- ryml: setting C++ standard required: ON
+-- ryml: importing subproject c4core (SUBDIRECTORY)... C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/rapidyaml/ext/c4core
+-- c4core: using C++ standard: C++11
+-- ryml: -----> target ryml PUBLIC incorporating lib c4core
 -- Configuring done
 -- Generating done
 -- Build files have been written to: C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug

@@ -1,121 +1,149 @@
 #include "SceneSerializer.hpp"
 #include <Candy/Math.hpp>
-/*
-namespace YAML
+#include <ryml.hpp>
+#include <ryml_std.hpp>
+#include <c4/format.hpp>
+#include <Candy/ECS.hpp>
+using namespace Candy::Math;
+namespace ryml
 {
-    template<>
-    struct convert<Candy::Math::Vector2>
+    // define a conversion function for Vector3
+    size_t to_chars(substr buf, const Vector2& v)
     {
-        static Node encode(const Candy::Math::Vector2& rhs)
-        {
-            Node node;
-            node.push_back(rhs.x);
-            node.push_back(rhs.y);
-            node.SetStyle(EmitterStyle::Flow);
-            return node;
-        }
-        static bool decode(const Node& node, Candy::Math::Vector2& rhs)
-        {
-            if (!node.IsSequence() || node.size() != 2)
-                return false;
-            
-            rhs.x = node[0].as<float>();
-            rhs.y = node[1].as<float>();
-            return true;
-        }
-    };
-    template<>
-    struct convert<Candy::Math::Vector3>
-    {
-        static Node encode(const Candy::Math::Vector3& rhs)
-        {
-            Node node;
-            node.push_back(rhs.x);
-            node.push_back(rhs.y);
-            node.push_back(rhs.z);
-            node.SetStyle(EmitterStyle::Flow);
-            return node;
-        }
-        
-        static bool decode(const Node& node, Candy::Math::Vector3& rhs)
-        {
-            if (!node.IsSequence() || node.size() != 3)
-                return false;
-            
-            rhs.x = node[0].as<float>();
-            rhs.y = node[1].as<float>();
-            rhs.z = node[2].as<float>();
-            return true;
-        }
-    };
+        return ryml::format(buf, "({},{})", v.x, v.y);
+    }
     
-    template<>
-    struct convert<Candy::Math::Vector4>
+    // define a conversion function for Vector3
+    bool from_chars(csubstr buf, Vector2 *v)
     {
-        static Node encode(const Candy::Math::Vector4& rhs)
-        {
-            Node node;
-            node.push_back(rhs.x);
-            node.push_back(rhs.y);
-            node.push_back(rhs.z);
-            node.push_back(rhs.w);
-            node.SetStyle(EmitterStyle::Flow);
-            return node;
-        }
-        
-        static bool decode(const Node& node, Candy::Math::Vector4& rhs)
-        {
-            if (!node.IsSequence() || node.size() != 4)
-                return false;
-            
-            rhs.x = node[0].as<float>();
-            rhs.y = node[1].as<float>();
-            rhs.z = node[2].as<float>();
-            rhs.w = node[3].as<float>();
-            return true;
-        }
-    };
+        return ryml::unformat(buf, "({},{})", v->x, v->y);
+    }
+    // define a conversion function for Vector3
+    size_t to_chars(substr buf, const Vector3& v)
+    {
+        return ryml::format(buf, "({},{},{})", v.x, v.y, v.z);
+    }
+
+    // define a conversion function for Vector3
+    bool from_chars(csubstr buf, Vector3 *v)
+    {
+        return ryml::unformat(buf, "({},{},{})", v->x, v->y, v->z);
+    }
     
-    template<>
-    struct convert<Candy::UUID>
+    // define a conversion function for Vector3
+    size_t to_chars(substr buf, const Vector4& v)
     {
-        static Node encode(const Candy::UUID& uuid)
-        {
-            Node node;
-            node.push_back((uint64_t)uuid);
-            return node;
-        }
-        
-        static bool decode(const Node& node, Candy::UUID& uuid)
-        {
-            uuid = node.as<uint64_t>();
-            return true;
-        }
-    };
-}*/
+        return ryml::format(buf, "({},{},{},{})", v.x, v.y, v.z, v.w);
+    }
+    
+    // define a conversion function for Vector3
+    bool from_chars(csubstr buf, Vector4 *v)
+    {
+        return ryml::unformat(buf, "({},{},{},{})", v->x, v->y, v->z, v->w);
+    }
+    
+    // define a conversion function for UUID
+    size_t to_chars(substr buf, const Candy::UUID& v)
+    {
+        return ryml::format(buf, "{}", v);
+    }
+    
+    // define a conversion function for UUID
+    bool from_chars(csubstr buf, Candy::UUID *v)
+    {
+        return ryml::unformat(buf, "{}", v);
+    }
+    
+}
 namespace Candy::ECS
 {
-    SceneSerializer::SceneSerializer(const SharedPtr<Scene>& scene)
+    SceneSerializer::SceneSerializer(const SharedPtr<Scene>& sceneVal)
+    : scene(sceneVal)
     {
     
     }
     
     void SceneSerializer::Serialize(const std::string& filepath)
     {
+        CANDY_CORE_INFO("Serializing scene");
+        c4::yml::Tree tree;
+        c4::yml::NodeRef root = tree.rootref();
+        
+        root |= c4::yml::MAP;
+        root["Scene"] |= c4::yml::MAP;
+        root["Scene"]["Name"] << scene->name;
+        root["Scene"]["Entities"] |= c4::yml::SEQ;
+        
+        scene->registry.each([&](auto entityID)
+        {
+           Entity entity={entityID, scene.get()};
+           if (!entity)
+           {
+               return;
+           }
+           //SerializeEntity(root["Scene"]["Entities"], entity);
+        });
+        
+        std::ofstream fout(filepath);
+        fout << c4::yml::emit_yaml(tree);
     
     }
     void SceneSerializer::SerializeRuntime(const std::string& filepath)
     {
+        //Not implemented
+        CANDY_CORE_ASSERT(false);
     
     }
     
     bool SceneSerializer::Deserialize(const std::string& filepath)
     {
+        CANDY_CORE_INFO("DESERIALIZING SCENE");
+        // read the file into a string
+        std::ifstream fin(filepath);
+        std::string yaml_str((std::istreambuf_iterator<char>(fin)), std::istreambuf_iterator<char>());
+        
+        if (yaml_str.empty())
+        {
+            CANDY_CORE_INFO("EMPTY YAML STRING WITH PATH: {}", filepath);
+        }
+        else
+        {
+            CANDY_CORE_INFO("YAML STRING CONTENTS: {}", yaml_str);
+        }
+        // parse the YAML string
+        ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(yaml_str));
+        ryml::NodeRef root = tree.rootref();
+        
+        CANDY_CORE_INFO("CREATED ROOT AND TREE");
+        
+        auto projectNode = root["Scene"];
+        
+        if (projectNode.empty())
+        {
+            CANDY_CORE_INFO("EMPTY PROJECT NODE");
+            return false;
+        }
+        else
+        {
+            CANDY_CORE_INFO("PROJECT NODE SOLID");
+        }
+        auto nameNode = projectNode.val();
+        auto startSceneNode = projectNode["StartScene"].val();
+        auto assetDirectoryNode = projectNode["AssetDirectory"].val();
+        auto scriptModulePathNode = projectNode["ScriptModulePath"].val();
+        
+        scene->name.assign(nameNode.begin(), nameNode.end());
+        CANDY_CORE_TRACE("Deserializing scene '{0}'", scene->name);
+        CANDY_CORE_WARN("Not finished implementing");
+        
+        return true;
     
     }
     bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
     {
-    
+        //Not implemented
+        CANDY_CORE_ASSERT(false);
+        return false;
     }
 }
 

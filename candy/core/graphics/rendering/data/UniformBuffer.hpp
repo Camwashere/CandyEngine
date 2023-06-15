@@ -1,4 +1,4 @@
-
+#pragma once
 #include <Candy/CandyEngineBase.hpp>
 namespace Candy::Graphics{
     class UniformBuffer

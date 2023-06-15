@@ -68,6 +68,7 @@ find_package(portaudio CONFIG REQUIRED)
 
 add_subdirectory(lib/glad)
 add_subdirectory(lib/entt)
+add_subdirectory(lib/rapidyaml)
 
 add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
 
@@ -90,6 +91,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${MONO_HOME}/include/mono-2.
 
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC fmt::fmt-header-only glfw glad SndFile::sndfile portaudio "${MONO_HOME}/bin/mono-2.0-sgen.dll")
+target_link_libraries(${PROJECT_NAME} PUBLIC fmt::fmt-header-only glfw glad SndFile::sndfile portaudio ryml::ryml "${MONO_HOME}/bin/mono-2.0-sgen.dll")
 
 configure_file("${MONO_HOME}/bin/mono-2.0-sgen.dll" "${PROJECT_BINARY_DIR}/mono-2.0-sgen.dll" COPYONLY)

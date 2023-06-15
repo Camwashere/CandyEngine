@@ -14,6 +14,64 @@
 # EXTERNAL cache entries
 ########################
 
+//compilation flags for c4core targets
+C4CORE_CXX_FLAGS:STRING=
+
+//linker flags for c4core targets
+C4CORE_CXX_LINKER_FLAGS:STRING=
+
+//enable development targets: tests, benchmarks, static analysis,
+// coverage
+C4CORE_DEV:BOOL=OFF
+
+//disable use of debug break even in debug builds
+C4CORE_NO_DEBUG_BREAK:BOOL=OFF
+
+//use libc++ instead of the default standard library
+C4CORE_USE_LIBCXX:BOOL=OFF
+
+//use fastfloat to parse floats
+C4CORE_WITH_FASTFLOAT:BOOL=ON
+
+//list of additional file extensions that might be added as sources
+// to targets
+C4_ADD_EXTS:STRING=natvis
+
+//list of CXX standards
+C4_CXX_STANDARDS:STRING=20;17;14;11
+
+//the default CXX standard for projects not specifying one
+C4_CXX_STANDARD_DEFAULT:STRING=11
+
+//enable detailed cmake logs in c4Project code
+C4_DBG_ENABLED:BOOL=OFF
+
+//enable development targets for all c4 projects
+C4_DEV:BOOL=OFF
+
+//the directory where imported projects should be looked for (or
+// cloned in when not found)
+C4_EXTERN_DIR:PATH=
+
+//the extension of the output header files resulting from concatenation
+C4_GEN_HDR_EXT:STRING=hpp
+
+//the extension of the output source files resulting from concatenation
+C4_GEN_SRC_EXT:STRING=cpp
+
+//list of header extensions for determining which files are headers
+C4_HDR_EXTS:STRING=h;hpp;hh;h++;hxx
+
+//default library type: either ""(defer to BUILD_SHARED_LIBS),INTERFACE,STATIC,SHARED,MODULE
+C4_LIBRARY_TYPE:STRING=
+
+//global source transform method
+C4_SOURCE_TRANSFORM:STRING=NONE
+
+//list of compilation unit extensions for determining which files
+// are sources
+C4_SRC_EXTS:STRING=c;cpp;cc;c++;cxx;cu;
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=C:/msys64/mingw64/bin/addr2line.exe
 
@@ -366,6 +424,38 @@ OPENGL_gl_LIBRARY:STRING=opengl32
 //GLU library for win32
 OPENGL_glu_LIBRARY:STRING=glu32
 
+//build tools
+RYML_BUILD_TOOLS:BOOL=OFF
+
+//compilation flags for ryml targets
+RYML_CXX_FLAGS:STRING=
+
+//linker flags for ryml targets
+RYML_CXX_LINKER_FLAGS:STRING=
+
+//Enable (very verbose) ryml debug prints.
+RYML_DBG:BOOL=OFF
+
+//Enable ryml's default implementation of callbacks: allocate(),
+// free(), error()
+RYML_DEFAULT_CALLBACKS:BOOL=ON
+
+//enable development targets: tests, benchmarks, static analysis,
+// coverage
+RYML_DEV:BOOL=OFF
+
+//Enable compilation of opting-in targets from ryml in standalone
+// mode (ie, incorporate subprojects as specified in the INCORPORATE
+// clause to c4_add_library/c4_add_target)
+RYML_STANDALONE:BOOL=ON
+
+//use libc++ instead of the default standard library
+RYML_USE_LIBCXX:BOOL=OFF
+
+//Enable parsing of tabs after ':' and '-'. This is costly and
+// disabled by default.
+RYML_WITH_TAB_TOKENS:BOOL=OFF
+
 //Value Computed by CMake
 Sandbox_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/sandbox
 
@@ -458,6 +548,15 @@ Z_VCPKG_PWSH_PATH:FILEPATH=Z_VCPKG_PWSH_PATH-NOTFOUND
 // triplet
 _VCPKG_INSTALLED_DIR:PATH=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed
 
+//Value Computed by CMake
+c4core_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/lib/rapidyaml/subprojects/c4core/build
+
+//Value Computed by CMake
+c4core_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+c4core_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/rapidyaml/ext/c4core
+
 //The directory containing a CMake configuration file for fmt.
 fmt_DIR:PATH=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/fmt
 
@@ -466,6 +565,15 @@ glfw3_DIR:PATH=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcp
 
 //The directory containing a CMake configuration file for portaudio.
 portaudio_DIR:PATH=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/vcpkg_installed/x64-windows/share/portaudio
+
+//Value Computed by CMake
+ryml_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/lib/rapidyaml
+
+//Value Computed by CMake
+ryml_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+ryml_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/rapidyaml
 
 //The directory containing a CMake configuration file for yaml-cpp.
 yaml-cpp_DIR:PATH=yaml-cpp_DIR-NOTFOUND
@@ -605,7 +713,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=8
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -667,6 +775,8 @@ FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[opengl32][c ][v()]
 OPENGL_gl_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_glu_LIBRARY
 OPENGL_glu_LIBRARY-ADVANCED:INTERNAL=1
+//Enable API generation (python, etc)
+RYML_BUILD_API:INTERNAL=OFF
 //ADVANCED property for variable: VCPKG_VERBOSE
 VCPKG_VERBOSE-ADVANCED:INTERNAL=1
 //Making sure VCPKG_MANIFEST_MODE doesn't change

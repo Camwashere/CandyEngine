@@ -1,11 +1,6 @@
 #pragma once
 
-#include <vector>
-
-#include <Candy/CandyEngineBase.hpp>
-#include <iostream>
-
-#include "../../../../include/Candy/Math.hpp"
+#include <Candy/Math.hpp>
 
 namespace Candy::Graphics {
         enum class ShaderDataType

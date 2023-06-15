@@ -90,7 +90,7 @@ namespace Candy
     
     void Renderer2D::Init()
     {
-        
+       
         
         rendererData.quadVertexArray = VertexArray::Create();
         
@@ -109,6 +109,8 @@ namespace Candy
         
         uint32_t* quadIndices = new uint32_t[Renderer2DData::MAX_INDICES];
         
+        
+        
         uint32_t offset = 0;
         for (uint32_t i = 0; i < Renderer2DData::MAX_INDICES; i += 6)
         {
@@ -123,9 +125,12 @@ namespace Candy
             offset += 4;
         }
         
+        
+        
         SharedPtr<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, Renderer2DData::MAX_INDICES);
         rendererData.quadVertexArray->SetIndexBuffer(quadIB);
         delete[] quadIndices;
+        
         
         // circles
         rendererData.circleVertexArray = VertexArray::Create();
@@ -143,6 +148,8 @@ namespace Candy
         rendererData.circleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
         rendererData.circleVertexBufferBase = new CircleVertex[Renderer2DData::MAX_VERTICES];
         
+        
+        
         // lines
         rendererData.lineVertexArray = VertexArray::Create();
         
@@ -155,13 +162,22 @@ namespace Candy
         rendererData.lineVertexArray->AddVertexBuffer(rendererData.lineVertexBuffer);
         rendererData.lineVertexBufferBase = new LineVertex[Renderer2DData::MAX_VERTICES];
         
-        rendererData.whiteTexture = Texture::Create(1, 1);
+        
+        
+        rendererData.whiteTexture = Texture::Create(TextureSpecification());
         uint32_t whiteTextureData = 0xffffffff;
+        
         rendererData.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
         
-        int32_t samplers[Renderer2DData::MAX_TEXTURE_SLOTS];
+        
+        
+        uint32_t samplers[Renderer2DData::MAX_TEXTURE_SLOTS];
         for (uint32_t i = 0; i < Renderer2DData::MAX_TEXTURE_SLOTS; i++)
+        {
             samplers[i] = i;
+        }
+        
+        
         
         rendererData.quadShader = Shader::Create("assets/shaders/Renderer2D_quad.glsl");
         rendererData.circleShader = Shader::Create("assets/shaders/Renderer2D_circle.glsl");
@@ -210,8 +226,8 @@ namespace Candy
         
         
         rendererData.cameraBuffer.viewProjection = camera.GetViewProjectionMatrix();
-        rendererData.cameraUniformBuffer->SetData(&rendererData.cameraBuffer, sizeof(Renderer2DData::CameraData));
         
+        rendererData.cameraUniformBuffer->SetData(&rendererData.cameraBuffer, sizeof(Renderer2DData::CameraData));
         StartBatch();
     }
     

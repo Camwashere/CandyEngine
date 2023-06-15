@@ -43,10 +43,10 @@ namespace Candy
             
             // If no project is opened, close Sugar
             // NOTE: this is while we don't have a new project path
-            if (!OpenProject())
+            /*if (!OpenProject())
             {
                 Application::Close();
-            }
+            }*/
             
             
         }
@@ -72,7 +72,6 @@ namespace Candy
             cameraController.OnResize(viewportSize.x, viewportSize.y);
             editorCamera.SetViewportSize(viewportSize.x, viewportSize.y);
         }
-        
         // Render
         Renderer2D::ResetStats();
         framebuffer->Bind();
@@ -82,14 +81,18 @@ namespace Candy
         // Clear our entity ID attachment to -1
         framebuffer->ClearAttachment(1, -1);
         
+        
         switch (sceneState)
         {
             case SceneState::Edit:
             {
                 if (viewportFocused)
+                {
                     cameraController.OnUpdate();
+                }
                 
                 editorCamera.OnUpdate();
+                
                 
                 activeScene->OnUpdateEditor(editorCamera);
                 break;
@@ -106,7 +109,11 @@ namespace Candy
                 activeScene->OnUpdateRuntime();
                 break;
             }
+            default:
+                break;
         }
+        
+       
         
         Math::Vector2 mousePos = ImGui::GetMousePos();
         mousePos.x -= viewportBounds[0].x;
@@ -116,15 +123,23 @@ namespace Candy
         int mouseX = (int)mousePos.x;
         int mouseY = (int)mousePos.y;
         
+        
+        
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewSize.x && mouseY < (int)viewSize.y)
         {
             int pixelData = framebuffer->ReadPixel(1, mouseX, mouseY);
             hoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, activeScene.get());
         }
         
+        
+        
         OnOverlayRender();
         
+        
+        
         framebuffer->Unbind();
+        
+        
     
     }
     
@@ -161,11 +176,15 @@ namespace Candy
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        
+        
         ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
         ImGui::PopStyleVar();
         
         if (opt_fullscreen)
             ImGui::PopStyleVar(2);
+        
+        
         
         // DockSpace
         ImGuiIO& io = ImGui::GetIO();
@@ -179,6 +198,7 @@ namespace Candy
         }
         
         style.WindowMinSize.x = minWinSizeX;
+        
         
         if (ImGui::BeginMenuBar())
         {
@@ -217,8 +237,13 @@ namespace Candy
             ImGui::EndMenuBar();
         }
         
+        
         sceneHierarchyPanel.OnRenderUI();
+        
+        //TODO Content browser panel ui render is broken
         contentBrowserPanel->OnRenderUI();
+        
+        
         
         ImGui::Begin("Stats");
         
@@ -231,9 +256,13 @@ namespace Candy
         
         ImGui::End();
         
+        
+        
         ImGui::Begin("Settings");
         ImGui::Checkbox("Show physics colliders", &showPhysicsColliders);
         ImGui::End();
+        
+        
         
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
@@ -274,12 +303,6 @@ namespace Candy
             //ImGuizmo::SetRect(viewportBounds[0].x, viewportBounds[0].y, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
             
             // Camera
-            
-            // Runtime camera from entity
-            // auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-            // const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-            // const glm::mat4& cameraProjection = camera.GetProjection();
-            // glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
             
             // Editor camera
             const Math::Matrix4& cameraProjection = editorCamera.GetProjectionMatrix();

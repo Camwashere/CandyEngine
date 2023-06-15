@@ -44,15 +44,15 @@ namespace Candy
         explicit Logger(LogLevel level) : logLevel(level){}
         
     public:
-        template<typename...T>
-        inline void Trace(fmt::format_string<T...> formatStr, T&&... args)
+        template<typename S, typename...Args>
+        inline void Trace(const S& formatStr, const Args&...args)
         {
-            Log(std::move(formatStr), args...);
+            Log(fmt::fg(fmt::color::white), formatStr, args...);
         }
         template<typename S, typename...Args>
         inline void Info(const S& formatStr, const Args&...args)
         {
-            Log(fmt::fg(fmt::color::yellow), formatStr, args...);
+            Log(fmt::fg(fmt::color::pale_golden_rod), formatStr, args...);
         }
         template<typename S, typename...Args>
         inline void Warn(const S& formatStr, const Args&...args)

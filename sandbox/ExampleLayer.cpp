@@ -31,8 +31,8 @@ ExampleLayer::ExampleLayer()
 void ExampleLayer::CreateShaderResources()
 {
     vertexArray = VertexArray::Create();
-    shader = Shader::Create("../sandbox/resources/shaders/vertexShader.glsl", "../sandbox/resources/shaders/fragShader.glsl");
-    lightShader = Shader::Create("../sandbox/resources/shaders/lightVertexShader.glsl", "../sandbox/resources/shaders/lightFragShader.glsl");
+    shader = Shader::Create("Bitch", "../sandbox/resources/shaders/vertexShader.glsl", "../sandbox/resources/shaders/fragShader.glsl");
+    lightShader = Shader::Create("BItch1", "../sandbox/resources/shaders/lightVertexShader.glsl", "../sandbox/resources/shaders/lightFragShader.glsl");
     lightVertexArray = VertexArray::Create();
     texture1 = Texture::Create("../sandbox/resources/images/wall.jpg");
     texture2 = Texture::Create("../sandbox/resources/images/awesomeface.png");

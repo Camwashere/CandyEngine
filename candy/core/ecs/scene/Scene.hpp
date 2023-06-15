@@ -17,8 +17,11 @@ namespace Candy::ECS{
     
         
     private:
+        
         entt::registry registry;
         std::unordered_map<UUID, Entity> entityMap;
+        
+        std::string name="Untitled";
         uint32 viewportWidth = 0, viewportHeight = 0;
         bool isRunning=false;
         bool isPaused=true;

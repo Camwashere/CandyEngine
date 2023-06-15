@@ -2,7 +2,33 @@
 #include "stb_image.h"
 #include <Candy/Graphics.hpp>
 
+
+
 namespace Candy::Graphics {
+    
+    static GLenum ImageFormatToGLDataFormat(ImageFormat format)
+    {
+        switch (format)
+        {
+            case ImageFormat::RGB8:  return GL_RGB;
+            case ImageFormat::RGBA8: return GL_RGBA;
+        }
+        
+        CANDY_CORE_ASSERT(false);
+        return 0;
+    }
+    
+    static GLenum ImageFormatToGLInternalFormat(ImageFormat format)
+    {
+        switch (format)
+        {
+            case ImageFormat::RGB8:  return GL_RGB8;
+            case ImageFormat::RGBA8: return GL_RGBA8;
+        }
+        
+        CANDY_CORE_ASSERT(false);
+        return 0;
+    }
         Texture::Texture(const std::string &path){
             
             glGenTextures(1, &rendererID);
@@ -51,8 +77,22 @@ namespace Candy::Graphics {
             
             
         }
-        Texture::Texture(uint32 width, uint32 height)
+        
+    
+        Texture::Texture(const TextureSpecification& spec)
+        : specification(spec), width(spec.width), height(spec.height)
         {
+            internalFormat = ImageFormatToGLInternalFormat(specification.format);
+            dataFormat = ImageFormatToGLDataFormat(specification.format);
+            
+            glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
+            glTextureStorage2D(rendererID, 1, internalFormat, width, height);
+            
+            glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            
+            glTextureParameteri(rendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTextureParameteri(rendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
         
         }
         
@@ -81,16 +121,9 @@ namespace Candy::Graphics {
             glTextureSubImage2D(rendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
     }
     
-    SharedPtr<Texture> Texture::Create(uint32 width, uint32 height)
+    SharedPtr<Texture> Texture::Create(const TextureSpecification& spec)
     {
-        switch (Renderer::GetAPI())
-        {
-            case RendererAPI::API::None:    CANDY_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-            case RendererAPI::API::OpenGL:  return CreateSharedPtr<Texture>(width, height);
-        }
-        
-        CANDY_CORE_ASSERT(false, "Unknown RendererAPI!");
-        return nullptr;
+            return CreateSharedPtr<Texture>(spec);
     }
     
         

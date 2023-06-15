@@ -1,5 +1,6 @@
 #include "ProjectSerializer.hpp"
-
+#include <ryml.hpp>
+#include <ryml_std.hpp>
 
 
 namespace Candy{
@@ -10,49 +11,50 @@ namespace Candy{
     
     bool ProjectSerializer::Serialize(const std::filesystem::path& filepath)
     {
-        /*const auto& config = project->GetConfig();
+        c4::yml::Tree tree;
+        c4::yml::NodeRef root = tree.rootref();
+        const auto& config = project->GetConfig();
         
-        YAML::Emitter out;
-        {
-            out << YAML::BeginMap;
-            out << YAML::Key << "Project" << YAML::Value;
-            {
-                out << YAML::BeginMap; // Project
-                out << YAML::Key << "Name" << YAML::Value << config.name.ToStdString();
-                out << YAML::Key << "StartScene" << YAML::Value << config.startScene.string();
-                out << YAML::Key << "AssetDirectory" << YAML::Value << config.assetDirectory.string();
-                out << YAML::Key << "ScriptModulePath" << YAML::Value << config.scriptModulePath.string();
-                out << YAML::EndMap; // Project
-            }
-            out << YAML::EndMap;
-        }
+        root |= c4::yml::MAP;
+        root["Project"] |= c4::yml::MAP;
+        root["Project"]["Name"] << config.name;
+        root["Project"]["StartScene"] << config.startScene.string();
+        root["Project"]["AssetDirectory"] << config.assetDirectory.string();
+        root["Project"]["ScriptModulePath"] << config.scriptModulePath.string();
+        
         std::ofstream fout(filepath);
-        fout << out.c_str();*/
+        fout << c4::yml::emit_yaml(tree);
+        
         return true;
     }
     
     bool ProjectSerializer::Deserialize(const std::filesystem::path& filepath)
     {
-        /*auto& config = project->GetConfig();
+        auto& config = project->GetConfig();
         
-        YAML::Node data;
-        try
+        // read the file into a string
+        std::ifstream fin(filepath);
+        std::string yaml_str((std::istreambuf_iterator<char>(fin)), std::istreambuf_iterator<char>());
+        
+        // parse the YAML string
+        ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(yaml_str));
+        ryml::NodeRef root = tree.rootref();
+        
+        auto projectNode = root["Project"];
+        if (projectNode.empty())
         {
-            data = YAML::LoadFile(filepath.string());
-        }
-        catch (YAML::ParserException& e)
-        {
-            CANDY_CORE_ERROR("Failed to load project file '{0}'\n   {1}", filepath.string(), e.what());
             return false;
         }
-        auto projectNode = data["Project"];
-        if (!projectNode)
-            return false;
+        auto nameNode = projectNode["Name"].val();
+        auto startSceneNode = projectNode["StartScene"].val();
+        auto assetDirectoryNode = projectNode["AssetDirectory"].val();
+        auto scriptModulePathNode = projectNode["ScriptModulePath"].val();
+        
+        config.name.assign(nameNode.begin(), nameNode.end());
+        config.startScene.assign(startSceneNode.begin(), startSceneNode.end());
+        config.assetDirectory.assign(assetDirectoryNode.begin(), assetDirectoryNode.end());
+        config.scriptModulePath.assign(scriptModulePathNode.begin(), scriptModulePathNode.end());
 
-        config.name = projectNode["Name"].as<std::string>();
-        config.startScene = projectNode["StartScene"].as<std::string>();
-        config.assetDirectory = projectNode["AssetDirectory"].as<std::string>();
-        config.scriptModulePath = projectNode["ScriptModulePath"].as<std::string>();*/
         return true;
         
     }

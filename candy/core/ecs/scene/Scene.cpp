@@ -81,8 +81,10 @@ namespace Candy::ECS {
     {
         Graphics::Renderer2D::BeginScene(camera);
         
+        
         //TODO Draw sprites, circles, text, etc
         Graphics::Renderer2D::EndScene();
+        
     
     }
     
@@ -252,9 +254,34 @@ namespace Candy::ECS {
     
     }*/
     
-    void Scene::OnRuntimeStart(){}
-    void Scene::OnUpdateRuntime(){}
-    void Scene::OnRuntimeStop(){}
+    void Scene::OnRuntimeStart(){isRunning=true;}
+    void Scene::OnUpdateRuntime()
+    {
+        // Render 2D
+        Graphics::Camera* mainCamera = nullptr;
+        Math::Matrix4 cameraTransform;
+        {
+            auto view = registry.view<TransformComponent, CameraComponent>();
+            for (auto entity : view)
+            {
+                auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+                
+                if (camera.primary)
+                {
+                    mainCamera = &camera.camera;
+                    cameraTransform = transform.GetTransform();
+                    break;
+                }
+            }
+        }
+        if (mainCamera)
+        {
+            Graphics::Renderer2D::BeginScene(*mainCamera, cameraTransform);
+            //Draw sprites, circles, text, etc
+            Graphics::Renderer2D::EndScene();
+        }
+    }
+    void Scene::OnRuntimeStop(){isRunning=false;}
     
     void Scene::OnSimulationStart()
     {
@@ -281,6 +308,7 @@ namespace Candy::ECS {
     void Scene::OnUpdateEditor(Graphics::EditorCamera& camera)
     {
         RenderScene(camera);
+        
     }
     
     
