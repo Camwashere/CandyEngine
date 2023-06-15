@@ -10,20 +10,15 @@ namespace Candy
     
     void ContentBrowserPanel::OnRenderUI()
     {
-        /*CANDY_CORE_INFO("START CONTENT BROWSER PANEL ONRENDERUI");
         ImGui::Begin("Content Browser");
-        CANDY_CORE_INFO("BEGAN IMGUI");
+        
         if (currentDirectory != baseDirectory)
         {
-            CANDY_CORE_INFO("CURRENT DIRECTORY NOT BASE DIRECTORY");
             if (ImGui::Button("<-"))
             {
-                CANDY_CORE_INFO("IMGUI BUTTON");
                 currentDirectory = currentDirectory.parent_path();
             }
         }
-        
-        CANDY_CORE_INFO("COMPLETED CONTENT BROWSER PANEL CURRENT DIRECTORY");
         
         static float padding = 16.0f;
         static float thumbnailSize = 128.0f;
@@ -74,6 +69,6 @@ namespace Candy
         ImGui::SliderFloat("Padding", &padding, 0, 32);
         
         // TODO: status bar
-        ImGui::End();*/
+        ImGui::End();
     }
 }

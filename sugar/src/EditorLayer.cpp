@@ -43,10 +43,10 @@ namespace Candy
             
             // If no project is opened, close Sugar
             // NOTE: this is while we don't have a new project path
-            /*if (!OpenProject())
+            if (!OpenProject())
             {
                 Application::Close();
-            }*/
+            }
             
             
         }

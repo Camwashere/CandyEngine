@@ -4,6 +4,7 @@
 #include <ryml_std.hpp>
 #include <c4/format.hpp>
 #include <Candy/ECS.hpp>
+#include <sstream>
 using namespace Candy::Math;
 namespace ryml
 {
@@ -99,8 +100,10 @@ namespace Candy::ECS
     {
         CANDY_CORE_INFO("DESERIALIZING SCENE");
         // read the file into a string
-        std::ifstream fin(filepath);
-        std::string yaml_str((std::istreambuf_iterator<char>(fin)), std::istreambuf_iterator<char>());
+        std::ifstream fin("sugar/SandboxProject/Assets/Scenes/ExampleScene.candy");
+        std::stringstream buffer;
+        buffer << fin.rdbuf();
+        std::string yaml_str = buffer.str();
         
         if (yaml_str.empty())
         {
@@ -128,9 +131,6 @@ namespace Candy::ECS
             CANDY_CORE_INFO("PROJECT NODE SOLID");
         }
         auto nameNode = projectNode.val();
-        auto startSceneNode = projectNode["StartScene"].val();
-        auto assetDirectoryNode = projectNode["AssetDirectory"].val();
-        auto scriptModulePathNode = projectNode["ScriptModulePath"].val();
         
         scene->name.assign(nameNode.begin(), nameNode.end());
         CANDY_CORE_TRACE("Deserializing scene '{0}'", scene->name);

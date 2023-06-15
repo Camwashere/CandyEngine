@@ -96,7 +96,6 @@ namespace Candy {
     void Application::Terminate()
     {
         isRunning=false;
-        std::cerr << "APPLICATION TERMINATED" << std::endl;
     }
     
     bool Application::OnWindowClose(Events::WindowCloseEvent& event)
