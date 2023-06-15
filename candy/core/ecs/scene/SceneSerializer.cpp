@@ -156,7 +156,6 @@ namespace Candy::ECS
     
     bool SceneSerializer::Deserialize(const std::string& filepath)
     {
-        CANDY_CORE_INFO("DESERIALIZING SCENE");
         // read the file into a string
         std::ifstream fin(filepath);
         std::stringstream buffer;
@@ -182,27 +181,23 @@ namespace Candy::ECS
         }
         
         projectNode >> scene->name;
-        CANDY_CORE_INFO("SCENE NAME: {}", scene->name);
         auto entitiesNode = root["Entities"];
         
         if (entitiesNode.valid())
         {
-            CANDY_CORE_INFO("ENTITIES NODE VALID");
             for (auto entity : entitiesNode)
             {
                 uint64_t uuid;
                 entity["Entity"] >> uuid;
-                CANDY_CORE_INFO("ENTITY VALID");
                 
                 std::string name;
                 auto nameComponent = entity["NameComponent"]["Name"];
-                CANDY_CORE_INFO("NAME COMPONENT VALID");
                 if (nameComponent.valid())
                 {
                     nameComponent >> name;
                     //name.assign(nameComponent.val().begin(), nameComponent.val().end());
                 }
-                CANDY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+                //CANDY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
                 
                 Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, name);
                 
@@ -210,9 +205,7 @@ namespace Candy::ECS
                 
                 if (transformComponent.has_key())
                 {
-                    CANDY_CORE_INFO("TRANSFORM COMPONENT VALID");
                     auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-                    CANDY_CORE_INFO("GOT TRANSFORM COMPONENT");
                     Vector3* pos = &tc.position;
                     Quaternion* rot = &tc.rotation;
                     Vector3* scale = &tc.scale;
@@ -225,27 +218,22 @@ namespace Candy::ECS
                     transformComponent["Rotation"][1] >> rot->y;
                     transformComponent["Rotation"][2] >> rot->z;
                     
-                    /*transformComponent["Position"] >> pos;
-                    transformComponent["Rotation"] >> rot;
-                    transformComponent["Scale"] >> scale;
-                    CANDY_CORE_INFO("TRANSFORM COMPONENT ASSIGNED");
-                    //tc.position = *pos;
-                    //tc.rotation = *rot;
-                    //tc.scale = *scale;
-                    CANDY_CORE_INFO("DESERIALIZED TRANSFORM COMPONENT");*/
+                    transformComponent["Scale"][0] >> scale->x;
+                    transformComponent["Scale"][1] >> scale->y;
+                    transformComponent["Scale"][2] >> scale->z;
+                    
                 }
                 
-                /*auto cameraComponent = entity["CameraComponent"];
-                if (!cameraComponent.empty())
+                auto cameraComponent = entity["CameraComponent"];
+                if (cameraComponent.has_key())
                 {
                     auto& cc = deserializedEntity.AddComponent<CameraComponent>();
                     
                     auto cameraProps = cameraComponent["Camera"];
                     
-                    emit_yaml(cameraProps);
+                    
                     int projectionType=1;
-                    //cameraProps["ProjectionType"] >> projectionType;
-                    CANDY_CORE_INFO("ADDED PROJECTION TYPE");
+                    cameraProps["ProjectionType"] >> projectionType;
                     
                     cc.camera.SetProjectionType((SceneCamera::ProjectionType)projectionType);
                     
@@ -269,11 +257,10 @@ namespace Candy::ECS
                     cc.camera.SetOrthographicSize(orthographicSize);
                     cc.camera.SetOrthographicNearClip(orthographicNear);
                     cc.camera.SetOrthographicFarClip(orthographicFar);
-                    CANDY_CORE_INFO("ADDED CAMERA PROPS");
                     
                     
                     
-                }*/
+                }
                 
             }
         }
