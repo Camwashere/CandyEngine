@@ -99,6 +99,7 @@ namespace Candy::ECS {
         entity.AddComponent<IDComponent>(uuid);
         auto& tag = entity.AddComponent<NameComponent>();
         tag.name = name.empty() ? "Entity" : name;
+        entity.AddComponent<TransformComponent>();
         
         entityMap[uuid] = entity;
         
@@ -257,6 +258,19 @@ namespace Candy::ECS {
     void Scene::OnRuntimeStart(){isRunning=true;}
     void Scene::OnUpdateRuntime()
     {
+        if (!isPaused || stepFrames-- > 0)
+        {
+            registry.view<NativeScriptComponent>().each([this](auto entity, auto& nsc)
+            {
+                if (!nsc.instance)
+                {
+                    nsc.instance = nsc.InstantiateScript();
+                    nsc.instance->entity = Entity{entity, this};
+                    nsc.instance->OnCreate();
+                }
+                nsc.instance->OnUpdate();
+            });
+        }
         // Render 2D
         Graphics::Camera* mainCamera = nullptr;
         Math::Matrix4 cameraTransform;

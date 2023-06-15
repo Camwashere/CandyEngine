@@ -12,7 +12,7 @@ namespace Candy{
     {
     private:
         ProjectConfig config;
-        std::filesystem::path projectDirectory;
+        std::filesystem::path projectDirectory="sugar/SandboxProject";
         inline static SharedPtr<Project> activeProject;
     
     public:

@@ -1,6 +1,6 @@
 #include "ProjectSerializer.hpp"
-#include <ryml.hpp>
 #include <ryml_std.hpp>
+#include <ryml.hpp>
 
 
 namespace Candy{
@@ -45,15 +45,25 @@ namespace Candy{
         {
             return false;
         }
-        auto nameNode = projectNode["Name"].val();
+        auto nameNode = projectNode["Name"];
         auto startSceneNode = projectNode["StartScene"].val();
         auto assetDirectoryNode = projectNode["AssetDirectory"].val();
         auto scriptModulePathNode = projectNode["ScriptModulePath"].val();
+        projectNode["Name"] >> config.name;
+        std::string startScenePath;
+        std::string assetDirectoryPath;
+        std::string scriptModulePath;
+        projectNode["StartScene"] >> startScenePath;
+        projectNode["AssetDirectory"] >> assetDirectoryPath;
+        projectNode["ScriptModulePath"] >> scriptModulePath;
+        config.startScene = startScenePath;
+        config.assetDirectory = assetDirectoryPath;
+        config.scriptModulePath = scriptModulePath;
         
-        config.name.assign(nameNode.begin(), nameNode.end());
-        config.startScene.assign(startSceneNode.begin(), startSceneNode.end());
-        config.assetDirectory.assign(assetDirectoryNode.begin(), assetDirectoryNode.end());
-        config.scriptModulePath.assign(scriptModulePathNode.begin(), scriptModulePathNode.end());
+        CANDY_CORE_INFO("Project Name: {}", config.name);
+        CANDY_CORE_INFO("Project Start Scene Path: {}", config.startScene.string());
+        CANDY_CORE_INFO("Project Asset Directory Path: {}", config.assetDirectory.string());
+        CANDY_CORE_INFO("Project Script Module Path: {}", config.scriptModulePath.string());
 
         return true;
         

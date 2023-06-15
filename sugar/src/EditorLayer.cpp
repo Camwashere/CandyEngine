@@ -53,6 +53,7 @@ namespace Candy
         
         editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
         Renderer2D::SetLineWidth(4.0f);
+        CANDY_CORE_INFO("ON ATTACH");
     }
     
     void EditorLayer::OnDetach()
