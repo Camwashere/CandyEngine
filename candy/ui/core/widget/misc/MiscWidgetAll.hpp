@@ -1,4 +1,0 @@
-#ifndef ENGINE_MISCWIDGETALL_H
-#define ENGINE_MISCWIDGETALL_H
-#include "Spacer.hpp"
-#endif //ENGINE_MISCWIDGETALL_H

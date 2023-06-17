@@ -1,5 +1,5 @@
 #include "Rectangle.hpp"
-#include "imgui_internal.h"
+
 namespace Candy
 {
     using namespace Math;
@@ -155,8 +155,7 @@ namespace Candy
         Math::Vector2 Rectangle::NormalizePoint(const Math::Vector2 &point) const
         { return (point - min) / (max - min); }
         
-        Rectangle::operator ImRect() const
-        { return {min.x, min.y, max.x, max.y}; }
+        
         
     }
 }

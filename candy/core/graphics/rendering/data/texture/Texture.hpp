@@ -51,6 +51,7 @@ namespace Candy::Graphics {
             inline uint GetRendererID()const{return rendererID;}
             inline uint32 GetChannels() const { return channels; }
             inline const std::string& GetPath()const{return filePath;}
+            inline bool IsLoaded()const{return isLoaded;}
             
             
             

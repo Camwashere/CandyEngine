@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include <Candy/CandyEngineBase.hpp>
+#include <CandyBase.hpp>
 #include "Limit.hpp"
 
 namespace Candy::Math

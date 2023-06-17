@@ -1,13 +1,14 @@
 #include "EditorLayer.hpp"
 #include "imgui_internal.h"
 #include <Candy/CandyEngine.hpp>
+#include "ImGuizmo.h"
 namespace Candy
 {
     using namespace Graphics;
     using namespace Math;
     using namespace ECS;
     using namespace Events;
-    EditorLayer::EditorLayer() : Layer("EditorLayer"), cameraController(1280.0f/720.0f), squareColor(0.2f, 0.3f, 0.8f, 1.0f)
+    EditorLayer::EditorLayer() : Layer("EditorLayer"), cameraController(1280.0f/720.0f), squareColor(0.2f, 0.3f, 0.8f, 1.0f), editorCamera(Vector3::zero)
     {}
     
     void EditorLayer::OnAttach()
@@ -47,11 +48,14 @@ namespace Candy
             {
                 Application::Close();
             }
+           
+            
             
             
         }
         
-        editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+        //editorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+        
         Renderer2D::SetLineWidth(4.0f);
         
     }
@@ -72,15 +76,31 @@ namespace Candy
             framebuffer->Resize((uint32_t)viewportSize.x, (uint32_t)viewportSize.y);
             cameraController.OnResize(viewportSize.x, viewportSize.y);
             editorCamera.SetViewportSize(viewportSize.x, viewportSize.y);
+            
         }
         // Render
         Renderer2D::ResetStats();
         framebuffer->Bind();
-        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+        RenderCommand::SetClearColor(Color::grey);
         RenderCommand::Clear();
+        
+        
+        
+        //Renderer2D::BeginScene(cameraController.GetCamera());
+        //std::cout << editorCamera.GetViewProjectionMatrix() << std::endl;
+        std::cout << editorCamera.GetViewProjectionMatrix() << std::endl;
+        //std::cout << cameraController.GetCamera().GetViewProjectionMatrix() << std::endl;
+        
+        
+        Renderer2D::BeginScene(editorCamera);
+        Entity entity = activeScene->FindEntityByName("CheckerboardBG");
+        Renderer2D::DrawSprite(entity.GetComponent<TransformComponent>().GetTransform(), entity.GetComponent<SpriteRendererComponent>(), entity.GetUUID());
+        Renderer2D::EndScene();
+        
         
         // Clear our entity ID attachment to -1
         framebuffer->ClearAttachment(1, -1);
+        
         
         
         switch (sceneState)
@@ -93,8 +113,6 @@ namespace Candy
                 }
                 
                 editorCamera.OnUpdate();
-                
-                
                 activeScene->OnUpdateEditor(editorCamera);
                 break;
             }
@@ -230,6 +248,9 @@ namespace Candy
             if (ImGui::BeginMenu("Script"))
             {
                 if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
+                {
+                
+                }
                     //Scripting::ScriptEngine::ReloadAssembly();
                 
                 ImGui::EndMenu();
@@ -247,11 +268,20 @@ namespace Candy
         
         
         ImGui::Begin("Stats");
+    #if 0
+        std::string name = "None"
+        if (hoveredEntity)
+        {
+            name = hoveredEntity.GetComponent<TagComponent>().tag;
+        }
+        ImGui::Text("Hovered Entity %s", name.c_str());
+    #endif
+        
         
         auto stats = Renderer2D::GetStats();
         ImGui::Text("Renderer2D Stats:");
-        ImGui::Text("Draw Calls: %d", stats.drawCalls);
-        ImGui::Text("Quads: %d", stats.quadCount);
+        ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+        ImGui::Text("Quads: %d", stats.QuadCount);
         ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
         
@@ -261,6 +291,7 @@ namespace Candy
         
         ImGui::Begin("Settings");
         ImGui::Checkbox("Show physics colliders", &showPhysicsColliders);
+        //ImGui::Image((ImTextureID)font->GetAtlasTexture()->GetRendererID(), {512,512},{0,1},{1,0});
         ImGui::End();
         
         
@@ -298,10 +329,10 @@ namespace Candy
         Entity selectedEntity = sceneHierarchyPanel.GetSelectedEntity();
         if (selectedEntity && gizmoType != -1)
         {
-            //ImGuizmo::SetOrthographic(false);
-            //ImGuizmo::SetDrawlist();
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
             
-            //ImGuizmo::SetRect(viewportBounds[0].x, viewportBounds[0].y, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
+            ImGuizmo::SetRect(viewportBounds[0].x, viewportBounds[0].y, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
             
             // Camera
             
@@ -314,7 +345,7 @@ namespace Candy
             Math::Matrix4 transform = tc.GetTransform();
             
             // Snapping
-            /*bool snap = Input::IsKeyPressed(Key::LeftControl);
+            bool snap = Input::IsKeyPressed(Key::LeftControl);
             float snapValue = 0.5f; // Snap to 0.5m for translation/scale
             // Snap to 45 degrees for rotation
             if (gizmoType == ImGuizmo::OPERATION::ROTATE)
@@ -335,7 +366,7 @@ namespace Candy
                 tc.position = position;
                 tc.rotation += deltaRotation;
                 tc.scale = scale;
-            }*/
+            }
         }
         
         
@@ -407,6 +438,44 @@ namespace Candy
                 
                 break;
             }
+            
+            // Gizmos
+            case Key::Q:
+                if (!ImGuizmo::IsUsing())
+                {
+                    gizmoType=-1;
+                }
+                break;
+            case Key::W:
+                if (!ImGuizmo::IsUsing())
+                {
+                    gizmoType=ImGuizmo::OPERATION::TRANSLATE;
+                }
+                break;
+            case Key::E:
+                if (!ImGuizmo::IsUsing())
+                {
+                    gizmoType=ImGuizmo::OPERATION::ROTATE;
+                }
+                break;
+            case Key::R:
+                if (!ImGuizmo::IsUsing())
+                {
+                    gizmoType=ImGuizmo::OPERATION::SCALE;
+                }
+                break;
+                
+            case Key::Delete:
+                if (Application::Instance().GetUILayer()->GetActiveWidgetID()==0)
+                {
+                    Entity selectedEntity = sceneHierarchyPanel.GetSelectedEntity();
+                    if (selectedEntity)
+                    {
+                        sceneHierarchyPanel.SetSelectedEntity({});
+                        activeScene->DestroyEntity(selectedEntity);
+                    }
+                }
+                break;
                 
             
         }
@@ -418,8 +487,8 @@ namespace Candy
     {
         if (e.GetButton() == Mouse::ButtonLeft)
         {
-            /*if (viewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
-                sceneHierarchyPanel.SetSelectedEntity(hoveredEntity);*/
+            if (viewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
+                sceneHierarchyPanel.SetSelectedEntity(hoveredEntity);
         }
         return false;
     }
@@ -469,6 +538,7 @@ namespace Candy
             CANDY_CORE_WARN("Filepath: {} is empty", filepath);
             return false;
         }
+        
         OpenProject(filepath);
         return true;
     }

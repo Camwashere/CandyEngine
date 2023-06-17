@@ -59,7 +59,7 @@ namespace Candy::Math{
             
             void Normalize();
             
-            
+            explicit operator std::string()const{return "{x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z) + ", w: " + std::to_string(w) + "}";}
             
             float &operator[](int index);
             

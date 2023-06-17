@@ -59,6 +59,7 @@ namespace Candy{
         config.startScene = startScenePath;
         config.assetDirectory = assetDirectoryPath;
         config.scriptModulePath = scriptModulePath;
+        
       
 
         return true;

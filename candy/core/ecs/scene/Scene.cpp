@@ -7,10 +7,7 @@ namespace Candy::ECS {
     
     
     
-    Scene::Scene()
-    {
-    
-    }
+    Scene::Scene()=default;
     
     Scene::~Scene() = default;
     
@@ -82,7 +79,26 @@ namespace Candy::ECS {
         Graphics::Renderer2D::BeginScene(camera);
         
         
-        //TODO Draw sprites, circles, text, etc
+        // Draw sprites
+        {
+            auto group = registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+            for (auto entity : group)
+            {
+                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                Graphics::Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+            }
+        }
+        
+        // Draw circles
+        {
+            auto view = registry.view<TransformComponent, CircleRendererComponent>();
+            for (auto entity : view)
+            {
+                auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+                
+                Graphics::Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
+            }
+        }
         Graphics::Renderer2D::EndScene();
         
     
@@ -174,86 +190,7 @@ namespace Candy::ECS {
         return {};
     }
     
-    /*void Scene::OnRuntimeStart()
-    {
-        isRunning=true;
-        {
-            ScriptEngine::OnRuntimeStart(this);
-            
-            auto view = registry.view<ScriptComponent>();
-            for (auto e : view)
-            {
-                Entity entity = {e, this};
-                ScriptEngine::OnCreateEntity(entity);
-            }
-        }
-    
-    }*
-    
-    void Scene::OnUpdateRuntime()
-    {
-        if (!isPaused || stepFrames-- > 0)
-        {
-            // Update scripts
-            {
-                // C# Entity OnUpdate
-                auto view = registry.view<ScriptComponent>();
-                for (auto e : view)
-                {
-                    Entity entity = { e, this };
-                    ScriptEngine::OnUpdateEntity(entity);
-                }
-                
-                registry.view<NativeScriptComponent>().each([this](auto entity, auto& nsc)
-                                                              {
-                                                                  // TODO: Move to Scene::OnScenePlay
-                                                                  if (!nsc.instance)
-                                                                  {
-                                                                      nsc.instance = nsc.InstantiateScript();
-                                                                      nsc.instance->entity = Entity{ entity, this };
-                                                                      nsc.instance->OnCreate();
-                                                                  }
-                                                                  
-                                                                  nsc.instance->OnUpdate();
-                                                              });
-            }
-            
-            
-        }
-        
-        // Render 2D
-        Graphics::Camera* mainCamera = nullptr;
-        Math::Matrix4 cameraTransform;
-        {
-            auto view = registry.view<TransformComponent, CameraComponent>();
-            for (auto entity : view)
-            {
-                auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-                
-                if (camera.primary)
-                {
-                    mainCamera = &camera.camera;
-                    cameraTransform = transform.GetTransform();
-                    break;
-                }
-            }
-        }
-        if (mainCamera)
-        {
-            Graphics::Renderer2D::BeginScene(*mainCamera, cameraTransform);
-            //Draw sprites, circles, text, etc
-            Graphics::Renderer2D::EndScene();
-        }
-        
-        
-    }
-    
-    void Scene::OnRuntimeStop()
-    {
-        isRunning=false;
-        ScriptEngine::OnRuntimeStop();
-    
-    }*/
+   
     
     void Scene::OnRuntimeStart(){isRunning=true;}
     void Scene::OnUpdateRuntime()
@@ -292,7 +229,25 @@ namespace Candy::ECS {
         {
             Graphics::Renderer2D::BeginScene(*mainCamera, cameraTransform);
             //Draw sprites, circles, text, etc
-            Graphics::Renderer2D::EndScene();
+            {
+                // Sprites
+                auto group = registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+                for (auto entity : group)
+                {
+                    auto[transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                    Graphics::Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+                }
+                
+                // Circles
+                auto view = registry.view<TransformComponent, CircleRendererComponent>();
+                for (auto entity : view)
+                {
+                    auto[transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+                    Graphics::Renderer2D::DrawCircle(transform.GetTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
+                }
+                
+                Graphics::Renderer2D::EndScene();
+            }
         }
     }
     void Scene::OnRuntimeStop(){isRunning=false;}
@@ -339,6 +294,16 @@ namespace Candy::ECS {
         
         viewportWidth = width;
         viewportHeight = height;
+        
+        auto view = registry.view<CameraComponent>();
+        for (auto entity : view)
+        {
+            auto& cameraComponent = view.get<CameraComponent>(entity);
+            if (!cameraComponent.fixedAspectRatio)
+            {
+                cameraComponent.camera.SetViewportSize(width, height);
+            }
+        }
     
     }
     
@@ -378,6 +343,16 @@ namespace Candy::ECS {
     
     template<>
     void Scene::OnComponentAdded<NameComponent>(Entity entity, NameComponent& component)
+    {
+    }
+    
+    template<>
+    void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+    {
+    }
+    
+    template<>
+    void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
     {
     }
     

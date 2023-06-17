@@ -1,6 +1,6 @@
 #pragma once
 #include <Candy/Math.hpp>
-
+#include "Camera.hpp"
 namespace Candy::Events
 {
     class Event;
@@ -9,76 +9,57 @@ namespace Candy::Events
 
 namespace Candy::Graphics
 {
-    class EditorCamera
+    class EditorCamera : public Camera
     {
     private:
-        float fov, aspectRatio, nearClip, farClip;
-        
-        Math::Matrix4 projectionMatrix;
-        Math::Matrix4 viewMatrix;
-        Math::Vector3 position;
-        Math::Vector3 focalPoint;
-        
-        Math::Vector2 initialMousePosition;
-        
-        float distance;
-        float pitch, yaw;
-        
-        Math::Vector2 viewportSize;
-        
-        float rotationSpeed;
-        float zoomSpeed;
-        float panSpeed;
-        
+        static constexpr float YAW=-90.0f;
+        static constexpr float PITCH       =  0.0f;
+        static constexpr float SPEED       =  0.006f;
+        static constexpr float SENSITIVITY =  0.1f;
+        static constexpr float SCROLL_SENSITIVITY=0.1f;
+        static constexpr float ZOOM        =  45.0f;
     private:
+        // Camera Attributes
+        Math::Vector3 position;
+        Math::Vector3 localFront;
+        Math::Vector3 localUp;
+        Math::Vector3 localRight;
+        
+        // Euler Angles
+        float yaw, pitch;
+        
+        // Camera Options
+        float movementSpeed;
+        float mouseSensitivity;
+        float scrollSensitivity;
+        float zoom;
+        
+        // Projection Attributes
+        float fov, aspectRatio, nearClip, farClip;
+        float viewportWidth, viewportHeight;
+        
+        // Mouse attributes
+        bool firstMouse=true;
+        Math::Vector2 lastMousePos;
+    private:
+        void UpdateCameraVectors();
         void UpdateProjection();
-        void UpdateView();
-        
-        bool OnMouseScroll(Events::MouseScrollEvent& event);
-        
-        void MousePan(const Math::Vector2& delta);
-        void MouseRotate(const Math::Vector2& delta);
-        void MouseZoom(float delta);
-        
-        Math::Vector3 CalculatePosition()const;
-        
-        
-        Math::Vector2 CalculatePanSpeed()const;
-        float CalculateZoomSpeed()const;
-        
+        void ProcessMouseMovement(const Events::MouseMovedEvent& event, bool constrainPitch=true);
+        void ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch=true);
+        void ProcessMouseScroll(const Events::MouseScrollEvent& event);
+        void ProcessKeyboard(Math::Direction3 direction, float deltaTime);
+        void ProcessKeyboardEvent();
         
     public:
-        EditorCamera(float fov=45.0f, float aspectRatio=1.778f, float nearClip=0.1f, float farClip=1000.0f);
+        EditorCamera(const Math::Vector3& pos, const Math::Vector3& upValue=Math::Vector3::up, float yawValue=YAW, float pitchValue=PITCH);
         
-    public:
-        void OnUpdate();
+        void SetViewportSize(float width, float height) {viewportWidth=width;viewportHeight = height; UpdateProjection();}
+        Math::Matrix4 GetViewMatrix()const;
+        Math::Matrix4 GetViewProjectionMatrix()const{return projectionMatrix*GetViewMatrix();}
+        
         void OnEvent(Events::Event& event);
         
-    public:
-        inline float GetDistance()const{return distance;}
-        inline void SetDistance(float value){distance=value;}
-        inline void SetViewportSize(float width, float height){viewportSize.Set(width, height);}
-        inline void SetViewportSize(const Math::Vector2& size){viewportSize=size; UpdateProjection();}
-        
-        const Math::Matrix4& GetViewMatrix()const{return viewMatrix;}
-        const Math::Matrix4& GetProjectionMatrix()const{return projectionMatrix;}
-        Math::Matrix4 GetViewProjectionMatrix()const{return projectionMatrix*viewMatrix;}
-        
-        Math::Vector3 GetLocalUp()const;
-        Math::Vector3 GetLocalRight()const;
-        Math::Vector3 GetLocalForward()const;
-        Math::Vector3 GetLocalDown()const;
-        Math::Vector3 GetLocalLeft()const;
-        Math::Vector3 GetLocalBack()const;
-        Math::Vector3 GetLocalDirection(Math::Direction3 direction)const;
-        
-        const Math::Vector3& GetPosition()const{return position;}
-        Math::Quaternion GetOrientation()const;
-        
-        float GetPitch()const{return pitch;}
-        float GetYaw()const{return yaw;}
-        
-        
+        void OnUpdate();
         
     };
 }

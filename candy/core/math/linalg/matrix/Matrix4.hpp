@@ -1,6 +1,6 @@
 #pragma once
 #include "../vector/VectorAll.hpp"
-#include <Candy/CandyEngineBase.hpp>
+#include <CandyBase.hpp>
 #include <xmmintrin.h>
 
 namespace Candy::Math{
@@ -16,7 +16,7 @@ namespace Candy::Math{
         private:
             union
             {
-                alignas(16) std::array<float, 16> data;
+                alignas(16) std::array<float, 16> data{0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f,0.0f};
                 alignas(16) std::array<Vector4, 4> columns;
                 alignas(16) __m128 matrix[4];
             };
@@ -29,11 +29,11 @@ namespace Candy::Math{
         public:
         public:
             Matrix4();
-            Matrix4(float diagonal);
-            Matrix4(const Vector4& diagonal);
+            explicit Matrix4(float diagonal);
+            explicit Matrix4(const Vector4& diagonal);
             
             template<Numeric... T>
-            Matrix4(T... elements)
+            explicit Matrix4(T... elements)
             {
                 //CANDY_CORE_ASSERT(sizeof...(elements)==16);
                 std::size_t size = sizeof...(elements);
@@ -150,9 +150,9 @@ namespace Candy::Math{
             
             Matrix4 &Invert();
             
-            constexpr inline std::size_t ColumnSize()const{return COLUMN_SIZE;}
-            constexpr inline std::size_t RowSize()const{return ROW_SIZE;}
-            constexpr inline std::size_t TotalSize()const{return TOTAL_SIZE;}
+            [[nodiscard]] constexpr inline std::size_t ColumnSize()const{return COLUMN_SIZE;}
+            [[nodiscard]] constexpr inline std::size_t RowSize()const{return ROW_SIZE;}
+            [[nodiscard]] constexpr inline std::size_t TotalSize()const{return TOTAL_SIZE;}
             void PrintFlat()const;
             
             

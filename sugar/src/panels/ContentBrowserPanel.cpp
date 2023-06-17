@@ -1,5 +1,6 @@
 #include "ContentBrowserPanel.hpp"
 #include <Candy/CandyEngine.hpp>
+#include "imgui.h"
 namespace Candy
 {
     ContentBrowserPanel::ContentBrowserPanel() : baseDirectory(Project::GetAssetDirectory()), currentDirectory(baseDirectory)

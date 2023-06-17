@@ -1,10 +1,9 @@
 #pragma once
 #include <unordered_map>
 #include <Candy/CandyEngineBase.hpp>
+#include "../../graphics/rendering/camera/EditorCamera.hpp"
 #include <entt/entt.hpp>
-namespace Candy::Graphics{
-    class EditorCamera;
-}
+
 namespace Candy{
     class SceneHierarchyPanel;
 }

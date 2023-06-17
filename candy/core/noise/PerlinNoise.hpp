@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "../../include/Candy/Math.hpp"
+#include <CandyMath.hpp>
 
 
 namespace Candy::Noise

@@ -21,6 +21,7 @@ namespace Candy {
     {
         std::string name="Engine Application";
         double version=1.0;
+        std::string workingDirectory;
         ApplicationCommandLineArgs commandLineArgs;
     };
     class Application {

@@ -2,14 +2,11 @@
 #include <Candy/Math.hpp>
 #include "camera/CameraAll.hpp"
 #include "data/texture/Texture.hpp"
+#include "../../ecs/component/BaseComponents.hpp"
 namespace Candy::Graphics
 {
     class Renderer2D
     {
-    private:
-        static void StartBatch();
-        static void NextBatch();
-        
     public:
         static void Init();
         static void Shutdown();
@@ -41,7 +38,16 @@ namespace Candy::Graphics
         static void DrawRect(const Math::Vector3& position, const Math::Vector2& size, const Math::Vector4& color, int entityID = -1);
         static void DrawRect(const Math::Matrix4& transform, const Math::Vector4& color, int entityID = -1);
         
+        static void DrawSprite(const Math::Matrix4& transform, ECS::SpriteRendererComponent& src, int entityID);
         
+        struct TextParams
+        {
+            Math::Vector4 Color{ 1.0f };
+            float Kerning = 0.0f;
+            float LineSpacing = 0.0f;
+        };
+        //static void DrawString(const std::string& string, SharedPtr<Font> font, const Math::Matrix4& transform, const TextParams& textParams, int entityID = -1);
+        //static void DrawString(const std::string& string, const Math::Matrix4& transform, const TextComponent& component, int entityID = -1);
         
         static float GetLineWidth();
         static void SetLineWidth(float width);
@@ -49,13 +55,18 @@ namespace Candy::Graphics
         // Stats
         struct Statistics
         {
-            uint32_t drawCalls = 0;
-            uint32_t quadCount = 0;
+            uint32_t DrawCalls = 0;
+            uint32_t QuadCount = 0;
             
-            uint32_t GetTotalVertexCount() const { return quadCount * 4; }
-            uint32_t GetTotalIndexCount() const { return quadCount * 6; }
+            uint32_t GetTotalVertexCount() const { return QuadCount * 4; }
+            uint32_t GetTotalIndexCount() const { return QuadCount * 6; }
         };
         static void ResetStats();
         static Statistics GetStats();
+    
+    private:
+        static void StartBatch();
+        static void NextBatch();
     };
+
 }

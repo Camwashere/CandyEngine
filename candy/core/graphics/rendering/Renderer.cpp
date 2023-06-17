@@ -1,15 +1,17 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include "RenderCommand.hpp"
-
+#include "Renderer2D.hpp"
 namespace Candy::Graphics {
         
         UniquePtr<Renderer::SceneData> Renderer::sceneData = CreateUniquePtr<Renderer::SceneData>();
         void Renderer::Init() {
             RenderCommand::Init();
+            Renderer2D::Init();
         }
         
         void Renderer::Shutdown() {
+            Renderer2D::Shutdown();
             
         }
         
@@ -19,7 +21,7 @@ namespace Candy::Graphics {
         }
         void Renderer::BeginScene(OrthographicCamera& camera)
         {
-            sceneData->viewMatrix = camera.GetViewMatrix();
+            sceneData->viewMatrix = camera.GetViewProjectionMatrix();
             
             
         }
@@ -30,10 +32,10 @@ namespace Candy::Graphics {
         
         void Renderer::Submit(const SharedPtr<Shader> &shader, const SharedPtr<VertexArray> &vertexArray,
                               const Math::Matrix4 &transform) {
-            vertexArray->Bind();
             shader->Bind();
-            shader->SetMatrix4("view", sceneData->viewMatrix);
-            shader->SetMatrix4("model", transform);
+            shader->SetMatrix4("u_ViewProjection", sceneData->viewMatrix);
+            shader->SetMatrix4("u_Transform", transform);
+            vertexArray->Bind();
             RenderCommand::DrawIndexed(vertexArray);
             
         }

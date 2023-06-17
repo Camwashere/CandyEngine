@@ -107,16 +107,41 @@ namespace Candy::ECS
             ref["Entity"]["CameraComponent"]["Camera"] |= c4::yml::MAP;
             ref["Entity"]["CameraComponent"]["Camera"]["ProjectionType"] << (int)camera.GetProjectionType();
             
-            ref["Entity"]["CameraComponent"]["PerspectiveFOV"] << camera.GetPerspectiveVerticalFov();
-            ref["Entity"]["CameraComponent"]["PerspectiveNear"] << camera.GetPerspectiveNearClip();
-            ref["Entity"]["CameraComponent"]["PerspectiveFar"] << camera.GetPerspectiveFarClip();
-            ref["Entity"]["CameraComponent"]["OrthographicSize"]  << camera.GetOrthographicSize();
-            ref["Entity"]["CameraComponent"]["OrthographicNear"] << camera.GetOrthographicNearClip();
-            ref["Entity"]["CameraComponent"]["OrthographicFar"] << camera.GetOrthographicFarClip();
+            ref["Entity"]["CameraComponent"]["Camera"]["PerspectiveFOV"] << camera.GetPerspectiveVerticalFov();
+            ref["Entity"]["CameraComponent"]["Camera"]["PerspectiveNear"] << camera.GetPerspectiveNearClip();
+            ref["Entity"]["CameraComponent"]["Camera"]["PerspectiveFar"] << camera.GetPerspectiveFarClip();
+            ref["Entity"]["CameraComponent"]["Camera"]["OrthographicSize"]  << camera.GetOrthographicSize();
+            ref["Entity"]["CameraComponent"]["Camera"]["OrthographicNear"] << camera.GetOrthographicNearClip();
+            ref["Entity"]["CameraComponent"]["Camera"]["OrthographicFar"] << camera.GetOrthographicFarClip();
             
             ref["Entity"]["CameraComponent"]["Primary"] << cameraComponent.primary;
             ref["Entity"]["CameraComponent"]["FixedAspectRatio"] << cameraComponent.fixedAspectRatio;
             
+        }
+        if (entity.HasComponent<SpriteRendererComponent>())
+        {
+            auto& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
+            ref["Entity"]["SpriteRendererComponent"] |= c4::yml::MAP;
+            ref["Entity"]["SpriteRendererComponent"]["Color"][0] << spriteRenderer.color.r;
+            ref["Entity"]["SpriteRendererComponent"]["Color"][1] << spriteRenderer.color.g;
+            ref["Entity"]["SpriteRendererComponent"]["Color"][2] << spriteRenderer.color.b;
+            ref["Entity"]["SpriteRendererComponent"]["Color"][3] << spriteRenderer.color.a;
+            ref["Entity"]["SpriteRendererComponent"]["TexturePath"] << spriteRenderer.texture->GetPath();
+            ref["Entity"]["SpriteRendererComponent"]["TilingFactor"] << spriteRenderer.tilingFactor;
+            
+        
+        }
+        if (entity.HasComponent<CircleRendererComponent>())
+        {
+            auto& circleRenderer = entity.GetComponent<CircleRendererComponent>();
+            ref["Entity"]["CircleRendererComponent"] |= c4::yml::MAP;
+            ref["Entity"]["CircleRendererComponent"]["Color"][0] << circleRenderer.color.r;
+            ref["Entity"]["CircleRendererComponent"]["Color"][1] << circleRenderer.color.g;
+            ref["Entity"]["CircleRendererComponent"]["Color"][2] << circleRenderer.color.b;
+            ref["Entity"]["CircleRendererComponent"]["Color"][3] << circleRenderer.color.a;
+            ref["Entity"]["CircleRendererComponent"]["Thickness"] << circleRenderer.thickness;
+            ref["Entity"]["CircleRendererComponent"]["Fade"] << circleRenderer.fade;
+        
         }
     }
     
@@ -156,6 +181,7 @@ namespace Candy::ECS
     
     bool SceneSerializer::Deserialize(const std::string& filepath)
     {
+        
         // read the file into a string
         std::ifstream fin(filepath);
         std::stringstream buffer;
@@ -191,13 +217,13 @@ namespace Candy::ECS
                 entity["Entity"] >> uuid;
                 
                 std::string name;
-                auto nameComponent = entity["NameComponent"]["Name"];
-                if (nameComponent.valid())
+                auto nameComponent = entity["NameComponent"];
+                if (nameComponent.has_key())
                 {
-                    nameComponent >> name;
+                    nameComponent["Name"] >> name;
                     //name.assign(nameComponent.val().begin(), nameComponent.val().end());
                 }
-                //CANDY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+                CANDY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
                 
                 Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, name);
                 
@@ -221,6 +247,8 @@ namespace Candy::ECS
                     transformComponent["Scale"][0] >> scale->x;
                     transformComponent["Scale"][1] >> scale->y;
                     transformComponent["Scale"][2] >> scale->z;
+                    
+                    CANDY_CORE_INFO("Deserialized transform");
                     
                 }
                 
@@ -259,14 +287,40 @@ namespace Candy::ECS
                     cc.camera.SetOrthographicFarClip(orthographicFar);
                     
                     
+                    cameraComponent["Primary"] >> cc.primary;
+                    cameraComponent["FixedAspectRatio"] >> cc.fixedAspectRatio;
                     
+                }
+                auto spriteRendererComponent = entity["SpriteRendererComponent"];
+                if (spriteRendererComponent.has_key())
+                {
+                    auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
+                    auto color = spriteRendererComponent["Color"];
+                    color[0] >> src.color.r;
+                    color[1] >> src.color.g;
+                    color[2] >> src.color.b;
+                    color[3] >> src.color.a;
+                    
+                    std::string texturePath;
+                    spriteRendererComponent["TexturePath"] >> texturePath;
+                    src.texture = Texture::Create(texturePath);
+                    spriteRendererComponent["TilingFactor"] >> src.tilingFactor;
+                }
+                auto circleRendererComponent = entity["CircleRendererComponent"];
+                if (circleRendererComponent.has_key())
+                {
+                    auto& src = deserializedEntity.AddComponent<CircleRendererComponent>();
+                    auto color = circleRendererComponent["Color"];
+                    color[0] >> src.color.r;
+                    color[1] >> src.color.g;
+                    color[2] >> src.color.b;
+                    color[3] >> src.color.a;
+                    circleRendererComponent["Thickness"] >> src.thickness;
+                    circleRendererComponent["Fade"] >> src.fade;
                 }
                 
             }
         }
-        
-        
-        
         
         return true;
     

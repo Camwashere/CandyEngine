@@ -34,19 +34,19 @@ namespace Candy::Math{
             result[5] = (-sqx + sqy - sqz + sqw) * invs;
             result[10] = (-sqx - sqy + sqz + sqw) * invs;
             
-            double tmp1 = x * y;
-            double tmp2 = z * w;
-            result[1] = 2.0 * (tmp1 + tmp2) * invs;
-            result[4] = 2.0 * (tmp1 - tmp2) * invs;
+            float tmp1 = x * y;
+            float tmp2 = z * w;
+            result[1] = 2.0f * (tmp1 + tmp2) * invs;
+            result[4] = 2.0f * (tmp1 - tmp2) * invs;
             
             tmp1 = x * z;
             tmp2 = y * w;
-            result[3] = 2.0 * (tmp1 - tmp2) * invs;
-            result[8] = 2.0 * (tmp1 + tmp2) * invs;
+            result[3] = 2.0f * (tmp1 - tmp2) * invs;
+            result[8] = 2.0f * (tmp1 + tmp2) * invs;
             tmp1 = y * z;
             tmp2 = x * w;
-            result[6] = 2.0 * (tmp1 + tmp2) * invs;
-            result[9] = 2.0 * (tmp1 - tmp2) * invs;
+            result[6] = 2.0f * (tmp1 + tmp2) * invs;
+            result[9] = 2.0f * (tmp1 - tmp2) * invs;
             return result;
         }
         

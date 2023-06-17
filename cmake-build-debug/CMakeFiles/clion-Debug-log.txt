@@ -2,8 +2,8 @@
 -- Running vcpkg install
 Detecting compiler hash for triplet x64-windows...
 All requested packages are currently installed.
-Restored 0 package(s) from C:\Users\perso\AppData\Local\vcpkg\archives in 70.4 us. Use --debug to see more details.
-Total install time: 86.8 us
+Restored 0 package(s) from C:\Users\perso\AppData\Local\vcpkg\archives in 65.4 us. Use --debug to see more details.
+Total install time: 80 us
 The package boost is compatible with built-in CMake targets:
 
     find_package(Boost REQUIRED [COMPONENTS <libs>...])

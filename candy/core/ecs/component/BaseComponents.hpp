@@ -1,7 +1,8 @@
 #pragma once
 #include <Candy/Math.hpp>
 #include "../scene/SceneCamera.hpp"
-
+#include "../../graphics/color/Color.hpp"
+#include "../../graphics/rendering/data/texture/Texture.hpp"
 namespace Candy::ECS{
         struct IDComponent {
             UUID id;
@@ -12,9 +13,9 @@ namespace Candy::ECS{
         };
         
         struct TransformComponent {
-            Math::Vector3 position;
-            Math::Quaternion rotation;
-            Math::Vector3 scale;
+            Math::Vector3 position = {0.0f, 0.0f, 0.0f};
+            Math::Quaternion rotation = {0.0f, 0.0f, 0.0f, 1.0f};
+            Math::Vector3 scale={1.0f, 1.0f, 1.0f};
             
             Math::Matrix4 GetTransform() const {
                 Math::Matrix4 rot = Math::Matrix4::Rotated(rotation);
@@ -22,7 +23,26 @@ namespace Candy::ECS{
             }
         };
     
+   struct SpriteRendererComponent
+   {
+       Color color=Color::white;
+       SharedPtr<Graphics::Texture> texture;
+       float tilingFactor=1.0f;
+       
+       SpriteRendererComponent()=default;
+       SpriteRendererComponent(const SpriteRendererComponent&)=default;
+       explicit SpriteRendererComponent(const Color& colorValue) : color(colorValue){}
+   };
    
+   struct CircleRendererComponent
+   {
+       Color color=Color::white;
+       float thickness=1.0f;
+       float fade=0.005f;
+       
+       CircleRendererComponent()=default;
+       CircleRendererComponent(const CircleRendererComponent&)=default;
+   };
     
     
     struct CameraComponent
@@ -70,5 +90,5 @@ namespace Candy::ECS{
         };
     
     using AllComponents =
-            ComponentGroup<TransformComponent, ScriptComponent, NativeScriptComponent>;
+            ComponentGroup<IDComponent, NameComponent, TransformComponent, ScriptComponent, NativeScriptComponent, SpriteRendererComponent, CircleRendererComponent>;
 }

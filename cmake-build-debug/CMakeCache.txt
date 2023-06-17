@@ -364,6 +364,15 @@ CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=C:\Users\perso\.clion-vcpkg\vcpkg\scripts\bui
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
+CandyBase_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/core/base
+
+//Value Computed by CMake
+CandyBase_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+CandyBase_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/core/base
+
+//Value Computed by CMake
 CandyEngineAll_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug
 
 //Value Computed by CMake
@@ -371,6 +380,15 @@ CandyEngineAll_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 CandyEngineAll_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll
+
+//Value Computed by CMake
+CandyMath_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/core/math
+
+//Value Computed by CMake
+CandyMath_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+CandyMath_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math
 
 //Value Computed by CMake
 Candy_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy
@@ -575,6 +593,9 @@ ryml_IS_TOP_LEVEL:STATIC=OFF
 //Value Computed by CMake
 ryml_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/lib/rapidyaml
 
+//The directory containing a CMake configuration file for unofficial-shaderc.
+unofficial-shaderc_DIR:PATH=unofficial-shaderc_DIR-NOTFOUND
+
 //The directory containing a CMake configuration file for yaml-cpp.
 yaml-cpp_DIR:PATH=yaml-cpp_DIR-NOTFOUND
 
@@ -713,7 +734,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=8
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

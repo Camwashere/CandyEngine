@@ -1,5 +1,5 @@
 #pragma once
-#include <Candy/CandyEngineBase.hpp>
+#include <CandyBase.hpp>
 
 namespace Candy::Math
 {

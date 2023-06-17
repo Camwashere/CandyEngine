@@ -1,141 +1,198 @@
 #include "EditorCamera.hpp"
 #include <Candy/Math.hpp>
+#include <Candy/App.hpp>
 #include <Candy/Events.hpp>
 namespace Candy{
     using namespace Math;
     using namespace Events;
     namespace Graphics
     {
-        EditorCamera::EditorCamera(float fovValue, float aspectRatioValue, float nearClipValue, float farClipValue)
-        : fov(fovValue), aspectRatio(aspectRatioValue), nearClip(nearClipValue), farClip(farClipValue), distance(10.0f),
-        pitch(0.0f), yaw(0.0f), viewportSize(1280, 720), rotationSpeed(0.8f), zoomSpeed(0.25f), panSpeed(0.01f)
+        EditorCamera::EditorCamera(const Vector3& pos, const Vector3& upValue, float yawValue, float pitchValue)
+                : localFront(Math::Vector3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), scrollSensitivity(SCROLL_SENSITIVITY), zoom(ZOOM),
+                position(pos), localUp(upValue), yaw(yawValue), pitch(pitchValue)
         {
-            UpdateView();
+            UpdateCameraVectors();
         }
         
+        Matrix4 EditorCamera::GetViewMatrix()const
+        {
+            return Matrix4::LookAt(position, position + localFront, localUp);
+        }
+        
+        
+        void EditorCamera::UpdateCameraVectors()
+        {
+            // calculate the new front vector
+            Math::Vector3 frontVec;
+            frontVec.x = Math::Cos(Math::ToRadians(yaw)) * Math::Cos(Math::ToRadians(pitch));
+            frontVec.y = Math::Sin(Math::ToRadians(pitch));
+            frontVec.z = Math::Sin(Math::ToRadians(yaw)) * Math::Cos(Math::ToRadians(pitch));
+            localFront = Math::Vector3::Normalize(frontVec);
+            // also re-calculate the right and up vector
+            localRight = Math::Vector3::Normalize(Math::Vector3::Cross(localFront, Math::Vector3::up));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+            localUp    = Math::Vector3::Normalize(Math::Vector3::Cross(localRight, localFront));
+        }
         
         void EditorCamera::UpdateProjection()
         {
-            aspectRatio=viewportSize.x/viewportSize.y;
+            aspectRatio = viewportWidth / viewportHeight;
             projectionMatrix = Matrix4::Perspective(Math::ToRadians(fov), aspectRatio, nearClip, farClip);
-        }
-        
-        void EditorCamera::UpdateView()
-        {
-            position = CalculatePosition();
-            Math::Quaternion orientation = GetOrientation();
-            viewMatrix = Matrix4::Translation(position)*orientation.ToMatrix();
-            viewMatrix = Matrix4::Invert(viewMatrix);
-        }
-        
-        Math::Vector2 EditorCamera::CalculatePanSpeed()const
-        {
-            float x = std::min(viewportSize.x/1000.0f, 2.4f);
-            float xFactor = 0.0366f * (x*x) - 0.1778f * x + 0.3021f;
-            
-            float y = std::min(viewportSize.y/1000.0f, 2.4f);
-            float yFactor = 0.0366f * (y*y) - 0.1778f * y + 0.3021f;
-            
-            return {xFactor, yFactor};
-        }
-        float EditorCamera::CalculateZoomSpeed()const
-        {
-            float dist = distance*0.2f;
-            dist = Math::Max(dist, 0.0f);
-            float speed = dist*dist;
-            speed = Math::Min(speed, 100.0f);
-            return speed;
-        }
-        
-        Math::Vector3 EditorCamera::CalculatePosition()const
-        {
-            return focalPoint - GetLocalForward()*distance;
-        }
-        
-        void EditorCamera::OnUpdate()
-        {
-            if (Input::IsKeyPressed(Key::LeftAlt))
-            {
-                const Math::Vector2& mousePos = Input::GetMousePosition();
-                Math::Vector2 delta = (mousePos-initialMousePosition)*0.003f;
-                initialMousePosition = mousePos;
-                
-                if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
-                    MousePan(delta);
-                else if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
-                    MouseRotate(delta);
-                else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
-                    MouseZoom(delta.y);
-                
-            }
-            
-            UpdateView();
         }
         
         void EditorCamera::OnEvent(Event& event)
         {
-            EventDispatcher dispatcher(event);
-            dispatcher.Dispatch<MouseScrollEvent>(CANDY_BIND_EVENT_FUNCTION(EditorCamera::OnMouseScroll));
-        }
-        
-        bool EditorCamera::OnMouseScroll(MouseScrollEvent& event)
-        {
-            float delta = event.GetOffsetY() * 0.1f;
-            MouseZoom(delta);
-            UpdateView();
-            return false;
-        }
-        void EditorCamera::MousePan(const Math::Vector2& delta)
-        {
-            Math::Vector2 speed = CalculatePanSpeed();
-            focalPoint += GetLocalLeft() * delta.x * speed.x * distance;
-            focalPoint += GetLocalUp() * delta.y * speed.y * distance;
-        }
-        void EditorCamera::MouseRotate(const Math::Vector2& delta)
-        {
-            float yawSign = GetLocalUp().y < 0 ? -1.0f : 1.0f;
-            yaw += yawSign * delta.x * rotationSpeed;
-            pitch += delta.y * rotationSpeed;
-        }
-        void EditorCamera::MouseZoom(float delta)
-        {
-            distance -= delta * CalculateZoomSpeed();
-            if (distance < 1.0f)
+            switch (event.GetType())
             {
-                focalPoint += GetLocalForward();
-                distance = 1.0f;
+                case Events::EventType::KEY_PRESSED:
+                    ProcessKeyboardEvent();
+                    break;
+                case Events::EventType::MOUSE_MOVE:
+                    ProcessMouseMovement(static_cast<Events::MouseMovedEvent&>(event));
+                    break;
+                case Events::EventType::MOUSE_SCROLL:
+                    ProcessMouseScroll(static_cast<Events::MouseScrollEvent&>(event));
+                    break;
+                default:
+                    break;
             }
         }
         
-        Math::Vector3 EditorCamera::GetLocalUp()const
+        void EditorCamera::OnUpdate()
         {
-            return Quaternion::Rotate(GetOrientation(), Vector3::up);
-        }
-        Math::Vector3 EditorCamera::GetLocalDown()const
-        {
-            return Quaternion::Rotate(GetOrientation(), Vector3::down);
-        }
-        Math::Vector3 EditorCamera::GetLocalRight()const
-        {
-            return Quaternion::Rotate(GetOrientation(), Vector3::right);
-        }
-        Math::Vector3 EditorCamera::GetLocalLeft()const
-        {
-            return Quaternion::Rotate(GetOrientation(), Vector3::left);
-        }
-        Math::Vector3 EditorCamera::GetLocalForward()const
-        {
-            return Quaternion::Rotate(GetOrientation(), Vector3::back);
-        }
-        Math::Vector3 EditorCamera::GetLocalBack()const
-        {
-            return Quaternion::Rotate(GetOrientation(), Vector3::forward);
+            ProcessKeyboardEvent();
         }
         
-        Math::Quaternion EditorCamera::GetOrientation()const
+        void EditorCamera::ProcessKeyboard(Math::Direction3 direction, float deltaTime)
         {
-            return Math::Quaternion(Vector3(-pitch, -yaw, 0.0f));
+            float velocity = movementSpeed * deltaTime;
+            switch (direction)
+            {
+                case Math::Direction3::FORWARD:
+                    position += localFront*velocity;
+                    break;
+                case Math::Direction3::BACK:
+                    position -= localFront*velocity;
+                    break;
+                case Math::Direction2::UP:
+                    position += localUp*velocity;
+                    break;
+                case Math::Direction2::DOWN:
+                    position-=localUp*velocity;
+                    break;
+                case Math::Direction3::LEFT:
+                    position -= localRight*velocity;
+                    break;
+                case Math::Direction3::RIGHT:
+                    position += localRight*velocity;
+                    break;
+                default:
+                    break;
+            }
         }
+        
+        void EditorCamera::ProcessKeyboardEvent()
+        {
+            float deltaTime = Application::DeltaTime();
+            if (Input::IsKeyPressed(Key::Escape))
+            {
+                Application::Instance().Terminate();
+                return;
+            }
+            if (Input::IsKeyPressed(Key::W))
+            {
+                ProcessKeyboard(Math::Direction3::FORWARD, deltaTime);
+            }
+            if (Input::IsKeyPressed(Key::A))
+            {
+                ProcessKeyboard(Math::Direction3::LEFT, deltaTime);
+            }
+            if (Input::IsKeyPressed(Key::Q))
+            {
+                ProcessKeyboard(Math::Direction3::DOWN, deltaTime);
+            }
+            if (Input::IsKeyPressed(Key::S))
+            {
+                ProcessKeyboard(Math::Direction3::BACK, deltaTime);
+            }
+            if (Input::IsKeyPressed(Key::D))
+            {
+                ProcessKeyboard(Math::Direction3::RIGHT, deltaTime);
+            }
+            if (Input::IsKeyPressed(Key::E))
+            {
+                ProcessKeyboard(Math::Direction3::UP, deltaTime);
+            }
+            UpdateCameraVectors();
+        }
+        
+        void EditorCamera::ProcessMouseMovement(const Events::MouseMovedEvent& event, bool constrainPitch)
+        {
+            if (firstMouse)
+            {
+                lastMousePos.x=event.GetX();
+                lastMousePos.y=event.GetY();
+                firstMouse=false;
+            }
+            if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+            {
+                float xOffset = event.GetX() - lastMousePos.x;
+                float yOffset=lastMousePos.y-event.GetY();
+                lastMousePos = Math::Vector2(event.GetX(), event.GetY());
+                ProcessMouseMovement(xOffset, yOffset, constrainPitch);
+            }
+            else if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
+            {
+                float xOffset = event.GetX() - lastMousePos.x;
+                float yOffset=lastMousePos.y-event.GetY();
+                lastMousePos = Math::Vector2(event.GetX(), event.GetY());
+                float deltaTime = Application::DeltaTime();
+                float velocity = movementSpeed * deltaTime;
+                Vector3 directionA = Vector3::Cross(localUp, localFront)*xOffset;
+                Vector3 directionB = Vector3::Cross(localFront, localRight)*yOffset;
+                Vector3 direction = (directionA+directionB);
+                
+                position += direction*velocity;
+                
+                UpdateCameraVectors();
+            }
+            else
+            {
+                firstMouse=true;
+            }
+            
+        }
+        
+        void EditorCamera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
+        {
+            
+            xoffset *= mouseSensitivity;
+            yoffset *= mouseSensitivity;
+            
+            yaw   += xoffset;
+            pitch += yoffset;
+            
+            // make sure that when pitch is out of bounds, screen doesn't get flipped
+            if (constrainPitch)
+            {
+                if (pitch > 89.0f)
+                    pitch = 89.0f;
+                if (pitch < -89.0f)
+                    pitch = -89.0f;
+            }
+            
+            // update Front, Right and Up Vectors using the updated Euler angles
+            UpdateCameraVectors();
+        }
+        void EditorCamera::ProcessMouseScroll(const Events::MouseScrollEvent& event)
+        {
+            float deltaTime = Application::DeltaTime();
+            float velocity = scrollSensitivity * deltaTime;
+            Vector3 direction = Vector3::Cross(localUp, localRight)*event.GetOffsetY();
+            position += direction*velocity;
+            
+            UpdateCameraVectors();
+        }
+        
         
     }
 }

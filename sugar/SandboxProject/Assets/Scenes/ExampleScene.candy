@@ -4,7 +4,7 @@ Entities:
     NameComponent:
       Name: Camera B
     TransformComponent:
-      Translation: [0, 0, 0]
+      Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -22,7 +22,7 @@ Entities:
     NameComponent:
       Name: Camera A
     TransformComponent:
-      Translation: [0, 0, 0]
+      Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -40,13 +40,21 @@ Entities:
     NameComponent:
       Name: Cherno Square
     TransformComponent:
-      Translation: [-1.09518838, 1.10000002, 0]
+      Position: [-1.09518838, 1.10000002, 0]
       Rotation: [0, 0, 0]
       Scale: [4.40999985, 4.40999985, 4.40999985]
+    SpriteRendererComponent:
+      Color: [1, 0.999989986, 0.999989986, 1]
+      TexturePath: sugar/SandboxProject/Assets/Textures/wall.jpg
+      TilingFactor: 1
   - Entity: 6645248621277955267
     NameComponent:
       Name: CheckerboardBG
     TransformComponent:
-      Translation: [2.4000001, 0, -12.255374]
+      Position: [2.4000001, 0, -12.255374]
       Rotation: [0, 0, 0]
       Scale: [20, 20, 20]
+    SpriteRendererComponent:
+      Color: [0.999989986, 1, 0.999989986, 1]
+      TexturePath: assets/textures/Checkerboard.png
+      TilingFactor: 10

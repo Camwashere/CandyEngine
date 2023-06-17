@@ -301,3 +301,49 @@ Abi: 5af9880de0d875824e6f279986b44de06c416bad90bd754cf8e92d0393d8f65e
 Description: yaml-cpp is a YAML parser and emitter in C++ matching the YAML 1.2 spec.
 Status: purge ok not-installed
 
+Package: spirv-headers
+Version: 1.3.231.1
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 40daa5a303c7ab23f1566681cdc4fc53263a2479281cdefacfc68c332c4e24af
+Description: Machine-readable files for the SPIR-V Registry
+Status: purge ok not-installed
+
+Package: spirv-tools
+Version: 2022.4
+Depends: spirv-headers, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 04fa471bb5e4f4fcd87d3f2f865237d7d5ee337f3336b93cfdfdce08266a99c1
+Description: API and commands for processing SPIR-V modules
+Status: purge ok not-installed
+
+Package: glslang
+Version: 12.1.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 526e039bbc33b355ae3a0f53cbc9f904d9e12be6251ad2941c9524fa593949a0
+Description: Khronos-reference front end for GLSL/ESSL, partial front end for HLSL, and a SPIR-V generator.
+Default-Features: tools
+Status: purge ok not-installed
+
+Package: glslang
+Feature: tools
+Architecture: x64-windows
+Multi-Arch: same
+Description: Build the glslangValidator and spirv-remap binaries
+Status: purge ok not-installed
+
+Package: shaderc
+Version: 2021.1
+Port-Version: 3
+Depends: glslang, spirv-tools, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ea365e33b6af77406b6df66b5613ea84fdd0ad1982763487f4aa384fba7fbe8a
+Description: A collection of tools, libraries and tests for shader compilation.
+Status: purge ok not-installed
+

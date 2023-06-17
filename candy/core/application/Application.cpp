@@ -7,15 +7,19 @@
 
 namespace Candy {
     using namespace Events;
-    Application *Application::instance;
+    Application *Application::instance=nullptr;
     
     
     
     Application::Application(const ApplicationData& applicationData) : appData(applicationData), mainWindow(new Window(appData.name, 3000, 1500)), initialized(false), isRunning(false), minimized(false)
     {
         //Engine::Logger::Init();
-        
+        CANDY_CORE_ASSERT(!instance, "Application already exists");
         instance = this;
+        if (!appData.workingDirectory.empty())
+        {
+            std::filesystem::current_path(appData.workingDirectory);
+        }
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
         Graphics::Renderer::Init();
         Graphics::Renderer2D::Init();
@@ -26,8 +30,7 @@ namespace Candy {
     
     Application::~Application()
     {
-        glfwTerminate();
-        
+        Graphics::Renderer::Shutdown();
     }
     
     void Application::PushLayer(Layer* layer)
@@ -72,6 +75,7 @@ namespace Candy {
         {
             float time = glfwGetTime();
             deltaTime = time-previousFrameTime;
+            previousFrameTime = time;
             ExecuteMainThreadQueue();
             
             if (! minimized)

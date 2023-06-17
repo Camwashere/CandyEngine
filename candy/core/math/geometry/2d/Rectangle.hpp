@@ -1,7 +1,7 @@
 #pragma once
 #include "../../linalg/vector/VectorAll.hpp"
 
-struct ImRect;
+
 namespace Candy::Shape
 {
 
@@ -59,7 +59,6 @@ namespace Candy::Shape
             Math::Vector4 ToVector4() const;
             Math::Vector2 NormalizePoint(const Math::Vector2& point)const;
             
-            operator ImRect()const;
             
             
             

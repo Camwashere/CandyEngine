@@ -227,6 +227,8 @@ namespace Candy
         if (ImGui::BeginPopup("AddComponent"))
         {
             DisplayAddComponentEntry<CameraComponent>("Camera");
+            DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+            DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
             //DisplayAddComponentEntry<ScriptComponent>("Script");
             
             ImGui::EndPopup();
@@ -302,83 +304,36 @@ namespace Candy
             }
         });
         
-        /*DrawComponent<ScriptComponent>("Script", entity, [entity, scene = context](auto& component) mutable
+        DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
         {
-            bool scriptClassExists = Scripting::ScriptEngine::EntityClassExists(component.className);
+            ImGui::ColorEdit4("Color", &component.color[0]);
             
-            static char buffer[64];
-            strcpy_s(buffer, sizeof(buffer), component.className.c_str());
-            
-            UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f), !scriptClassExists);
-            
-            if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+            ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
             {
-                component.className = buffer;
-                return;
-            }
-            
-            // Fields
-            bool sceneRunning = scene->IsRunning();
-            if (sceneRunning)
-            {
-                SharedPtr<Scripting::ScriptInstance> scriptInstance = Scripting::ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-                if (scriptInstance)
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
                 {
-                    const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-                    for (const auto& [name, field] : fields)
-                    {
-                        if (field.type == Scripting::ScriptFieldType::Float)
-                        {
-                            float data = scriptInstance->GetFieldValue<float>(name);
-                            if (ImGui::DragFloat(name.c_str(), &data))
-                            {
-                                scriptInstance->SetFieldValue(name, data);
-                            }
-                        }
-                    }
+                    const wchar_t* path = (const wchar_t*)payload->Data;
+                    std::filesystem::path texturePath(path);
+                    SharedPtr<Texture> texture = Texture::Create(texturePath.string());
+                    if (texture->IsLoaded())
+                        component.texture = texture;
+                    else
+                        CANDY_WARN("Could not load texture {0}", texturePath.filename().string());
                 }
+                ImGui::EndDragDropTarget();
             }
-            else
-            {
-                if (scriptClassExists)
-                {
-                    SharedPtr<Scripting::ScriptClass> entityClass = Scripting::ScriptEngine::GetEntityClass(component.className);
-                    const auto& fields = entityClass->GetFields();
-                    
-                    auto& entityFields = Scripting::ScriptEngine::GetScriptFieldMap(entity);
-                    for (const auto& [name, field] : fields)
-                    {
-                        // Field has been set in editor
-                        if (entityFields.find(name) != entityFields.end())
-                        {
-                            Scripting::ScriptFieldInstance& scriptField = entityFields.at(name);
-                            
-                            // Display control to set it maybe
-                            if (field.type == Scripting::ScriptFieldType::Float)
-                            {
-                                float data = scriptField.GetValue<float>();
-                                if (ImGui::DragFloat(name.c_str(), &data))
-                                    scriptField.SetValue(data);
-                            }
-                        }
-                        else
-                        {
-                            // Display control to set it maybe
-                            if (field.type == Scripting::ScriptFieldType::Float)
-                            {
-                                float data = 0.0f;
-                                if (ImGui::DragFloat(name.c_str(), &data))
-                                {
-                                    Scripting::ScriptFieldInstance& fieldInstance = entityFields[name];
-                                    fieldInstance.field = field;
-                                    fieldInstance.SetValue(data);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });*/
+            
+            ImGui::DragFloat("Tiling Factor", &component.tilingFactor, 0.1f, 0.0f, 100.0f);
+        });
+        
+        DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+        {
+            ImGui::ColorEdit4("Color", &component.color[0]);
+            ImGui::DragFloat("Thickness", &component.thickness, 0.025f, 0.0f, 1.0f);
+            ImGui::DragFloat("Fade", &component.fade, 0.00025f, 0.0f, 1.0f);
+        });
+        
     }
     
     template<typename T>

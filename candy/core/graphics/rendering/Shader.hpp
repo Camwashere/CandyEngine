@@ -16,16 +16,16 @@ namespace Candy::Graphics{
             std::string filepath;
             std::string name;
             std::unordered_map<std::string, int> uniformLocationCache{};
+            
         private:
-            std::string ReadFile(const std::string& filepath);
+            std::string ReadFile(const std::string& path);
             std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
             bool CheckCompileErrors(GLuint shader, const std::string& type);
             void CompileShaders(const char* vertexShaderCode, const char* fragmentShaderCode);
+            void CompileOrGetBinaries(const std::unordered_map<GLenum, std::string>& sources);
             void CreateProgram(uint32 vertex, uint32 fragment);
-            void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
         
         public:
-            Shader();
             explicit Shader(std::string  filepath);
             Shader(std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
             ~Shader();
@@ -34,6 +34,8 @@ namespace Candy::Graphics{
             void Bind() const;
             
             void Unbind() const;
+            
+            const std::string& GetName()const{return name;}
         
         public:
             
@@ -101,6 +103,22 @@ namespace Candy::Graphics{
             static SharedPtr<Shader> Create(const std::string& filepath);
             
             static SharedPtr<Shader> Create(const std::string& shaderName, const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+        };
+        
+        class ShaderLibrary
+        {
+        private:
+            std::unordered_map<std::string, SharedPtr<Shader>> shaders;
+            
+        public:
+            void Add(const std::string& name, const SharedPtr<Shader>& shader);
+            void Add(const SharedPtr<Shader>& shader);
+            SharedPtr<Shader> Load(const std::string& filepath);
+            SharedPtr<Shader> Load(const std::string& name, const std::string& filepath);
+            
+            SharedPtr<Shader> Get(const std::string& name);
+            
+            bool Exists(const std::string& name)const;
         };
     
 }

@@ -9,105 +9,95 @@
 
 namespace Candy::Graphics{
     
-    namespace Utils{
+    namespace Utils
+    {
         static GLenum ShaderTypeFromString(const std::string& type)
         {
             if (type == "vertex")
+            {
                 return GL_VERTEX_SHADER;
+            }
             if (type == "fragment" || type == "pixel")
+            {
                 return GL_FRAGMENT_SHADER;
-            
-            CANDY_CORE_ASSERT(false, "Unknown shader type!");
+            }
+            CANDY_CORE_ASSERT(false, "Unknown Shader Type");
             return 0;
         }
-        
-        
         static const char* GLShaderStageToString(GLenum stage)
         {
             switch (stage)
             {
-                case GL_VERTEX_SHADER:   return "GL_VERTEX_SHADER";
+                case GL_VERTEX_SHADER: return "GL_VERTEX_SHADER";
                 case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+                default:
+                    CANDY_CORE_ASSERT(false);
+                    return nullptr;
             }
-            CANDY_CORE_ASSERT(false);
-            return nullptr;
         }
         
         static const char* GetCacheDirectory()
         {
-            // TODO: make sure the assets directory is valid
             return "assets/cache/shader";
         }
         
-        static void CreateCacheDirectoryIfNeeded()
+        static void CreateCacheDirectory()
         {
             std::string cacheDirectory = GetCacheDirectory();
             if (!std::filesystem::exists(cacheDirectory))
+            {
                 std::filesystem::create_directories(cacheDirectory);
+            }
         }
         
         static const char* GLShaderStageCachedOpenGLFileExtension(uint32_t stage)
         {
             switch (stage)
             {
-                case GL_VERTEX_SHADER:    return ".cached_opengl.vert";
-                case GL_FRAGMENT_SHADER:  return ".cached_opengl.frag";
+                case GL_VERTEX_SHADER: return ".cached_opengl.vert";
+                case GL_FRAGMENT_SHADER: return ".cached_opengl.frag";
+                default:
+                    CANDY_CORE_ASSERT(false);
+                    return nullptr;
             }
-            CANDY_CORE_ASSERT(false);
-            return "";
-        }
-        
-        static const char* GLShaderStageCachedVulkanFileExtension(uint32_t stage)
-        {
-            switch (stage)
-            {
-                case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
-                case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
-            }
-            CANDY_CORE_ASSERT(false);
-            return "";
         }
     }
-        
-        
-        Shader::Shader() {}
     
-        Shader::Shader(std::string  shaderFilePath) : filepath(std::move(shaderFilePath))
-        {
-            Utils::CreateCacheDirectoryIfNeeded();
-            std::string source = ReadFile(filepath);
-            auto shaderSources = PreProcess(source);
-            
-            
-            CompileShaders(shaderSources[GL_VERTEX_SHADER].c_str(), shaderSources[GL_FRAGMENT_SHADER].c_str());
-            
-            // Extract name from filepath
-            auto lastSlash = filepath.find_last_of("/\\");
-            lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-            auto lastDot = filepath.rfind('.');
-            auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
-            name = filepath.substr(lastSlash, count);
+    
+    Shader::Shader(std::string  shaderFilePath) : filepath(std::move(shaderFilePath))
+    {
+        Utils::CreateCacheDirectory();
+        std::string source = ReadFile(filepath);
+        std::unordered_map<GLenum, std::string> shaderSources = PreProcess(source);
+        CompileShaders(shaderSources[GL_VERTEX_SHADER].c_str(), shaderSources[GL_FRAGMENT_SHADER].c_str());
         
-        }
+        // Extract name from filepath
+        auto lastSlash = filepath.find_last_of("/\\");
+        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+        auto lastDot = filepath.rfind('.');
+        auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+        name = filepath.substr(lastSlash, count);
+        
+    }
     
-        Shader::Shader(std::string  shaderName, const std::string& vertexPath, const std::string& fragmentPath)
-        : name(std::move(shaderName))
-        {
-            // 1. retrieve the vertex/fragment source code from filePath
-            std::string vertexCode = ReadFile(vertexPath);
-            std::string fragmentCode = ReadFile(fragmentPath);
-           
-            CompileShaders(vertexCode.c_str(), fragmentCode.c_str());
-        }
-        Shader::~Shader()
-        {
-            glDeleteProgram(rendererID);
-        }
+    Shader::Shader(std::string  shaderName, const std::string& vertexPath, const std::string& fragmentPath)
+            : name(std::move(shaderName))
+    {
+        // 1. retrieve the vertex/fragment source code from filePath
+        std::string vertexCode = ReadFile(vertexPath);
+        std::string fragmentCode = ReadFile(fragmentPath);
+        
+        CompileShaders(vertexCode.c_str(), fragmentCode.c_str());
+    }
+    Shader::~Shader()
+    {
+        glDeleteProgram(rendererID);
+    }
     
-    std::string Shader::ReadFile(const std::string& filepath)
+    std::string Shader::ReadFile(const std::string& path)
     {
         std::string result;
-        std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
+        std::ifstream in(path, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
         if (in)
         {
             in.seekg(0, std::ios::end);
@@ -120,16 +110,16 @@ namespace Candy::Graphics{
             }
             else
             {
-                CANDY_CORE_ERROR("Could not read from file '{0}'", filepath);
+                CANDY_CORE_ERROR("Could not read from file '{0}'", path);
             }
         }
         else
         {
-            CANDY_CORE_ERROR("Could not open file '{0}'", filepath);
+            CANDY_CORE_ERROR("Could not open file '{0}'", path);
         }
         
         return result;
-    
+        
     }
     std::unordered_map<GLenum, std::string> Shader::PreProcess(const std::string& source)
     {
@@ -154,7 +144,7 @@ namespace Candy::Graphics{
         }
         
         return shaderSources;
-    
+        
     }
     
     bool Shader::CheckCompileErrors(GLuint shader, const std::string& type)
@@ -191,23 +181,18 @@ namespace Candy::Graphics{
         glCompileShader(vertex);
         if (!CheckCompileErrors(vertex, "VERTEX"))
         {
-            std::cerr << "Failed to compile vertex shader!" << std::endl;
+            CANDY_CORE_ERROR("Failed to compile vertex shader");
             
         }
-        // print compile errors if any
-        
-        
         // Fragment Shader
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment, 1, &fragmentShaderCode, NULL);
         glCompileShader(fragment);
         if (!CheckCompileErrors(fragment, "FRAGMENT"))
         {
-            std::cerr << "Failed to compile fragment shader!" << std::endl;
+            CANDY_CORE_ERROR("Failed to compile fragment shader!");
             
         }
-        
-        // print compile errors if any
         
         
         // shader Program
@@ -231,6 +216,10 @@ namespace Candy::Graphics{
         glDeleteShader(vertex);
         glDeleteShader(fragment);
     }
+    
+    
+    
+    
     
         
         void Shader::Bind() const {
@@ -403,6 +392,40 @@ namespace Candy::Graphics{
         {
             return CreateSharedPtr<Shader>(shaderName, vertexShaderPath.c_str(), fragmentShaderPath.c_str());
         }
+    
+    void ShaderLibrary::Add(const std::string& name, const SharedPtr<Shader>& shader)
+    {
+        shaders[name] = shader;
+    }
+    void ShaderLibrary::Add(const SharedPtr<Shader>& shader)
+    {
+        auto& name = shader->GetName();
+        Add(name, shader);
+    }
+    SharedPtr<Shader> ShaderLibrary::Load(const std::string& filepath)
+    {
+        auto shader = Shader::Create(filepath);
+        Add(shader);
+        return shader;
+    }
+    SharedPtr<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
+    {
+        auto shader = Shader::Create(filepath);
+        Add(name, shader);
+        return shader;
+    }
+    
+    SharedPtr<Shader> ShaderLibrary::Get(const std::string& name)
+    {
+        CANDY_CORE_ASSERT(Exists(name), "Shader not found");
+        return shaders[name];
+    }
+    
+    bool ShaderLibrary::Exists(const std::string& name)const
+    {
+        return shaders.find(name) != shaders.end();
+    }
+    
     
 }
 
