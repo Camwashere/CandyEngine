@@ -373,6 +373,15 @@ CandyBase_IS_TOP_LEVEL:STATIC=OFF
 CandyBase_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/core/base
 
 //Value Computed by CMake
+CandyCollections_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/core/collections
+
+//Value Computed by CMake
+CandyCollections_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+CandyCollections_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/core/collections
+
+//Value Computed by CMake
 CandyEngineAll_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug
 
 //Value Computed by CMake
@@ -389,6 +398,15 @@ CandyMath_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
 CandyMath_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/core/math
+
+//Value Computed by CMake
+CandyNoise_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy/core/noise
+
+//Value Computed by CMake
+CandyNoise_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+CandyNoise_SOURCE_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/candy/core/noise
 
 //Value Computed by CMake
 Candy_BINARY_DIR:STATIC=C:/Users/perso/CLionProjects/CandyEngineAll/cmake-build-debug/candy
@@ -734,7 +752,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
