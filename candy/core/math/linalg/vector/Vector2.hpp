@@ -262,6 +262,9 @@ namespace Candy::Math{
             Vector3 ToVector3() const;
             
             Vector4 ToVector4() const;
+            
+            [[nodiscard]] std::string ToString()const{return std::string(*this);}
+            
         
         public:
             int LexicographicCompare(const Vector2 &other) const;

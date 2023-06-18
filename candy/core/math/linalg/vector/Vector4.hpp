@@ -86,6 +86,8 @@ namespace Candy::Math{
             
             void operator/=(float scalar);
             
+            Vector4 operator-()const{return {-x, -y, -z, -w};}
+            
             
             explicit operator Vector2() const;
             
@@ -186,6 +188,8 @@ namespace Candy::Math{
             int MagnitudeCompare(const Vector4 &other) const;
             
             int SumCompare(const Vector4 &other) const;
+            
+            [[nodiscard]] std::string ToString()const{return std::string(*this);}
             
         };
     

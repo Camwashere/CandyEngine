@@ -86,16 +86,6 @@ namespace Candy
         
         
         
-        //Renderer2D::BeginScene(cameraController.GetCamera());
-        //std::cout << editorCamera.GetViewProjectionMatrix() << std::endl;
-        std::cout << editorCamera.GetViewProjectionMatrix() << std::endl;
-        //std::cout << cameraController.GetCamera().GetViewProjectionMatrix() << std::endl;
-        
-        
-        Renderer2D::BeginScene(editorCamera);
-        Entity entity = activeScene->FindEntityByName("CheckerboardBG");
-        Renderer2D::DrawSprite(entity.GetComponent<TransformComponent>().GetTransform(), entity.GetComponent<SpriteRendererComponent>(), entity.GetUUID());
-        Renderer2D::EndScene();
         
         
         // Clear our entity ID attachment to -1

@@ -110,6 +110,8 @@ namespace Candy::Math{
             
             void operator/=(float scalar);
             
+            Vector3 operator-()const{return {-x, -y, -z};}
+            
             
             explicit operator Vector2() const;
             
@@ -217,6 +219,8 @@ namespace Candy::Math{
             bool InRangeExclusive(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax) const;
             
             bool InRangeExclusive(const Vector3 &min, const Vector3 &max) const;
+            
+            [[nodiscard]] std::string ToString()const{return std::string(*this);}
         
         public:
             Vector2 xx() const;

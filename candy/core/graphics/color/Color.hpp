@@ -51,21 +51,21 @@ namespace Candy {
     
     public:
         Color();
-        Color(float value);
+        explicit Color(float value);
         constexpr Color(float redValue, float greenValue, float blueValue, float alphaValue = 1.0f) : Math::VectorBase<float, 4>(redValue, greenValue, blueValue, alphaValue){}
         Color(const Color &other);
-        Color(const float* data);
-        Color(const std::string& hex);
-        Color(uint32 packedValue);
-        Color(const Math::Vector2& vector);
-        Color(const Math::Vector3& vector);
+        explicit Color(const float* data);
+        explicit Color(const std::string& hex);
+        explicit Color(uint32 packedValue);
+        explicit Color(const Math::Vector2& vector);
+        explicit Color(const Math::Vector3& vector);
         Color(const Math::Vector4& vector);
         Color(const Math::Quaternion& quaternion);
-        Color(const Color32& other);
-        Color(const ColorHSV& other);
-        Color(const ColorHSL& other);
-        Color(const ColorCMYK& other);
-        Color(const ColorYIQ& other);
+        explicit Color(const Color32& other);
+        explicit Color(const ColorHSV& other);
+        explicit Color(const ColorHSL& other);
+        explicit Color(const ColorCMYK& other);
+        explicit Color(const ColorYIQ& other);
         
         template<typename E>
         Color(const VectorExpression<float, E> &expr) : VectorBase<float, 4>(expr) {}
@@ -90,8 +90,8 @@ namespace Candy {
         
         void operator/=(float scalar);
         
-        operator Math::Vector2()const;
-        operator Math::Vector3()const;
+        explicit operator Math::Vector2()const;
+        explicit operator Math::Vector3()const;
         operator Math::Vector4()const;
         operator Math::Quaternion()const;
     
