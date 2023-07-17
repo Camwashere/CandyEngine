@@ -10,8 +10,7 @@ namespace Candy::Graphics
     
     VertexBuffer::VertexBuffer(CommandBuffer* commandBuf, BufferLayout  bufferLayout, uint64_t countPerElement) : commandBuffer(commandBuf), layout(std::move(bufferLayout)), size(layout.CalculateSize(countPerElement))
     {
-        CANDY_CORE_INFO("CREATING VERTEX BUFFER");
-        
+      
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
@@ -33,17 +32,16 @@ namespace Candy::Graphics
     
     VertexBuffer::VertexBuffer(CommandBuffer* commandBuf, float* vertices, uint64_t bufferSize) : commandBuffer(commandBuf), size(bufferSize)
     {
-        CANDY_CORE_INFO("CREATING VERTEX BUFFER");
+       
         
         VkBuffer stagingBuffer;
         VmaAllocation stagingBufferAllocation;
         
         CreateStagingBuffer(stagingBuffer, &stagingBufferAllocation);
         
-        CANDY_CORE_INFO("CREATED STAGING BUFFER");
+       
         void* data;
         vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
-        CANDY_CORE_INFO("MAPPED MEMORY");
         memcpy(data, vertices, (size_t) bufferSize);
         vmaUnmapMemory(Vulkan::Allocator(), stagingBufferAllocation);
         
@@ -65,7 +63,7 @@ namespace Candy::Graphics
         
         
         commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
-        CANDY_CORE_INFO("COPIED BUFFER");
+        
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
         

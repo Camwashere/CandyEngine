@@ -19,11 +19,9 @@ namespace Candy
             std::filesystem::current_path(appData.workingDirectory);
         }
         
-        CANDY_CORE_INFO("PRE WINDOW");
         mainWindow = CreateUniquePtr<Window>(WindowData(appData.name, 3000, 1500));
-        CANDY_CORE_INFO("CREATED WINDOW");
+        
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
-        CANDY_CORE_INFO("CREATED WINDOW EVENT CALLBACK");
         
         
         

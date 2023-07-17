@@ -70,26 +70,17 @@ namespace Candy::Graphics
         
     GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
     {
-      CANDY_CORE_INFO("GRAPHICS CONTEXT CONSTRUCTOR");
-      if (windowHandle == nullptr)
-      {
-        CANDY_CORE_INFO("NULL WINDOW HANDLE!");
-      }
-      CANDY_CORE_INFO("WAA");
       handle = windowHandle;
       CANDY_CORE_ASSERT(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface) == VK_SUCCESS, "Failed to create vulkan window surface!");
       Vulkan::InitDeviceManager(surface);
       
       //deviceManager = CreateUniquePtr<VulkanDeviceManager>(surface);
-      CANDY_CORE_INFO("CREATED DEVICE MANAGER");
       swapChain = new SwapChain(this);
-      CANDY_CORE_INFO("CREATED SWAPCHAIN");
       renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
-      CANDY_CORE_INFO("CREATED RENDER PASS");
       swapChain->CreateFrameBuffers(*renderPass);
-      CANDY_CORE_INFO("CREATED FRAME BUFFERS");
+      
       InitSyncStructures();
-      CANDY_CORE_INFO("INIT SYNC STRUCTURES");
+      
         //Init();
     }
   void GraphicsContext::InitSyncStructures()

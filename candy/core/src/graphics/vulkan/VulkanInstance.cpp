@@ -10,13 +10,10 @@ namespace Candy::Graphics
     
     VulkanInstance::VulkanInstance()
     {
-        CANDY_CORE_INFO("VULKAN INSTANCE CONSTRUCTOR");
+      
         CreateInstance();
-        CANDY_CORE_INFO("CREATED INSTANCE");
         debugManager = CreateUniquePtr<VulkanDebugManager>();
-        CANDY_CORE_INFO("CREATED DEBUG MANAGER");
         debugManager->Init(instance);
-        CANDY_CORE_INFO("DEBUG MANAGER INITED");
     }
     
     void VulkanInstance::CreateInstance()

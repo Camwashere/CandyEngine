@@ -36,7 +36,7 @@ namespace Candy::Graphics
     
     SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(&target->frames[0].commandBuffer, layout, vertices.size());
     
-    CANDY_CORE_INFO("HI");
+    
     uint64_t totalSize = layout.CalculateTotalComponentCount(vertices.size());
     float data[totalSize];
     for (int i=0, a=0; i<totalSize; i+=5, a++)

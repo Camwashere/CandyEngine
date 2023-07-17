@@ -10,11 +10,9 @@ namespace Candy::Graphics
   Vulkan* Vulkan::vulkan = nullptr;
   Vulkan::Vulkan()
   {
-    CANDY_CORE_INFO("VULIKAN CONSTRUCTOR");
     deviceManager = nullptr;
     instance = CreateUniquePtr<VulkanInstance>();
     allocator = VK_NULL_HANDLE;
-    
   }
   
   void Vulkan::CreateAllocator()
@@ -34,17 +32,14 @@ namespace Candy::Graphics
   }
   void Vulkan::Init()
   {
-    CANDY_CORE_INFO("PRE VULKAN");
+    
     vulkan = new Vulkan();
     
   }
   
   VkInstance Vulkan::Instance()
   {
-    if (vulkan->instance->instance == VK_NULL_HANDLE)
-    {
-      CANDY_CORE_INFO("VULL HANDLE NIG!");
-    }
+    
     return vulkan->instance->instance;
   }
   

@@ -5,7 +5,6 @@ namespace Candy::Graphics
 {
     IndexBuffer::IndexBuffer(CommandBuffer* commandBuf, uint32_t* indices, uint64_t indexCount) : commandBuffer(commandBuf), count(indexCount), size(sizeof(uint32_t)*count)
     {
-        CANDY_CORE_INFO("CREATING INDEX BUFFER");
         
         VkBuffer stagingBuffer;
         VmaAllocation stagingBufferAllocation;

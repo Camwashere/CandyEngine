@@ -23,22 +23,16 @@ namespace Candy
             int success = glfwInit();
             CANDY_CORE_ASSERT(success, "FAILED TO INITIALIZE GLFW");
             glfwSetErrorCallback(GLFWErrorCallback);
-            CANDY_CORE_INFO("PRE INITIALIZE VULKAN");
             Vulkan::Init();
-            CANDY_CORE_INFO("INITIALIZED VULKAN");
         }
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
-        CANDY_CORE_INFO("CREATED WINDOW HANDLE");
         //VulkanInstance::Init(handle);
         
         ++GLFW_WINDOW_COUNT;
         graphicsContext = new GraphicsContext(handle);
-        //graphicsContext = Vulkan::CreateContext(handle);
-        CANDY_CORE_INFO("CREATED GRAPHICS CONTEXT");
         renderer = new Renderer(graphicsContext);
-        CANDY_CORE_INFO("CREATED RENDERER");
         glfwSetWindowUserPointer(handle, &windowData);
         SetVSync(true);
         EventCallbackInit();
