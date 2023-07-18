@@ -41,6 +41,7 @@ namespace Candy::Graphics
     private:
         friend class GraphicsContext;
         friend class GraphicsPipeline;
+        friend class Pipeline;
         
        
     

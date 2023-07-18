@@ -10,6 +10,13 @@ namespace Candy::Graphics
   {
   private:
     std::vector<Pipeline> pipelines;
+    uint32_t currentID=0;
+    
+  public:
+    PipelineManager();
+    
+  public:
+    void AddPipeline(Pipeline& pipeline);
   
   };
 }

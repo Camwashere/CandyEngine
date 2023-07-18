@@ -3,6 +3,9 @@
 #include <vector>
 #include "../../ShaderUtils.hpp"
 #include "PipelineLayout.hpp"
+#include "../../VertexArray.hpp"
+#include "../../Shader.hpp"
+#include "../RenderPass.hpp"
 namespace Candy::Graphics
 {
   
@@ -11,7 +14,7 @@ namespace Candy::Graphics
   class Pipeline
   {
   private:
-    const uint32_t id;
+    uint32_t id;
     PipelineLayout layout;
     VkPipeline pipeline=VK_NULL_HANDLE;
     std::vector<VkDynamicState> dynamicStates;
@@ -31,7 +34,11 @@ namespace Candy::Graphics
     
   
   public:
-    explicit Pipeline(uint32_t pipelineId);
+    explicit Pipeline();
+    
+  public:
+    operator VkPipeline()const{return pipeline;}
+    operator VkPipeline(){return pipeline;}
   
   public:
     void SetTopology(VkPrimitiveTopology topology, VkBool32 primitiveRestartEnable=VK_FALSE);
@@ -44,8 +51,13 @@ namespace Candy::Graphics
   
   public:
     void RestoreDefaultSettings();
-    void Bake();
+    void Bake(const SharedPtr<VertexArray>& vertexArray, const SharedPtr<Shader>& shader, const RenderPass& renderPass);
+    PipelineLayout& GetLayout();
+    void Destroy();
     
     [[nodiscard]] uint32_t GetID()const;
+    
+  private:
+    friend class PipelineManager;
   };
 }

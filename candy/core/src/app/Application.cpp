@@ -51,6 +51,16 @@ namespace Candy
             it->OnEvent(event);
         }*/
     }
+  
+  float Application::DeltaTime()
+  {
+      return instance->frameTime.GetDeltaTime();
+  }
+  
+  float Application::CurrentTime()
+  {
+      return instance->frameTime.GetCurrentTime();
+  }
     void Application::Shutdown()
     {
         instance->Close();
@@ -62,7 +72,8 @@ namespace Candy
         
         while(isRunning)
         {
-            mainWindow->OnUpdate();
+          frameTime.Update();
+          mainWindow->OnUpdate();
         }
         CleanUp();
     }

@@ -4,6 +4,7 @@
 #include "vulkan/RenderPass.hpp"
 #include "vulkan/pipeline/GraphicsPipeline.hpp"
 #include "GraphicsContext.hpp"
+#include "vulkan/pipeline/Pipeline.hpp"
 #include <deque>
 #include <ranges>
 namespace Candy::Graphics
@@ -15,7 +16,8 @@ namespace Candy::Graphics
   private:
     SharedPtr<Shader> shader;
     SharedPtr<VertexArray> vertexArray;
-    GraphicsPipeline graphicsPipeline;
+    Pipeline pipeline;
+    //GraphicsPipeline graphicsPipeline;
     GraphicsContext* target;
     
     

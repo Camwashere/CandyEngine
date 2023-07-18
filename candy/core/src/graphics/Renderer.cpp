@@ -56,7 +56,11 @@ namespace Candy::Graphics
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
     
-    graphicsPipeline.Create(vertexArray, shader, *target->renderPass);
+    pipeline.GetLayout().AddPushConstantRange<UniformBufferObject>(ShaderStage::VERTEX, 0);
+    pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,
+                               VK_DYNAMIC_STATE_SCISSOR});
+    pipeline.Bake(vertexArray, shader, *target->renderPass);
+    //graphicsPipeline.Create(vertexArray, shader, *target->renderPass);
   
   }
   
@@ -79,7 +83,7 @@ namespace Candy::Graphics
     ubo.proj[1,1] *= -1;
     
     
-    GetCurrentFrame().commandBuffer.PushConstants(graphicsPipeline.Layout(), ShaderStage::VERTEX, sizeof(UniformBufferObject), &ubo);
+    GetCurrentFrame().commandBuffer.PushConstants(pipeline.GetLayout(), ShaderStage::VERTEX, sizeof(UniformBufferObject), &ubo);
     
   }
   
@@ -119,7 +123,7 @@ namespace Candy::Graphics
     
     rpInfo.pClearValues = &clearValues[0];
     GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
-    GetCurrentFrame().commandBuffer.BindPipeline(graphicsPipeline.Pipeline());
+    GetCurrentFrame().commandBuffer.BindPipeline(pipeline);
     GetCurrentFrame().commandBuffer.SetViewport(target->swapChain->extent);
     GetCurrentFrame().commandBuffer.Bind(vertexArray);
     UpdatePushConstants();
@@ -190,8 +194,8 @@ namespace Candy::Graphics
     
     vertexArray->Clear();
     
-    
-    graphicsPipeline.Destroy();
+    pipeline.Destroy();
+    //graphicsPipeline.Destroy();
     
     
     

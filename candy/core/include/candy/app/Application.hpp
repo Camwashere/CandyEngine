@@ -1,6 +1,7 @@
 #pragma once
 #include <CandyPch.hpp>
 #include "Window.hpp"
+#include <candy/utils/FrameTime.hpp>
 int main(int argc, char** argv);
 namespace Candy
 {
@@ -27,6 +28,7 @@ namespace Candy
         UniquePtr<Window> mainWindow;
         bool isRunning;
         bool minimized;
+        FrameTime frameTime;
         
     private:
         bool OnWindowClose(Events::WindowCloseEvent& event);
@@ -45,6 +47,9 @@ namespace Candy
         
     public:
         static inline Window& GetMainWindowReference(){return *instance->mainWindow;}
+        static Application& Instance(){return *instance;}
+        static float DeltaTime();
+        static float CurrentTime();
     
     private:
         static Application* instance;

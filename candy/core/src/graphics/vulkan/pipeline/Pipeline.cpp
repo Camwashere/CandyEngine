@@ -1,9 +1,10 @@
 #include <candy/graphics/vulkan/pipeline/Pipeline.hpp>
-
+#include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  Pipeline::Pipeline(uint32_t pipelineId) : id(pipelineId)
+  Pipeline::Pipeline() : id(0)
   {
+    
     InitInputAssembly();
     InitViewportState();
     InitRasterizer();
@@ -107,13 +108,31 @@ namespace Candy::Graphics
     InitColorBlending();
     dynamicStates.clear();
   }
-  void Pipeline::Bake()
+  void Pipeline::Bake(const SharedPtr<VertexArray>& vertexArray, const SharedPtr<Shader>& shader, const RenderPass& renderPass)
   {
-    /*VkPipelineDynamicStateCreateInfo dynamicState{};
+    //TODO VERTEX SHIT HERE
+    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    
+    
+    auto bindingDescriptions = vertexArray->GetVertexBindingDescriptions();
+    auto attributeDescriptions = vertexArray->GetVertexAttributeDescriptions();
+    
+    vertexInputInfo.vertexBindingDescriptionCount = vertexArray->GetVertexBindingDescriptionCount();
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexArray->GetVertexAttributeDescriptionCount());
+    vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+    
+    
+    VkPipelineDynamicStateCreateInfo dynamicState{};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
     dynamicState.pDynamicStates = dynamicStates.data();
+    
+    
     layout.Bake();
+    
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = shader->CreateShaderStageCreateInfos();
     
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -129,7 +148,7 @@ namespace Candy::Graphics
     pipelineInfo.pColorBlendState = &colorBlending;
     pipelineInfo.pDynamicState = &dynamicState;
     
-    pipelineInfo.layout = pipelineLayout;
+    pipelineInfo.layout = layout;
     
     pipelineInfo.renderPass = renderPass;
     pipelineInfo.subpass = 0;
@@ -137,8 +156,21 @@ namespace Candy::Graphics
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
     pipelineInfo.basePipelineIndex = -1; // Optional
     
-    CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(VulkanInstance::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");*/
+    CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
+    
+    shader->DestroyShaderModules();
   
+  }
+  
+  void Pipeline::Destroy()
+  {
+    vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);
+    vkDestroyPipelineLayout(Vulkan::LogicalDevice(), layout, nullptr);
+  }
+  
+  PipelineLayout& Pipeline::GetLayout()
+  {
+    return layout;
   }
   
   uint32_t Pipeline::GetID()const{return id;}

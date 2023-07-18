@@ -3,6 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/SPIRV-Cross" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/entt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/imgui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/shaderc" vcs="Git" />
   </component>
 </project>

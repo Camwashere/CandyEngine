@@ -13,6 +13,10 @@ namespace Candy::Graphics
   
   public:
     PipelineLayout();
+    
+  public:
+    operator VkPipelineLayout()const{return layout;}
+    operator VkPipelineLayout(){return layout;}
   
   public:
     void AddDescriptorSetLayout(VkDescriptorSetLayout descriptorSetLayout);

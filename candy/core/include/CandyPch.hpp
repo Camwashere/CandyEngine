@@ -15,6 +15,6 @@
 #include "candy/base/Instrumentor.hpp"
 #include "candy/base/Assert.hpp"
 
-#ifdef CANDY_PLATFORM_WINDOWS
-  #include <Windows.h>
-#endif
+
+
+
