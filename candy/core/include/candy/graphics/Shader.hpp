@@ -23,13 +23,18 @@ namespace Candy::Graphics
         std::string shaderName;
         std::filesystem::path filepath;
         
-        std::unordered_map<ShaderStage, std::vector<uint32_t>> vulkanSPIRV;
+        
+        bool optimize=false;
+        bool recompileOnLoad=true;
+        std::unordered_map<ShaderStage, std::vector<uint32_t>> spirvBinaries;
         std::vector<VkShaderModule> shaderModules;
+        std::vector<VkPushConstantRange> pushConstantRanges;
     
     private:
         std::string ReadFile(const std::filesystem::path& path);
         std::unordered_map<ShaderStage, std::string> PreProcess(const std::string& source);
         void CompileOrGetBinaries(const std::unordered_map<ShaderStage, std::string>& sources);
+        void Reflect(ShaderStage stage, std::vector<uint32_t> spirvBinary);
         VkShaderModule CreateShaderModule(ShaderStage stage);
         std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
         
@@ -41,12 +46,15 @@ namespace Candy::Graphics
         const std::string& GetName()const{return shaderName;}
         const std::filesystem::path& GetFilepath()const{return filepath;}
         void DestroyShaderModules();
+        uint32_t PushConstantRangeCount();
+        const VkPushConstantRange* PushConstantRangeData();
         
     public:
       static ShaderStage StageFromString(const std::string& stage);
       static const char* StageCachedFileExtension(ShaderStage stage);
       static const char* StageToString(ShaderStage stage);
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);
+      static ShaderStage VulkanToStage(VkShaderStageFlagBits stage);
       static VkShaderStageFlagBits StageToVulkan(ShaderStage stage);
       static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath);
         

@@ -1,5 +1,6 @@
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/VulkanBuffer.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -23,7 +24,7 @@ namespace Candy::Graphics
   Renderer::Renderer(GraphicsContext* context) : target(context)
   {
     
-    
+    CreateDescriptorSetLayout();
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
     
@@ -55,12 +56,17 @@ namespace Candy::Graphics
     
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
-    
-    pipeline.GetLayout().AddPushConstantRange<UniformBufferObject>(ShaderStage::VERTEX, 0);
+    CANDY_CORE_INFO("Uniform buffer obj size: {}", sizeof(UniformBufferObject));
+    pipeline.GetLayout().AddDescriptorSetLayout(descriptorSetLayout);
     pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,
                                VK_DYNAMIC_STATE_SCISSOR});
+    
     pipeline.Bake(vertexArray, shader, *target->renderPass);
-    //graphicsPipeline.Create(vertexArray, shader, *target->renderPass);
+    
+    CreateUniformBuffers();
+    CreateDescriptorPool();
+    CreateDescriptorSets();
+    
   
   }
   
@@ -88,35 +94,117 @@ namespace Candy::Graphics
   }
   
   
+  void Renderer::CreateDescriptorPool()
+  {
+    VkDescriptorPoolSize poolSize{};
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = static_cast<uint32_t>(FRAME_OVERLAP);
+    
+    VkDescriptorPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = &poolSize;
+    
+    poolInfo.maxSets = static_cast<uint32_t>(FRAME_OVERLAP);
+    
+    CANDY_CORE_ASSERT(vkCreateDescriptorPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &descriptorPool) == VK_SUCCESS, "Failed to create descriptor pooL!");
+    
+  }
+  
+  void Renderer::CreateDescriptorSets()
+  {
+    std::vector<VkDescriptorSetLayout> layouts(FRAME_OVERLAP, descriptorSetLayout);
+    VkDescriptorSetAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = descriptorPool;
+    allocInfo.descriptorSetCount = static_cast<uint32_t>(FRAME_OVERLAP);
+    allocInfo.pSetLayouts = layouts.data();
+    
+    
+    
+    descriptorSets.resize(FRAME_OVERLAP);
+    CANDY_CORE_ASSERT(vkAllocateDescriptorSets(Vulkan::LogicalDevice(), &allocInfo, descriptorSets.data()) == VK_SUCCESS, "Failed to allocate descriptor sets!");
+    
+    for (size_t i=0; i<FRAME_OVERLAP; i++)
+    {
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = *uniformBuffers[i];
+        bufferInfo.offset = 0;
+        bufferInfo.range = sizeof(UniformBufferObject);
+        
+        VkWriteDescriptorSet descriptorWrite{};
+        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite.dstSet = descriptorSets[i];
+        descriptorWrite.dstBinding = 0;
+        descriptorWrite.dstArrayElement = 0;
+        
+        
+        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrite.descriptorCount = 1;
+        
+        descriptorWrite.pBufferInfo = &bufferInfo;
+        descriptorWrite.pImageInfo = nullptr; // Optional
+        descriptorWrite.pTexelBufferView = nullptr; // Optional
+        
+        vkUpdateDescriptorSets(Vulkan::LogicalDevice(), 1, &descriptorWrite, 0, nullptr);
+    }
+    
+    
+  }
+  void Renderer::CreateDescriptorSetLayout()
+  {
+    VkDescriptorSetLayoutBinding uboLayoutBinding{};
+    uboLayoutBinding.binding = 0;
+    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    uboLayoutBinding.descriptorCount = 1;
+    
+    // Only referencing descriptor from the fragment shader
+    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    
+    uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
+    
+    VkDescriptorSetLayoutCreateInfo layoutInfo{};
+    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    layoutInfo.bindingCount = 1;
+    layoutInfo.pBindings = &uboLayoutBinding;
+    
+    CANDY_CORE_ASSERT(vkCreateDescriptorSetLayout(Vulkan::LogicalDevice(), &layoutInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS, "Failed to create descriptor set layout!");
+    
+  }
+  
+  void Renderer::CreateUniformBuffers()
+  {
+    VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+    
+    uniformBuffers.resize(FRAME_OVERLAP);
+    
+    for (size_t i = 0; i < FRAME_OVERLAP; i++)
+    {
+      uniformBuffers[i] = UniformBuffer::Create(bufferSize);
+    }
+    
+  }
+  
+  void Renderer::UpdateUniformBuffer()
+  {
+    Color color = Color::blue;
+    uniformBuffers[target->currentFrameIndex]->SetData(&color[0]);
+  }
   void Renderer::Draw()
   {
-  
-// Only reset the fence if we are submitting work
     
-    //wait until the gpu has finished rendering the last frame. Timeout of 1 second
-    //CANDY_CORE_ASSERT(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, VK_TRUE, UINT64_MAX) == VK_SUCCESS);
     CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
     
     GetCurrentFrame().commandBuffer.Reset();
-    
-    
-    
-    
     GetCurrentFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
     
-    
     VkClearValue clearValue;
-   
     clearValue.color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
-    
     
     VkClearValue depthClear;
     depthClear.depthStencil.depth = 1.f;
     
-    
     VkRenderPassBeginInfo rpInfo = target->BeginRenderPass();
-    
-   
     rpInfo.clearValueCount = 2;
     
     VkClearValue clearValues[] = { clearValue, depthClear };
@@ -127,15 +215,14 @@ namespace Candy::Graphics
     GetCurrentFrame().commandBuffer.SetViewport(target->swapChain->extent);
     GetCurrentFrame().commandBuffer.Bind(vertexArray);
     UpdatePushConstants();
-    //draw_objects(cmd, _renderables.data(), _renderables.size());
+    UpdateUniformBuffer();
+    GetCurrentFrame().commandBuffer.BindDescriptorSets(pipeline.GetLayout(), descriptorSets[target->currentFrameIndex]);
+    
     GetCurrentFrame().commandBuffer.DrawIndexed(vertexArray);
     
     
     GetCurrentFrame().commandBuffer.EndRenderPass();
     GetCurrentFrame().commandBuffer.EndRecording();
-    
-    
-  
     
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -179,7 +266,6 @@ namespace Candy::Graphics
     }
     
     target->UpdateFrameIndex();
-    //currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
   }
   
   FrameData& Renderer::GetCurrentFrame(){return target->GetCurrentFrame();}
@@ -191,13 +277,16 @@ namespace Candy::Graphics
     
     
    target->swapChain->Clean();
+    for (size_t i = 0; i < FRAME_OVERLAP; i++)
+    {
+      uniformBuffers[i]->Destroy();
+    }
+    vkDestroyDescriptorPool(Vulkan::LogicalDevice(), descriptorPool, nullptr);
+    vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), descriptorSetLayout, nullptr);
     
     vertexArray->Clear();
     
     pipeline.Destroy();
-    //graphicsPipeline.Destroy();
-    
-    
     
   }
 }

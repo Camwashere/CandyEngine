@@ -5,8 +5,8 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/utils/FileUtils.hpp>
 #include <shaderc/shaderc.hpp>
-#include <spirv_cross/spirv_cross.hpp>
 #include <spirv_glsl.hpp>
+
 using namespace Candy::Utils;
 namespace Candy::Graphics
 {
@@ -54,7 +54,7 @@ namespace Candy::Graphics
     std::vector<VkPipelineShaderStageCreateInfo> Shader::CreateShaderStageCreateInfos()
     {
         std::vector<VkPipelineShaderStageCreateInfo> shaderStageCreateInfos;
-        for (auto&& [stage, binaryCode] : vulkanSPIRV)
+        for (auto&& [stage, binaryCode] : spirvBinaries)
         {
             VkShaderModule shaderModule = CreateShaderModule(stage);
             VkPipelineShaderStageCreateInfo shaderStageCreateInfo{};
@@ -73,8 +73,8 @@ namespace Candy::Graphics
     
     VkShaderModule Shader::CreateShaderModule(ShaderStage stage)
     {
-        const auto& valuePair = vulkanSPIRV.find(stage);
-        CANDY_CORE_ASSERT(valuePair != vulkanSPIRV.end(), "Shader binary not found! Cannot attempt to create shader module!");
+        const auto& valuePair = spirvBinaries.find(stage);
+        CANDY_CORE_ASSERT(valuePair != spirvBinaries.end(), "Shader binary not found! Cannot attempt to create shader module!");
         const auto& binary = valuePair->second;
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -154,13 +154,16 @@ namespace Candy::Graphics
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;
         options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
-        const bool optimize = true;
+        
         if (optimize)
             options.SetOptimizationLevel(shaderc_optimization_level_performance);
         
+        
+        
+        
         std::filesystem::path cacheDirectory = GetCacheDirectory();
         
-        auto& shaderData = vulkanSPIRV;
+        auto& shaderData = spirvBinaries;
         shaderData.clear();
         
         for (auto&& [stage, source] : sources)
@@ -169,7 +172,7 @@ namespace Candy::Graphics
             std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + StageCachedFileExtension(stage));
             
             std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-            if (in.is_open())
+            if (in.is_open() && !recompileOnLoad)
             {
                 CANDY_CORE_INFO("ALREADY HAS SHADER CACHED");
                 in.seekg(0, std::ios::end);
@@ -202,6 +205,64 @@ namespace Candy::Graphics
                 }
             }
         }
+        
+        for (auto&& [stage, data] : shaderData)
+        {
+            Reflect(stage, data);
+        }
+        
+        
+    }
+    
+    void Shader::Reflect(ShaderStage stage, std::vector<uint32_t> spirvBinary)
+    {
+      spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
+      
+      auto resources = compiler.get_shader_resources();
+      
+      for (auto& resource : resources.uniform_buffers)
+      {
+        CANDY_CORE_INFO("UNIFORM NAME: {}", resource.name);
+        CANDY_CORE_INFO("UNIFORM SIZE: {}", compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)));
+        
+        uint32_t index=0;
+        while (true)
+        {
+          
+          std::string memberName = compiler.get_member_name(resource.base_type_id, index);
+          if (memberName.empty())
+          {
+            break;
+          }
+          CANDY_CORE_INFO("UNIFORM MEMBER NAME: {}", memberName);
+          index++;
+        }
+        
+        
+      }
+      VkPushConstantRange pushRange{};
+      pushRange.stageFlags = StageToVulkan(stage);
+      pushRange.offset = 0;
+      
+      
+      uint32_t id = compiler.get_shader_resources().push_constant_buffers[0].id;
+      uint32_t base_type_id = compiler.get_shader_resources().push_constant_buffers[0].base_type_id;
+      uint32_t pcrSize=0;
+      std::vector<spirv_cross::BufferRange> ranges = (std::vector<spirv_cross::BufferRange>)compiler.get_active_buffer_ranges(id);
+      for (auto& range : ranges)
+      {
+        
+        CANDY_CORE_INFO("MEMBER NAME {}", compiler.get_member_name(base_type_id, range.index));
+        CANDY_CORE_INFO("Member: {0}, Offset: {1}, Size: {2}", range.index, range.offset, range.range);
+        pcrSize += range.range;
+      }
+      pushRange.size = pcrSize;
+      if (pushRange.size > 0)
+      {
+        pushConstantRanges.push_back(pushRange);
+      }
+      
+      
     }
     
     
@@ -213,6 +274,9 @@ namespace Candy::Graphics
             vkDestroyShaderModule(Vulkan::LogicalDevice(), shaderModule, nullptr);
         shaderModules.clear();
     }
+  
+  uint32_t Shader::PushConstantRangeCount(){return pushConstantRanges.size();}
+  const VkPushConstantRange* Shader::PushConstantRangeData(){return pushConstantRanges.data();}
   
   ShaderStage Shader::StageFromString(const std::string& type)
   {
@@ -281,6 +345,22 @@ namespace Candy::Graphics
       default:
       CANDY_CORE_ASSERT(false, "Unknown shader stage!");
         return (VkShaderStageFlagBits)0;
+    }
+  }
+  
+  ShaderStage Shader::VulkanToStage(VkShaderStageFlagBits stage)
+  {
+    switch(stage)
+    {
+      case VK_SHADER_STAGE_VERTEX_BIT: return VERTEX;
+      case VK_SHADER_STAGE_FRAGMENT_BIT: return FRAGMENT;
+      case VK_SHADER_STAGE_COMPUTE_BIT: return COMPUTE;
+      case VK_SHADER_STAGE_GEOMETRY_BIT: return GEOMETRY;
+      case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return TESSELATION_CONTROL;
+      case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return TESSELATION_EVALUATION;
+      default:
+        CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return NONE;
     }
   }
     

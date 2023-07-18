@@ -97,19 +97,7 @@ namespace Candy::Graphics
       
       CANDY_CORE_ASSERT(vkBeginCommandBuffer(mainCommandBuffer, &cmdBeginInfo)==VK_SUCCESS);
     }
-    /*void CommandBuffer::StartRecording(uint32_t currentFrame)
-    {
-      //mainCommandBuffer = commandBuffers[currentFrame];
-        Reset();
-        
-        VkCommandBufferBeginInfo beginInfo{};
-        
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = 0;
-        beginInfo.pInheritanceInfo = nullptr;
-        
-        CANDY_CORE_ASSERT(vkBeginCommandBuffer(mainCommandBuffer, &beginInfo) == VK_SUCCESS, "Failed to begin recording command buffer!");
-    };*/
+    
     
     void CommandBuffer::StartRenderPass(const VkRenderPassBeginInfo* renderPassInfo)
     {
@@ -149,9 +137,13 @@ namespace Candy::Graphics
     void CommandBuffer::BindIndexBuffer(const IndexBuffer& indexBuffer)
     {
         vkCmdBindIndexBuffer(mainCommandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        
     }
-    
-    
+  
+  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet)
+  {
+      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 0, nullptr);
+  }
     void CommandBuffer::Bind(const SharedPtr<VertexArray>& vertexArray)
     {
         VkBuffer data[vertexArray->vertexBuffers.size()];

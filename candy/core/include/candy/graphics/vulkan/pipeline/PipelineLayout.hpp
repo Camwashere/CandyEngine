@@ -21,7 +21,7 @@ namespace Candy::Graphics
   public:
     void AddDescriptorSetLayout(VkDescriptorSetLayout descriptorSetLayout);
     
-    template<typename T>
+    /*template<typename T>
     void AddPushConstantRange(ShaderStage stage, uint32_t offset)
     {
       VkPushConstantRange value{};
@@ -29,8 +29,9 @@ namespace Candy::Graphics
       value.offset = offset;
       value.stageFlags = Shader::StageToVulkan(stage);
       pushConstantRanges.push_back(value);
-    }
+    }*/
     
-    void Bake();
+    //void Bake();
+    void Bake(const SharedPtr<Shader>& shader);
   };
 }

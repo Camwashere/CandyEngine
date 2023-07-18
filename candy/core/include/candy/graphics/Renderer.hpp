@@ -7,6 +7,7 @@
 #include "vulkan/pipeline/Pipeline.hpp"
 #include <deque>
 #include <ranges>
+#include "UniformBuffer.hpp"
 namespace Candy::Graphics
 {
   
@@ -19,12 +20,23 @@ namespace Candy::Graphics
     Pipeline pipeline;
     //GraphicsPipeline graphicsPipeline;
     GraphicsContext* target;
+    VkDescriptorPool descriptorPool;
+    std::vector<VkDescriptorSet> descriptorSets;
+    VkDescriptorSetLayout descriptorSetLayout;
+    std::vector<SharedPtr<UniformBuffer>> uniformBuffers;
+    //std::vector<VkBuffer> uniformBuffers;
+    //std::vector<VmaAllocation> uniformBufferAllocations;
+    //std::vector<void*> uniformBuffersMapped;
     
     
     
   private:
+    void CreateDescriptorPool();
+    void CreateDescriptorSets();
+    void CreateDescriptorSetLayout();
+    void CreateUniformBuffers();
+    void UpdateUniformBuffer();
     void UpdatePushConstants();
-    
     FrameData& GetCurrentFrame();
     
   public:

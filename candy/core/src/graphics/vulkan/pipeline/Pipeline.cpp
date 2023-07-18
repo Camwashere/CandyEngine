@@ -130,7 +130,7 @@ namespace Candy::Graphics
     dynamicState.pDynamicStates = dynamicStates.data();
     
     
-    layout.Bake();
+    layout.Bake(shader);
     
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages = shader->CreateShaderStageCreateInfos();
     
