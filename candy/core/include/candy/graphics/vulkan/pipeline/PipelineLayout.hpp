@@ -1,7 +1,7 @@
 #pragma once
 #include <vulkan/vulkan.h>
 #include <vector>
-#include "../../ShaderUtils.hpp"
+#include "../../Shader.hpp"
 namespace Candy::Graphics
 {
   class PipelineLayout
@@ -27,7 +27,7 @@ namespace Candy::Graphics
       VkPushConstantRange value{};
       value.size = sizeof(T);
       value.offset = offset;
-      value.stageFlags = ShaderUtils::ShaderStageToVulkan(stage);
+      value.stageFlags = Shader::StageToVulkan(stage);
       pushConstantRanges.push_back(value);
     }
     

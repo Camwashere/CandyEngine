@@ -9,5 +9,6 @@ namespace Candy::Utils
     {
     public:
         static Buffer ReadFileBinary(const std::filesystem::path& filepath);
+        static std::string ExtractNameFromFilePath(const std::filesystem::path& path);
     };
 }

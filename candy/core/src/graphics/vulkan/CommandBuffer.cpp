@@ -186,7 +186,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderStage shaderStage, uint32_t dataSize, const void* data)
   {
-    vkCmdPushConstants(mainCommandBuffer, layout, ShaderUtils::ShaderStageToVulkan(shaderStage), 0, dataSize, data);
+    vkCmdPushConstants(mainCommandBuffer, layout, Shader::StageToVulkan(shaderStage), 0, dataSize, data);
   }
   
   void CommandBuffer::Destroy()

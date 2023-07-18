@@ -3,27 +3,37 @@
 #include <filesystem>
 #include <utility>
 #include <candy/graphics/Vulkan.hpp>
-
-
+#include <candy/utils/FileUtils.hpp>
+#include <shaderc/shaderc.hpp>
+#include <spirv_cross/spirv_cross.hpp>
+#include <spirv_glsl.hpp>
+using namespace Candy::Utils;
 namespace Candy::Graphics
 {
-    
-    
-    //static ShaderLibrary* shaderLibrary = new ShaderLibrary("assets/cache/shader", "assets/shaders/temp");
-    namespace Utils {
-        
-        
-        static std::filesystem::path GetCacheDirectory()
-        {
-          return "assets/cache/shader";
-            //CANDY_CORE_ASSERT(shaderLibrary->IsValid(), "Shader library is not valid!");
-            //return shaderLibrary->GetCacheDirectory();
-        }
-        
-        
-        
-        
+  
+  
+  static std::filesystem::path GetCacheDirectory()
+  {
+    return "assets/cache/shader";
+    //CANDY_CORE_ASSERT(shaderLibrary->IsValid(), "Shader library is not valid!");
+    //return shaderLibrary->GetCacheDirectory();
+  }
+  
+  static shaderc_shader_kind StageToShaderC(ShaderStage stage)
+  {
+    switch (stage)
+    {
+      
+      case VERTEX:   return shaderc_glsl_vertex_shader;
+      case FRAGMENT: return shaderc_glsl_fragment_shader;
+      case COMPUTE: return shaderc_glsl_compute_shader;
+      case GEOMETRY: return shaderc_glsl_geometry_shader;
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        CANDY_CORE_INFO("BA");
+        return (shaderc_shader_kind)0;
     }
+  }
     
     
     Shader::Shader(std::filesystem::path  shaderFilePath) : filepath(std::move(shaderFilePath))
@@ -31,15 +41,12 @@ namespace Candy::Graphics
         CANDY_PROFILE_FUNCTION();
         
         
-        std::string source = ShaderUtils::ReadFile(filepath);
-        std::unordered_map<ShaderStage, std::string> shaderSources = ShaderUtils::PreProcess(source);
-        //ShaderUtils::GetBinaries(vulkanSPIRV, shaderSources, filepath, shaderLibrary.GetCacheDirectory());
-        ShaderUtils::CompileOrGetBinaries(vulkanSPIRV, shaderSources, filepath, Utils::GetCacheDirectory());
-        //CompileOrGetBinaries(shaderSources);
-        CreateProgram();
+        std::string source = ReadFile(filepath);
+        std::unordered_map<ShaderStage, std::string> shaderSources = PreProcess(source);
+        CompileOrGetBinaries(shaderSources);
         
         // Extract name from filepath
-        shaderName = ShaderUtils::ExtractNameFromFilePath(filepath);
+        shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
         
         
     }
@@ -52,7 +59,7 @@ namespace Candy::Graphics
             VkShaderModule shaderModule = CreateShaderModule(stage);
             VkPipelineShaderStageCreateInfo shaderStageCreateInfo{};
             shaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-            shaderStageCreateInfo.stage = ShaderUtils::ShaderStageToVulkan(stage);
+            shaderStageCreateInfo.stage = StageToVulkan(stage);
             shaderStageCreateInfo.module = shaderModule;
             shaderStageCreateInfo.pName = "main";
             
@@ -78,55 +85,71 @@ namespace Candy::Graphics
         
         return shaderModule;
     }
+  
+  std::string Shader::ReadFile(const std::filesystem::path& path)
+  {
+    CANDY_PROFILE_FUNCTION();
     
-    
-    
-    void Shader::CreateProgram()
+    std::string result;
+    std::ifstream in(path, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
+    if (in)
     {
-        /*GLuint program = glCreateProgram();
-        
-        std::vector<GLuint> shaderIDs;
-        for (auto&& [stage, spirv] : m_OpenGLSPIRV)
-        {
-            GLuint shaderID = shaderIDs.emplace_back(glCreateShader(stage));
-            glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), spirv.size() * sizeof(uint32_t));
-            glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
-            glAttachShader(program, shaderID);
-        }
-        
-        glLinkProgram(program);
-        
-        GLint isLinked;
-        glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
-        if (isLinked == GL_FALSE)
-        {
-            GLint maxLength;
-            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-            
-            std::vector<GLchar> infoLog(maxLength);
-            glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-            HZ_CORE_ERROR("Shader linking failed ({0}):\n{1}", m_FilePath, infoLog.data());
-            
-            glDeleteProgram(program);
-            
-            for (auto id : shaderIDs)
-                glDeleteShader(id);
-        }
-        
-        for (auto id : shaderIDs)
-        {
-            glDetachShader(program, id);
-            glDeleteShader(id);
-        }
-        
-        m_RendererID = program;*/
+      in.seekg(0, std::ios::end);
+      auto size = in.tellg();
+      if (size != -1)
+      {
+        result.resize(size);
+        in.seekg(0, std::ios::beg);
+        in.read(&result[0], size);
+      }
+      else
+      {
+        CANDY_CORE_ERROR("Could not read from file '{0}'", path);
+      }
+    }
+    else
+    {
+      CANDY_CORE_ERROR("Could not open file '{0}'", path);
     }
     
+    return result;
+  }
+  std::unordered_map<ShaderStage, std::string> Shader::PreProcess(const std::string& source)
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    std::unordered_map<ShaderStage, std::string> shaderSources;
+    
+    const char* typeToken = "#type";
+    size_t typeTokenLength = strlen(typeToken);
+    size_t pos = source.find(typeToken, 0); //Start of shader type declaration line
+    while (pos != std::string::npos)
+    {
+      size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
+      CANDY_CORE_ASSERT(eol != std::string::npos, "Syntax error");
+      size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
+      std::string type = source.substr(begin, eol - begin);
+      CANDY_CORE_ASSERT(StageFromString(type), "Invalid shader type specified");
+      
+      size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
+      CANDY_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+      pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
+      
+      shaderSources[StageFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
+    }
+    
+    return shaderSources;
+  }
+  
+  
     
     
     
     
-    /*void Shader::CompileOrGetBinaries(const std::unordered_map<ShaderStage, std::string> &sources)
+    
+    
+    
+    void Shader::CompileOrGetBinaries(const std::unordered_map<ShaderStage, std::string> &sources)
     {
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;
@@ -135,7 +158,7 @@ namespace Candy::Graphics
         if (optimize)
             options.SetOptimizationLevel(shaderc_optimization_level_performance);
         
-        std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
+        std::filesystem::path cacheDirectory = GetCacheDirectory();
         
         auto& shaderData = vulkanSPIRV;
         shaderData.clear();
@@ -143,7 +166,7 @@ namespace Candy::Graphics
         for (auto&& [stage, source] : sources)
         {
             std::filesystem::path shaderFilePath = filepath;
-            std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + ShaderUtils::ShaderStageCachedVulkanFileExtension(stage));
+            std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + StageCachedFileExtension(stage));
             
             std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
             if (in.is_open())
@@ -160,7 +183,7 @@ namespace Candy::Graphics
             else
             {
                 CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
-                shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, Utils::ShaderStageToShaderC(stage), filepath.string().c_str(), options);
+                shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
                 if (mod.GetCompilationStatus() != shaderc_compilation_status_success)
                 {
                     CANDY_CORE_ERROR(mod.GetErrorMessage());
@@ -179,14 +202,7 @@ namespace Candy::Graphics
                 }
             }
         }
-        CANDY_CORE_INFO("PRE REFLECTION");
-        
-        for (auto&& [stage, data]: shaderData)
-            Reflect(stage, data);
-        
-        
-    
-    }*/
+    }
     
     
     
@@ -197,8 +213,78 @@ namespace Candy::Graphics
             vkDestroyShaderModule(Vulkan::LogicalDevice(), shaderModule, nullptr);
         shaderModules.clear();
     }
+  
+  ShaderStage Shader::StageFromString(const std::string& type)
+  {
+    if (type == "vertex" || type == "vert")
+      return VERTEX;
+    if (type == "fragment" || type == "pixel" || type == "frag")
+      return FRAGMENT;
+    if (type == "geometry" || type == "geom")
+      return GEOMETRY;
+    if (type == "compute" || type == "comp")
+      return COMPUTE;
     
-    SharedPtr<Shader> Shader::Create(std::filesystem::path shaderFilePath)
+    CANDY_CORE_ASSERT(false, "Unknown shader type!");
+    return ShaderStage::NONE;
+  }
+  const char* Shader::StageCachedFileExtension(ShaderStage stage)
+  {
+    switch (stage)
+    {
+      case VERTEX:    return ".cached_vulkan.vert";
+      case FRAGMENT:  return ".cached_vulkan.frag";
+      case GEOMETRY:  return ".cached_vulkan.geometry";
+      case COMPUTE:   return ".cached_vulkan.compute";
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return nullptr;
+    }
+  }
+  const char* Shader::StageToString(ShaderStage stage)
+  {
+    switch (stage)
+    {
+      case VERTEX:   return "VERTEX";
+      case FRAGMENT: return "FRAGMENT";
+      case GEOMETRY: return "GEOMETRY";
+      case COMPUTE: return "COMPUTE";
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return nullptr;
+    }
+  }
+  std::vector<char> Shader::ReadSpvFileBinary(const std::string& filename)
+  {
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    CANDY_CORE_ASSERT(file.is_open(), "Failed to open file!");
+    
+    size_t fileSize = (size_t)file.tellg();
+    std::vector<char> buffer(fileSize);
+    
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+    file.close();
+    
+    return buffer;
+  }
+  VkShaderStageFlagBits Shader::StageToVulkan(ShaderStage stage)
+  {
+    switch (stage)
+    {
+      case VERTEX: return VK_SHADER_STAGE_VERTEX_BIT;
+      case FRAGMENT: return VK_SHADER_STAGE_FRAGMENT_BIT;
+      case COMPUTE: return VK_SHADER_STAGE_COMPUTE_BIT;
+      case GEOMETRY: return VK_SHADER_STAGE_GEOMETRY_BIT;
+      case TESSELATION_CONTROL: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+      case TESSELATION_EVALUATION: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return (VkShaderStageFlagBits)0;
+    }
+  }
+    
+    SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath)
     {
         return CreateSharedPtr<Shader>(shaderFilePath);
     }

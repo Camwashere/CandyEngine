@@ -3,11 +3,19 @@
 #include <unordered_map>
 #include "CandyPch.hpp"
 #include "Color.hpp"
-#include "ShaderUtils.hpp"
 #include "vulkan/vulkan.h"
 namespace Candy::Graphics
 {
-    
+  enum ShaderStage
+  {
+    NONE = 0,
+    VERTEX = 1,
+    FRAGMENT = 2,
+    COMPUTE = 3,
+    GEOMETRY = 4,
+    TESSELATION_CONTROL=5,
+    TESSELATION_EVALUATION=6,
+  };
     class Shader
     {
     
@@ -19,13 +27,12 @@ namespace Candy::Graphics
         std::vector<VkShaderModule> shaderModules;
     
     private:
-        //std::string ReadFile(const std::filesystem::path& path);
-        //std::unordered_map<ShaderStage, std::string> PreProcess(const std::string& source);
-        //void CompileOrGetBinaries(const std::unordered_map<ShaderStage, std::string>& sources);
-        void CreateProgram();
+        std::string ReadFile(const std::filesystem::path& path);
+        std::unordered_map<ShaderStage, std::string> PreProcess(const std::string& source);
+        void CompileOrGetBinaries(const std::unordered_map<ShaderStage, std::string>& sources);
         VkShaderModule CreateShaderModule(ShaderStage stage);
         std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
-        //std::string ExtractNameFromFilePath(const std::filesystem::path& path);
+        
     
     public:
         explicit Shader(std::filesystem::path  shaderFilePath);
@@ -36,7 +43,12 @@ namespace Candy::Graphics
         void DestroyShaderModules();
         
     public:
-        static SharedPtr<Shader> Create(std::filesystem::path shaderFilePath);
+      static ShaderStage StageFromString(const std::string& stage);
+      static const char* StageCachedFileExtension(ShaderStage stage);
+      static const char* StageToString(ShaderStage stage);
+      static std::vector<char> ReadSpvFileBinary(const std::string& filename);
+      static VkShaderStageFlagBits StageToVulkan(ShaderStage stage);
+      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath);
         
     private:
         friend class GraphicsContext;

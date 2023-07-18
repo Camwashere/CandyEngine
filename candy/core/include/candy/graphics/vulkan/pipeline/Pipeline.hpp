@@ -1,7 +1,7 @@
 #pragma once
 #include "vulkan/vulkan.h"
 #include <vector>
-#include "../../ShaderUtils.hpp"
+#include "../../Shader.hpp"
 #include "PipelineLayout.hpp"
 #include "../../VertexArray.hpp"
 #include "../../Shader.hpp"
