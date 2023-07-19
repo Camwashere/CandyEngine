@@ -26,6 +26,7 @@ namespace Candy::Graphics
         
         bool optimize=false;
         bool recompileOnLoad=true;
+        VkDescriptorSetLayout descriptorSetLayout;
         std::unordered_map<ShaderStage, std::vector<uint32_t>> spirvBinaries;
         std::vector<VkShaderModule> shaderModules;
         std::vector<VkPushConstantRange> pushConstantRanges;
@@ -34,7 +35,8 @@ namespace Candy::Graphics
         std::string ReadFile(const std::filesystem::path& path);
         std::unordered_map<ShaderStage, std::string> PreProcess(const std::string& source);
         void CompileOrGetBinaries(const std::unordered_map<ShaderStage, std::string>& sources);
-        void Reflect(ShaderStage stage, std::vector<uint32_t> spirvBinary);
+        void Reflect(ShaderStage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings);
+        
         VkShaderModule CreateShaderModule(ShaderStage stage);
         std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
         
@@ -48,6 +50,7 @@ namespace Candy::Graphics
         void DestroyShaderModules();
         uint32_t PushConstantRangeCount();
         const VkPushConstantRange* PushConstantRangeData();
+        VkDescriptorSetLayout GetDescriptorSetLayout(){return descriptorSetLayout;}
         
     public:
       static ShaderStage StageFromString(const std::string& stage);

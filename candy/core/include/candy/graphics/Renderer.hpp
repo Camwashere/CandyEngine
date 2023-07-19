@@ -18,22 +18,16 @@ namespace Candy::Graphics
     SharedPtr<Shader> shader;
     SharedPtr<VertexArray> vertexArray;
     Pipeline pipeline;
-    //GraphicsPipeline graphicsPipeline;
     GraphicsContext* target;
     VkDescriptorPool descriptorPool;
     std::vector<VkDescriptorSet> descriptorSets;
-    VkDescriptorSetLayout descriptorSetLayout;
     std::vector<SharedPtr<UniformBuffer>> uniformBuffers;
-    //std::vector<VkBuffer> uniformBuffers;
-    //std::vector<VmaAllocation> uniformBufferAllocations;
-    //std::vector<void*> uniformBuffersMapped;
     
     
     
   private:
     void CreateDescriptorPool();
     void CreateDescriptorSets();
-    void CreateDescriptorSetLayout();
     void CreateUniformBuffers();
     void UpdateUniformBuffer();
     void UpdatePushConstants();

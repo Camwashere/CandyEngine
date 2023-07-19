@@ -24,7 +24,6 @@ namespace Candy::Graphics
   Renderer::Renderer(GraphicsContext* context) : target(context)
   {
     
-    CreateDescriptorSetLayout();
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
     
@@ -57,7 +56,7 @@ namespace Candy::Graphics
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
     CANDY_CORE_INFO("Uniform buffer obj size: {}", sizeof(UniformBufferObject));
-    pipeline.GetLayout().AddDescriptorSetLayout(descriptorSetLayout);
+    //pipeline.GetLayout().AddDescriptorSetLayout(descriptorSetLayout);
     pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,
                                VK_DYNAMIC_STATE_SCISSOR});
     
@@ -113,7 +112,7 @@ namespace Candy::Graphics
   
   void Renderer::CreateDescriptorSets()
   {
-    std::vector<VkDescriptorSetLayout> layouts(FRAME_OVERLAP, descriptorSetLayout);
+    std::vector<VkDescriptorSetLayout> layouts(FRAME_OVERLAP, shader->GetDescriptorSetLayout());
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
@@ -123,6 +122,7 @@ namespace Candy::Graphics
     
     
     descriptorSets.resize(FRAME_OVERLAP);
+    
     CANDY_CORE_ASSERT(vkAllocateDescriptorSets(Vulkan::LogicalDevice(), &allocInfo, descriptorSets.data()) == VK_SUCCESS, "Failed to allocate descriptor sets!");
     
     for (size_t i=0; i<FRAME_OVERLAP; i++)
@@ -151,26 +151,7 @@ namespace Candy::Graphics
     
     
   }
-  void Renderer::CreateDescriptorSetLayout()
-  {
-    VkDescriptorSetLayoutBinding uboLayoutBinding{};
-    uboLayoutBinding.binding = 0;
-    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    uboLayoutBinding.descriptorCount = 1;
-    
-    // Only referencing descriptor from the fragment shader
-    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-    
-    uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
-    
-    VkDescriptorSetLayoutCreateInfo layoutInfo{};
-    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 1;
-    layoutInfo.pBindings = &uboLayoutBinding;
-    
-    CANDY_CORE_ASSERT(vkCreateDescriptorSetLayout(Vulkan::LogicalDevice(), &layoutInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS, "Failed to create descriptor set layout!");
-    
-  }
+
   
   void Renderer::CreateUniformBuffers()
   {
@@ -282,7 +263,7 @@ namespace Candy::Graphics
       uniformBuffers[i]->Destroy();
     }
     vkDestroyDescriptorPool(Vulkan::LogicalDevice(), descriptorPool, nullptr);
-    vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), descriptorSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), shader->GetDescriptorSetLayout(), nullptr);
     
     vertexArray->Clear();
     

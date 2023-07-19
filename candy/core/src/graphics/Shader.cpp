@@ -205,39 +205,51 @@ namespace Candy::Graphics
                 }
             }
         }
-        
+       
+        std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
         for (auto&& [stage, data] : shaderData)
         {
-            Reflect(stage, data);
+            Reflect(stage, data, layoutBindings);
         }
+      
+      VkDescriptorSetLayoutCreateInfo layoutInfo{};
+      layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+      layoutInfo.bindingCount = layoutBindings.size();
+      layoutInfo.pBindings = layoutBindings.data();
+      
+      CANDY_CORE_ASSERT(vkCreateDescriptorSetLayout(Vulkan::LogicalDevice(), &layoutInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS, "Failed to create descriptor set layout!");
+      
         
         
     }
     
-    void Shader::Reflect(ShaderStage stage, std::vector<uint32_t> spirvBinary)
+    void Shader::Reflect(ShaderStage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings)
     {
       spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
-      
       auto resources = compiler.get_shader_resources();
+      
+      
       
       for (auto& resource : resources.uniform_buffers)
       {
         CANDY_CORE_INFO("UNIFORM NAME: {}", resource.name);
         CANDY_CORE_INFO("UNIFORM SIZE: {}", compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)));
-        
-        uint32_t index=0;
-        while (true)
+        auto memberNames = compiler.get_type(resource.base_type_id).member_name_cache;
+        for (auto& memberName : memberNames)
         {
-          
-          std::string memberName = compiler.get_member_name(resource.base_type_id, index);
-          if (memberName.empty())
-          {
-            break;
-          }
           CANDY_CORE_INFO("UNIFORM MEMBER NAME: {}", memberName);
-          index++;
         }
+        uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+        uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
         
+        VkDescriptorSetLayoutBinding layoutBinding{};
+        
+        layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        layoutBinding.descriptorCount = 1;
+        layoutBinding.binding = binding;
+        layoutBinding.stageFlags = StageToVulkan(stage);
+        layoutBinding.pImmutableSamplers = nullptr;
+        layoutBindings.push_back(layoutBinding);
         
       }
       VkPushConstantRange pushRange{};
