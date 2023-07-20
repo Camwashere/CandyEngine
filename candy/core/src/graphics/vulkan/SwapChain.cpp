@@ -1,5 +1,4 @@
 #include <candy/graphics/vulkan/SwapChain.hpp>
-#include <Candy/Math/MathOps.hpp>
 #include <GLFW/glfw3.h>
 #include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/Vulkan.hpp>
@@ -27,21 +26,19 @@ namespace Candy::Graphics
         Clean();
         Build();
         CreateImageViews();
-        context->CreateDepthResources();
         CreateFrameBuffers(renderPass);
     }
     
     void SwapChain::Clean()
     {
-      context->depthImageView.Destroy();
-      context->depthImage.Destroy();
+      depthImageView.Destroy();
+      depthImage.Destroy();
         for (auto & swapChainFrameBuffer : frameBuffers) {
             vkDestroyFramebuffer(Vulkan::LogicalDevice(), swapChainFrameBuffer, nullptr);
         }
         
         for (auto & swapChainImageView : imageViews) {
           swapChainImageView.Destroy();
-            //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
         }
         
         vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
@@ -95,39 +92,32 @@ namespace Candy::Graphics
         imageFormat = surfaceFormat.format;
         extent = swapExtent;
     }
+  void SwapChain::CreateDepthResources()
+  {
+    VkFormat depthFormat = GraphicsContext::FindDepthFormat();
+    depthImage.Create(Math::Vector2u(extent.width, extent.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    context->GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     
+  }
     void SwapChain::CreateImageViews()
     {
         imageViews.resize(images.size());
         
         for (size_t i = 0; i < images.size(); i++) {
           imageViews[i].Set(images[i], imageFormat);
-            /*VkImageViewCreateInfo createInfo{};
-            createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-            createInfo.image = images[i];
-            createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            createInfo.format = imageFormat;
-            createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            createInfo.subresourceRange.baseMipLevel = 0;
-            createInfo.subresourceRange.levelCount = 1;
-            createInfo.subresourceRange.baseArrayLayer = 0;
-            createInfo.subresourceRange.layerCount = 1;
-            
-            CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &createInfo, nullptr, &imageViews[i]) == VK_SUCCESS, "Failed to create image views!");*/
+          
             
         }
     }
     
     void SwapChain::CreateFrameBuffers(VkRenderPass renderPass)
     {
+      CreateDepthResources();
         frameBuffers.resize(imageViews.size());
         for (size_t i = 0; i < imageViews.size(); i++)
         {
-          std::array<VkImageView, 2> attachments = {imageViews[i], context->depthImageView};
+          std::array<VkImageView, 2> attachments = {imageViews[i], depthImageView};
             
             
             VkFramebufferCreateInfo framebufferInfo{};

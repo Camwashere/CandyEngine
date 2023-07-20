@@ -14,14 +14,10 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface) == VK_SUCCESS, "Failed to create vulkan window surface!");
       Vulkan::InitDeviceManager(surface);
       
-      //deviceManager = CreateUniquePtr<VulkanDeviceManager>(surface);
       swapChain = new SwapChain(this);
       renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
       InitSyncStructures();
-      CreateDepthResources();
       swapChain->CreateFrameBuffers(*renderPass);
-      
-        //Init();
     }
   void GraphicsContext::InitSyncStructures()
   {
@@ -40,14 +36,7 @@ namespace Candy::Graphics
     }
   }
   
-  void GraphicsContext::CreateDepthResources()
-  {
-    VkFormat depthFormat = FindDepthFormat();
-    depthImage.Create(Math::Vector2u(swapChain->extent.width, swapChain->extent.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-    depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-    GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-    
-  }
+
   
   bool GraphicsContext::HasStencilComponent(VkFormat format)
   {
@@ -78,6 +67,7 @@ namespace Candy::Graphics
     }
     
     CANDY_CORE_ASSERT(false, "Failed to find supported format!");
+    return VK_FORMAT_UNDEFINED;
     
   }
   
@@ -130,30 +120,7 @@ namespace Candy::Graphics
     void GraphicsContext::Terminate()
     {
         vkDeviceWaitIdle(Vulkan::LogicalDevice());
-        //swapChain->Clean();
-        
-        /*for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-        {
-          vmaUnmapMemory(VulkanInstance::Allocator(), uniformBufferAllocations[i]);
-          VulkanBuffer::DestroyBuffer(uniformBuffers[i], uniformBufferAllocations[i]);
-        }
-        vkDestroyDescriptorPool(Vulkan::LogicalDevice, descriptorPool, nullptr);
-        vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice, descriptorSetLayout, nullptr);
-        vertexArray->Clear();
-        
-        //vkDestroyPipeline(Vulkan::LogicalDevice, graphicsPipeline, nullptr);
-        //vkDestroyPipelineLayout(Vulkan::LogicalDevice, pipelineLayout, nullptr);
-        graphicsPipeline.Destroy();
-        delete renderPass;
-        for (size_t i=0; i<MAX_FRAMES_IN_FLIGHT; i++)
-        {
-            vkDestroySemaphore(Vulkan::LogicalDevice, imageAvailableSemaphores[i], nullptr);
-            vkDestroySemaphore(Vulkan::LogicalDevice, renderFinishedSemaphores[i], nullptr);
-            vkDestroyFence(Vulkan::LogicalDevice, inFlightFences[i], nullptr);
-        }
-      
-        
-        delete commandBuffer;*/
+       
       renderPass->Destroy();
       for (size_t i=0; i<FRAME_OVERLAP; i++)
       {
@@ -170,9 +137,7 @@ namespace Candy::Graphics
         
         vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
         
-        //vkDestroyDevice(Vulkan::LogicalDevice, nullptr);
-        //VulkanInstance::Shutdown();
-        //vkDestroyInstance(VulkanInstance::Get(), nullptr);
+      
     }
   
   void GraphicsContext::OnFrameBufferResize()

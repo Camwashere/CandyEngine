@@ -18,6 +18,8 @@ namespace Candy::Graphics
         VkExtent2D extent;
         std::vector<ImageView> imageViews;
         std::vector<VkFramebuffer> frameBuffers;
+        Image depthImage;
+        ImageView depthImageView;
         uint32_t imageIndex=0;
         
     private:
@@ -26,6 +28,7 @@ namespace Candy::Graphics
         VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
         void CreateImageViews();
         void Build();
+        void CreateDepthResources();
         
     public:
         explicit SwapChain(GraphicsContext* context);

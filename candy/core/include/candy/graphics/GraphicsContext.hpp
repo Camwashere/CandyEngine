@@ -37,8 +37,6 @@ namespace Candy::Graphics
         UniquePtr<RenderPass> renderPass;
         uint32_t currentFrameIndex = 0;
         FrameData frames[FRAME_OVERLAP];
-        Image depthImage;
-        ImageView depthImageView;
         bool frameBufferResized=false;
 
         
@@ -46,7 +44,6 @@ namespace Candy::Graphics
         void InitSyncStructures();
         VkRenderPassBeginInfo BeginRenderPass();
         FrameData& GetCurrentFrame();
-        void CreateDepthResources();
         
     public:
         explicit GraphicsContext(GLFWwindow* windowHandle);
