@@ -228,7 +228,7 @@ namespace Candy::Graphics
       spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
       auto resources = compiler.get_shader_resources();
       
-      
+     
       
       for (auto& resource : resources.uniform_buffers)
       {
@@ -251,6 +251,18 @@ namespace Candy::Graphics
         layoutBinding.pImmutableSamplers = nullptr;
         layoutBindings.push_back(layoutBinding);
         
+      }
+      
+      for (auto& resource : resources.sampled_images)
+      {
+        VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+        uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+        samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        samplerLayoutBinding.descriptorCount = 1;
+        samplerLayoutBinding.binding = binding;
+        samplerLayoutBinding.stageFlags = StageToVulkan(stage);
+        samplerLayoutBinding.pImmutableSamplers = nullptr;
+        layoutBindings.push_back(samplerLayoutBinding);
       }
       VkPushConstantRange pushRange{};
       pushRange.stageFlags = StageToVulkan(stage);

@@ -24,11 +24,15 @@ namespace Candy::Graphics
         
     public:
         void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+        VkCommandBuffer BeginSingleTimeCommands();
+        void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+      void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+        void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
         
     public:
+        
         void Reset();
         void StartRecording(VkCommandBufferUsageFlags flags=0);
-        //void StartRecording(uint32_t currentFrame);
         void StartRenderPass(const VkRenderPassBeginInfo* renderPassInfo);
         void BindPipeline(VkPipeline pipeline);
         void SetViewport(VkExtent2D extent);

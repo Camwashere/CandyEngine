@@ -2,6 +2,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "device/VulkanDeviceManager.hpp"
+#include "ImageView.hpp"
 struct GLFWwindow;
 namespace Candy::Graphics
 {
@@ -15,7 +16,7 @@ namespace Candy::Graphics
         std::vector<VkImage> images;
         VkFormat imageFormat;
         VkExtent2D extent;
-        std::vector<VkImageView> imageViews;
+        std::vector<ImageView> imageViews;
         std::vector<VkFramebuffer> frameBuffers;
         uint32_t imageIndex=0;
         

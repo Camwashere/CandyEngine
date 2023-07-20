@@ -8,66 +8,6 @@ namespace Candy::Graphics
 {
   using namespace Math;
   
-    
-    
-    struct Vertex {
-        Math::Vector2 pos;
-        Math::Vector3 color;
-        
-        static VkVertexInputBindingDescription getBindingDescription() {
-            VkVertexInputBindingDescription bindingDescription{};
-            bindingDescription.binding = 0;
-            bindingDescription.stride = sizeof(Vertex);
-            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-            
-            return bindingDescription;
-        }
-        
-        static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
-            
-            attributeDescriptions[0].binding = 0;
-            attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-            attributeDescriptions[0].offset = offsetof(Vertex, pos);
-            
-            attributeDescriptions[1].binding = 0;
-            attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[1].offset = offsetof(Vertex, color);
-            
-            return attributeDescriptions;
-        }
-    };
-    const std::vector<Vertex> vertices1 = {
-            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
-    };
-    
-    const std::vector<Math::Vector2> vertices = {
-            {-0.5f, -0.5f},
-            {0.5f, -0.5f},
-            {0.5f, 0.5f},
-            {-0.5f, 0.5f}
-    };
-    
-    const std::vector<Math::Vector3> colors = {
-            {1.0f, 0.0f, 0.0f},
-            {0.0f, 1.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f},
-            {1.0f, 1.0f, 1.0f}
-    };
-    
-    const std::vector<uint32_t> indices = {
-            0, 1, 2, 2, 3, 0
-    };
-    
-    
-    
-    
-        
     GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
     {
       handle = windowHandle;
@@ -77,9 +17,9 @@ namespace Candy::Graphics
       //deviceManager = CreateUniquePtr<VulkanDeviceManager>(surface);
       swapChain = new SwapChain(this);
       renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
-      swapChain->CreateFrameBuffers(*renderPass);
-      
       InitSyncStructures();
+      CreateDepthResources();
+      swapChain->CreateFrameBuffers(*renderPass);
       
         //Init();
     }
@@ -100,127 +40,53 @@ namespace Candy::Graphics
     }
   }
   
+  void GraphicsContext::CreateDepthResources()
+  {
+    VkFormat depthFormat = FindDepthFormat();
+    depthImage.Create(Math::Vector2u(swapChain->extent.width, swapChain->extent.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    
+  }
+  
+  bool GraphicsContext::HasStencilComponent(VkFormat format)
+  {
+    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+  }
+  VkFormat GraphicsContext::FindDepthFormat()
+  {
+    return FindSupportedFormat(
+      {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+      VK_IMAGE_TILING_OPTIMAL,
+      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+    );
+  }
+  VkFormat GraphicsContext::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+  {
+    for (VkFormat format : candidates)
+    {
+      VkFormatProperties props;
+      vkGetPhysicalDeviceFormatProperties(Vulkan::PhysicalDevice(), format, &props);
+      if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
+      {
+        return format;
+      }
+      else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
+      {
+        return format;
+      }
+    }
+    
+    CANDY_CORE_ASSERT(false, "Failed to find supported format!");
+    
+  }
+  
   VkRenderPassBeginInfo GraphicsContext::BeginRenderPass()
   {
       return renderPass->BeginPass(swapChain->GetCurrentFrameBuffer(), swapChain->extent);
   }
 
-    void GraphicsContext::CreateDescriptorPool()
-    {
-        /*VkDescriptorPoolSize poolSize{};
-        poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        poolSize.descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-        
-        VkDescriptorPoolCreateInfo poolInfo{};
-        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        poolInfo.poolSizeCount = 1;
-        poolInfo.pPoolSizes = &poolSize;
-        
-        poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-        
-        CANDY_CORE_ASSERT(vkCreateDescriptorPool(Vulkan::LogicalDevice, &poolInfo, nullptr, &descriptorPool) == VK_SUCCESS, "Failed to create descriptor pooL!");*/
-        
-    }
-    
-    void GraphicsContext::CreateDescriptorSets()
-    {
-        /*std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
-        VkDescriptorSetAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = descriptorPool;
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-        allocInfo.pSetLayouts = layouts.data();
-        
-        
-        
-        descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-        CANDY_CORE_ASSERT(vkAllocateDescriptorSets(Vulkan::LogicalDevice, &allocInfo, descriptorSets.data()) == VK_SUCCESS, "Failed to allocate descriptor sets!");
-        
-        for (size_t i=0; i<MAX_FRAMES_IN_FLIGHT; i++)
-        {
-            VkDescriptorBufferInfo bufferInfo{};
-            bufferInfo.buffer = uniformBuffers[i];
-            bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(UniformBufferObject);
-            
-            VkWriteDescriptorSet descriptorWrite{};
-            descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            descriptorWrite.dstSet = descriptorSets[i];
-            descriptorWrite.dstBinding = 0;
-            descriptorWrite.dstArrayElement = 0;
-            
-            
-            descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            descriptorWrite.descriptorCount = 1;
-            
-            descriptorWrite.pBufferInfo = &bufferInfo;
-            descriptorWrite.pImageInfo = nullptr; // Optional
-            descriptorWrite.pTexelBufferView = nullptr; // Optional
-            
-            vkUpdateDescriptorSets(Vulkan::LogicalDevice, 1, &descriptorWrite, 0, nullptr);
-        }*/
-        
-        
-    }
-    void GraphicsContext::CreateDescriptorSetLayout()
-    {
-        /*VkDescriptorSetLayoutBinding uboLayoutBinding{};
-        uboLayoutBinding.binding = 0;
-        uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        uboLayoutBinding.descriptorCount = 1;
-        
-        // Only referencing descriptor from the vertex shader
-        uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-        
-        uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
-        
-        VkDescriptorSetLayoutCreateInfo layoutInfo{};
-        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        layoutInfo.bindingCount = 1;
-        layoutInfo.pBindings = &uboLayoutBinding;
-        
-        CANDY_CORE_ASSERT(vkCreateDescriptorSetLayout(Vulkan::LogicalDevice, &layoutInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS, "Failed to create descriptor set layout!");*/
-    
-    }
-    
-    void GraphicsContext::CreateUniformBuffers()
-    {
-        /*VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-        
-        uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-        uniformBufferAllocations.resize(MAX_FRAMES_IN_FLIGHT);
-        uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
-        
-        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-            VulkanBuffer::CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], &uniformBufferAllocations[i]);
-            
-            vmaMapMemory(Vulkan::Allocator(), uniformBufferAllocations[i], &uniformBuffersMapped[i]);
-        }*/
-        
-    }
-    
-    void GraphicsContext::UpdateUniformBuffer(uint32_t currentImage)
-    {
-        static auto startTime = std::chrono::high_resolution_clock::now();
-        
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-        
-        UniformBufferObject ubo{};
-        
-        ubo.model = Matrix4::Rotate(Matrix4::IDENTITY, time * Math::ToRadians(90.0f), Math::Vector3(0.0f, 0.0f, 1.0f));
-        ubo.view = Matrix4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-        ubo.proj = Matrix4::Perspective(Math::ToRadians(45.0f), (float)swapChain->extent.width / (float) swapChain->extent.height, 0.1f, 10.0f);
-        
-        ubo.proj[1,1] *= -1;
-        
-        //ubo.model = Matrix4::Transpose(ubo.model);
-        //ubo.view = Matrix4::Transpose(ubo.view);
-        //ubo.proj = Matrix4::Transpose(ubo.proj);
-        
-        //memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
-        
-    }
+  
   
   
   FrameData& GraphicsContext::GetCurrentFrame(){return frames[currentFrameIndex];}

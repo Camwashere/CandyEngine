@@ -34,37 +34,19 @@ namespace Candy::Graphics
         GLFWwindow* handle;
         VkSurfaceKHR surface;
         SwapChain* swapChain;
-        //UniquePtr<VulkanDeviceManager> deviceManager;
         UniquePtr<RenderPass> renderPass;
         uint32_t currentFrameIndex = 0;
         FrameData frames[FRAME_OVERLAP];
-
-        /*VkDescriptorPool descriptorPool;
-        std::vector<VkDescriptorSet> descriptorSets;
-        VkDescriptorSetLayout descriptorSetLayout;*/
-        
-
-        
+        Image depthImage;
+        ImageView depthImageView;
         bool frameBufferResized=false;
 
         
-        //std::vector<VkBuffer> uniformBuffers;
-        //std::vector<VmaAllocation> uniformBufferAllocations;
-        //std::vector<void*> uniformBuffersMapped;
-        
-        
     private:
-        void CreateDescriptorPool();
-        void CreateDescriptorSets();
-        void CreateDescriptorSetLayout();
-        void CreateUniformBuffers();
-        void UpdateUniformBuffer(uint32_t currentImage);
         void InitSyncStructures();
         VkRenderPassBeginInfo BeginRenderPass();
         FrameData& GetCurrentFrame();
-        
-
-        
+        void CreateDepthResources();
         
     public:
         explicit GraphicsContext(GLFWwindow* windowHandle);
@@ -76,10 +58,11 @@ namespace Candy::Graphics
         void OnFrameBufferResize();
         void UpdateFrameIndex();
         
-        
-        
     public:
         static UniquePtr<GraphicsContext> Create(GLFWwindow* windowHandle);
+      static bool HasStencilComponent(VkFormat format);
+      static VkFormat FindDepthFormat();
+      static VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
         
     private:
         friend class VulkanDebugManager;

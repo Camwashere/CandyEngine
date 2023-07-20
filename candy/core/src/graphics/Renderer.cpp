@@ -1,52 +1,88 @@
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
+#include <candy/graphics/vulkan/Image.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
-  const std::vector<Math::Vector2> vertices = {
-  {-0.5f, -0.5f},
-  {0.5f, -0.5f},
-  {0.5f, 0.5f},
-  {-0.5f, 0.5f}
+  const std::vector<Math::Vector3> vertices = {
+  {-0.5f, -0.5f, 0.0f},
+  {0.5f, -0.5f, 0.0f},
+  {0.5f, 0.5f, 0.0f},
+  {-0.5f, 0.5f, 0.0f},
+  
+  // SECOND SQUARE
+    {-0.5f, -0.5f, -0.5f},
+    {0.5f, -0.5f, -0.5f},
+    {0.5f, 0.5f, -0.5f},
+    {-0.5f, 0.5f, -0.5f}
   };
   
   const std::vector<Math::Vector3> colors = {
   {1.0f, 0.0f, 0.0f},
   {0.0f, 1.0f, 0.0f},
   {0.0f, 0.0f, 1.0f},
+  {1.0f, 1.0f, 1.0f},
+  
+  //SECOND SQUARE
+  {1.0f, 0.0f, 0.0f},
+  {0.0f, 1.0f, 0.0f},
+  {0.0f, 0.0f, 1.0f},
   {1.0f, 1.0f, 1.0f}
   };
   
+  const std::vector<Math::Vector2> uvs = {
+    {1.0f, 0.0f},
+    {0.0f, 0.0f},
+    {0.0f, 1.0f},
+    {1.0f, 1.0f},
+    
+    //SECOND SQUARE
+    {1.0f, 0.0f},
+    {0.0f, 0.0f},
+    {0.0f, 1.0f},
+    {1.0f, 1.0f}
+  };
+  
   const std::vector<uint32_t> indices = {
-  0, 1, 2, 2, 3, 0
+  0, 1, 2, 2, 3, 0,
+  //SECOND SQUARE
+  4, 5, 6, 6, 7, 4
   };
   Renderer::Renderer(GraphicsContext* context) : target(context)
   {
     
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
+    texture.Load("assets/textures/statue.jpg", GetCurrentFrame().commandBuffer);
+    textureImageView.Set(texture);
+    texture.CreateSampler();
     
     //Buffers
     vertexArray = VertexArray::Create();
     
     BufferLayout layout;
-    layout.AddElement(ShaderDataType::Float2, "inPosition");
+    layout.AddElement(ShaderDataType::Float3, "inPosition");
     layout.AddElement(ShaderDataType::Float3, "inColor");
+    layout.AddElement(ShaderDataType::Float2, "inTexCoord");
     
     SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(&target->frames[0].commandBuffer, layout, vertices.size());
     
     
     uint64_t totalSize = layout.CalculateTotalComponentCount(vertices.size());
     float data[totalSize];
-    for (int i=0, a=0; i<totalSize; i+=5, a++)
+    for (int i=0, a=0; i<totalSize; i+=8, a++)
     {
       data[i] = vertices[a].x;
       data[i+1] = vertices[a].y;
+      data[i+2] = vertices[a].z;
       
-      data[i+2] = colors[a].x;
-      data[i+3] = colors[a].y;
-      data[i+4] = colors[a].z;
+      data[i+3] = colors[a].x;
+      data[i+4] = colors[a].y;
+      data[i+5] = colors[a].z;
+      
+      data[i+6] = uvs[a].x;
+      data[i+7] = uvs[a].y;
     }
     
     vertexBuffer->SetData(data);
@@ -65,6 +101,7 @@ namespace Candy::Graphics
     CreateUniformBuffers();
     CreateDescriptorPool();
     CreateDescriptorSets();
+    
     
   
   }
@@ -95,16 +132,18 @@ namespace Candy::Graphics
   
   void Renderer::CreateDescriptorPool()
   {
-    VkDescriptorPoolSize poolSize{};
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = static_cast<uint32_t>(FRAME_OVERLAP);
+    std::array<VkDescriptorPoolSize, 2> poolSizes{};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = static_cast<uint32_t>(FRAME_OVERLAP);
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = static_cast<uint32_t>(FRAME_OVERLAP);
     
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
-    
+    poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+    poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = static_cast<uint32_t>(FRAME_OVERLAP);
+    
     
     CANDY_CORE_ASSERT(vkCreateDescriptorPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &descriptorPool) == VK_SUCCESS, "Failed to create descriptor pooL!");
     
@@ -123,30 +162,40 @@ namespace Candy::Graphics
     
     descriptorSets.resize(FRAME_OVERLAP);
     
+    
     CANDY_CORE_ASSERT(vkAllocateDescriptorSets(Vulkan::LogicalDevice(), &allocInfo, descriptorSets.data()) == VK_SUCCESS, "Failed to allocate descriptor sets!");
     
     for (size_t i=0; i<FRAME_OVERLAP; i++)
     {
-        VkDescriptorBufferInfo bufferInfo{};
-        bufferInfo.buffer = *uniformBuffers[i];
-        bufferInfo.offset = 0;
-        bufferInfo.range = sizeof(UniformBufferObject);
+      VkDescriptorBufferInfo bufferInfo{};
+      bufferInfo.buffer = *uniformBuffers[i];
+      bufferInfo.offset = 0;
+      bufferInfo.range = sizeof(UniformBufferObject);
+      
+      VkDescriptorImageInfo imageInfo{};
+      imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      imageInfo.imageView = textureImageView;
+      imageInfo.sampler = texture.GetSampler();
+      
+      std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+      
+      descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      descriptorWrites[0].dstSet = descriptorSets[i];
+      descriptorWrites[0].dstBinding = 0;
+      descriptorWrites[0].dstArrayElement = 0;
+      descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      descriptorWrites[0].descriptorCount = 1;
+      descriptorWrites[0].pBufferInfo = &bufferInfo;
+      
+      descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      descriptorWrites[1].dstSet = descriptorSets[i];
+      descriptorWrites[1].dstBinding = 1;
+      descriptorWrites[1].dstArrayElement = 0;
+      descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      descriptorWrites[1].descriptorCount = 1;
+      descriptorWrites[1].pImageInfo = &imageInfo;
         
-        VkWriteDescriptorSet descriptorWrite{};
-        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrite.dstSet = descriptorSets[i];
-        descriptorWrite.dstBinding = 0;
-        descriptorWrite.dstArrayElement = 0;
-        
-        
-        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        descriptorWrite.descriptorCount = 1;
-        
-        descriptorWrite.pBufferInfo = &bufferInfo;
-        descriptorWrite.pImageInfo = nullptr; // Optional
-        descriptorWrite.pTexelBufferView = nullptr; // Optional
-        
-        vkUpdateDescriptorSets(Vulkan::LogicalDevice(), 1, &descriptorWrite, 0, nullptr);
+      vkUpdateDescriptorSets(Vulkan::LogicalDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
     
     
@@ -179,18 +228,15 @@ namespace Candy::Graphics
     GetCurrentFrame().commandBuffer.Reset();
     GetCurrentFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
     
-    VkClearValue clearValue;
-    clearValue.color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+    std::array<VkClearValue, 2> clearValues{};
     
-    VkClearValue depthClear;
-    depthClear.depthStencil.depth = 1.f;
+    clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+    clearValues[1].depthStencil = {1.0f, 0};
     
     VkRenderPassBeginInfo rpInfo = target->BeginRenderPass();
-    rpInfo.clearValueCount = 2;
+    rpInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    rpInfo.pClearValues = clearValues.data();
     
-    VkClearValue clearValues[] = { clearValue, depthClear };
-    
-    rpInfo.pClearValues = &clearValues[0];
     GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
     GetCurrentFrame().commandBuffer.BindPipeline(pipeline);
     GetCurrentFrame().commandBuffer.SetViewport(target->swapChain->extent);
@@ -258,6 +304,8 @@ namespace Candy::Graphics
     
     
    target->swapChain->Clean();
+   textureImageView.Destroy();
+   texture.Destroy();
     for (size_t i = 0; i < FRAME_OVERLAP; i++)
     {
       uniformBuffers[i]->Destroy();

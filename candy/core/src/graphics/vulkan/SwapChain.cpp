@@ -27,17 +27,21 @@ namespace Candy::Graphics
         Clean();
         Build();
         CreateImageViews();
+        context->CreateDepthResources();
         CreateFrameBuffers(renderPass);
     }
     
     void SwapChain::Clean()
     {
+      context->depthImageView.Destroy();
+      context->depthImage.Destroy();
         for (auto & swapChainFrameBuffer : frameBuffers) {
             vkDestroyFramebuffer(Vulkan::LogicalDevice(), swapChainFrameBuffer, nullptr);
         }
         
         for (auto & swapChainImageView : imageViews) {
-            vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
+          swapChainImageView.Destroy();
+            //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
         }
         
         vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
@@ -97,7 +101,8 @@ namespace Candy::Graphics
         imageViews.resize(images.size());
         
         for (size_t i = 0; i < images.size(); i++) {
-            VkImageViewCreateInfo createInfo{};
+          imageViews[i].Set(images[i], imageFormat);
+            /*VkImageViewCreateInfo createInfo{};
             createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             createInfo.image = images[i];
             createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -112,7 +117,7 @@ namespace Candy::Graphics
             createInfo.subresourceRange.baseArrayLayer = 0;
             createInfo.subresourceRange.layerCount = 1;
             
-            CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &createInfo, nullptr, &imageViews[i]) == VK_SUCCESS, "Failed to create image views!");
+            CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &createInfo, nullptr, &imageViews[i]) == VK_SUCCESS, "Failed to create image views!");*/
             
         }
     }
@@ -120,16 +125,16 @@ namespace Candy::Graphics
     void SwapChain::CreateFrameBuffers(VkRenderPass renderPass)
     {
         frameBuffers.resize(imageViews.size());
-        for (size_t i = 0; i < imageViews.size(); i++) {
-            VkImageView attachments[] = {
-                    imageViews[i]
-            };
+        for (size_t i = 0; i < imageViews.size(); i++)
+        {
+          std::array<VkImageView, 2> attachments = {imageViews[i], context->depthImageView};
+            
             
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             framebufferInfo.renderPass = renderPass;
-            framebufferInfo.attachmentCount = 1;
-            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+            framebufferInfo.pAttachments = attachments.data();
             framebufferInfo.width = extent.width;
             framebufferInfo.height = extent.height;
             framebufferInfo.layers = 1;

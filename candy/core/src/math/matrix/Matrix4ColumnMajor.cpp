@@ -227,8 +227,11 @@ namespace Candy::Math
   
   AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::Perspective(float fov, float aspectRatio, float near, float far)
   {
+    
     float f = 1.0f / Tan(fov / 2.0f);
     float zRange = near - far;
+    float a = (far+near)/zRange;
+    float b = 2.0f * far * near / zRange;
     
     return {
     f / aspectRatio, 0.0f, 0.0f, 0.0f,

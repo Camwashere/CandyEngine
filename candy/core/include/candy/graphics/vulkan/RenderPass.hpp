@@ -13,7 +13,7 @@ namespace Candy::Graphics
         Color clearColor;
    
     public:
-        RenderPass(VkFormat colorAttachmentFormat);
+        explicit RenderPass(VkFormat colorAttachmentFormat);
         ~RenderPass();
         
     public:

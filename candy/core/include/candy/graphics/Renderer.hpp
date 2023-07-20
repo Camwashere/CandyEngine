@@ -8,6 +8,8 @@
 #include <deque>
 #include <ranges>
 #include "UniformBuffer.hpp"
+#include "Texture.hpp"
+#include "vulkan/ImageView.hpp"
 namespace Candy::Graphics
 {
   
@@ -22,6 +24,9 @@ namespace Candy::Graphics
     VkDescriptorPool descriptorPool;
     std::vector<VkDescriptorSet> descriptorSets;
     std::vector<SharedPtr<UniformBuffer>> uniformBuffers;
+    Texture texture;
+    ImageView textureImageView;
+    
     
     
     
@@ -31,10 +36,15 @@ namespace Candy::Graphics
     void CreateUniformBuffers();
     void UpdateUniformBuffer();
     void UpdatePushConstants();
+  
+    
     FrameData& GetCurrentFrame();
     
   public:
     explicit Renderer(GraphicsContext* target);
+  
+  public:
+  
     
   public:
     void Draw();

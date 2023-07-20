@@ -1,33 +1,39 @@
 #pragma once
-
+#include <candy/base/Base.hpp>
 namespace Candy {
-    struct Color;
-    struct Color32;
-    struct ColorHSV;
-    struct ColorHSL;
-    struct ColorCMYK;
-    struct ColorYIQ;
+
 }
 namespace Candy
 {
-    enum ColorFormat
+    enum class ColorLayout : uint8_t
     {
-        RGB=0,
-        RGB32,
+        NONE = 0,
+        RGBA,
+        RGB,
         HSV,
         HSL,
         CMYK,
         YIQ,
-        NONE,
+       
+    };
+    enum class ColorDataType : uint8_t
+    {
+      NONE=0,
+      FLOAT,
+      DOUBLE,
+      BYTE,
+      UNSIGNED_BYTE,
     };
     
     
-    template<ColorFormat COLOR_FORMAT>
+    
+    template<ColorLayout COLOR_FORMAT, ColorDataType COLOR_DATA_TYPE>
     class ColorBase
     {
     
     public:
-        [[nodiscard]] constexpr ColorFormat GetFormat()const{return COLOR_FORMAT;}
+        [[nodiscard]] constexpr ColorLayout GetLayout()const{return COLOR_FORMAT;}
+        [[nodiscard]] constexpr ColorDataType GetDataType()const{return COLOR_DATA_TYPE;}
         
     };
     

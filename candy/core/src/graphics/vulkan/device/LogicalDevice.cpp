@@ -26,9 +26,11 @@ namespace Candy::Graphics
         
         
         
+        
         // Specify the set of device features we will be using that we queried support for
         // in the IsDeviceSuitable function using vkGetPhysicalDeviceFeatures
         VkPhysicalDeviceFeatures deviceFeatures{};
+        deviceFeatures.samplerAnisotropy=VK_TRUE;
         
         // Create the logical device
         VkDeviceCreateInfo createInfo{};
