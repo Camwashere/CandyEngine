@@ -1,7 +1,7 @@
 #pragma once
 #include "vulkan/vulkan.h"
 #include <vector>
-#include "../../Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 #include "Pipeline.hpp"
 namespace Candy::Graphics
 {

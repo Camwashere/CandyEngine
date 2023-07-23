@@ -104,10 +104,9 @@ namespace Candy::Graphics
     {
         imageViews.resize(images.size());
         
-        for (size_t i = 0; i < images.size(); i++) {
+        for (size_t i = 0; i < images.size(); i++)
+        {
           imageViews[i].Set(images[i], imageFormat);
-          
-            
         }
     }
     

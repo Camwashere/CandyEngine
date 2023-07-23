@@ -5,23 +5,23 @@
 namespace Candy::Graphics
 {
     
-    BufferElement::BufferElement(ShaderDataType dataType, std::string elementName) : type(dataType), name(std::move(elementName))
+    BufferElement::BufferElement(ShaderData::Type dataType, std::string elementName) : type(dataType), name(std::move(elementName))
     {
     
     }
     
     uint64_t BufferElement::Size()const
     {
-        return ShaderData::ShaderDataTypeSize(type);
+        return ShaderData::ShaderData::TypeSize(type);
     }
     uint64_t BufferElement::GetComponentCount()const
     {
-        return ShaderData::ShaderDataTypeComponentCount(type);
+        return ShaderData::ShaderData::ComponentCount(type);
     }
     VkFormat BufferElement::GetFormat()const
     {
         
-        return ShaderData::ShaderDataTypeToVulkanFormat(type);
+        return ShaderData::ShaderData::TypeToVulkan(type);
     }
     
     uint64_t BufferElement::CalculateSize(uint64_t count)const
@@ -48,7 +48,7 @@ namespace Candy::Graphics
         }
     }
     
-    void BufferLayout::AddElement(ShaderDataType type, const std::string& name)
+    void BufferLayout::AddElement(ShaderData::Type type, const std::string& name)
     {
         BufferElement element(type, name);
         size_t size = element.Size();

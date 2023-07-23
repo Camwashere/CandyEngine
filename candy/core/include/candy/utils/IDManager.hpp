@@ -27,7 +27,7 @@ namespace Candy::Utils
       }
       else
       {
-        return ++currentMax;
+        return currentMax++;
       }
     }
     void Free(T id)

@@ -1,10 +1,10 @@
 #pragma once
 #include "vulkan/vulkan.h"
 #include <vector>
-#include "../../Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 #include "PipelineLayout.hpp"
 #include "../../VertexArray.hpp"
-#include "../../Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 #include "../RenderPass.hpp"
 namespace Candy::Graphics
 {

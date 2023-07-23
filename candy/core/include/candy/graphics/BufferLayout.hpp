@@ -1,5 +1,5 @@
 #pragma once
-#include "ShaderData.hpp"
+#include "candy/graphics/shader/ShaderData.hpp"
 #include <vector>
 #include "CandyPch.hpp"
 namespace Candy::Graphics
@@ -7,10 +7,10 @@ namespace Candy::Graphics
     struct BufferElement
     {
         std::string name="Empty";
-        ShaderDataType type=ShaderDataType::NONE;
+        ShaderData::Type type=ShaderData::Type::None;
         uint64_t offset=0;
         
-        BufferElement(ShaderDataType dataType, std::string elementName);
+        BufferElement(ShaderData::Type dataType, std::string elementName);
         [[nodiscard]] uint64_t Size()const;
         [[nodiscard]] uint64_t GetComponentCount()const;
         [[nodiscard]] VkFormat GetFormat()const;
@@ -39,7 +39,7 @@ namespace Candy::Graphics
         [[nodiscard]] std::vector<BufferElement>::const_iterator end() const { return elements.end(); }
     
     public:
-        void AddElement(ShaderDataType type, const std::string& name);
+        void AddElement(ShaderData::Type type, const std::string& name);
         [[nodiscard]] const BufferElement& GetElement(uint64_t index)const;
         [[nodiscard]] uint32_t GetStride()const;
         [[nodiscard]] size_t GetElementCount()const;

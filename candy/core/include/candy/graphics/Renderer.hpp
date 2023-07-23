@@ -1,5 +1,5 @@
 #pragma once
-#include "Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 #include "VertexArray.hpp"
 #include "vulkan/RenderPass.hpp"
 #include "vulkan/pipeline/GraphicsPipeline.hpp"

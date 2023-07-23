@@ -1,5 +1,5 @@
 #pragma once
-#include "ShaderData.hpp"
+#include "candy/graphics/shader/ShaderData.hpp"
 #include <CandyPch.hpp>
 #include "vma/vk_mem_alloc.h"
 namespace Candy::Graphics

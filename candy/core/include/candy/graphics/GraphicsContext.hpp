@@ -13,7 +13,7 @@
 #include "vulkan/RenderPass.hpp"
 #include "vulkan/pipeline/GraphicsPipeline.hpp"
 #include "vma/vk_mem_alloc.h"
-#include "Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 
 struct GLFWwindow;
 namespace Candy::Graphics

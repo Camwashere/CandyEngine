@@ -3,7 +3,7 @@
 #include <vector>
 #include "device/VulkanDeviceManager.hpp"
 #include "../VertexArray.hpp"
-#include "../Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 namespace Candy::Graphics
 {
     class CommandBuffer

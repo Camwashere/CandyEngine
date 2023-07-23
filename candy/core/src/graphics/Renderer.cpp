@@ -62,9 +62,9 @@ namespace Candy::Graphics
     vertexArray = VertexArray::Create();
     
     BufferLayout layout;
-    layout.AddElement(ShaderDataType::Float3, "inPosition");
-    layout.AddElement(ShaderDataType::Float3, "inColor");
-    layout.AddElement(ShaderDataType::Float2, "inTexCoord");
+    layout.AddElement(ShaderData::Type::Float3, "inPosition");
+    layout.AddElement(ShaderData::Type::Float3, "inColor");
+    layout.AddElement(ShaderData::Type::Float2, "inTexCoord");
     
     SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(&target->frames[0].commandBuffer, layout, vertices.size());
     

@@ -2,7 +2,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "../../VertexArray.hpp"
-#include "../../Shader.hpp"
+#include "candy/graphics/shader/Shader.hpp"
 #include "../RenderPass.hpp"
 namespace Candy::Graphics
 {

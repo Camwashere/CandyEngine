@@ -1,1 +1,0 @@
-PATH=C:\Users\perso\CLionProjects\CandyEngine\build\debug\lib\spdlog\;C:\Users\perso\CLionProjects\CandyEngine\build\debug\lib\glfw\src\;${PATH}
