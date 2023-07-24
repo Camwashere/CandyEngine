@@ -10,6 +10,7 @@
 #include "UniformBuffer.hpp"
 #include "Texture.hpp"
 #include "vulkan/ImageView.hpp"
+#include "vulkan/DescriptorBuilder.hpp"
 namespace Candy::Graphics
 {
   
@@ -21,7 +22,10 @@ namespace Candy::Graphics
     SharedPtr<VertexArray> vertexArray;
     Pipeline pipeline;
     GraphicsContext* target;
-    VkDescriptorPool descriptorPool;
+    DescriptorBuilder descriptorBuilder;
+    DescriptorAllocator descriptorAllocator;
+    DescriptorLayoutCache descriptorLayoutCache;
+    //VkDescriptorPool descriptorPool;
     std::vector<VkDescriptorSet> descriptorSets;
     std::vector<SharedPtr<UniformBuffer>> uniformBuffers;
     Texture texture;
@@ -31,7 +35,7 @@ namespace Candy::Graphics
     
     
   private:
-    void CreateDescriptorPool();
+    //void CreateDescriptorPool();
     void CreateDescriptorSets();
     void CreateUniformBuffers();
     void UpdateUniformBuffer();

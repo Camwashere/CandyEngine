@@ -151,7 +151,7 @@ namespace Candy::Graphics
     commandBuffer.TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     
     VulkanBuffer::DestroyBuffer(stagingBuffer, stagingBufferAllocation);
-    
+    return true;
   }
   VkFormat Texture::GetVulkanFormat()const
   {

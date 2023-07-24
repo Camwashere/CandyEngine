@@ -135,6 +135,54 @@ namespace Candy::Graphics
       return it->second;
     return Stage::None;
   }
+  VkShaderStageFlagBits ShaderData::StageToVulkan(Stage stage)
+  {
+    switch (stage)
+    {
+      case Stage::Vertex: return VK_SHADER_STAGE_VERTEX_BIT;
+      case Stage::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
+      case Stage::Compute: return VK_SHADER_STAGE_COMPUTE_BIT;
+      case Stage::Geometry: return VK_SHADER_STAGE_GEOMETRY_BIT;
+      case Stage::TessellationControl: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+      case Stage::TessellationEvaluation: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return (VkShaderStageFlagBits)0;
+    }
+  
+  }
+  
+  ShaderData::Stage ShaderData::VulkanToStage(VkShaderStageFlagBits stage)
+  {
+    switch(stage)
+    {
+      case VK_SHADER_STAGE_VERTEX_BIT: return Stage::Vertex;
+      case VK_SHADER_STAGE_FRAGMENT_BIT: return Stage::Fragment;
+      case VK_SHADER_STAGE_COMPUTE_BIT: return Stage::Compute;
+      case VK_SHADER_STAGE_GEOMETRY_BIT: return Stage::Geometry;
+      case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return Stage::TessellationControl;
+      case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return Stage::TessellationEvaluation;
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return Stage::None;
+    }
+  
+  }
+  
+  std::string ShaderData::StageToCachedFileExtension(Stage stage)
+  {
+    switch (stage)
+    {
+      case Stage::Vertex:    return ".cached_vulkan.vert";
+      case Stage::Fragment:  return ".cached_vulkan.frag";
+      case Stage::Geometry:  return ".cached_vulkan.geometry";
+      case Stage::Compute:   return ".cached_vulkan.compute";
+      default:
+      CANDY_CORE_ASSERT(false, "Unknown shader stage!");
+        return {};
+    }
+  
+  }
   size_t ShaderData::ComponentSize(Type type)
   {
     switch(type)

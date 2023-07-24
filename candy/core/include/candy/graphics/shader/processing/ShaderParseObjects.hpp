@@ -1,6 +1,8 @@
 #pragma once
 #include "../ShaderData.hpp"
 #include <candy/utils/IDManager.hpp>
+
+
 namespace Candy::Graphics
 {
   class ShaderParseObject
@@ -9,7 +11,7 @@ namespace Candy::Graphics
     static Utils::IDManager<uint32_t> idManager;
   private:
     const uint32_t id;
-    
+  
   public:
     ShaderParseObject();
     ShaderParseObject(const ShaderParseObject& other);
@@ -20,7 +22,7 @@ namespace Candy::Graphics
   
   struct ShaderMetaData : public ShaderParseObject
   {
-  
+    
     ShaderData::Stage stage;
     uint32_t version;
     std::vector<std::string> includes{};
@@ -62,19 +64,40 @@ namespace Candy::Graphics
       return "Name: " + name + " Type: " + ShaderData::TypeToString(type);
     }
   };
-  
+  struct LayoutQualifier
+  {
+    std::string name{};
+    std::string value{};
+    
+    [[nodiscard]] bool HasValue()const{return !value.empty();}
+  };
+  struct ShaderObjectLayout
+  {
+    std::string attribute={};
+    int location=-1;
+    int binding=-1;
+    int set=-1;
+    [[nodiscard]] bool HasAttribute()const;
+    [[nodiscard]] bool HasLocation()const;
+    [[nodiscard]] bool HasBinding()const;
+    [[nodiscard]] bool HasSet()const;
+    ShaderObjectLayout()=default;
+    explicit ShaderObjectLayout(const std::vector<LayoutQualifier>& layoutQualifiers);
+    
+    [[nodiscard]] std::string ToString()const;
+  };
   struct ShaderBlock : public ShaderParseObject
   {
     std::string blockName={};
     std::string objectName={};
-    int binding=-1;
+    ShaderObjectLayout layout={};
     std::vector<ShaderVariable> variables{};
     
     ShaderBlock() = default;
     
     [[nodiscard]] std::string ToString()const
     {
-      std::string start = "Block Name: " + blockName + " Object Name: " + objectName + " Binding: " + std::to_string(binding);
+      std::string start = "Block Name: " + blockName + " Object Name: " + objectName + layout.ToString();
       for (const auto& var : variables)
       {
         start += '\n' + var.ToString();
@@ -87,7 +110,7 @@ namespace Candy::Graphics
   {
     std::string name{};
     ShaderData::Type type=ShaderData::Type::None;
-    int binding=0;
+    ShaderObjectLayout layout={};
     
     ShaderUniformSingle()=default;
     
@@ -95,19 +118,20 @@ namespace Candy::Graphics
     
     [[nodiscard]] std::string ToString()const
     {
-      return "Name: " + name + " Type: " + ShaderData::TypeToString(type) + " Binding: " + std::to_string(binding);
+      return "Name: " + name + " Type: " + ShaderData::TypeToString(type) + layout.ToString();
     }
   };
   
   struct ShaderIOVariable : public ShaderParseObject
   {
     ShaderVariable variable{};
-    int location=-1;
+    ShaderObjectLayout layout={};
     bool isInput=false;
     ShaderIOVariable()=default;
-    ShaderIOVariable(const ShaderVariable& var, int loc, bool input) : ShaderParseObject(), variable(var), location(loc), isInput(input)
+    ShaderIOVariable(const ShaderVariable& var, int loc, bool input) : ShaderParseObject(), variable(var), isInput(input)
     {
-    
+      layout.location = loc;
+      
     }
     [[nodiscard]] bool IsInput()const{return isInput;}
     [[nodiscard]] bool IsOutput()const{return !isInput;}
@@ -115,7 +139,7 @@ namespace Candy::Graphics
     
     [[nodiscard]] std::string ToString()const
     {
-      return "Location: " + std::to_string(location) + " " + SpecifierString() + " " + variable.ToString();
+      return layout.ToString() + " " + SpecifierString() + " " + variable.ToString();
     }
     
   };

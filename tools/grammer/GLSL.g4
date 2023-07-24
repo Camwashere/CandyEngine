@@ -51,7 +51,7 @@ layout_qualifier: (layout_qualifier_type (EQUAL layout_qualifier_value)?);
 
 layout_qualifier_value: (INTCONSTANT);
 
-layout_qualifier_type: (layout_std_qualifier | LOCATION | COMPONENT | BINDING | INDEX | OFFSET | IDENTIFIER);
+layout_qualifier_type: (layout_std_qualifier | LOCATION | COMPONENT | BINDING | SET | INDEX | OFFSET | IDENTIFIER);
 
 layout_std_qualifier: STD INTCONSTANT;
 
@@ -73,6 +73,7 @@ COMPONENT: 'component';
 MAIN  : 'main';
 BINDING: 'binding';
 INDEX: 'index';
+SET: 'set';
 STD: 'std';
 OFFSET: 'offset';
 

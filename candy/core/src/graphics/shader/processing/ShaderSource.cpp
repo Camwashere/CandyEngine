@@ -8,18 +8,11 @@
 #include "grammer/GLSLBaseListener.h"
 namespace Candy::Graphics
 {
-  struct LayoutQualifier
-  {
-    std::string name{};
-    std::string value{};
-    
-    [[nodiscard]] bool HasValue()const{return !value.empty();}
-  };
   class SourceListener : public GLSLBaseListener
   {
   private:
     ShaderSource* source;
-    
+  
   private:
     static std::vector<LayoutQualifier> GetLayoutQualifiers(GLSLParser::Layout_qualifiersContext* ctx)
     {
@@ -40,13 +33,13 @@ namespace Candy::Graphics
       }
       return qualifiers;
     }
-    
+  
   public:
     explicit SourceListener(ShaderSource* source) : source(source)
     {
     
     }
-    
+  
   public:
     void enterPreprocessor_directive(GLSLParser::Preprocessor_directiveContext *ctx) override
     {
@@ -100,7 +93,7 @@ namespace Candy::Graphics
       }
       
       source->structs.push_back(shaderStruct);
-    
+      
     }
     
     void enterShader_uniform_block(GLSLParser::Shader_uniform_blockContext * ctx) override
@@ -117,15 +110,8 @@ namespace Candy::Graphics
       
       if (ctx->layout_declaration())
       {
+        uniformBlock.layout = ShaderObjectLayout(GetLayoutQualifiers(ctx->layout_declaration()->layout_qualifiers()));
         std::vector<LayoutQualifier> qualifiers = GetLayoutQualifiers(ctx->layout_declaration()->layout_qualifiers());
-        for (const auto& qualifier : qualifiers)
-        {
-          if (qualifier.name == "binding")
-          {
-            uniformBlock.binding = std::stoi(qualifier.value);
-          }
-        }
-        
       }
       
       for (auto var : ctx->struct_variable_declaration())
@@ -148,14 +134,7 @@ namespace Candy::Graphics
       
       if (ctx->layout_declaration())
       {
-        auto qualifiers = GetLayoutQualifiers(ctx->layout_declaration()->layout_qualifiers());
-        for (const auto& qualifier : qualifiers)
-        {
-          if (qualifier.name == "binding")
-          {
-            uniformSingle.binding = std::stoi(qualifier.value);
-          }
-        }
+        uniformSingle.layout = ShaderObjectLayout(GetLayoutQualifiers(ctx->layout_declaration()->layout_qualifiers()));
         
       }
       
@@ -172,14 +151,7 @@ namespace Candy::Graphics
       
       if (ctx->layout_declaration())
       {
-        std::vector<LayoutQualifier> qualifiers = GetLayoutQualifiers(ctx->layout_declaration()->layout_qualifiers());
-        for (const auto& qualifier : qualifiers)
-        {
-          if (qualifier.name == "location")
-          {
-            ioVar.location = std::stoi(qualifier.value);
-          }
-        }
+        ioVar.layout = ShaderObjectLayout(GetLayoutQualifiers(ctx->layout_declaration()->layout_qualifiers()));
       }
       std::string variableType = ctx->variable_type()->getText();
       std::string variableName = ctx->IDENTIFIER()->getText();
@@ -227,7 +199,7 @@ namespace Candy::Graphics
   };
   ShaderSource::ShaderSource(ShaderData::Stage shaderStage, std::string sourceCode) : metaData{shaderStage}, source(std::move(sourceCode))
   {
-    //std::cout << source << std::endl;
+    //std::cout << "Starting: " << ShaderData::StageToString(shaderStage) << std::endl;
     Tokenize(source);
     
   }
@@ -248,7 +220,7 @@ namespace Candy::Graphics
     walker.walk(&sourceListener, tree);
     
     std::cout << "Tokenizing source!" << std::endl;
-   
+    
     std::cout << ToString() << std::endl;
     
     
@@ -280,12 +252,13 @@ namespace Candy::Graphics
     str += "\nInput Variables\n";
     for (const auto& inputVar : inputVariables)
     {
-      str += inputVar.variable.ToString() + " Location: " + std::to_string(inputVar.location) + "\n";
+      
+      str += inputVar.ToString() + "\n";
     }
     str += "\nOutput Variables\n";
     for (const auto& outputVar : outputVariables)
     {
-      str += outputVar.variable.ToString() + " Location: " + std::to_string(outputVar.location) + "\n";
+      str += outputVar.ToString() + "\n";
     }
     str += "\nFunctions\n";
     for (const auto& function : functions)
@@ -294,13 +267,21 @@ namespace Candy::Graphics
     }
     
     return str;
+    
+  }
   
+  std::string ShaderSource::GetSource()const
+  {
+    return source;
   }
   
   
   
   
-  
+  SharedPtr<ShaderSource> ShaderSource::Create(ShaderData::Stage shaderStage, std::string sourceCode)
+  {
+    return CreateSharedPtr<ShaderSource>(shaderStage, std::move(sourceCode));
+  }
   
   
   

@@ -56,13 +56,13 @@ void glslParserInitialize() {
     },
     std::vector<std::string>{
       "", "'push_constant'", "'layout'", "'location'", "'component'", "'main'", 
-      "'binding'", "'index'", "'std'", "'offset'", "", "'#'", "", "", "", 
-      "", "", "';'", "','", "'='", "'('", "')'", "'['", "']'", "'{'", "'}'", 
-      "'.'", "'+'", "'-'", "'*'", "'/'", "'%'", "'++'", "'--'", "'<'", "'>'", 
-      "'<='", "'>='", "'|'", "'^'", "'&'", "'||'", "'^^'", "'&&'", "'=='", 
-      "'!='", "'<<'", "'>>'", "'\\u003F'", "':'", "'!'", "'~'", "'*='", 
-      "'/='", "'%='", "'+='", "'-='", "'<<='", "'>>='", "'&='", "'^='", 
-      "'|='", "'void'", "", "", "", "", "'float'", "'double'", "'int'", 
+      "'binding'", "'index'", "'set'", "'std'", "'offset'", "", "'#'", "", 
+      "", "", "", "", "';'", "','", "'='", "'('", "')'", "'['", "']'", "'{'", 
+      "'}'", "'.'", "'+'", "'-'", "'*'", "'/'", "'%'", "'++'", "'--'", "'<'", 
+      "'>'", "'<='", "'>='", "'|'", "'^'", "'&'", "'||'", "'^^'", "'&&'", 
+      "'=='", "'!='", "'<<'", "'>>'", "'\\u003F'", "':'", "'!'", "'~'", 
+      "'*='", "'/='", "'%='", "'+='", "'-='", "'<<='", "'>>='", "'&='", 
+      "'^='", "'|='", "'void'", "", "", "", "", "'float'", "'double'", "'int'", 
       "'uint'", "'bool'", "'vec2'", "'vec3'", "'vec4'", "'dvec2'", "'dvec3'", 
       "'dvec4'", "'bvec2'", "'bvec3'", "'bvec4'", "'ivec2'", "'ivec3'", 
       "'ivec4'", "'uvec2'", "'uvec3'", "'uvec4'", "", "'mat2x3'", "'mat2x4'", 
@@ -85,38 +85,39 @@ void glslParserInitialize() {
     },
     std::vector<std::string>{
       "", "", "LAYOUT", "LOCATION", "COMPONENT", "MAIN", "BINDING", "INDEX", 
-      "STD", "OFFSET", "STRING_LITERAL", "HASH", "NEWLINE", "SPACE", "TAB", 
-      "LINE_COMMENT", "BLOCK_COMMENT", "SEMICOLON", "COMMA", "EQUAL", "LEFT_PAREN", 
-      "RIGHT_PAREN", "LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", "RIGHT_BRACE", 
-      "DOT", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", "INC_OP", "DEC_OP", 
-      "LEFT_ANGLE", "RIGHT_ANGLE", "LEFT_ANGLE_EQUAL", "RIGHT_ANGLE_EQUAL", 
-      "VERTICAL_BAR", "CARET", "AMPERSAND", "OR_OP", "XOR_OP", "AND_OP", 
-      "EQUAL_EQUAL", "BANG_EQUAL", "LEFT_OP", "RIGHT_OP", "QUESTION", "COLON", 
-      "BANG", "TILDE", "MUL_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", "ADD_ASSIGN", 
-      "SUB_ASSIGN", "LEFT_ASSIGN", "RIGHT_ASSIGN", "AND_ASSIGN", "XOR_ASSIGN", 
-      "OR_ASSIGN", "VOID", "FLOATCONSTANT", "INTCONSTANT", "UINTCONSTANT", 
-      "BOOLCONSTANT", "FLOAT", "DOUBLE", "INT", "UINT", "BOOL", "VEC2", 
-      "VEC3", "VEC4", "DVEC2", "DVEC3", "DVEC4", "BVEC2", "BVEC3", "BVEC4", 
-      "IVEC2", "IVEC3", "IVEC4", "UVEC2", "UVEC3", "UVEC4", "MAT2X2", "MAT2X3", 
-      "MAT2X4", "MAT3X2", "MAT3X3", "MAT3X4", "MAT4X2", "MAT4X3", "MAT4X4", 
-      "DMAT2X2", "DMAT2X3", "DMAT2X4", "DMAT3X2", "DMAT3X3", "DMAT3X4", 
-      "DMAT4X2", "DMAT4X3", "DMAT4X4", "SAMPLER1D", "SAMPLER1DARRAY", "SAMPLER1DSHADOW", 
-      "SAMPLER1DARRAYSHADOW", "SAMPLER2D", "SAMPLER2DARRAY", "SAMPLER2DSHADOW", 
-      "SAMPLER2DARRAYSHADOW", "SAMPLERCUBE", "SAMPLERCUBEARRAY", "SAMPLERCUBESHADOW", 
-      "SAMPLERCUBEARRAYSHADOW", "SAMPLERBUFFER", "SAMPLER2DRECT", "SAMPLER2DRECTSHADOW", 
-      "ISAMPLER1D", "ISAMPLER1DARRAY", "ISAMPLER2D", "ISAMPLER2DARRAY", 
-      "ISAMPLERCUBE", "ISAMPLERCUBEARRAY", "ISAMPLERBUFFER", "ISAMPLER2DRECT", 
-      "USAMPLER1D", "USAMPLER1DARRAY", "USAMPLER2D", "USAMPLER2DARRAY", 
-      "USAMPLERCUBE", "USAMPLERCUBEARRAY", "USAMPLERBUFFER", "USAMPLER2DRECT", 
-      "STRUCT", "RETURN", "CONTINUE", "DISCARD", "IF", "ELSE", "SWITCH", 
-      "CASE", "DEFAULT", "WHILE", "DO", "FOR", "BREAK", "CONST", "UNIFORM", 
-      "BUFFER", "SHARED", "COHERENT", "VOLATILE", "RESTRICT", "READONLY", 
-      "WRITEONLY", "PRECISION", "IN", "OUT", "INOUT", "INVARIANT", "CENTROID", 
-      "PATCH", "SAMPLE", "ATOMIC_UINT", "NOPERAND", "FLAT", "SMOOTH", "IDENTIFIER"
+      "SET", "STD", "OFFSET", "STRING_LITERAL", "HASH", "NEWLINE", "SPACE", 
+      "TAB", "LINE_COMMENT", "BLOCK_COMMENT", "SEMICOLON", "COMMA", "EQUAL", 
+      "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", 
+      "RIGHT_BRACE", "DOT", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", 
+      "INC_OP", "DEC_OP", "LEFT_ANGLE", "RIGHT_ANGLE", "LEFT_ANGLE_EQUAL", 
+      "RIGHT_ANGLE_EQUAL", "VERTICAL_BAR", "CARET", "AMPERSAND", "OR_OP", 
+      "XOR_OP", "AND_OP", "EQUAL_EQUAL", "BANG_EQUAL", "LEFT_OP", "RIGHT_OP", 
+      "QUESTION", "COLON", "BANG", "TILDE", "MUL_ASSIGN", "DIV_ASSIGN", 
+      "MOD_ASSIGN", "ADD_ASSIGN", "SUB_ASSIGN", "LEFT_ASSIGN", "RIGHT_ASSIGN", 
+      "AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN", "VOID", "FLOATCONSTANT", 
+      "INTCONSTANT", "UINTCONSTANT", "BOOLCONSTANT", "FLOAT", "DOUBLE", 
+      "INT", "UINT", "BOOL", "VEC2", "VEC3", "VEC4", "DVEC2", "DVEC3", "DVEC4", 
+      "BVEC2", "BVEC3", "BVEC4", "IVEC2", "IVEC3", "IVEC4", "UVEC2", "UVEC3", 
+      "UVEC4", "MAT2X2", "MAT2X3", "MAT2X4", "MAT3X2", "MAT3X3", "MAT3X4", 
+      "MAT4X2", "MAT4X3", "MAT4X4", "DMAT2X2", "DMAT2X3", "DMAT2X4", "DMAT3X2", 
+      "DMAT3X3", "DMAT3X4", "DMAT4X2", "DMAT4X3", "DMAT4X4", "SAMPLER1D", 
+      "SAMPLER1DARRAY", "SAMPLER1DSHADOW", "SAMPLER1DARRAYSHADOW", "SAMPLER2D", 
+      "SAMPLER2DARRAY", "SAMPLER2DSHADOW", "SAMPLER2DARRAYSHADOW", "SAMPLERCUBE", 
+      "SAMPLERCUBEARRAY", "SAMPLERCUBESHADOW", "SAMPLERCUBEARRAYSHADOW", 
+      "SAMPLERBUFFER", "SAMPLER2DRECT", "SAMPLER2DRECTSHADOW", "ISAMPLER1D", 
+      "ISAMPLER1DARRAY", "ISAMPLER2D", "ISAMPLER2DARRAY", "ISAMPLERCUBE", 
+      "ISAMPLERCUBEARRAY", "ISAMPLERBUFFER", "ISAMPLER2DRECT", "USAMPLER1D", 
+      "USAMPLER1DARRAY", "USAMPLER2D", "USAMPLER2DARRAY", "USAMPLERCUBE", 
+      "USAMPLERCUBEARRAY", "USAMPLERBUFFER", "USAMPLER2DRECT", "STRUCT", 
+      "RETURN", "CONTINUE", "DISCARD", "IF", "ELSE", "SWITCH", "CASE", "DEFAULT", 
+      "WHILE", "DO", "FOR", "BREAK", "CONST", "UNIFORM", "BUFFER", "SHARED", 
+      "COHERENT", "VOLATILE", "RESTRICT", "READONLY", "WRITEONLY", "PRECISION", 
+      "IN", "OUT", "INOUT", "INVARIANT", "CENTROID", "PATCH", "SAMPLE", 
+      "ATOMIC_UINT", "NOPERAND", "FLAT", "SMOOTH", "IDENTIFIER"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,170,254,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,171,255,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,
   	21,2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,
@@ -133,17 +134,17 @@ void glslParserInitialize() {
   	18,10,18,12,18,198,9,18,1,19,1,19,1,19,1,20,1,20,5,20,205,8,20,10,20,
   	12,20,208,9,20,1,20,1,20,1,21,1,21,1,21,1,21,1,21,1,22,1,22,1,22,5,22,
   	220,8,22,10,22,12,22,223,9,22,1,23,1,23,1,23,3,23,228,8,23,1,24,1,24,
-  	1,25,1,25,1,25,1,25,1,25,1,25,1,25,3,25,239,8,25,1,26,1,26,1,26,1,27,
-  	1,27,1,27,1,27,1,28,1,28,3,28,250,8,28,1,29,1,29,1,29,1,206,0,30,0,2,
-  	4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,
-  	52,54,56,58,0,4,1,0,159,160,3,0,10,10,63,64,170,170,2,0,5,5,170,170,3,
-  	0,62,62,67,82,84,135,253,0,60,1,0,0,0,2,92,1,0,0,0,4,96,1,0,0,0,6,112,
+  	1,25,1,25,1,25,1,25,1,25,1,25,1,25,1,25,3,25,240,8,25,1,26,1,26,1,26,
+  	1,27,1,27,1,27,1,27,1,28,1,28,3,28,251,8,28,1,29,1,29,1,29,1,206,0,30,
+  	0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,
+  	50,52,54,56,58,0,4,1,0,160,161,3,0,11,11,64,65,171,171,2,0,5,5,171,171,
+  	3,0,63,63,68,83,85,136,255,0,60,1,0,0,0,2,92,1,0,0,0,4,96,1,0,0,0,6,112,
   	1,0,0,0,8,127,1,0,0,0,10,133,1,0,0,0,12,139,1,0,0,0,14,150,1,0,0,0,16,
   	154,1,0,0,0,18,156,1,0,0,0,20,160,1,0,0,0,22,162,1,0,0,0,24,167,1,0,0,
   	0,26,170,1,0,0,0,28,174,1,0,0,0,30,178,1,0,0,0,32,187,1,0,0,0,34,189,
   	1,0,0,0,36,191,1,0,0,0,38,199,1,0,0,0,40,202,1,0,0,0,42,211,1,0,0,0,44,
-  	216,1,0,0,0,46,224,1,0,0,0,48,229,1,0,0,0,50,238,1,0,0,0,52,240,1,0,0,
-  	0,54,243,1,0,0,0,56,249,1,0,0,0,58,251,1,0,0,0,60,89,3,2,1,0,61,88,3,
+  	216,1,0,0,0,46,224,1,0,0,0,48,229,1,0,0,0,50,239,1,0,0,0,52,241,1,0,0,
+  	0,54,244,1,0,0,0,56,250,1,0,0,0,58,252,1,0,0,0,60,89,3,2,1,0,61,88,3,
   	4,2,0,62,64,3,6,3,0,63,62,1,0,0,0,64,65,1,0,0,0,65,63,1,0,0,0,65,66,1,
   	0,0,0,66,88,1,0,0,0,67,69,3,8,4,0,68,67,1,0,0,0,69,70,1,0,0,0,70,68,1,
   	0,0,0,70,71,1,0,0,0,71,88,1,0,0,0,72,74,3,10,5,0,73,72,1,0,0,0,74,75,
@@ -152,50 +153,51 @@ void glslParserInitialize() {
   	3,30,15,0,83,82,1,0,0,0,84,85,1,0,0,0,85,83,1,0,0,0,85,86,1,0,0,0,86,
   	88,1,0,0,0,87,61,1,0,0,0,87,63,1,0,0,0,87,68,1,0,0,0,87,73,1,0,0,0,87,
   	78,1,0,0,0,87,83,1,0,0,0,88,91,1,0,0,0,89,87,1,0,0,0,89,90,1,0,0,0,90,
-  	1,1,0,0,0,91,89,1,0,0,0,92,93,5,11,0,0,93,94,3,22,11,0,94,95,3,24,12,
-  	0,95,3,1,0,0,0,96,97,5,2,0,0,97,98,5,20,0,0,98,99,5,1,0,0,99,100,5,21,
-  	0,0,100,101,5,150,0,0,101,102,5,170,0,0,102,104,5,24,0,0,103,105,3,26,
+  	1,1,0,0,0,91,89,1,0,0,0,92,93,5,12,0,0,93,94,3,22,11,0,94,95,3,24,12,
+  	0,95,3,1,0,0,0,96,97,5,2,0,0,97,98,5,21,0,0,98,99,5,1,0,0,99,100,5,22,
+  	0,0,100,101,5,151,0,0,101,102,5,171,0,0,102,104,5,25,0,0,103,105,3,26,
   	13,0,104,103,1,0,0,0,105,106,1,0,0,0,106,104,1,0,0,0,106,107,1,0,0,0,
-  	107,108,1,0,0,0,108,109,5,25,0,0,109,110,3,20,10,0,110,111,5,17,0,0,111,
-  	5,1,0,0,0,112,113,3,42,21,0,113,114,5,150,0,0,114,115,5,170,0,0,115,117,
-  	5,24,0,0,116,118,3,26,13,0,117,116,1,0,0,0,118,119,1,0,0,0,119,117,1,
-  	0,0,0,119,120,1,0,0,0,120,121,1,0,0,0,121,123,5,25,0,0,122,124,3,18,9,
-  	0,123,122,1,0,0,0,123,124,1,0,0,0,124,125,1,0,0,0,125,126,5,17,0,0,126,
-  	7,1,0,0,0,127,128,3,42,21,0,128,129,5,150,0,0,129,130,3,56,28,0,130,131,
-  	3,18,9,0,131,132,5,17,0,0,132,9,1,0,0,0,133,134,3,42,21,0,134,135,3,14,
-  	7,0,135,136,3,56,28,0,136,137,5,170,0,0,137,138,5,17,0,0,138,11,1,0,0,
-  	0,139,140,5,136,0,0,140,141,3,16,8,0,141,143,5,24,0,0,142,144,3,26,13,
+  	107,108,1,0,0,0,108,109,5,26,0,0,109,110,3,20,10,0,110,111,5,18,0,0,111,
+  	5,1,0,0,0,112,113,3,42,21,0,113,114,5,151,0,0,114,115,5,171,0,0,115,117,
+  	5,25,0,0,116,118,3,26,13,0,117,116,1,0,0,0,118,119,1,0,0,0,119,117,1,
+  	0,0,0,119,120,1,0,0,0,120,121,1,0,0,0,121,123,5,26,0,0,122,124,3,18,9,
+  	0,123,122,1,0,0,0,123,124,1,0,0,0,124,125,1,0,0,0,125,126,5,18,0,0,126,
+  	7,1,0,0,0,127,128,3,42,21,0,128,129,5,151,0,0,129,130,3,56,28,0,130,131,
+  	3,18,9,0,131,132,5,18,0,0,132,9,1,0,0,0,133,134,3,42,21,0,134,135,3,14,
+  	7,0,135,136,3,56,28,0,136,137,5,171,0,0,137,138,5,18,0,0,138,11,1,0,0,
+  	0,139,140,5,137,0,0,140,141,3,16,8,0,141,143,5,25,0,0,142,144,3,26,13,
   	0,143,142,1,0,0,0,144,145,1,0,0,0,145,143,1,0,0,0,145,146,1,0,0,0,146,
-  	147,1,0,0,0,147,148,5,25,0,0,148,149,5,17,0,0,149,13,1,0,0,0,150,152,
-  	7,0,0,0,151,153,5,168,0,0,152,151,1,0,0,0,152,153,1,0,0,0,153,15,1,0,
-  	0,0,154,155,5,170,0,0,155,17,1,0,0,0,156,158,5,170,0,0,157,159,3,54,27,
-  	0,158,157,1,0,0,0,158,159,1,0,0,0,159,19,1,0,0,0,160,161,5,170,0,0,161,
-  	21,1,0,0,0,162,163,5,170,0,0,163,23,1,0,0,0,164,166,7,1,0,0,165,164,1,
+  	147,1,0,0,0,147,148,5,26,0,0,148,149,5,18,0,0,149,13,1,0,0,0,150,152,
+  	7,0,0,0,151,153,5,169,0,0,152,151,1,0,0,0,152,153,1,0,0,0,153,15,1,0,
+  	0,0,154,155,5,171,0,0,155,17,1,0,0,0,156,158,5,171,0,0,157,159,3,54,27,
+  	0,158,157,1,0,0,0,158,159,1,0,0,0,159,19,1,0,0,0,160,161,5,171,0,0,161,
+  	21,1,0,0,0,162,163,5,171,0,0,163,23,1,0,0,0,164,166,7,1,0,0,165,164,1,
   	0,0,0,166,169,1,0,0,0,167,165,1,0,0,0,167,168,1,0,0,0,168,25,1,0,0,0,
-  	169,167,1,0,0,0,170,171,3,56,28,0,171,172,5,170,0,0,172,173,5,17,0,0,
-  	173,27,1,0,0,0,174,175,3,58,29,0,175,176,5,170,0,0,176,177,5,17,0,0,177,
-  	29,1,0,0,0,178,179,3,34,17,0,179,180,3,32,16,0,180,182,5,20,0,0,181,183,
-  	3,36,18,0,182,181,1,0,0,0,182,183,1,0,0,0,183,184,1,0,0,0,184,185,5,21,
+  	169,167,1,0,0,0,170,171,3,56,28,0,171,172,5,171,0,0,172,173,5,18,0,0,
+  	173,27,1,0,0,0,174,175,3,58,29,0,175,176,5,171,0,0,176,177,5,18,0,0,177,
+  	29,1,0,0,0,178,179,3,34,17,0,179,180,3,32,16,0,180,182,5,21,0,0,181,183,
+  	3,36,18,0,182,181,1,0,0,0,182,183,1,0,0,0,183,184,1,0,0,0,184,185,5,22,
   	0,0,185,186,3,40,20,0,186,31,1,0,0,0,187,188,7,2,0,0,188,33,1,0,0,0,189,
-  	190,3,56,28,0,190,35,1,0,0,0,191,196,3,38,19,0,192,193,5,18,0,0,193,195,
+  	190,3,56,28,0,190,35,1,0,0,0,191,196,3,38,19,0,192,193,5,19,0,0,193,195,
   	3,38,19,0,194,192,1,0,0,0,195,198,1,0,0,0,196,194,1,0,0,0,196,197,1,0,
-  	0,0,197,37,1,0,0,0,198,196,1,0,0,0,199,200,3,56,28,0,200,201,5,170,0,
-  	0,201,39,1,0,0,0,202,206,5,24,0,0,203,205,9,0,0,0,204,203,1,0,0,0,205,
+  	0,0,197,37,1,0,0,0,198,196,1,0,0,0,199,200,3,56,28,0,200,201,5,171,0,
+  	0,201,39,1,0,0,0,202,206,5,25,0,0,203,205,9,0,0,0,204,203,1,0,0,0,205,
   	208,1,0,0,0,206,207,1,0,0,0,206,204,1,0,0,0,207,209,1,0,0,0,208,206,1,
-  	0,0,0,209,210,5,25,0,0,210,41,1,0,0,0,211,212,5,2,0,0,212,213,5,20,0,
-  	0,213,214,3,44,22,0,214,215,5,21,0,0,215,43,1,0,0,0,216,221,3,46,23,0,
-  	217,218,5,18,0,0,218,220,3,46,23,0,219,217,1,0,0,0,220,223,1,0,0,0,221,
+  	0,0,0,209,210,5,26,0,0,210,41,1,0,0,0,211,212,5,2,0,0,212,213,5,21,0,
+  	0,213,214,3,44,22,0,214,215,5,22,0,0,215,43,1,0,0,0,216,221,3,46,23,0,
+  	217,218,5,19,0,0,218,220,3,46,23,0,219,217,1,0,0,0,220,223,1,0,0,0,221,
   	219,1,0,0,0,221,222,1,0,0,0,222,45,1,0,0,0,223,221,1,0,0,0,224,227,3,
-  	50,25,0,225,226,5,19,0,0,226,228,3,48,24,0,227,225,1,0,0,0,227,228,1,
-  	0,0,0,228,47,1,0,0,0,229,230,5,64,0,0,230,49,1,0,0,0,231,239,3,52,26,
-  	0,232,239,5,3,0,0,233,239,5,4,0,0,234,239,5,6,0,0,235,239,5,7,0,0,236,
-  	239,5,9,0,0,237,239,5,170,0,0,238,231,1,0,0,0,238,232,1,0,0,0,238,233,
-  	1,0,0,0,238,234,1,0,0,0,238,235,1,0,0,0,238,236,1,0,0,0,238,237,1,0,0,
-  	0,239,51,1,0,0,0,240,241,5,8,0,0,241,242,5,64,0,0,242,53,1,0,0,0,243,
-  	244,5,22,0,0,244,245,5,64,0,0,245,246,5,23,0,0,246,55,1,0,0,0,247,250,
-  	3,58,29,0,248,250,3,16,8,0,249,247,1,0,0,0,249,248,1,0,0,0,250,57,1,0,
-  	0,0,251,252,7,3,0,0,252,59,1,0,0,0,21,65,70,75,80,85,87,89,106,119,123,
-  	145,152,158,167,182,196,206,221,227,238,249
+  	50,25,0,225,226,5,20,0,0,226,228,3,48,24,0,227,225,1,0,0,0,227,228,1,
+  	0,0,0,228,47,1,0,0,0,229,230,5,65,0,0,230,49,1,0,0,0,231,240,3,52,26,
+  	0,232,240,5,3,0,0,233,240,5,4,0,0,234,240,5,6,0,0,235,240,5,8,0,0,236,
+  	240,5,7,0,0,237,240,5,10,0,0,238,240,5,171,0,0,239,231,1,0,0,0,239,232,
+  	1,0,0,0,239,233,1,0,0,0,239,234,1,0,0,0,239,235,1,0,0,0,239,236,1,0,0,
+  	0,239,237,1,0,0,0,239,238,1,0,0,0,240,51,1,0,0,0,241,242,5,9,0,0,242,
+  	243,5,65,0,0,243,53,1,0,0,0,244,245,5,23,0,0,245,246,5,65,0,0,246,247,
+  	5,24,0,0,247,55,1,0,0,0,248,251,3,58,29,0,249,251,3,16,8,0,250,248,1,
+  	0,0,0,250,249,1,0,0,0,251,57,1,0,0,0,252,253,7,3,0,0,253,59,1,0,0,0,21,
+  	65,70,75,80,85,87,89,106,119,123,145,152,158,167,182,196,206,221,227,
+  	239,250
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -349,9 +351,9 @@ GLSLParser::StartShaderContext* GLSLParser::startShader() {
     _la = _input->LA(1);
     while (_la == GLSLParser::LAYOUT
 
-    || _la == GLSLParser::VOID || ((((_la - 67) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 67)) & -65537) != 0) || ((((_la - 131) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 131)) & 549755813951) != 0)) {
+    || _la == GLSLParser::VOID || ((((_la - 68) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 68)) & -65537) != 0) || ((((_la - 132) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 132)) & 549755813951) != 0)) {
       setState(87);
       _errHandler->sync(this);
       switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx)) {
@@ -674,9 +676,9 @@ GLSLParser::Push_constant_blockContext* GLSLParser::push_constant_block() {
       setState(106); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    } while (((((_la - 62) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 62)) & -2097183) != 0) || ((((_la - 126) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 126)) & 17592186045439) != 0));
+    } while (((((_la - 63) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 63)) & -2097183) != 0) || ((((_la - 127) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 127)) & 17592186045439) != 0));
     setState(108);
     match(GLSLParser::RIGHT_BRACE);
     setState(109);
@@ -793,9 +795,9 @@ GLSLParser::Shader_uniform_blockContext* GLSLParser::shader_uniform_block() {
       setState(119); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    } while (((((_la - 62) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 62)) & -2097183) != 0) || ((((_la - 126) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 126)) & 17592186045439) != 0));
+    } while (((((_la - 63) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 63)) & -2097183) != 0) || ((((_la - 127) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 127)) & 17592186045439) != 0));
     setState(121);
     match(GLSLParser::RIGHT_BRACE);
 
@@ -1079,9 +1081,9 @@ GLSLParser::Shader_struct_declarationContext* GLSLParser::shader_struct_declarat
       setState(145); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    } while (((((_la - 62) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 62)) & -2097183) != 0) || ((((_la - 126) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 126)) & 17592186045439) != 0));
+    } while (((((_la - 63) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 63)) & -2097183) != 0) || ((((_la - 127) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 127)) & 17592186045439) != 0));
     setState(147);
     match(GLSLParser::RIGHT_BRACE);
     setState(148);
@@ -1527,8 +1529,8 @@ GLSLParser::Directive_valueContext* GLSLParser::directive_value() {
       if (alt == 1) {
         setState(164);
         _la = _input->LA(1);
-        if (!(((((_la - 10) & ~ 0x3fULL) == 0) &&
-          ((1ULL << (_la - 10)) & 27021597764222977) != 0) || _la == GLSLParser::IDENTIFIER)) {
+        if (!(((((_la - 11) & ~ 0x3fULL) == 0) &&
+          ((1ULL << (_la - 11)) & 27021597764222977) != 0) || _la == GLSLParser::IDENTIFIER)) {
         _errHandler->recoverInline(this);
         }
         else {
@@ -1776,9 +1778,9 @@ GLSLParser::Function_declarationContext* GLSLParser::function_declaration() {
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (((((_la - 62) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 62)) & -2097183) != 0) || ((((_la - 126) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 126)) & 17592186045439) != 0)) {
+    if (((((_la - 63) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 63)) & -2097183) != 0) || ((((_la - 127) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 127)) & 17592186045439) != 0)) {
       setState(181);
       function_parameters();
     }
@@ -2492,6 +2494,10 @@ tree::TerminalNode* GLSLParser::Layout_qualifier_typeContext::BINDING() {
   return getToken(GLSLParser::BINDING, 0);
 }
 
+tree::TerminalNode* GLSLParser::Layout_qualifier_typeContext::SET() {
+  return getToken(GLSLParser::SET, 0);
+}
+
 tree::TerminalNode* GLSLParser::Layout_qualifier_typeContext::INDEX() {
   return getToken(GLSLParser::INDEX, 0);
 }
@@ -2542,7 +2548,7 @@ GLSLParser::Layout_qualifier_typeContext* GLSLParser::layout_qualifier_type() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(238);
+    setState(239);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case GLSLParser::STD: {
@@ -2569,20 +2575,26 @@ GLSLParser::Layout_qualifier_typeContext* GLSLParser::layout_qualifier_type() {
         break;
       }
 
-      case GLSLParser::INDEX: {
+      case GLSLParser::SET: {
         setState(235);
+        match(GLSLParser::SET);
+        break;
+      }
+
+      case GLSLParser::INDEX: {
+        setState(236);
         match(GLSLParser::INDEX);
         break;
       }
 
       case GLSLParser::OFFSET: {
-        setState(236);
+        setState(237);
         match(GLSLParser::OFFSET);
         break;
       }
 
       case GLSLParser::IDENTIFIER: {
-        setState(237);
+        setState(238);
         match(GLSLParser::IDENTIFIER);
         break;
       }
@@ -2653,9 +2665,9 @@ GLSLParser::Layout_std_qualifierContext* GLSLParser::layout_std_qualifier() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(240);
-    match(GLSLParser::STD);
     setState(241);
+    match(GLSLParser::STD);
+    setState(242);
     match(GLSLParser::INTCONSTANT);
    
   }
@@ -2724,11 +2736,11 @@ GLSLParser::Array_specifierContext* GLSLParser::array_specifier() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(243);
-    match(GLSLParser::LEFT_BRACKET);
     setState(244);
-    match(GLSLParser::INTCONSTANT);
+    match(GLSLParser::LEFT_BRACKET);
     setState(245);
+    match(GLSLParser::INTCONSTANT);
+    setState(246);
     match(GLSLParser::RIGHT_BRACKET);
    
   }
@@ -2793,7 +2805,7 @@ GLSLParser::Variable_typeContext* GLSLParser::variable_type() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(249);
+    setState(250);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case GLSLParser::VOID:
@@ -2865,13 +2877,13 @@ GLSLParser::Variable_typeContext* GLSLParser::variable_type() {
       case GLSLParser::USAMPLERCUBEARRAY:
       case GLSLParser::USAMPLERBUFFER:
       case GLSLParser::USAMPLER2DRECT: {
-        setState(247);
+        setState(248);
         primitive_type();
         break;
       }
 
       case GLSLParser::IDENTIFIER: {
-        setState(248);
+        setState(249);
         struct_type_name();
         break;
       }
@@ -3211,11 +3223,11 @@ GLSLParser::Primitive_typeContext* GLSLParser::primitive_type() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(251);
+    setState(252);
     _la = _input->LA(1);
-    if (!(((((_la - 62) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 62)) & -2097183) != 0) || ((((_la - 126) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 126)) & 1023) != 0))) {
+    if (!(((((_la - 63) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 63)) & -2097183) != 0) || ((((_la - 127) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 127)) & 1023) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {

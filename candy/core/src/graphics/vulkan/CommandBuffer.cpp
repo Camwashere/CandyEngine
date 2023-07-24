@@ -289,9 +289,9 @@ namespace Candy::Graphics
       EndRecording();
     }
   
-  void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderStage shaderStage, uint32_t dataSize, const void* data)
+  void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t dataSize, const void* data)
   {
-    vkCmdPushConstants(mainCommandBuffer, layout, Shader::StageToVulkan(shaderStage), 0, dataSize, data);
+    vkCmdPushConstants(mainCommandBuffer, layout, ShaderData::StageToVulkan(shaderStage), 0, dataSize, data);
   }
   
   void CommandBuffer::Destroy()

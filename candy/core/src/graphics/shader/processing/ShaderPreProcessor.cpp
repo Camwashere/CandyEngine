@@ -1,38 +1,36 @@
-#include <candy/graphics/shader/processing/ShaderProcessor.hpp>
+#include <candy/graphics/shader/processing/ShaderPreProcessor.hpp>
 #include <fstream>
 #include <cstring>
 #include <iostream>
 
-#define CANDY_CORE_ASSERT(...)
+
 namespace Candy::Graphics
 {
   
-  ShaderProcessor::ShaderProcessor(const std::filesystem::path& path)
+  ShaderPreProcessor::ShaderPreProcessor(const std::filesystem::path& path)
   {
     std::string sourceCode = ReadFile(path);
-    //std::cout << sourceCode << std::endl;
     InitializeSources(sourceCode);
     
     
   }
   
-  ShaderProcessor::ShaderProcessor(std::initializer_list<std::filesystem::path> paths)
+  ShaderPreProcessor::ShaderPreProcessor(std::initializer_list<std::filesystem::path> paths)
   {
     std::string sourceCode = ConsolidateFiles(paths);
     InitializeSources(sourceCode);
   }
-  void ShaderProcessor::InitializeSources(const std::string& sourceCode)
+  void ShaderPreProcessor::InitializeSources(const std::string& sourceCode)
   {
     std::unordered_map<ShaderData::Stage, std::string> shaderSources = PrepareSources(sourceCode);
     for(const auto& [stage, source] : shaderSources)
     {
-      //std::cout << source << std::endl;
-      sources.insert({stage, std::make_shared<ShaderSource>(stage, source)});
+      sources.insert({stage, ShaderSource::Create(stage, source)});
     }
   }
   
   
-  std::unordered_map<ShaderData::Stage, std::string> ShaderProcessor::PrepareSources(const std::string& source)
+  std::unordered_map<ShaderData::Stage, std::string> ShaderPreProcessor::PrepareSources(const std::string& source)
   {
     std::unordered_map<ShaderData::Stage, std::string> shaderSources;
     
@@ -42,24 +40,16 @@ namespace Candy::Graphics
     while (pos != std::string::npos)
     {
       size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
-      if (eol == std::string::npos)
-      {
-        throw std::runtime_error("Syntax error");
-      }
+      CANDY_CORE_ASSERT(eol != std::string::npos, "Syntax error");
+      
       
       size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
       std::string type = source.substr(begin, eol - begin);
-      if (ShaderData::StringToStage(type) == ShaderData::Stage::None)
-      {
-        throw std::runtime_error("Invalid shader type specified");
-      }
+      CANDY_CORE_ASSERT(ShaderData::StringToStage(type) != ShaderData::Stage::None, "Invalid shader type specified");
      
       
       size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
-      if (nextLinePos == std::string::npos)
-      {
-        throw std::runtime_error("Syntax error");
-      }
+      CANDY_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
       pos = source.find(typeToken, nextLinePos); //Start of next shader type declaration line
       
       shaderSources[ShaderData::StringToStage(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
@@ -70,8 +60,9 @@ namespace Candy::Graphics
     
   }
   
-  std::string ShaderProcessor::ConsolidateFiles(std::initializer_list<std::filesystem::path> paths)
+  std::string ShaderPreProcessor::ConsolidateFiles(std::initializer_list<std::filesystem::path> paths)
   {
+    
     std::string result;
     for (auto& path : paths)
     {
@@ -79,8 +70,9 @@ namespace Candy::Graphics
     }
     return result;
   }
-  std::string ShaderProcessor::ReadFile(const std::filesystem::path& path)
+  std::string ShaderPreProcessor::ReadFile(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     std::string result;
     std::ifstream in(path, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
     if (in)
@@ -95,20 +87,37 @@ namespace Candy::Graphics
       }
       else
       {
-        throw std::runtime_error("Could not read from file '" + path.string() + "'");
+        CANDY_CORE_ERROR("Could not read from file '" + path.string() + "'");
        
       }
     }
     else
     {
-      throw std::runtime_error("Could not open file '" + path.string() + "'");
+      CANDY_CORE_ERROR("Could not open file '" + path.string() + "'");
     }
     
     return result;
   }
   
-  std::shared_ptr<ShaderSource> ShaderProcessor::GetSource(ShaderData::Stage stage)
+  ShaderSource& ShaderPreProcessor::GetSource(ShaderData::Stage stage)
   {
-    return sources[stage];
+    return *sources[stage];
+  }
+  std::unordered_map<ShaderData::Stage, std::string> ShaderPreProcessor::GetSourceStrings()
+  {
+    std::unordered_map<ShaderData::Stage, std::string> result;
+    for(const auto& [stage, source] : sources)
+    {
+      result.insert({stage, source->GetSource()});
+    }
+    return result;
+  }
+  UniquePtr<ShaderPreProcessor> ShaderPreProcessor::Create(const std::filesystem::path& path)
+  {
+    return CreateUniquePtr<ShaderPreProcessor>(path);
+  }
+  UniquePtr<ShaderPreProcessor> ShaderPreProcessor::Create(std::initializer_list<std::filesystem::path> paths)
+  {
+    return CreateUniquePtr<ShaderPreProcessor>(paths);
   }
 }

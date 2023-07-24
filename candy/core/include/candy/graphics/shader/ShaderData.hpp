@@ -4,6 +4,8 @@
 #include <array>
 #include <unordered_map>
 #include <vulkan/vulkan.h>
+
+
 namespace Candy::Graphics
 {
   
@@ -102,10 +104,12 @@ namespace Candy::Graphics
     static const std::string& StageToString(Stage stage);
     static Stage StringToStage(const std::string& stage);
     static VkFormat TypeToVulkan(Type type);
+    static VkShaderStageFlagBits StageToVulkan(Stage stage);
+    static Stage VulkanToStage(VkShaderStageFlagBits stage);
+    static std::string StageToCachedFileExtension(Stage stage);
     static size_t ComponentCount(Type type);
     static size_t ComponentSize(Type type);
     static size_t TypeSize(Type type);
-    
   };
   
 }

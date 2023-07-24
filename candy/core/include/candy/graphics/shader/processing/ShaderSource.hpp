@@ -4,6 +4,7 @@
 #include <vector>
 #include "../ShaderData.hpp"
 #include "ShaderParseObjects.hpp"
+#include "CandyPch.hpp"
 namespace Candy::Graphics
 {
   
@@ -31,6 +32,10 @@ namespace Candy::Graphics
     [[nodiscard]] ShaderData::Stage GetStage()const;
     [[nodiscard]] uint32_t GetVersion()const;
     [[nodiscard]] std::string ToString()const;
+    [[nodiscard]] std::string GetSource()const;
+    
+  public:
+    static SharedPtr<ShaderSource> Create(ShaderData::Stage shaderStage, std::string sourceCode);
     
  
 
