@@ -23,6 +23,7 @@ namespace Candy::Graphics
   public:
     void SetData(void* data);
     void Destroy();
+    void* GetData();
     
   public:
     static SharedPtr<UniformBuffer> Create(uint64_t size);

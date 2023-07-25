@@ -33,6 +33,7 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
+      frames[i].uniformBuffer = CreateSharedPtr<UniformBuffer>(192);
     }
   }
   
@@ -79,7 +80,6 @@ namespace Candy::Graphics
   
   
   
-  FrameData& GraphicsContext::GetCurrentFrame(){return frames[currentFrameIndex];}
   
 
 
@@ -133,6 +133,7 @@ namespace Candy::Graphics
       for (size_t i=0; i<FRAME_OVERLAP; i++)
       {
         frames[i].commandBuffer.Destroy();
+        frames[i].uniformBuffer->Destroy();
       }
         
         vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
@@ -144,10 +145,18 @@ namespace Candy::Graphics
   {
       frameBufferResized = true;
   }
-  
+  FrameData& GraphicsContext::GetCurrentFrame()
+  {
+      return frames[currentFrameIndex];
+  }
+  FrameData& GraphicsContext::GetPreviousFrame()
+  {
+      return frames[previousFrameIndex];
+  }
   void GraphicsContext::UpdateFrameIndex()
   {
-    currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
+      previousFrameIndex = currentFrameIndex;
+      currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
   }
     
 }

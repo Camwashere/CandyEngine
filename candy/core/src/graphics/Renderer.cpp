@@ -52,6 +52,7 @@ namespace Candy::Graphics
   };
   Renderer::Renderer(GraphicsContext* context) : target(context)
   {
+    uniformBuffer = UniformBuffer::Create(sizeof(UniformBufferObject));
     color = Color::blue;
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
@@ -100,8 +101,6 @@ namespace Candy::Graphics
     pipeline.Bake(vertexArray, shader, *target->renderPass);
     
     descriptorBuilder = DescriptorBuilder::Begin(&descriptorLayoutCache, &descriptorAllocator);
-    CreateUniformBuffers();
-    //CreateDescriptorPool();
     CreateDescriptorSets();
     
     
@@ -179,14 +178,14 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(vkAllocateDescriptorSets(Vulkan::LogicalDevice(), &allocInfo, descriptorSets.data()) == VK_SUCCESS, "Failed to allocate descriptor sets!");*/
     
     VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = *uniformBuffers[0];
+    bufferInfo.buffer = *uniformBuffer;
     bufferInfo.offset = 0;
     bufferInfo.range = sizeof(UniformBufferObject);
     
-    VkDescriptorBufferInfo bufferInfo1{};
+    /*VkDescriptorBufferInfo bufferInfo1{};
     bufferInfo.buffer = *uniformBuffers[1];
     bufferInfo.offset = 0;
-    bufferInfo.range = sizeof(UniformBufferObject);
+    bufferInfo.range = sizeof(UniformBufferObject);*/
     
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -243,18 +242,7 @@ namespace Candy::Graphics
   }
 
   
-  void Renderer::CreateUniformBuffers()
-  {
-    VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-    
-    uniformBuffers.resize(FRAME_OVERLAP);
-    
-    for (size_t i = 0; i < FRAME_OVERLAP; i++)
-    {
-      uniformBuffers[i] = UniformBuffer::Create(bufferSize);
-    }
-    
-  }
+  
   
   void Renderer::UpdateUniformBuffer()
   {
@@ -287,9 +275,11 @@ namespace Candy::Graphics
     {
       color.b = 1;
     }
-    
+    uniformBuffer->SetData(&color[0]);
+    GetCurrentFrame().uniformBuffer->SetData(uniformBuffer->GetData());
     //CANDY_CORE_INFO(color.ToString());
-    uniformBuffers[target->currentFrameIndex]->SetData(&color[0]);
+    //GetCurrentFrame().uniformBuffer->SetData(&color[0]);
+    //uniformBuffers[target->currentFrameIndex]->SetData(&color[0]);
   }
   void Renderer::Draw()
   {
@@ -378,9 +368,10 @@ namespace Candy::Graphics
    target->swapChain->Clean();
    textureImageView.Destroy();
    texture.Destroy();
+   uniformBuffer->Destroy();
     for (size_t i = 0; i < FRAME_OVERLAP; i++)
     {
-      uniformBuffers[i]->Destroy();
+      //uniformBuffers[i]->Destroy();
     }
     descriptorAllocator.Destroy();
     descriptorLayoutCache.Destroy();

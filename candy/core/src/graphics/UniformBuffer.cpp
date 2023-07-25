@@ -30,6 +30,11 @@ namespace Candy::Graphics
     VulkanBuffer::DestroyBuffer(buffer, allocation);
   }
   
+  void* UniformBuffer::GetData()
+  {
+    return data;
+  }
+  
   SharedPtr<UniformBuffer> UniformBuffer::Create(uint64_t size)
   {
     return CreateSharedPtr<UniformBuffer>(size);

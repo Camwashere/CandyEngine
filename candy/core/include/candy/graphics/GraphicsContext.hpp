@@ -14,6 +14,7 @@
 #include "vulkan/pipeline/GraphicsPipeline.hpp"
 #include "vma/vk_mem_alloc.h"
 #include "candy/graphics/shader/Shader.hpp"
+#include "UniformBuffer.hpp"
 
 /*void VulkanEngine::init_imgui()
 {
@@ -91,6 +92,7 @@ namespace Candy::Graphics
       VkSemaphore renderSemaphore=VK_NULL_HANDLE;
       VkSemaphore presentSemaphore=VK_NULL_HANDLE;
       VkFence renderFence=VK_NULL_HANDLE;
+      SharedPtr<UniformBuffer> uniformBuffer;
       CommandBuffer commandBuffer;
     };
     class GraphicsContext
@@ -102,6 +104,7 @@ namespace Candy::Graphics
         SwapChain* swapChain;
         UniquePtr<RenderPass> renderPass;
         uint32_t currentFrameIndex = 0;
+        uint32_t previousFrameIndex=0;
         FrameData frames[FRAME_OVERLAP];
         
         bool frameBufferResized=false;
@@ -111,7 +114,8 @@ namespace Candy::Graphics
         void InitSyncStructures();
         VkRenderPassBeginInfo BeginRenderPass();
         FrameData& GetCurrentFrame();
-        
+        FrameData& GetPreviousFrame();
+        void UpdateFrameIndex();
     public:
         explicit GraphicsContext(GLFWwindow* windowHandle);
         
@@ -120,10 +124,10 @@ namespace Candy::Graphics
         void Terminate();
         void RebuildSwapChain();
         void OnFrameBufferResize();
-        void UpdateFrameIndex();
+        
         
     public:
-        static UniquePtr<GraphicsContext> Create(GLFWwindow* windowHandle);
+      static UniquePtr<GraphicsContext> Create(GLFWwindow* windowHandle);
       static bool HasStencilComponent(VkFormat format);
       static VkFormat FindDepthFormat();
       static VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
