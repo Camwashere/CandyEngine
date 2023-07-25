@@ -2,6 +2,7 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/vulkan/Image.hpp>
+#include <candy/app/Application.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -51,7 +52,7 @@ namespace Candy::Graphics
   };
   Renderer::Renderer(GraphicsContext* context) : target(context)
   {
-    
+    color = Color::blue;
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
     texture.Load("assets/textures/statue.jpg", GetCurrentFrame().commandBuffer);
@@ -98,7 +99,7 @@ namespace Candy::Graphics
     
     pipeline.Bake(vertexArray, shader, *target->renderPass);
     
-    descriptorBuilder = DescriptorBuilder::Create(&descriptorLayoutCache, &descriptorAllocator);
+    descriptorBuilder = DescriptorBuilder::Begin(&descriptorLayoutCache, &descriptorAllocator);
     CreateUniformBuffers();
     //CreateDescriptorPool();
     CreateDescriptorSets();
@@ -182,10 +183,21 @@ namespace Candy::Graphics
     bufferInfo.offset = 0;
     bufferInfo.range = sizeof(UniformBufferObject);
     
+    VkDescriptorBufferInfo bufferInfo1{};
+    bufferInfo.buffer = *uniformBuffers[1];
+    bufferInfo.offset = 0;
+    bufferInfo.range = sizeof(UniformBufferObject);
+    
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     imageInfo.imageView = textureImageView;
     imageInfo.sampler = texture.GetSampler();
+    
+    
+   
+    
+    
+    
     
     descriptorBuilder.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, ShaderData::StageToVulkan(ShaderData::Stage::Fragment));
     descriptorBuilder.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(ShaderData::Stage::Fragment));
@@ -246,7 +258,37 @@ namespace Candy::Graphics
   
   void Renderer::UpdateUniformBuffer()
   {
-    Color color = Color::blue;
+    
+    Color blueLerp = Color::LerpClamped(color, Color::brown, Application::DeltaTime()*0.07f);
+    Color redLerp = Color::LerpClamped(blueLerp, Color::purple, Application::DeltaTime()*0.07f);
+    Color combined = Color::LerpClamped(redLerp, blueLerp, Application::DeltaTime()*0.07f);
+    color = Color::Normalize(Color::LerpClamped(Color::Normalize(color + redLerp), combined, Application::DeltaTime()*0.07f));
+    if (color.r >= 0.99f)
+    {
+      color.r = 0.0f;
+    }
+    else if (color.r == 0)
+    {
+      color.r = 1.0f;
+    }
+    if (color.g >= 0.99f)
+    {
+      color.g = 0.0f;
+    }
+    else if (color.g == 0)
+    {
+      color.g = 1;
+    }
+    if (color.b >= 0.99f)
+    {
+      color.b = 0.0f;
+    }
+    else if (color.b == 0)
+    {
+      color.b = 1;
+    }
+    
+    //CANDY_CORE_INFO(color.ToString());
     uniformBuffers[target->currentFrameIndex]->SetData(&color[0]);
   }
   void Renderer::Draw()
@@ -322,6 +364,7 @@ namespace Candy::Graphics
     }
     
     target->UpdateFrameIndex();
+    
   }
   
   FrameData& Renderer::GetCurrentFrame(){return target->GetCurrentFrame();}

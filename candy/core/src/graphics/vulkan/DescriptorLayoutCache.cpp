@@ -13,15 +13,15 @@ namespace Candy::Graphics
   
   VkDescriptorSetLayout DescriptorLayoutCache::CreateDescriptorSetLayout(VkDescriptorSetLayoutCreateInfo* info)
   {
-    DescriptorLayoutInfo layoutinfo;
-    layoutinfo.bindings.reserve(info->bindingCount);
+    DescriptorLayoutInfo layoutInfo;
+    layoutInfo.bindings.reserve(info->bindingCount);
     bool isSorted = true;
     int lastBinding = -1;
     
     //copy from the direct info struct into our own one
     for (int i = 0; i < info->bindingCount; i++)
     {
-      layoutinfo.bindings.push_back(info->pBindings[i]);
+      layoutInfo.bindings.push_back(info->pBindings[i]);
       
       //check that the bindings are in strict increasing order
       if (info->pBindings[i].binding > lastBinding)
@@ -36,14 +36,14 @@ namespace Candy::Graphics
     //sort the bindings if they aren't in order
     if (!isSorted)
     {
-      std::sort(layoutinfo.bindings.begin(), layoutinfo.bindings.end(), [](VkDescriptorSetLayoutBinding& a, VkDescriptorSetLayoutBinding& b )
+      std::sort(layoutInfo.bindings.begin(), layoutInfo.bindings.end(), [](VkDescriptorSetLayoutBinding& a, VkDescriptorSetLayoutBinding& b )
       {
       return a.binding < b.binding;
       });
     }
     
     //try to grab from cache
-    auto it = layoutCache.find(layoutinfo);
+    auto it = layoutCache.find(layoutInfo);
     if (it != layoutCache.end())
     {
       return (*it).second;
@@ -55,7 +55,7 @@ namespace Candy::Graphics
       vkCreateDescriptorSetLayout(Vulkan::LogicalDevice(), info, nullptr, &layout);
       
       //add to cache
-      layoutCache[layoutinfo] = layout;
+      layoutCache[layoutInfo] = layout;
       return layout;
     }
   }

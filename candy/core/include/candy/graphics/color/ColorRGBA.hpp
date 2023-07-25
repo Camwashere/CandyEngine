@@ -84,6 +84,7 @@ namespace Candy {
     [[nodiscard]] Math::Vector3 ToVector3()const;
     [[nodiscard]] Math::Vector4 ToVector4()const;
     [[nodiscard]] Math::Quaternion ToQuaternion()const;
+    [[nodiscard]] std::string ToString()const;
     [[nodiscard]] ColorBase rr() const;
     [[nodiscard]] ColorBase rg() const;
     [[nodiscard]] ColorBase rb() const;

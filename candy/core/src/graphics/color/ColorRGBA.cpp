@@ -26,7 +26,7 @@ namespace Candy {
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::orange(1.0f, 0.647f, 0.0f);
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::purple(0.627f, 0.125f, 0.941f);
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::brown(0.588f, 0.294f, 0.0f);
-  const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> coral(1.0f, 0.5f, 0.31f);
+  const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::coral(1.0f, 0.5f, 0.31f);
   
   
   
@@ -52,6 +52,11 @@ namespace Candy {
   Math::Quaternion ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::ToQuaternion() const
   {
     return {r, g, b, a};
+  }
+  
+  std::string ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::ToString()const
+  {
+    return std::string("Color(") + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + ")";
   }
   
   

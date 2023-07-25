@@ -2,7 +2,7 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  DescriptorBuilder DescriptorBuilder::Create(DescriptorLayoutCache* layoutCache, DescriptorAllocator* allocator){
+  DescriptorBuilder DescriptorBuilder::Begin(DescriptorLayoutCache* layoutCache, DescriptorAllocator* allocator){
     
     DescriptorBuilder builder;
     

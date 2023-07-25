@@ -30,6 +30,7 @@ namespace Candy::Graphics
     std::vector<SharedPtr<UniformBuffer>> uniformBuffers;
     Texture texture;
     ImageView textureImageView;
+    Color color;
     
     
     

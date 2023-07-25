@@ -7,7 +7,7 @@ namespace Candy::Graphics
   {
     pool = UniquePtr<vke::DescriptorAllocatorPool>(vke::DescriptorAllocatorPool::Create(Vulkan::LogicalDevice(), FRAME_OVERLAP));
     //descriptorAllocatorPool->SetPoolSizeMultiplier()
-    pool->GetAllocator();
+    
     
     
   }

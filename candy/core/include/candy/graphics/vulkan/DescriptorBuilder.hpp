@@ -12,7 +12,7 @@ namespace Candy::Graphics
     DescriptorLayoutCache* cache;
     DescriptorAllocator* alloc;
   public:
-    static DescriptorBuilder Create(DescriptorLayoutCache* layoutCache, DescriptorAllocator* allocator );
+    static DescriptorBuilder Begin(DescriptorLayoutCache* layoutCache, DescriptorAllocator* allocator );
     
     DescriptorBuilder& BindBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
     DescriptorBuilder& BindImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
