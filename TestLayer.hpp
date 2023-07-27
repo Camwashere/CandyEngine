@@ -14,16 +14,9 @@ private:
   Candy::SharedPtr<Candy::Graphics::Shader> shader;
   Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
   Candy::Graphics::Material material;
-  //Candy::SharedPtr<Candy::Graphics::UniformBuffer> uniformBuffer;
   Candy::Color color;
-  //Candy::Graphics::Texture texture;
-  //Candy::Graphics::ImageView textureImageView;
-  Candy::Graphics::UniformBufferObject ubo{};
-  //Candy::Graphics::DescriptorBuilder descriptorBuilder;
-  
-private:
-  //void CreateDescriptorSets();
 
+  
 public:
   TestLayer();
   virtual void OnAttach() override;

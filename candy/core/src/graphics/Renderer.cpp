@@ -87,6 +87,10 @@ namespace Candy::Graphics
   {
     GetCurrentFrame().commandBuffer.PushConstants(instance.pipeline.GetLayout(), stage, dataSize, data);
   }
+  void Renderer::PushConstants(ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data)
+  {
+    GetCurrentFrame().commandBuffer.PushConstants(instance.pipeline.GetLayout(), stage, offset, dataSize, data);
+  }
   void Renderer::Shutdown()
   {
     //vkDeviceWaitIdle(Vulkan::LogicalDevice());

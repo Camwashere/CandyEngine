@@ -57,9 +57,7 @@ TestLayer::TestLayer() : Layer("Test Layer")
   material.shader = shader.get();
   material.texture.Load("assets/textures/statue.jpg");
   material.textureImageView.Set(material.texture);
-  //texture.Load("assets/textures/statue.jpg");
-  //textureImageView.Set(texture);
-  //texture.CreateSampler();
+
 
   //Buffers
   vertexArray = VertexArray::Create();
@@ -94,39 +92,11 @@ TestLayer::TestLayer() : Layer("Test Layer")
   
   vertexArray->AddVertexBuffer(vertexBuffer);
   vertexArray->SetIndexBuffer(indexBuffer);
-  //CreateDescriptorSets();
   Renderer::Submit(&material);
   
   
 }
-/*void TestLayer::CreateDescriptorSets()
-{
-  
 
-  size_t sum=0;
-  for (size_t i=0; i<FRAME_OVERLAP; i++)
-  {
-    VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = *Vulkan::GetCurrentContext().GetFrame(i).uniformBuffer;
-    //bufferInfo.buffer = *uniformBuffer;
-    size_t offset=0;
-    //size_t offset = Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color))*i;
-    bufferInfo.offset = offset;
-    bufferInfo.range = sizeof(Color);
-    sum += bufferInfo.range + bufferInfo.offset;
-    
-    
-    VkDescriptorImageInfo imageInfo{};
-    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageInfo.imageView = material.textureImageView;
-    imageInfo.sampler = material.textureImageView.GetSampler();
-    DescriptorBuilder::Begin()
-    .BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(ShaderData::Stage::Fragment))
-    .BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(ShaderData::Stage::Fragment))
-    .Build(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor);
-  }
-
-}*/
 void TestLayer::OnAttach()
 {
   Layer::OnAttach();
@@ -160,19 +130,20 @@ void TestLayer::OnUpdate()
   auto currentTime = std::chrono::high_resolution_clock::now();
   float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
   
-  ubo.model = Matrix4::Rotate(Matrix4::IDENTITY, time * Math::ToRadians(90.0f), Math::Vector3(0.0f, 0.0f, 1.0f));
-  ubo.view = Matrix4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-  ubo.proj = Matrix4::Perspective(Math::ToRadians(45.0f), Vulkan::GetContextSizeRatio(), 0.1f, 10.0f);
+  Matrix4 model = Matrix4::Rotate(Matrix4::IDENTITY, time * Math::ToRadians(90.0f), Math::Vector3(0.0f, 0.0f, 1.0f));
+  Matrix4 view = Matrix4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
+  Matrix4 proj = Matrix4::Perspective(Math::ToRadians(45.0f), Vulkan::GetContextSizeRatio(), 0.1f, 10.0f);
   
-  ubo.proj[1,1] *= -1;
-  size_t dataOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color))*Vulkan::GetCurrentContext().GetCurrentFrameIndex();
+  proj[1,1] *= -1;
+
   Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer->SetData(&color[0]);
-  //uniformBuffer->SetData(&color[0]);
+
   Renderer::BindDescriptorSets();
-  //uniformBuffer->SetData(&color[0]);
+
   vertexArray->Bind();
-  
-  Renderer::PushConstants(ShaderData::Stage::Vertex, sizeof(UniformBufferObject), &ubo);
+  shader->GetLayout().PushMatrix("model", model);
+  shader->GetLayout().PushMatrix("view", view);
+  shader->GetLayout().PushMatrix("proj", proj);
   
   Renderer::DrawIndexed(vertexArray);
 }

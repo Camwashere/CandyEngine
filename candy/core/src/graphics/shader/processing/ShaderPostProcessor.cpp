@@ -105,6 +105,7 @@ namespace Candy::Graphics
     
     //descriptorLayout.Build();
     shaderLayout.CalculateOffsetsAndStride();
+    shaderLayout.CalculateProperties();
     
     /*VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -205,12 +206,28 @@ namespace Candy::Graphics
     pushRange.stageFlags = ShaderData::StageToVulkan(stage);
     pushRange.offset = 0;
     
+    spirv_cross::Resource pushResource = compiler.get_shader_resources().push_constant_buffers[0];
     
-    uint32_t id = compiler.get_shader_resources().push_constant_buffers[0].id;
+    CANDY_CORE_INFO("PUSH RESOURCE ID: {}, Type ID: {}, Base Type ID: {}", pushResource.id, pushResource.type_id, pushResource.base_type_id);
+    CANDY_CORE_INFO("PRE PUSH TYPE");
+    
+   
+    CANDY_CORE_INFO("POST PUSH TYPE");
+   
+    
+    
+    uint32_t id = pushResource.id;
+    
+    
     pushBlock.id = id;
-    uint32_t base_type_id = compiler.get_shader_resources().push_constant_buffers[0].base_type_id;
+    uint32_t base_type_id = pushResource.base_type_id;
     uint32_t pcrSize=0;
     std::vector<spirv_cross::BufferRange> ranges = (std::vector<spirv_cross::BufferRange>)compiler.get_active_buffer_ranges(id);
+    if (ranges.empty())
+    {
+      return;
+    }
+    auto pushMembers = compiler.get_type(base_type_id).member_types;
     for (auto& range : ranges)
     {
       ShaderPushConstantProperty prop;
@@ -218,7 +235,11 @@ namespace Candy::Graphics
       prop.index = range.index;
       prop.offset = range.offset;
       prop.size = range.range;
+      prop.type = ShaderData::SpirvToType(compiler.get_type(pushMembers[range.index]));
+      
+      //CANDY_CORE_INFO("PUSH CONSTANT VAR TYPE: {}", ShaderData::TypeToString(prop.type));
       prop.parentBlockID = pushBlock.id;
+      
       
       pushBlock.properties.push_back(prop);
       //CANDY_CORE_INFO("MEMBER NAME {}", compiler.get_member_name(base_type_id, range.index));

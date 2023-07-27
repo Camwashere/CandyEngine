@@ -11,7 +11,7 @@ namespace Candy::Graphics
     
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     
-    //std::vector<VkDescriptorSetLayout> descriptorSetLayouts{shader->GetDescriptorSetLayout()};
+    
     auto descriptorSetLayouts = BakeDescriptorSetLayouts();
     CANDY_CORE_INFO("DESCRIPTOR SET VECTOR SIZE: {}", descriptorSetLayouts.size());
     for (auto d : descriptorSetLayouts)
@@ -23,8 +23,7 @@ namespace Candy::Graphics
     }
     pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
     pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
-    //pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size(); // Optional
-    //pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data(); // Optional
+    
     auto pushConstantRanges = shader->GetPushConstantRanges();
     CANDY_CORE_INFO("Push Constant Range Count: {0}", pushConstantRanges.size());
     pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size(); // Optional
@@ -38,8 +37,7 @@ namespace Candy::Graphics
     
     std::vector<VkDescriptorSetLayout> layouts;
     layouts.resize(FRAME_OVERLAP);
-   
-    //std::vector<VkDescriptorSetLayoutBinding> bindings;
+    
     
     
     for (int i=0; i<FRAME_OVERLAP; i++)

@@ -1,6 +1,7 @@
 #pragma once
 #include "ShaderData.hpp"
 #include "../UniformBuffer.hpp"
+#include <candy/math/Matrix.hpp>
 namespace Candy::Graphics
 {
   // Responsible for automatically creating descriptor sets
@@ -8,15 +9,32 @@ namespace Candy::Graphics
   {
     std::string name;
     uint32_t id;
+    uint32_t parentBlockID;
+    uint32_t offset;
+    uint32_t size;
     ShaderData::Type type;
-    std::uint32_t binding;
-    std::uint32_t set;
-    std::uint32_t offset;
-    std::uint32_t size;
+    
     
     [[nodiscard]] std::string ToString()const;
     
   };
+  struct ShaderParentProperty
+  {
+    std::string name;
+    uint32_t id;
+    uint32_t binding;
+  };
+  
+  struct ShaderPushProperty
+  {
+    std::string name;
+    uint32_t id;
+    uint32_t offset;
+    uint32_t size;
+    ShaderData::Stage stage;
+    ShaderData::Type type;
+  };
+  
   struct ShaderUniformProperty
   {
     std::string name;
@@ -50,6 +68,7 @@ namespace Candy::Graphics
     uint32_t index;
     uint32_t offset;
     size_t size;
+    ShaderData::Type type;
   };
   struct ShaderPushConstantBlockProperty
   {
@@ -84,6 +103,12 @@ namespace Candy::Graphics
     uint32_t layoutVertexStride;
     UniquePtr<UniformBuffer> uniformBuffer;
     std::unordered_map<std::string, uint32_t> propertyMap;
+    std::unordered_map<std::string, uint32_t> pushPropertyMap;
+    std::vector<ShaderProperty> properties;
+    std::vector<ShaderParentProperty> parentProperties;
+    std::vector<ShaderParentProperty> imageProperties;
+    std::vector<ShaderPushProperty> pushProperties;
+    
     std::vector<ShaderPushConstantBlockProperty> pushConstantBlockProperties;
     std::vector<ShaderUniformBlockProperty> uniformBlockProperties;
     std::vector<ShaderUniformImageProperty> uniformImageProperties;
@@ -91,7 +116,10 @@ namespace Candy::Graphics
     std::vector<ShaderLayoutProperty> outputLayoutProperties;
     
   public:
+    uint32_t PushMatrix(const std::string& name, const Math::Matrix4& matrix);
+    void PushMatrix(uint32_t id, const Math::Matrix4& matrix);
     void CalculateOffsetsAndStride();
+    void CalculateProperties();
     size_t MaxSetCount()const;
     //std::vector<VkDescriptorSetLayout> GetDescriptorSetLayouts();
     std::vector<VkPushConstantRange> GetPushConstantRanges();

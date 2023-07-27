@@ -1,11 +1,12 @@
 #include <candy/graphics/shader/ShaderLayout.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/utils/IDManager.hpp>
 namespace Candy::Graphics
 {
   std::string ShaderProperty::ToString()const
   {
     std::stringstream ss;
-    ss << "Name: " << name << ", Type: " << ShaderData::TypeToString(type) << ", Binding: " << binding << ", Set: " << set << ", Offset: " << offset << ", Size: " << size;
+    //ss << "Name: " << name << ", Type: " << ShaderData::TypeToString(type) << ", Binding: " << binding << ", Set: " << set << ", Offset: " << offset << ", Size: " << size;
     return ss.str();
   }
   std::string ShaderLayoutProperty::ToString()const
@@ -31,6 +32,58 @@ namespace Candy::Graphics
     }
     layoutVertexStride = stride;
   
+  }
+  void ShaderLayout::CalculateProperties()
+  {
+    Utils::IDManager<uint32_t> parentIDManager;
+    Utils::IDManager<uint32_t> propertyIDManager;
+    for (const auto& block : uniformBlockProperties)
+    {
+      ShaderParentProperty parentProperty{};
+      parentProperty.name = block.name;
+      parentProperty.id = parentIDManager.Assign();
+      parentProperty.binding = block.binding;
+      uint32_t offset = 0;
+      parentProperties.push_back(parentProperty);
+      for (const auto& value : block.properties)
+      {
+        ShaderProperty property{};
+        property.name = value.name;
+        property.id = propertyIDManager.Assign();
+        property.type = value.type;
+        property.parentBlockID = parentProperty.id;
+        property.size = ShaderData::TypeSize(property.type);
+        property.offset = offset;
+        offset += property.size;
+        properties.push_back(property);
+      }
+    }
+    Utils::IDManager<uint32_t> imageIDManager;
+    for (const auto& image : uniformImageProperties)
+    {
+      ShaderParentProperty parentProperty{};
+      parentProperty.name = image.name;
+      parentProperty.id = imageIDManager.Assign();
+      parentProperty.binding = image.binding;
+      imageProperties.push_back(parentProperty);
+    }
+    
+    Utils::IDManager<uint32_t> pushConstantIDManager;
+    for (const auto& block : pushConstantBlockProperties)
+    {
+      for (const auto& push : block.properties)
+      {
+        ShaderPushProperty property{};
+        property.id = pushConstantIDManager.Assign();
+        property.name = push.name;
+        property.stage = block.stage;
+        property.type = push.type;
+        property.size = push.size;
+        property.offset = push.offset;
+        pushPropertyMap[property.name] = pushProperties.size();
+        pushProperties.push_back(property);
+      }
+    }
   }
   size_t ShaderLayout::MaxSetCount()const
   {
@@ -176,6 +229,24 @@ namespace Candy::Graphics
     
     
   
+  }
+  
+  uint32_t ShaderLayout::PushMatrix(const std::string& name, const Math::Matrix4& matrix)
+  {
+    auto it = pushPropertyMap.find(name);
+    if (it != pushPropertyMap.end())
+    {
+      uint32_t id = it->second;
+      PushMatrix(id, matrix);
+      return id;
+    }
+    return 0;
+  }
+  void ShaderLayout::PushMatrix(uint32_t id, const Math::Matrix4& matrix)
+  {
+    auto& prop = pushProperties[id];
+    
+    Renderer::PushConstants(prop.stage, prop.offset, prop.size, &matrix);
   }
   
   uint32_t ShaderLayout::GetLayoutVertexStride()const

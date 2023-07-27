@@ -292,6 +292,11 @@ namespace Candy::Graphics
     vkCmdPushConstants(mainCommandBuffer, layout, ShaderData::StageToVulkan(shaderStage), 0, dataSize, data);
   }
   
+  void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t offset, uint32_t dataSize, const void* data)
+  {
+    vkCmdPushConstants(mainCommandBuffer, layout, ShaderData::StageToVulkan(shaderStage), offset, dataSize, data);
+  }
+  
   void CommandBuffer::Destroy()
   {
     vkDestroyCommandPool(Vulkan::LogicalDevice(), commandPool, nullptr);
