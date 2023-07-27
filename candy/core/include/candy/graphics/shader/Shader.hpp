@@ -13,41 +13,49 @@ namespace Candy::Graphics
     class Shader
     {
     private:
-        std::string shaderName;
-        std::filesystem::path filepath;
+      std::string shaderName;
+      std::filesystem::path filepath;
         
-        UniquePtr<ShaderPreProcessor> preProcessor;
-        ShaderPostProcessor postProcessor;
-        //bool optimize=false;
-        //bool recompileOnLoad=true;
-        //VkDescriptorSetLayout descriptorSetLayout;
-        //std::unordered_map<ShaderData::Stage, std::vector<uint32_t>> spirvBinaries;
-        std::vector<VkShaderModule> shaderModules;
-        //std::vector<VkPushConstantRange> pushConstantRanges;
+      UniquePtr<ShaderPreProcessor> preProcessor;
+      ShaderPostProcessor postProcessor;
+      std::vector<VkShaderModule> shaderModules;
     
     private:
-        //void CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources);
-        //void Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings);
-        
-        VkShaderModule CreateShaderModule(ShaderData::Stage stage);
-        std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
+      VkShaderModule CreateShaderModule(ShaderData::Stage stage);
+      std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
         
     
     public:
-        explicit Shader(std::filesystem::path  shaderFilePath);
+      explicit Shader(std::filesystem::path  shaderFilePath);
     
     public:
-        const std::string& GetName()const{return shaderName;}
-        const std::filesystem::path& GetFilepath()const{return filepath;}
-        void DestroyShaderModules();
-        //std::vector<VkDescriptorSetLayout> GetDescriptorSetLayouts();
+      // Push constant functions
+      uint32_t PushFloat(const std::string& name, float value);
+      uint32_t PushVector2(const std::string& name, const Math::Vector2& vector);
+      uint32_t PushVector3(const std::string& name, const Math::Vector3& vector);
+      uint32_t PushVector4(const std::string& name, const Math::Vector4& vector);
+      uint32_t PushMatrix(const std::string& name, const Math::Matrix4& matrix);
+      
+      void PushFloat(uint32_t id, float value);
+      void PushVector2(uint32_t id, const Math::Vector2& vector);
+      void PushVector3(uint32_t id, const Math::Vector3& vector);
+      void PushVector4(uint32_t id, const Math::Vector4& vector);
+      void PushMatrix(uint32_t id, const Math::Matrix4& matrix);
+      
+      // Set uniform functions
+      uint32_t SetColor(const std::string& name, const Color& color);
+      uint32_t SetVector4(const std::string& name, const Math::Vector4& vector);
+      
+      
+      
+      const std::string& GetName()const{return shaderName;}
+      const std::filesystem::path& GetFilepath()const{return filepath;}
+      void DestroyShaderModules();
+      
         
-        std::vector<VkPushConstantRange> GetPushConstantRanges();
-        //uint32_t PushConstantRangeCount();
-        //const VkPushConstantRange* PushConstantRangeData();
-        //VkDescriptorSetLayout GetDescriptorSetLayout(){return postProcessor.descriptorLayout.GetLayout();}
-        ShaderPostProcessor& GetPostProcessor(){return postProcessor;}
-        ShaderLayout& GetLayout(){return postProcessor.shaderLayout;}
+      std::vector<VkPushConstantRange> GetPushConstantRanges();
+      ShaderPostProcessor& GetPostProcessor(){return postProcessor;}
+      ShaderLayout& GetLayout(){return postProcessor.shaderLayout;}
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);

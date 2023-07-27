@@ -37,9 +37,10 @@ namespace Candy::Graphics
     static void SetTarget(GraphicsContext* target);
     static void BeginPass();
     static void EndPass();
-    static void BindDescriptorSets();
+    static void BindDescriptorSets(uint32_t uniformOffset);
     static void PushConstants(ShaderData::Stage stage, uint32_t dataSize, const void* data);
     static void PushConstants(ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data);
+    static void SetUniform(uint32_t offset, uint32_t size, const void* data);
     static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
     static void Shutdown();
   private:

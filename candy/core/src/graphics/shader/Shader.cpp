@@ -69,9 +69,58 @@ namespace Candy::Graphics
         }
         return ShaderStageCreateInfos;
     }
-    
-    
-    
+  
+  uint32_t Shader::PushFloat(const std::string& name, float value)
+  {
+    return GetLayout().PushConstant(name, &value);
+  }
+  uint32_t Shader::PushVector2(const std::string& name, const Math::Vector2& vector)
+  {
+    return GetLayout().PushConstant(name, &vector);
+  }
+  uint32_t Shader::PushVector3(const std::string& name, const Math::Vector3& vector)
+  {
+    return GetLayout().PushConstant(name, &vector);
+  }
+  uint32_t Shader::PushVector4(const std::string& name, const Math::Vector4& vector)
+  {
+    return GetLayout().PushConstant(name, &vector);
+  }
+  uint32_t Shader::PushMatrix(const std::string& name, const Math::Matrix4& matrix)
+  {
+    return GetLayout().PushConstant(name, &matrix);
+  }
+  
+  void Shader::PushFloat(uint32_t id, float value)
+  {
+    GetLayout().PushConstant(id, &value);
+  }
+  void Shader::PushVector2(uint32_t id, const Math::Vector2& vector)
+  {
+    GetLayout().PushConstant(id, &vector);
+  }
+  void Shader::PushVector3(uint32_t id, const Math::Vector3& vector)
+  {
+    GetLayout().PushConstant(id, &vector);
+  }
+  void Shader::PushVector4(uint32_t id, const Math::Vector4& vector)
+  {
+    GetLayout().PushConstant(id, &vector);
+  }
+  void Shader::PushMatrix(uint32_t id, const Math::Matrix4& matrix)
+  {
+    GetLayout().PushConstant(id, &matrix);
+  }
+  
+  
+  uint32_t Shader::SetColor(const std::string& name, const Color& color)
+  {
+    return GetLayout().SetUniform(name, &color);
+  }
+  uint32_t Shader::SetVector4(const std::string& name, const Math::Vector4& vector)
+  {
+  
+  }
     VkShaderModule Shader::CreateShaderModule(ShaderData::Stage stage)
     {
         const auto& valuePair = postProcessor.spirvBinaries.find(stage);

@@ -55,6 +55,7 @@ namespace Candy::Graphics
         property.size = ShaderData::TypeSize(property.type);
         property.offset = offset;
         offset += property.size;
+        propertyMap[property.name] = properties.size();
         properties.push_back(property);
       }
     }
@@ -104,61 +105,7 @@ namespace Candy::Graphics
     }
     return maxSet+1;
   }
- /* std::vector<VkDescriptorSetLayout> ShaderLayout::GetDescriptorSetLayouts()
-  {
-    
-    std::vector<VkDescriptorSetLayout> layouts;
-    DescriptorBuilder builder = DescriptorBuilder::Begin();
-    
-    
-    std::vector<VkDescriptorSetLayoutBinding> bindings;
-    for (int i=0; i<FRAME_OVERLAP; i++)
-    {
-      VkDescriptorBufferInfo bufferInfo{};
-      bufferInfo.buffer = *Vulkan::GetCurrentContext().GetFrame(i).uniformBuffer;
-      bufferInfo.offset = 0;
-      bufferInfo.range = sizeof(Color);
-      
-      
-      VkDescriptorImageInfo imageInfo{};
-      imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      imageInfo.imageView = textureImageView;
-      imageInfo.sampler = textureImageView.GetSampler();
-      for (const auto& block : uniformBlockProperties)
-      {
-        builder.BindBuffer(block.binding, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
-        *//*VkDescriptorSetLayoutBinding binding{};
-        binding.binding = block.binding;
-        binding.stageFlags = ShaderData::StageToVulkan(block.stage);
-        binding.pImmutableSamplers = nullptr;
-        binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-        
-        binding.descriptorCount = 1;
-        bindings.push_back(binding);*//*
-        
-      }
-      for (const auto& block : uniformImageProperties)
-      {
-        builder.BindImage(block.binding, nullptr, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
-        *//*VkDescriptorSetLayoutBinding binding{};
-        binding.binding = block.binding;
-        binding.stageFlags = ShaderData::StageToVulkan(block.stage);
-        binding.pImmutableSamplers = nullptr;
-        binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        binding.descriptorCount = 1;
-        bindings.push_back(binding);*//*
-        //bindings.push_back(binding);
-      }
-      VkDescriptorSetLayout layout;
-      builder.Build(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor, layout);
-      layouts.push_back(layout);
-    }
-    
-    
-   
-    return layouts;
-  
-  }*/
+
   std::vector<VkPushConstantRange> ShaderLayout::GetPushConstantRanges()
   {
     std::vector<VkPushConstantRange> pushConstantRanges;
@@ -230,25 +177,46 @@ namespace Candy::Graphics
     
   
   }
-  
-  uint32_t ShaderLayout::PushMatrix(const std::string& name, const Math::Matrix4& matrix)
+  uint32_t ShaderLayout::PushConstant(const std::string& name, const void* data)
   {
     auto it = pushPropertyMap.find(name);
     if (it != pushPropertyMap.end())
     {
       uint32_t id = it->second;
-      PushMatrix(id, matrix);
+      PushConstant(id, data);
       return id;
     }
+    CANDY_CORE_ASSERT(false, "Push constant name not found");
     return 0;
   }
-  void ShaderLayout::PushMatrix(uint32_t id, const Math::Matrix4& matrix)
+  void ShaderLayout::PushConstant(uint32_t id, const void* data)
   {
+    CANDY_CORE_ASSERT(id < pushProperties.size(), "Push constant id out of range");
     auto& prop = pushProperties[id];
     
-    Renderer::PushConstants(prop.stage, prop.offset, prop.size, &matrix);
+    Renderer::PushConstants(prop.stage, prop.offset, prop.size, data);
   }
-  
+  uint32_t ShaderLayout::SetUniform(const std::string& name, const void* data)
+  {
+    auto it = propertyMap.find(name);
+    if (it != propertyMap.end())
+    {
+      uint32_t id = it->second;
+      SetUniform(id, data);
+      return id;
+    }
+    CANDY_CORE_ERROR("Uniform name: {0} was not found", name);
+    CANDY_CORE_ASSERT(false);
+    return 0;
+  }
+  void ShaderLayout::SetUniform(uint32_t id, const void* data)
+  {
+    CANDY_CORE_ASSERT(id < properties.size(), "Uniform id out of range");
+    auto& prop = properties[id];
+    auto& parent = parentProperties[prop.parentBlockID];
+    
+    Renderer::SetUniform(prop.offset, prop.size, data);
+  }
   uint32_t ShaderLayout::GetLayoutVertexStride()const
   {
     return layoutVertexStride;

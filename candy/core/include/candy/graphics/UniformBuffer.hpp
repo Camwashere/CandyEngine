@@ -25,7 +25,8 @@ namespace Candy::Graphics
     operator VkBuffer();
     
   public:
-    void SetData(const void* data);
+    void SetData(uint64_t dataSize, const void* data);
+    void SetData(uint64_t offset, uint64_t size, const void* data);
     //void* GetData();
     void Destroy();
    

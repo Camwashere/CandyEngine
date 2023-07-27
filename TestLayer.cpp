@@ -136,14 +136,15 @@ void TestLayer::OnUpdate()
   
   proj[1,1] *= -1;
 
-  Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer->SetData(&color[0]);
-
-  Renderer::BindDescriptorSets();
+  color.x = (Math::Sin(time) + 1.0f) / 2.0f;
+  color.y = (Math::Cos(time) + 1.0f) / 2.0f;
+  color.z = (Math::Sin(time) + 1.0f) / 2.0f;
+  shader->SetColor("uColor", color);
 
   vertexArray->Bind();
-  shader->GetLayout().PushMatrix("model", model);
-  shader->GetLayout().PushMatrix("view", view);
-  shader->GetLayout().PushMatrix("proj", proj);
+  shader->PushMatrix("model", model);
+  shader->PushMatrix("view", view);
+  shader->PushMatrix("proj", proj);
   
   Renderer::DrawIndexed(vertexArray);
 }

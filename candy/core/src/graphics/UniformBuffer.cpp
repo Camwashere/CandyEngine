@@ -20,15 +20,20 @@ namespace Candy::Graphics
     return buffer;
   }
   
-  void UniformBuffer::SetData(const void* newData)
+  void UniformBuffer::SetData(uint64_t dataSize, const void* newData)
   {
-    
-    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
     char* sceneData;
     vmaMapMemory(Vulkan::Allocator(), allocation, (void**)&sceneData);
-    sceneData += Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color)) * Vulkan::GetCurrentContext().GetCurrentFrameIndex();
-    memcpy(sceneData, newData, sizeof(Color));
-    //vmaFlushAllocation(Vulkan::Allocator(), allocation, 0, size);
+    //sceneData += Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color)) * Vulkan::GetCurrentContext().GetCurrentFrameIndex();
+    memcpy(sceneData, newData, dataSize);
+    vmaUnmapMemory(Vulkan::Allocator(), allocation);
+  }
+  
+  void UniformBuffer::SetData(uint64_t offset, uint64_t dataSize, const void* data)
+  {
+    char* sceneData;
+    vmaMapMemory(Vulkan::Allocator(), allocation, (void**)&sceneData);
+    memcpy(sceneData+offset, data, dataSize);
     vmaUnmapMemory(Vulkan::Allocator(), allocation);
   }
   

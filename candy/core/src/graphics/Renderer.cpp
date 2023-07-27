@@ -72,10 +72,18 @@ namespace Candy::Graphics
   }
   
 
-  void Renderer::BindDescriptorSets()
+  void Renderer::BindDescriptorSets(uint32_t uniformOffset)
   {
-    uint32_t uniformOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color)) * instance.target->currentFrameIndex;
+    //uint32_t uniformOffset = paddedOffset * instance.target->currentFrameIndex;
     GetCurrentFrame().commandBuffer.BindDescriptorSets(instance.pipeline.GetLayout(), GetCurrentFrame().globalDescriptor, &uniformOffset);
+  }
+  
+  void Renderer::SetUniform(uint32_t offset, uint32_t size, const void* data)
+  {
+    GetCurrentFrame().uniformBuffer->SetData(offset, size, data);
+    //uint32_t paddedOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(size);
+    BindDescriptorSets(offset);
+  
   }
   void Renderer::DrawIndexed(const SharedPtr<VertexArray>& vertexArray)
   {

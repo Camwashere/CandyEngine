@@ -116,8 +116,10 @@ namespace Candy::Graphics
     std::vector<ShaderLayoutProperty> outputLayoutProperties;
     
   public:
-    uint32_t PushMatrix(const std::string& name, const Math::Matrix4& matrix);
-    void PushMatrix(uint32_t id, const Math::Matrix4& matrix);
+    uint32_t PushConstant(const std::string& name, const void* data);
+    void PushConstant(uint32_t id, const void* data);
+    uint32_t SetUniform(const std::string& name, const void* data);
+    void SetUniform(uint32_t id, const void* data);
     void CalculateOffsetsAndStride();
     void CalculateProperties();
     size_t MaxSetCount()const;
