@@ -4,11 +4,12 @@ namespace Candy::Graphics
 {
   ImageView::ImageView() : imageView(VK_NULL_HANDLE)
   {
-  
+    //Vulkan::PushDeleter([=, this](){Destroy();});
   }
   ImageView::ImageView(Texture& texture, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
     Set(texture, aspectFlags);
+    //Vulkan::PushDeleter([=, this](){Destroy();});
   }
   ImageView::ImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
@@ -25,7 +26,10 @@ namespace Candy::Graphics
     
     
     CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    //Vulkan::PushDeleter([=, this](){Destroy();});
   }
+  
+  
   void ImageView::Set(Texture& texture, VkImageAspectFlags aspectFlags)
   {
     Set(texture.GetImage(), texture.GetVulkanFormat(), aspectFlags);

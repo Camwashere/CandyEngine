@@ -7,11 +7,12 @@ namespace Candy::Graphics
     
     PhysicalDevice::PhysicalDevice() : device(VK_NULL_HANDLE)
     {
+      //vkGetPhysicalDeviceProperties(device, &properties);
     
     }
     PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : device(physicalDevice)
     {
-    
+      vkGetPhysicalDeviceProperties(device, &properties);
     }
     PhysicalDevice::PhysicalDevice(const PhysicalDevice& other) = default;
     
@@ -40,6 +41,7 @@ namespace Candy::Graphics
     
     bool PhysicalDevice::CheckExtensionSupport(VkPhysicalDevice device)
     {
+      
         uint32_t extensionCount;
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
         
@@ -122,4 +124,48 @@ namespace Candy::Graphics
         
         return indices;
     }
+  
+  const char* PhysicalDevice::GetName()const
+  {
+      return properties.deviceName;
+  }
+  uint32_t PhysicalDevice::GetDriverVersion()const
+  {
+      return properties.driverVersion;
+  }
+  uint32_t PhysicalDevice::GetApiVersion()const
+  {
+    return properties.apiVersion;
+  }
+  uint32_t PhysicalDevice::GetVendorID()const
+  {
+      return properties.vendorID;
+  }
+  uint32_t PhysicalDevice::GetDeviceID()const
+  {
+      return properties.deviceID;
+  }
+  size_t PhysicalDevice::GetMinUniformBufferOffsetAlignment()const
+  {
+      return properties.limits.minUniformBufferOffsetAlignment;
+  }
+  uint32_t PhysicalDevice::GetMaxPushConstantSize()const
+  {
+      return properties.limits.maxPushConstantsSize;
+  }
+  uint32_t PhysicalDevice::GetMaxDynamicUniformBuffers()const
+  {
+    return properties.limits.maxDescriptorSetUniformBuffersDynamic;
+  }
+  
+  size_t PhysicalDevice::PadUniformBufferSize(size_t originalSize)const
+  {
+    size_t minUboAlignment = GetMinUniformBufferOffsetAlignment();
+    size_t alignedSize = originalSize;
+    if (minUboAlignment > 0)
+    {
+      alignedSize = (alignedSize + minUboAlignment - 1) & ~(minUboAlignment - 1);
+    }
+    return alignedSize;
+  }
 }

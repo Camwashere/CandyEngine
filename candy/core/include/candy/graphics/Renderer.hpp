@@ -10,7 +10,7 @@
 #include "UniformBuffer.hpp"
 #include "Texture.hpp"
 #include "vulkan/ImageView.hpp"
-#include "vulkan/DescriptorBuilder.hpp"
+#include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
 namespace Candy::Graphics
 {
   
@@ -18,38 +18,29 @@ namespace Candy::Graphics
   class Renderer
   {
   private:
-    SharedPtr<Shader> shader;
-    SharedPtr<VertexArray> vertexArray;
-    SharedPtr<UniformBuffer> uniformBuffer;
-    Pipeline pipeline;
-    GraphicsContext* target;
-    DescriptorBuilder descriptorBuilder;
-    DescriptorAllocator descriptorAllocator;
-    DescriptorLayoutCache descriptorLayoutCache;
-    //VkDescriptorPool descriptorPool;
-    std::vector<VkDescriptorSet> descriptorSets;
-    //std::vector<SharedPtr<UniformBuffer>> uniformBuffers;
-    Texture texture;
-    ImageView textureImageView;
-    Color color;
-    
-    
-    
+    static Renderer instance;
     
   private:
-    void CreateDescriptorSets();
-    void UpdateUniformBuffer();
-    void UpdatePushConstants();
-    FrameData& GetCurrentFrame();
+    Pipeline pipeline;
+    GraphicsContext* target;
+    
+  private:
+    static FrameData& GetCurrentFrame();
+    
+  private:
+    Renderer();
+    
     
   public:
-    explicit Renderer(GraphicsContext* target);
-  
-  public:
-  
-    
-  public:
-    void Draw();
-    void Shutdown();
+    static void Submit(const SharedPtr<VertexArray>& vertArray, const SharedPtr<Shader>& shader);
+    static void SetTarget(GraphicsContext* target);
+    static void BeginPass();
+    static void EndPass();
+    static void BindDescriptorSets();
+    static void PushConstants(ShaderData::Stage stage, uint32_t dataSize, const void* data);
+    static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
+    static void Shutdown();
+  private:
+    friend class Vulkan;
   };
 }

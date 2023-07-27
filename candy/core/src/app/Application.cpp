@@ -1,10 +1,12 @@
 #include <candy/app/Application.hpp>
 #include <ranges>
 //#include <Candy/Graphics.hpp>
+#include <candy/graphics/Vulkan.hpp>
+#include <GLFW/glfw3.h>
 namespace Candy
 {
     using namespace Events;
-    //using namespace Graphics;
+    using namespace Graphics;
     using namespace Math;
     Application* Application::instance = nullptr;
     
@@ -52,6 +54,28 @@ namespace Candy
         }*/
     }
   
+  
+  void Application::PushLayer(Layer* layer)
+  {
+      CANDY_PROFILE_FUNCTION();
+      layerStack.PushLayer(layer);
+      layer->OnAttach();
+  }
+  void Application::PushOverlay(Layer* layer)
+  {
+      CANDY_PROFILE_FUNCTION();
+      layerStack.PushOverlay(layer);
+      layer->OnAttach();
+  }
+  
+  void Application::UpdateLayers()
+  {
+      CANDY_PROFILE_FUNCTION();
+      for (Layer* layer : layerStack)
+      {
+        layer->OnUpdate();
+      }
+  }
   float Application::DeltaTime()
   {
       return instance->frameTime.GetDeltaTime();
@@ -73,19 +97,31 @@ namespace Candy
         while(isRunning)
         {
           frameTime.Update();
+          //UpdateLayers();
           mainWindow->OnUpdate();
         }
         CleanUp();
+        
     }
     
     void Application::CleanUp()
     {
-    
+      //renderer->Shutdown();
+      //graphicsContext->Terminate();
+      for (Layer* layer : layerStack)
+      {
+        layer->OnDetach();
+      }
+      //Renderer::Shutdown();
+      Vulkan::Shutdown();
+      glfwTerminate();
+      CANDY_CORE_INFO("TERMINATED APPLICATION");
     }
     
     void Application::Close()
     {
         isRunning=false;
+        
     }
     
     bool Application::OnWindowClose(Events::WindowCloseEvent& event)

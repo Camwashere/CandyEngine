@@ -46,5 +46,6 @@ namespace Candy::Graphics
     private:
         friend class GraphicsContext;
         friend class Renderer;
+        friend class Vulkan;
     };
 }

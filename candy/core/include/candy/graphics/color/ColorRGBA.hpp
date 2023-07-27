@@ -62,7 +62,7 @@ namespace Candy {
     using VectorBase<float, 4>::operator/=;
     
     
-    
+    bool operator==(const ColorBase& other)const;
     
     
     explicit operator Math::Vector2()const;

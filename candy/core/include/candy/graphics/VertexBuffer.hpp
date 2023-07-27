@@ -13,17 +13,18 @@ namespace Candy::Graphics
     private:
         VkBuffer buffer=VK_NULL_HANDLE;
         VmaAllocation allocation=VK_NULL_HANDLE;
-        CommandBuffer* commandBuffer;
+        //CommandBuffer* commandBuffer;
         BufferLayout layout;
         uint64_t size=0;
         
     private:
         void CreateStagingBuffer(VkBuffer& buffer, VmaAllocation* allocation);
+        void Destroy();
         
         
     public:
-        VertexBuffer(CommandBuffer* commandBuf, BufferLayout  layout, uint64_t countPerElement);
-        VertexBuffer(CommandBuffer* commandBuf, float* vertices, uint64_t size);
+        VertexBuffer(BufferLayout  layout, uint64_t countPerElement);
+        VertexBuffer(float* vertices, uint64_t size);
         ~VertexBuffer();
         
     public:
@@ -31,17 +32,19 @@ namespace Candy::Graphics
         operator VkBuffer(){return buffer;}
         
     public:
-        void SetData(float* data);
-        void SetLayout(const BufferLayout& bufferLayout);
-        [[nodiscard]] const BufferLayout& GetLayout()const;
-        [[nodiscard]] uint64_t Size()const;
-        [[nodiscard]] VkVertexInputBindingDescription GetVertexBindingDescription()const;
+      
+      void SetData(float* data);
+      void SetLayout(const BufferLayout& bufferLayout);
+      [[nodiscard]] const BufferLayout& GetLayout()const;
+      [[nodiscard]] uint64_t Size()const;
+      [[nodiscard]] VkVertexInputBindingDescription GetVertexBindingDescription()const;
+      
         
         
         
     public:
-        static SharedPtr<VertexBuffer> Create(CommandBuffer* commandBuf, const BufferLayout& layout, uint64_t countPerElement);
-        static SharedPtr<VertexBuffer> Create(CommandBuffer* commandBuf, float* vertices, uint64_t bufferSize);
+        static SharedPtr<VertexBuffer> Create(const BufferLayout& layout, uint64_t countPerElement);
+        static SharedPtr<VertexBuffer> Create(float* vertices, uint64_t bufferSize);
         
     private:
         friend class GraphicsContext;

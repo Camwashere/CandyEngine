@@ -10,12 +10,10 @@ namespace Candy::Graphics
     {
         //CreateCommandPool(surface);
         //CreateCommandBuffers();
+      //Vulkan::PushDeleter([=, this](){Destroy();});
     }
     
-    CommandBuffer::~CommandBuffer()
-    {
-        //Destroy();
-    }
+    
   
   void CommandBuffer::Init(VkSurfaceKHR surface)
   {
@@ -87,7 +85,6 @@ namespace Candy::Graphics
   void CommandBuffer::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
   {
     vkEndCommandBuffer(commandBuffer);
-    
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
@@ -253,19 +250,20 @@ namespace Candy::Graphics
         
     }
   
-  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet)
+  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset)
   {
-      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 0, nullptr);
+      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 1, uniformOffset);
   }
-    void CommandBuffer::Bind(const SharedPtr<VertexArray>& vertexArray)
+  
+  
+ 
+    void CommandBuffer::Bind(const VertexArray* vertexArray)
     {
         VkBuffer data[vertexArray->vertexBuffers.size()];
         for (int i = 0; i < vertexArray->vertexBuffers.size(); i++)
         {
             data[i] = *vertexArray->vertexBuffers[i];
         }
-        
-        
         vkCmdBindVertexBuffers(mainCommandBuffer, 0, vertexArray->vertexBuffers.size(), data, vertexArray->vertexBufferOffsets.data());
         vkCmdBindIndexBuffer(mainCommandBuffer, *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
     }

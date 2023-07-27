@@ -5,7 +5,10 @@
 #include <unordered_map>
 #include <vulkan/vulkan.h>
 
-
+namespace spirv_cross
+{
+  struct SPIRType;
+}
 namespace Candy::Graphics
 {
   
@@ -19,6 +22,12 @@ namespace Candy::Graphics
       None=0, Unknown=0,
       
       Void,
+      
+      //Byte
+      Byte, Byte2, Byte3, Byte4,
+      
+      //UByte
+      UByte, UByte2, UByte3, UByte4,
       
       // Bool
       Bool,Bool2,BVec2=Bool2,Bool3,BVec3=Bool3,Bool4,BVec4=Bool4,
@@ -101,6 +110,7 @@ namespace Candy::Graphics
   public:
     static const std::string& TypeToString(Type type);
     static Type StringToType(const std::string& type);
+    static Type SpirvToType(const spirv_cross::SPIRType& spirvType);
     static const std::string& StageToString(Stage stage);
     static Stage StringToStage(const std::string& stage);
     static VkFormat TypeToVulkan(Type type);

@@ -12,6 +12,7 @@ namespace Candy::Graphics
         CANDY_CORE_ASSERT(context->surface != VK_NULL_HANDLE, "SwapChain's surface is null!");
         Build();
         CreateImageViews();
+        //Vulkan::PushDeleter([=, this](){Clean();});
     }
     
     void SwapChain::Rebuild(VkRenderPass renderPass)
@@ -112,7 +113,7 @@ namespace Candy::Graphics
     
     void SwapChain::CreateFrameBuffers(VkRenderPass renderPass)
     {
-      CreateDepthResources();
+        CreateDepthResources();
         frameBuffers.resize(imageViews.size());
         for (size_t i = 0; i < imageViews.size(); i++)
         {
@@ -127,6 +128,7 @@ namespace Candy::Graphics
             framebufferInfo.width = extent.width;
             framebufferInfo.height = extent.height;
             framebufferInfo.layers = 1;
+            
             
             CANDY_CORE_ASSERT(vkCreateFramebuffer(Vulkan::LogicalDevice(), &framebufferInfo, nullptr, &frameBuffers[i]) == VK_SUCCESS, "Failed to create framebuffer");
             

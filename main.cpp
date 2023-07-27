@@ -1,11 +1,5 @@
-#include <CandyPch.hpp>
-#include <candy/math/Math.hpp>
-#include <iostream>
-
-#include <candy/utils/FrameTime.hpp>
 #include <candy/app/Application.hpp>
-#include <vulkan/vulkan.h>
-#include <vma/vk_mem_alloc.h>
+#include "TestLayer.hpp"
 using namespace Candy;
 int main(int argc, char** argv)
 {
@@ -14,10 +8,11 @@ int main(int argc, char** argv)
   ApplicationCommandLineArgs commandLineArgs{argc, argv};
   appData.commandLineArgs = commandLineArgs;
   Application app(appData);
-  FrameTime frameTime;
-  frameTime.Update();
+  TestLayer testLayer;
+  app.PushLayer(&testLayer);
   //CANDY_PROFILE_END_SESSION();
   app.Run();
+  
   
   
   return 0;

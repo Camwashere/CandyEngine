@@ -42,10 +42,11 @@ namespace Candy::Graphics
     explicit Texture(const TextureSpecification& textureSpecification);
     
     
+    
   public:
     VkImage GetImage(){return image;}
     VkSampler GetSampler(){return sampler;}
-    bool Load(const std::filesystem::path& path, CommandBuffer& commandBuffer);
+    bool Load(const std::filesystem::path& path);
     [[nodiscard]] VkFormat GetVulkanFormat()const;
     void Destroy();
   

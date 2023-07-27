@@ -42,7 +42,7 @@ namespace Candy::Graphics
         void DestroyShaderModules();
         uint32_t PushConstantRangeCount();
         const VkPushConstantRange* PushConstantRangeData();
-        VkDescriptorSetLayout GetDescriptorSetLayout(){return postProcessor.descriptorSetLayout;}
+        VkDescriptorSetLayout GetDescriptorSetLayout(){return postProcessor.descriptorLayout.GetLayout();}
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);

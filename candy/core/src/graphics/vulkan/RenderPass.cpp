@@ -63,6 +63,7 @@ namespace Candy::Graphics
         renderPassInfo.pDependencies = &dependency;
         
         CANDY_CORE_ASSERT(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass) == VK_SUCCESS, "Failed to create render pass!");
+        //Vulkan::PushDeleter([=, this](){Destroy();});
     }
     
     RenderPass::~RenderPass()

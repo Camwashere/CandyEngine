@@ -1,5 +1,5 @@
 #include <candy/graphics/VertexArray.hpp>
-
+#include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
     
@@ -13,6 +13,12 @@ namespace Candy::Graphics
         vertexBuffers.clear();
         vertexBufferOffsets.clear();
         indexBuffer = nullptr;
+    }
+    void VertexArray::Bind()
+    {
+      Vulkan::GetCurrentCommandBuffer().Bind(this);
+    
+    
     }
     void VertexArray::AddVertexBuffer(const SharedPtr<VertexBuffer> &buffer, uint64_t offset)
     {

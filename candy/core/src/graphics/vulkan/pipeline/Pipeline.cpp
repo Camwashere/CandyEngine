@@ -10,6 +10,7 @@ namespace Candy::Graphics
     InitRasterizer();
     InitMultisampling();
     InitColorBlending();
+    //Vulkan::PushDeleter([=, this](){Destroy();});
   }
   
   void Pipeline::InitInputAssembly()

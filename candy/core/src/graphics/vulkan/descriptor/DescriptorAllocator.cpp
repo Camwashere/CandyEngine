@@ -1,13 +1,13 @@
-#include <candy/graphics/vulkan/DescriptorAllocator.hpp>
+#include "candy/graphics/vulkan/descriptor/DescriptorAllocator.hpp"
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
 namespace Candy::Graphics
 {
-  DescriptorAllocator::DescriptorAllocator()
+  DescriptorAllocator::DescriptorAllocator(const VkDevice& logicalDevice)
   {
-    pool = UniquePtr<vke::DescriptorAllocatorPool>(vke::DescriptorAllocatorPool::Create(Vulkan::LogicalDevice(), FRAME_OVERLAP));
-    //descriptorAllocatorPool->SetPoolSizeMultiplier()
-    
+    pool = UniquePtr<vke::DescriptorAllocatorPool>(vke::DescriptorAllocatorPool::Create(logicalDevice, 1));
+    //pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 2.);
+    //Vulkan::PushDeleter([=, this](){Destroy();});
     
     
   }

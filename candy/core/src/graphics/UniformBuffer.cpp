@@ -3,10 +3,12 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  UniformBuffer::UniformBuffer(uint64_t bufferSize) : size(bufferSize)
+  UniformBuffer::UniformBuffer(uint64_t origSize) : size(origSize)
   {
+    
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
-    vmaMapMemory(Vulkan::Allocator(), allocation, &data);
+    //Vulkan::PushDeleter([=, this](){Destroy();});
+    //vmaMapMemory(Vulkan::Allocator(), allocation, &data);
   }
   
   UniformBuffer::operator VkBuffer()const
@@ -18,22 +20,29 @@ namespace Candy::Graphics
     return buffer;
   }
   
-  void UniformBuffer::SetData(void* newData)
+  void UniformBuffer::SetData(const void* newData)
   {
-    memcpy(data, newData, size);
-    //vmaMapMemory(Vulkan::Allocator(), allocation, &data);
+    
+    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
+    char* sceneData;
+    vmaMapMemory(Vulkan::Allocator(), allocation, (void**)&sceneData);
+    sceneData += Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color)) * Vulkan::GetCurrentContext().GetCurrentFrameIndex();
+    memcpy(sceneData, newData, sizeof(Color));
+    //vmaFlushAllocation(Vulkan::Allocator(), allocation, 0, size);
+    vmaUnmapMemory(Vulkan::Allocator(), allocation);
   }
+  
+  
+  
+  
   
   void UniformBuffer::Destroy()
   {
-    vmaUnmapMemory(Vulkan::Allocator(), allocation);
+    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
     VulkanBuffer::DestroyBuffer(buffer, allocation);
   }
   
-  void* UniformBuffer::GetData()
-  {
-    return data;
-  }
+  
   
   SharedPtr<UniformBuffer> UniformBuffer::Create(uint64_t size)
   {

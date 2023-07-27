@@ -10,7 +10,6 @@ namespace Candy::Graphics
     {
     private:
         VkCommandPool commandPool;
-        //std::vector<VkCommandBuffer> commandBuffers;
         VkCommandBuffer mainCommandBuffer;
         
         
@@ -20,7 +19,8 @@ namespace Candy::Graphics
         void Init(VkSurfaceKHR surface);
     public:
         explicit CommandBuffer(uint32_t currentFrame=0);
-        ~CommandBuffer();
+        ~CommandBuffer()=default;
+        
         
     public:
         void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
@@ -38,8 +38,9 @@ namespace Candy::Graphics
         void SetViewport(VkExtent2D extent);
         void BindVertexBuffers(const std::vector<VkBuffer>& vertexBuffers);
         void BindIndexBuffer(const IndexBuffer& indexBuffer);
-        void BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet);
-        void Bind(const SharedPtr<VertexArray>& vertexArray);
+        void BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset);
+        
+        void Bind(const VertexArray* vertexArray);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
         void EndRenderPass();
         void EndRecording();

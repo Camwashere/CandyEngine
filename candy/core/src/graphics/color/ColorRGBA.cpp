@@ -106,7 +106,10 @@ namespace Candy {
   
   
   
-  
+  bool ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::operator==(const ColorBase& other)const
+  {
+    return r==other.r && g==other.g && b==other.b && a==other.a;
+  }
   
   void ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::Invert() {r = 1.0f-r; g=1.0f-g; b=1.0f-b;}
   

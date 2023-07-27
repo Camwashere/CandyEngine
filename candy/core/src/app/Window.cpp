@@ -16,7 +16,7 @@ namespace Candy
     
     
     
-    Window::Window(WindowData data) : windowData(std::move(data)), fullscreen(false), renderer(nullptr), graphicsContext(nullptr)
+    Window::Window(WindowData data) : windowData(std::move(data)), fullscreen(false), graphicsContext(nullptr)
     {
         if (GLFW_WINDOW_COUNT==0)
         {
@@ -32,10 +32,13 @@ namespace Candy
         
         ++GLFW_WINDOW_COUNT;
         graphicsContext = new GraphicsContext(handle);
-        renderer = new Renderer(graphicsContext);
+       
+        //renderer = new Renderer(graphicsContext);
+        
         glfwSetWindowUserPointer(handle, &windowData);
         SetVSync(true);
         EventCallbackInit();
+      
     }
     
     void Window::EventCallbackInit() const
@@ -157,7 +160,11 @@ namespace Candy
         CANDY_PROFILE_FUNCTION();
         glfwPollEvents();
         graphicsContext->SwapBuffers();
-        renderer->Draw();
+        Renderer::BeginPass();
+        Application::Instance().UpdateLayers();
+        //renderer->Draw();
+        Renderer::EndPass();
+        graphicsContext->Present();
     }
     
     void Window::Close() const
@@ -166,11 +173,11 @@ namespace Candy
         --GLFW_WINDOW_COUNT;
         if (GLFW_WINDOW_COUNT==0)
         {
-            renderer->Shutdown();
-            graphicsContext->Terminate();
-            Vulkan::Shutdown();
-            glfwTerminate();
-            Application::Shutdown();
+          /*renderer->Shutdown();
+          graphicsContext->Terminate();
+          Vulkan::Shutdown();
+          glfwTerminate();*/
+          Application::Shutdown();
         }
     }
     

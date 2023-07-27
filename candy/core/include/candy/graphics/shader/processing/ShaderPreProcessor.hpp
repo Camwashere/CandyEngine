@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "ShaderSource.hpp"
 
+
 namespace Candy::Graphics
 {
   
@@ -13,6 +14,7 @@ namespace Candy::Graphics
   
   private:
     std::unordered_map<ShaderData::Stage, SharedPtr<ShaderSource>> sources{};
+    
     
   private:
     static std::string ReadFile(const std::filesystem::path& path);

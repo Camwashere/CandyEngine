@@ -219,9 +219,9 @@ namespace Candy::Graphics
     SourceListener sourceListener(this);
     walker.walk(&sourceListener, tree);
     
-    std::cout << "Tokenizing source!" << std::endl;
+    //std::cout << "Tokenizing source!" << std::endl;
     
-    std::cout << ToString() << std::endl;
+    //std::cout << ToString() << std::endl;
     
     
     

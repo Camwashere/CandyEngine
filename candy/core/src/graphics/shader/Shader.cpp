@@ -43,6 +43,7 @@ namespace Candy::Graphics
       
       preProcessor = ShaderPreProcessor::Create(filepath);
       postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
+      CANDY_CORE_INFO("GOT BINARIES");
       //CompileOrGetBinaries(preProcessor->GetSourceStrings());
         
       // Extract name from filepath

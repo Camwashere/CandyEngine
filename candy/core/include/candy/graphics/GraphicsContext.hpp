@@ -92,8 +92,9 @@ namespace Candy::Graphics
       VkSemaphore renderSemaphore=VK_NULL_HANDLE;
       VkSemaphore presentSemaphore=VK_NULL_HANDLE;
       VkFence renderFence=VK_NULL_HANDLE;
-      SharedPtr<UniformBuffer> uniformBuffer;
       CommandBuffer commandBuffer;
+      VkDescriptorSet globalDescriptor=VK_NULL_HANDLE;
+      SharedPtr<UniformBuffer> uniformBuffer;
     };
     class GraphicsContext
     {
@@ -113,17 +114,25 @@ namespace Candy::Graphics
     private:
         void InitSyncStructures();
         VkRenderPassBeginInfo BeginRenderPass();
-        FrameData& GetCurrentFrame();
-        FrameData& GetPreviousFrame();
         void UpdateFrameIndex();
     public:
         explicit GraphicsContext(GLFWwindow* windowHandle);
         
     public:
         void SwapBuffers();
+        void Present();
         void Terminate();
         void RebuildSwapChain();
         void OnFrameBufferResize();
+        void CleanSwapChain();
+        
+        
+        [[nodiscard]] uint32_t GetCurrentFrameIndex()const;
+        [[nodiscard]] uint32_t GetPreviousFrameIndex()const;
+        
+        FrameData& GetCurrentFrame();
+        FrameData& GetFrame(uint32_t index);
+        FrameData& GetPreviousFrame();
         
         
     public:

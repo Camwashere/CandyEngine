@@ -1,5 +1,5 @@
 #pragma once
-#include <CandyPch.hpp>
+#include "CandyPch.hpp"
 #include "vke/descriptor_allocator.h"
 namespace Candy::Graphics
 {
@@ -9,7 +9,7 @@ namespace Candy::Graphics
     UniquePtr<vke::DescriptorAllocatorPool> pool;
     
   public:
-    DescriptorAllocator();
+    explicit DescriptorAllocator(const VkDevice& logicalDevice);
     
   public:
     vke::DescriptorAllocatorHandle GetHandle();

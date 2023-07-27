@@ -21,6 +21,7 @@ namespace Candy::Graphics
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Optional
         
         CANDY_CORE_ASSERT(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) == VK_SUCCESS, "Failed to create pipeline layout!");
+      //Vulkan::PushDeleter([=, this](){Destroy();});
         
     }
     void GraphicsPipeline::Create(const SharedPtr<VertexArray>& vertexArray, const SharedPtr<Shader>& shader, const RenderPass& renderPass, VkDescriptorSetLayout descriptorSetLayout)

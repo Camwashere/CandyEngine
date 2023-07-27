@@ -12,6 +12,7 @@ namespace Candy::Graphics
     ImageView();
     explicit ImageView(Texture& texture, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     ImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
+    //~ImageView();
     
   public:
     operator VkImageView(){return imageView;}

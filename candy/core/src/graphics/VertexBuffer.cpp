@@ -8,7 +8,7 @@
 namespace Candy::Graphics
 {
     
-    VertexBuffer::VertexBuffer(CommandBuffer* commandBuf, BufferLayout  bufferLayout, uint64_t countPerElement) : commandBuffer(commandBuf), layout(std::move(bufferLayout)), size(layout.CalculateSize(countPerElement))
+    VertexBuffer::VertexBuffer(BufferLayout  bufferLayout, uint64_t countPerElement) : layout(std::move(bufferLayout)), size(layout.CalculateSize(countPerElement))
     {
       
         VkBufferCreateInfo bufferInfo{};
@@ -25,12 +25,12 @@ namespace Candy::Graphics
         
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create allocated buffer!");
-        
+      //Vulkan::PushDeleter([=, this](){Destroy();});
         
     
     }
     
-    VertexBuffer::VertexBuffer(CommandBuffer* commandBuf, float* vertices, uint64_t bufferSize) : commandBuffer(commandBuf), size(bufferSize)
+    VertexBuffer::VertexBuffer(float* vertices, uint64_t bufferSize) : size(bufferSize)
     {
        
         
@@ -61,18 +61,20 @@ namespace Candy::Graphics
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create allocated buffer!");
         
-        
-        commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
+        Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+        //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
         
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
-        
-        
         
     }
     VertexBuffer::~VertexBuffer()
     {
         vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
+    }
+    void VertexBuffer::Destroy()
+    {
+      vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }
     
     void VertexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
@@ -92,9 +94,9 @@ namespace Candy::Graphics
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create vertex staging buffer!");
     }
-    
-    
-    
+  
+  
+  
     void VertexBuffer::SetData(float* vertices)
     {
         VkBuffer stagingBuffer;
@@ -106,8 +108,8 @@ namespace Candy::Graphics
         vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
         memcpy(data, vertices, (size_t) size);
         vmaUnmapMemory(Vulkan::Allocator(), stagingBufferAllocation);
-        
-        commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
+        Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+        //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
     }
@@ -132,18 +134,20 @@ namespace Candy::Graphics
         bindingDescription.stride = layout.GetStride();
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         
+        
+        
         return bindingDescription;
     }
     
-    SharedPtr<VertexBuffer> VertexBuffer::Create(CommandBuffer* commandBuf, const BufferLayout& layout, uint64_t countPerElement)
+    SharedPtr<VertexBuffer> VertexBuffer::Create(const BufferLayout& layout, uint64_t countPerElement)
     {
-        return CreateSharedPtr<VertexBuffer>(commandBuf, layout, countPerElement);
+        return CreateSharedPtr<VertexBuffer>(layout, countPerElement);
     }
     
     
-    SharedPtr<VertexBuffer> VertexBuffer::Create(CommandBuffer* commandBuf, float* vertices, uint64_t bufferSize)
+    SharedPtr<VertexBuffer> VertexBuffer::Create(float* vertices, uint64_t bufferSize)
     {
-        return CreateSharedPtr<VertexBuffer>(commandBuf, vertices, bufferSize);
+        return CreateSharedPtr<VertexBuffer>(vertices, bufferSize);
     }
     
     

@@ -11,6 +11,9 @@ namespace Candy::Graphics
         std::vector<uint64_t> vertexBufferOffsets;
         SharedPtr<IndexBuffer> indexBuffer;
         
+    private:
+    
+        
     public:
         VertexArray();
         ~VertexArray();
@@ -19,6 +22,7 @@ namespace Candy::Graphics
         void AddVertexBuffer(const SharedPtr<VertexBuffer>& vertexBuffer, uint64_t offset=0);
         void SetIndexBuffer(const SharedPtr<IndexBuffer>& indexBuffer);
         void Clear();
+        void Bind();
         [[nodiscard]] std::vector<VkVertexInputBindingDescription> GetVertexBindingDescriptions()const;
         [[nodiscard]] std::vector<VkVertexInputAttributeDescription> GetVertexAttributeDescriptions()const;
         [[nodiscard]] uint64_t GetVertexBindingDescriptionCount()const;

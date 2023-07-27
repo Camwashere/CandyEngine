@@ -25,7 +25,8 @@ namespace Candy::Graphics
     class PhysicalDevice
     {
     private:
-        VkPhysicalDevice device;
+        VkPhysicalDevice device=VK_NULL_HANDLE;
+        VkPhysicalDeviceProperties properties{};
         
     public:
         PhysicalDevice();
@@ -38,7 +39,16 @@ namespace Candy::Graphics
         
     public:
         [[nodiscard]] bool IsValid()const;
+        [[nodiscard]] const char* GetName()const;
+        [[nodiscard]] uint32_t GetDriverVersion()const;
+        [[nodiscard]] uint32_t GetApiVersion()const;
+        [[nodiscard]] uint32_t GetVendorID()const;
+        [[nodiscard]] uint32_t GetDeviceID()const;
+        [[nodiscard]] size_t GetMinUniformBufferOffsetAlignment()const;
+        [[nodiscard]] uint32_t GetMaxPushConstantSize()const;
+        [[nodiscard]] uint32_t GetMaxDynamicUniformBuffers()const;
         
+        [[nodiscard]] size_t PadUniformBufferSize(size_t originalSize)const;
         
         
     public:

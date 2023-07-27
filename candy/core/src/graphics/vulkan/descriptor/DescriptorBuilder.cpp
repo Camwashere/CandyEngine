@@ -1,13 +1,13 @@
-#include <candy/graphics/vulkan/DescriptorBuilder.hpp>
-#include <candy/graphics/Vulkan.hpp>
+#include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
+#include "candy/graphics/Vulkan.hpp"
 namespace Candy::Graphics
 {
-  DescriptorBuilder DescriptorBuilder::Begin(DescriptorLayoutCache* layoutCache, DescriptorAllocator* allocator){
+  DescriptorBuilder DescriptorBuilder::Begin(){
     
     DescriptorBuilder builder;
     
-    builder.cache = layoutCache;
-    builder.alloc = allocator;
+    builder.cache = &Vulkan::GetDescriptorLayoutCache();
+    builder.alloc = &Vulkan::GetDescriptorAllocator();
     return builder;
   }
   
@@ -21,18 +21,18 @@ namespace Candy::Graphics
     newBinding.pImmutableSamplers = nullptr;
     newBinding.stageFlags = stageFlags;
     newBinding.binding = binding;
-    
     bindings.push_back(newBinding);
     
     //create the descriptor write
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     newWrite.pNext = nullptr;
-    
     newWrite.descriptorCount = 1;
     newWrite.descriptorType = type;
     newWrite.pBufferInfo = bufferInfo;
     newWrite.dstBinding = binding;
+    
+    
     
     writes.push_back(newWrite);
     return *this;
@@ -70,6 +70,7 @@ namespace Candy::Graphics
     layoutInfo.pBindings = bindings.data();
     layoutInfo.bindingCount = bindings.size();
     
+    
     layout = cache->CreateDescriptorSetLayout(&layoutInfo);
     
     //allocate descriptor
@@ -87,7 +88,8 @@ namespace Candy::Graphics
     }
     
     vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
-    
+    //bindings.clear();
+    //writes.clear();
     return true;
   }
   

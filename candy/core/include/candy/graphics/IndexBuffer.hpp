@@ -13,16 +13,17 @@ namespace Candy::Graphics
         VkBuffer buffer=VK_NULL_HANDLE;
         VmaAllocation allocation=VK_NULL_HANDLE;
         
-        CommandBuffer* commandBuffer;
+        //CommandBuffer* commandBuffer;
         uint64_t count;
         uint64_t size=0;
         
     private:
         void CreateStagingBuffer(VkBuffer& buffer, VmaAllocation* allocation);
+        void Destroy();
     
     
     public:
-        IndexBuffer(CommandBuffer* commandBuf, uint32_t* indices, uint64_t count);
+        IndexBuffer(uint32_t* indices, uint64_t count);
         ~IndexBuffer();
     
     public:
@@ -35,7 +36,7 @@ namespace Candy::Graphics
         
         
     public:
-        static SharedPtr<IndexBuffer> Create(CommandBuffer* commandBuf, uint32_t* indices, uint64_t count);
+        static SharedPtr<IndexBuffer> Create(uint32_t* indices, uint64_t count);
         
     private:
         friend class GraphicsContext;

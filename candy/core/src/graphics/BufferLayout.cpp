@@ -78,6 +78,7 @@ namespace Candy::Graphics
             attributeDescription.location = attributeDescriptions.size();
             attributeDescription.format = element.GetFormat();
             attributeDescription.offset = element.offset;
+            
             attributeDescriptions.push_back(attributeDescription);
         }
         return attributeDescriptions;

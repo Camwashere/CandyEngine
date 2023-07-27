@@ -4,6 +4,7 @@
 #include <set>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -18,6 +19,7 @@ namespace Candy::Graphics
       renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
       InitSyncStructures();
       swapChain->CreateFrameBuffers(*renderPass);
+      Vulkan::RegisterContext(this);
     }
   void GraphicsContext::InitSyncStructures()
   {
@@ -33,7 +35,7 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
-      frames[i].uniformBuffer = CreateSharedPtr<UniformBuffer>(192);
+      frames[i].uniformBuffer = UniformBuffer::Create(Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color))*FRAME_OVERLAP);
     }
   }
   
@@ -110,6 +112,34 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
       
       
+      
+      
+    }
+    
+    void GraphicsContext::Present()
+    {
+      VkPresentInfoKHR presentInfo{};
+      presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+      presentInfo.pSwapchains = &swapChain->swapChain;
+      presentInfo.swapchainCount = 1;
+      
+      presentInfo.pWaitSemaphores = &GetCurrentFrame().renderSemaphore;
+      presentInfo.waitSemaphoreCount = 1;
+      
+      presentInfo.pImageIndices = &swapChain->imageIndex;
+      
+      VkResult result = vkQueuePresentKHR(Vulkan::LogicalDevice().graphicsQueue, &presentInfo);
+      if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+      {
+        swapChain->Rebuild(*renderPass);
+      }
+      else
+      {
+        CANDY_CORE_ASSERT(result == VK_SUCCESS, "failed to present swap chain image!");
+      }
+      //descriptorAllocator.Flip();
+      
+      UpdateFrameIndex();
     }
     
     void GraphicsContext::RebuildSwapChain()
@@ -120,7 +150,7 @@ namespace Candy::Graphics
     void GraphicsContext::Terminate()
     {
         vkDeviceWaitIdle(Vulkan::LogicalDevice());
-       
+       //renderPass.reset();
       renderPass->Destroy();
       for (size_t i=0; i<FRAME_OVERLAP; i++)
       {
@@ -128,15 +158,15 @@ namespace Candy::Graphics
         vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].renderSemaphore, nullptr);
         vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].presentSemaphore, nullptr);
         vkDestroyFence(Vulkan::LogicalDevice(), frames[i].renderFence, nullptr);
+        frames[i].uniformBuffer->Destroy();
+        frames[i].commandBuffer.Destroy();
+        
       }
       
-      for (size_t i=0; i<FRAME_OVERLAP; i++)
-      {
-        frames[i].commandBuffer.Destroy();
-        frames[i].uniformBuffer->Destroy();
-      }
-        
+        swapChain->Clean();
         vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
+      
+      //CANDY_CORE_INFO("DESTROYED GRAPHICS CONTEXT");
         
       
     }
@@ -145,6 +175,20 @@ namespace Candy::Graphics
   {
       frameBufferResized = true;
   }
+  
+  void GraphicsContext::CleanSwapChain()
+  {
+      swapChain->Clean();
+  }
+  
+  uint32_t GraphicsContext::GetCurrentFrameIndex()const
+  {
+      return currentFrameIndex;
+  }
+  uint32_t GraphicsContext::GetPreviousFrameIndex()const
+  {
+      return previousFrameIndex;
+  }
   FrameData& GraphicsContext::GetCurrentFrame()
   {
       return frames[currentFrameIndex];
@@ -152,6 +196,10 @@ namespace Candy::Graphics
   FrameData& GraphicsContext::GetPreviousFrame()
   {
       return frames[previousFrameIndex];
+  }
+  FrameData& GraphicsContext::GetFrame(uint32_t index)
+  {
+      return frames[index];
   }
   void GraphicsContext::UpdateFrameIndex()
   {

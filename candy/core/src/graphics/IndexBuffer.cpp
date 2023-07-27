@@ -3,7 +3,7 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-    IndexBuffer::IndexBuffer(CommandBuffer* commandBuf, uint32_t* indices, uint64_t indexCount) : commandBuffer(commandBuf), count(indexCount), size(sizeof(uint32_t)*count)
+    IndexBuffer::IndexBuffer(uint32_t* indices, uint64_t indexCount) : count(indexCount), size(sizeof(uint32_t)*count)
     {
         
         VkBuffer stagingBuffer;
@@ -30,14 +30,20 @@ namespace Candy::Graphics
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create index buffer!");
         
-        commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
+        Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+        //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
+      
     }
     
     IndexBuffer::~IndexBuffer()
     {
         vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
+    }
+    void IndexBuffer::Destroy()
+    {
+      vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }
     
     void IndexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
@@ -55,11 +61,11 @@ namespace Candy::Graphics
         
         
         
-        CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create vertex staging buffer!");
+        CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create index staging buffer!");
     }
     
-    SharedPtr<IndexBuffer> IndexBuffer::Create(CommandBuffer* commandBuf, uint32_t* indices, uint64_t count)
+    SharedPtr<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint64_t count)
     {
-        return CreateSharedPtr<IndexBuffer>(commandBuf, indices, count);
+        return CreateSharedPtr<IndexBuffer>(indices, count);
     }
 }

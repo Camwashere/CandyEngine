@@ -1,5 +1,6 @@
 #include "candy/graphics/shader/ShaderData.hpp"
 #include "CandyPch.hpp"
+#include "SPIRV-Cross/spirv_glsl.hpp"
 namespace Candy::Graphics
 {
   std::array<std::string, static_cast<size_t>(ShaderData::Type::End)> ShaderData::InitTypeToStringArray()
@@ -123,6 +124,98 @@ namespace Candy::Graphics
       return it->second;
     return Type::None;
   }
+  
+  
+  ShaderData::Type ShaderData::SpirvToType(const spirv_cross::SPIRType& spirvType)
+  {
+    switch(spirvType.basetype)
+    {
+      
+      case spirv_cross::SPIRType::Unknown:
+        break;
+      case spirv_cross::SPIRType::Void:
+        break;
+      case spirv_cross::SPIRType::Boolean:
+        break;
+      case spirv_cross::SPIRType::SByte:
+        break;
+      case spirv_cross::SPIRType::UByte:
+        break;
+      case spirv_cross::SPIRType::Short:
+        break;
+      case spirv_cross::SPIRType::UShort:
+        break;
+      case spirv_cross::SPIRType::Int:
+        break;
+      case spirv_cross::SPIRType::UInt:
+        break;
+      case spirv_cross::SPIRType::Int64:
+        break;
+      case spirv_cross::SPIRType::UInt64:
+        break;
+      case spirv_cross::SPIRType::AtomicCounter:
+        break;
+      case spirv_cross::SPIRType::Half:
+        break;
+      case spirv_cross::SPIRType::Float:
+        if (spirvType.columns == 1)
+        {
+          switch(spirvType.vecsize)
+          {
+            case 1: return Type::Float;
+            case 2: return Type::Vec2;
+            case 3: return Type::Vec3;
+            case 4: return Type::Vec4;
+            default:
+              return Type::Unknown;
+              break;
+          }
+        }
+        else
+        {
+          if (spirvType.columns == spirvType.vecsize)
+          {
+            switch(spirvType.columns)
+            {
+              case 2: return Type::Matrix2;
+              case 3: return Type::Matrix3;
+              case 4: return Type::Matrix4;
+              default:
+                return Type::Unknown;
+                break;
+            }
+          }
+          return Type::Unknown;
+        }
+        
+        break;
+      case spirv_cross::SPIRType::Double:
+        break;
+      case spirv_cross::SPIRType::Struct:
+        break;
+      case spirv_cross::SPIRType::Image:
+        break;
+      case spirv_cross::SPIRType::SampledImage:
+        break;
+      case spirv_cross::SPIRType::Sampler:
+        break;
+      case spirv_cross::SPIRType::AccelerationStructure:
+        break;
+      case spirv_cross::SPIRType::RayQuery:
+        break;
+      case spirv_cross::SPIRType::ControlPointArray:
+        break;
+      case spirv_cross::SPIRType::Interpolant:
+        break;
+      case spirv_cross::SPIRType::Char:
+        break;
+    }
+    
+    CANDY_CORE_INFO("Vec Size: {}, Columns: {}", spirvType.vecsize, spirvType.columns);
+    return Type::Unknown;
+    
+  }
+  
   
   const std::string& ShaderData::StageToString(Stage stage)
   {

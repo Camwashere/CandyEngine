@@ -2,6 +2,7 @@
 #include <CandyPch.hpp>
 #include "Window.hpp"
 #include <candy/utils/FrameTime.hpp>
+#include "LayerStack.hpp"
 int main(int argc, char** argv);
 namespace Candy
 {
@@ -29,6 +30,7 @@ namespace Candy
         bool isRunning;
         bool minimized;
         FrameTime frameTime;
+        LayerStack layerStack;
         
     private:
         bool OnWindowClose(Events::WindowCloseEvent& event);
@@ -43,13 +45,17 @@ namespace Candy
         
     public:
         void OnEvent(Events::Event& event);
-        static void Shutdown();
+      void PushLayer(Layer* layer);
+      void PushOverlay(Layer* layer);
+      void UpdateLayers();
+      
         
     public:
         static inline Window& GetMainWindowReference(){return *instance->mainWindow;}
         static Application& Instance(){return *instance;}
         static float DeltaTime();
         static float CurrentTime();
+      static void Shutdown();
     
     private:
         static Application* instance;

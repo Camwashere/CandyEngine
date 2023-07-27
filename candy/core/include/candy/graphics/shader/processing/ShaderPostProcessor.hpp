@@ -4,6 +4,9 @@
 #include "../ShaderData.hpp"
 #include "vulkan/vulkan.h"
 #include <filesystem>
+#include "../../vulkan/descriptor/DescriptorBuilder.hpp"
+#include "../ShaderLayout.hpp"
+#include "../../vulkan/descriptor/DescriptorSetLayout.hpp"
 namespace Candy::Graphics
 {
   class ShaderPostProcessor
@@ -14,11 +17,17 @@ namespace Candy::Graphics
     bool generateDebugInfo=true;
     bool optimize=true;
     bool recompileOnLoad=true;
-    VkDescriptorSetLayout descriptorSetLayout=VK_NULL_HANDLE;
+    //DescriptorBuilder descriptorBuilder;
+    //VkDescriptorSetLayout descriptorSetLayout=VK_NULL_HANDLE;
     std::vector<VkPushConstantRange> pushConstantRanges;
+    ShaderLayout shaderLayout;
+    DescriptorSetLayout descriptorLayout;
+    
+    
   private:
     void CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath);
     void Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings);
+    
     
   public:
     ShaderPostProcessor()=default;

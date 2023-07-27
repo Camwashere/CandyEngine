@@ -38,7 +38,7 @@ namespace Candy
     private:
         WindowData windowData;
         bool fullscreen;
-        Graphics::Renderer* renderer;
+        //Graphics::Renderer* renderer;
         Graphics::GraphicsContext* graphicsContext;
         
     public:
