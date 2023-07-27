@@ -100,10 +100,12 @@ namespace Candy::Graphics
     
     for (auto&& [stage, data] : shaderData)
     {
-      Reflect(stage, data, layoutBindings);
+      Reflect(stage, data);
     }
     
-    descriptorLayout.Build();
+    //descriptorLayout.Build();
+    shaderLayout.CalculateOffsetsAndStride();
+    
     /*VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.bindingCount = layoutBindings.size();
@@ -114,7 +116,7 @@ namespace Candy::Graphics
   }
   
   
-  void ShaderPostProcessor::Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings)
+  void ShaderPostProcessor::Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary)
   {
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
     auto resources = compiler.get_shader_resources();
@@ -128,7 +130,7 @@ namespace Candy::Graphics
       uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
       
       ShaderData::Type shaderType = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
-      shaderLayout.AddInputLayoutProperty(compiler.get_name(resource.id), shaderType, binding, set, offset, stride, location);
+      shaderLayout.AddInputLayoutProperty(compiler.get_name(resource.id), stage, shaderType, binding, set, offset, stride, location);
     }
     for (auto& resource : resources.stage_outputs)
     {
@@ -139,37 +141,52 @@ namespace Candy::Graphics
       uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
       
       ShaderData::Type shaderType = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
-      shaderLayout.AddInputLayoutProperty(compiler.get_name(resource.id), shaderType, binding, set, offset, stride, location);
+      shaderLayout.AddOutputLayoutProperty(compiler.get_name(resource.id), stage, shaderType, binding, set, offset, stride, location);
     }
     
     for (auto& resource : resources.uniform_buffers)
     {
       //CANDY_CORE_INFO("UNIFORM NAME: {}", resource.name);
       //CANDY_CORE_INFO("UNIFORM SIZE: {}", compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)));
-      auto memberNames = compiler.get_type(resource.base_type_id).member_name_cache;
-      for (auto& memberName : memberNames)
+      ShaderUniformBlockProperty block;
+      block.name = compiler.get_name(resource.id);
+      block.id = resource.id;
+      block.stage = stage;
+      block.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+      block.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+      size_t blockSize = compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id));
+      //CANDY_CORE_INFO("BLOCK NAME: {}, BLOCK ID: {}, BLOCK SIZE: {}", block.name, block.id, blockSize);
+      auto members = compiler.get_type(resource.base_type_id).member_types;
+      size_t memberSize = members.size();
+      //CANDY_CORE_INFO("MEMBER COUNT: {}", memberSize);
+      for (int i=0; i<memberSize; i++)
       {
-        //CANDY_CORE_INFO("UNIFORM MEMBER NAME: {}", memberName);
+        ShaderUniformProperty prop;
+        prop.name = compiler.get_member_name(resource.base_type_id, i);
+        prop.id = members[i];
+        prop.parentBlockID = resource.base_type_id;
+        prop.type = ShaderData::SpirvToType(compiler.get_type(prop.id));
+        CANDY_CORE_INFO("MEMBER NAME: {}, MEMBER ID: {}, PARENT ID: {}, TYPE: {}", prop.name, prop.id, prop.parentBlockID, ShaderData::TypeToString(prop.type));
+        block.properties.push_back(prop);
       }
-      uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-      uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-      descriptorLayout.BindBuffer(binding, stage);
-      /*VkDescriptorSetLayoutBinding layoutBinding{};
       
-      layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-      layoutBinding.descriptorCount = 1;
-      layoutBinding.binding = binding;
-      layoutBinding.stageFlags = ShaderData::StageToVulkan(stage);
-      layoutBinding.pImmutableSamplers = nullptr;
-      layoutBindings.push_back(layoutBinding);*/
-      //descriptorBuilder.BindBuffer(binding, )
+      shaderLayout.AddUniformBlockProperty(block);
+
       
     }
     
     for (auto& resource : resources.sampled_images)
     {
-      uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-      descriptorLayout.BindImage(binding, stage);
+      ShaderUniformImageProperty prop;
+      prop.id = resource.id;
+      prop.name = compiler.get_name(resource.id);
+      prop.stage = stage;
+      prop.type = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
+      prop.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+      prop.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+      CANDY_CORE_INFO("IMAGE PROP NAME: {}, ID: {}, TYPE: {},  BINDING: {}, SET: {}", prop.name, prop.id, ShaderData::TypeToString(prop.type), prop.binding, prop.set);
+      shaderLayout.AddUniformImageProperty(prop);
+      //descriptorLayout.BindImage(prop.binding, stage);
       
       /*VkDescriptorSetLayoutBinding samplerLayoutBinding{};
       samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -180,18 +197,30 @@ namespace Candy::Graphics
       samplerLayoutBinding.pImmutableSamplers = nullptr;
       layoutBindings.push_back(samplerLayoutBinding);*/
     }
+    
+    ShaderPushConstantBlockProperty pushBlock{};
+    pushBlock.stage = stage;
+    pushBlock.offset = 0;
     VkPushConstantRange pushRange{};
     pushRange.stageFlags = ShaderData::StageToVulkan(stage);
     pushRange.offset = 0;
     
     
     uint32_t id = compiler.get_shader_resources().push_constant_buffers[0].id;
+    pushBlock.id = id;
     uint32_t base_type_id = compiler.get_shader_resources().push_constant_buffers[0].base_type_id;
     uint32_t pcrSize=0;
     std::vector<spirv_cross::BufferRange> ranges = (std::vector<spirv_cross::BufferRange>)compiler.get_active_buffer_ranges(id);
     for (auto& range : ranges)
     {
+      ShaderPushConstantProperty prop;
+      prop.name = compiler.get_member_name(base_type_id, range.index);
+      prop.index = range.index;
+      prop.offset = range.offset;
+      prop.size = range.range;
+      prop.parentBlockID = pushBlock.id;
       
+      pushBlock.properties.push_back(prop);
       //CANDY_CORE_INFO("MEMBER NAME {}", compiler.get_member_name(base_type_id, range.index));
       //CANDY_CORE_INFO("Member: {0}, Offset: {1}, Size: {2}", range.index, range.offset, range.range);
       pcrSize += range.range;
@@ -199,8 +228,14 @@ namespace Candy::Graphics
     pushRange.size = pcrSize;
     if (pushRange.size > 0)
     {
-      pushConstantRanges.push_back(pushRange);
+      shaderLayout.AddPushConstantBlockProperty(pushBlock);
+      //pushConstantRanges.push_back(pushRange);
     }
+  }
+  
+  ShaderLayout& ShaderPostProcessor::GetLayout()
+  {
+    return shaderLayout;
   }
 
 }

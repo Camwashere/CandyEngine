@@ -19,18 +19,21 @@ namespace Candy::Graphics
     bool recompileOnLoad=true;
     //DescriptorBuilder descriptorBuilder;
     //VkDescriptorSetLayout descriptorSetLayout=VK_NULL_HANDLE;
-    std::vector<VkPushConstantRange> pushConstantRanges;
+    //std::vector<VkPushConstantRange> pushConstantRanges;
     ShaderLayout shaderLayout;
-    DescriptorSetLayout descriptorLayout;
+    //DescriptorSetLayout descriptorLayout;
     
     
   private:
     void CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath);
-    void Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings);
+    void Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary);
     
     
   public:
     ShaderPostProcessor()=default;
+    
+  public:
+    ShaderLayout& GetLayout();
     
   private:
     friend class Shader;

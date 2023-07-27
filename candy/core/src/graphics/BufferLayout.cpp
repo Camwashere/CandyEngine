@@ -12,7 +12,7 @@ namespace Candy::Graphics
     
     uint64_t BufferElement::Size()const
     {
-        return ShaderData::ShaderData::TypeSize(type);
+        return ShaderData::TypeSize(type);
     }
     uint64_t BufferElement::GetComponentCount()const
     {

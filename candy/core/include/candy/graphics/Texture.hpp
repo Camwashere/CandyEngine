@@ -30,22 +30,23 @@ namespace Candy::Graphics
     //VkImage image;
     Image image;
     TextureSpecification specification;
-    VkSampler sampler;
+    std::filesystem::path path;
+    //VkSampler sampler;
     VmaAllocation allocation;
     
   public:
-    void CreateSampler();
+    //void CreateSampler();
     
   public:
     Texture();
-    explicit Texture(const std::filesystem::path& path);
+    explicit Texture(std::filesystem::path  path);
     explicit Texture(const TextureSpecification& textureSpecification);
     
     
     
   public:
     VkImage GetImage(){return image;}
-    VkSampler GetSampler(){return sampler;}
+    //VkSampler GetSampler(){return sampler;}
     bool Load(const std::filesystem::path& path);
     [[nodiscard]] VkFormat GetVulkanFormat()const;
     void Destroy();

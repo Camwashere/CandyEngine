@@ -237,10 +237,19 @@ namespace Candy::Graphics
         shaderModules.clear();
     }
   
-  uint32_t Shader::PushConstantRangeCount(){return postProcessor.pushConstantRanges.size();}
-  const VkPushConstantRange* Shader::PushConstantRangeData(){return postProcessor.pushConstantRanges.data();}
+  //uint32_t Shader::PushConstantRangeCount(){return postProcessor.pushConstantRanges.size();}
+  //const VkPushConstantRange* Shader::PushConstantRangeData(){return postProcessor.pushConstantRanges.data();}
   
+ /* std::vector<VkDescriptorSetLayout> Shader::GetDescriptorSetLayouts()
+  {
+      return GetLayout().GetDescriptorSetLayouts();
   
+  }*/
+  std::vector<VkPushConstantRange> Shader::GetPushConstantRanges()
+  {
+      return GetLayout().GetPushConstantRanges();
+  
+  }
   std::vector<char> Shader::ReadSpvFileBinary(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);

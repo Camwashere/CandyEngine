@@ -196,7 +196,7 @@ namespace Candy::Graphics
       case spirv_cross::SPIRType::Image:
         break;
       case spirv_cross::SPIRType::SampledImage:
-        break;
+        return Type::Sampler2D;
       case spirv_cross::SPIRType::Sampler:
         break;
       case spirv_cross::SPIRType::AccelerationStructure:

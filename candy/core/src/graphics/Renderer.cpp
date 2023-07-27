@@ -13,12 +13,15 @@ namespace Candy::Graphics
 
   
   Renderer Renderer::instance;
-
-  void Renderer::Submit(const SharedPtr<VertexArray>& vertArray, const SharedPtr<Shader>& shader)
+  
+  void Renderer::Submit(Material* material)
   {
-    
-    instance.pipeline.Bake(vertArray, shader, *instance.target->renderPass);
+    instance.pipeline.Bake(material, *instance.target->renderPass);
   }
+  /*void Renderer::Submit(const SharedPtr<Shader>& shader)
+  {
+    instance.pipeline.Bake(shader, *instance.target->renderPass);
+  }*/
  
   void Renderer::SetTarget(GraphicsContext* target)
   {

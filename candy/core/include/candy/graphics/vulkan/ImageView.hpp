@@ -7,6 +7,7 @@ namespace Candy::Graphics
   {
   private:
     VkImageView imageView;
+    VkSampler sampler;
     
   public:
     ImageView();
@@ -19,9 +20,11 @@ namespace Candy::Graphics
     operator VkImageView()const{return imageView;}
     
   public:
+    void CreateSampler();
     void Set(Texture& texture, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     void Set(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     [[nodiscard]] bool IsValid()const;
+    VkSampler GetSampler(){return sampler;}
     void Destroy();
   };
 }

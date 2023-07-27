@@ -18,7 +18,7 @@ namespace Candy::Graphics
     DescriptorBuilder& BindImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags);
     
     
-    bool Build(VkDescriptorSet* set, VkDescriptorSetLayout layout);
+    bool Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout);
     bool Build(VkDescriptorSet* set);
  
   };

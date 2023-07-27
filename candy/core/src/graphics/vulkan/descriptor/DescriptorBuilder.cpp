@@ -61,7 +61,7 @@ namespace Candy::Graphics
     writes.push_back(newWrite);
     return *this;
   }
-  bool DescriptorBuilder::Build(VkDescriptorSet* set, VkDescriptorSetLayout layout){
+  bool DescriptorBuilder::Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout){
     //build layout first
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

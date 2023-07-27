@@ -32,7 +32,8 @@ namespace Candy::Graphics
     
     
   public:
-    static void Submit(const SharedPtr<VertexArray>& vertArray, const SharedPtr<Shader>& shader);
+    static void Submit(Material* material);
+    //static void Submit(const SharedPtr<Shader>& shader);
     static void SetTarget(GraphicsContext* target);
     static void BeginPass();
     static void EndPass();

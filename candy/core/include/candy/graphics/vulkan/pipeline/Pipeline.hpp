@@ -6,6 +6,7 @@
 #include "../../VertexArray.hpp"
 #include "candy/graphics/shader/Shader.hpp"
 #include "../RenderPass.hpp"
+#include "../../Material.hpp"
 namespace Candy::Graphics
 {
   
@@ -15,7 +16,8 @@ namespace Candy::Graphics
   {
   private:
     uint32_t id;
-    PipelineLayout layout;
+    Material* material;
+    //PipelineLayout layout;
     VkPipeline pipeline=VK_NULL_HANDLE;
     std::vector<VkDynamicState> dynamicStates;
     VkPipelineInputAssemblyStateCreateInfo inputAssembly;
@@ -51,8 +53,9 @@ namespace Candy::Graphics
   
   public:
     void RestoreDefaultSettings();
-    void Bake(const SharedPtr<VertexArray>& vertexArray, const SharedPtr<Shader>& shader, const RenderPass& renderPass);
-    PipelineLayout& GetLayout();
+    //void Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass);
+    void Bake(Material* material, const RenderPass& renderPass);
+    VkPipelineLayout& GetLayout();
     void Destroy();
     
     [[nodiscard]] uint32_t GetID()const;

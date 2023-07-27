@@ -19,6 +19,6 @@ namespace Candy::Graphics
   
   public:
     
-    void Bake(const SharedPtr<Shader>& shader);
+    //void Bake(const SharedPtr<Shader>& shader);
   };
 }

@@ -44,6 +44,7 @@ namespace Candy::Graphics
     layoutInfo.pBindings = bindings.data();
     layoutInfo.bindingCount = bindings.size();
     
+    
     layout = Vulkan::GetDescriptorLayoutCache().CreateDescriptorSetLayout(&layoutInfo);
    
   }

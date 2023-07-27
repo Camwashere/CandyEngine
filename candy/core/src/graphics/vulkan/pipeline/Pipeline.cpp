@@ -109,18 +109,91 @@ namespace Candy::Graphics
     InitColorBlending();
     dynamicStates.clear();
   }
-  void Pipeline::Bake(const SharedPtr<VertexArray>& vertexArray, const SharedPtr<Shader>& shader, const RenderPass& renderPass)
+  
+  void Pipeline::Bake(Material* bakeMaterial, const RenderPass& renderPass)
   {
-    //TODO VERTEX SHIT HERE
+    material = bakeMaterial;
+    material->BakePipelineLayout();
+    
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     
     
-    auto bindingDescriptions = vertexArray->GetVertexBindingDescriptions();
-    auto attributeDescriptions = vertexArray->GetVertexAttributeDescriptions();
     
-    vertexInputInfo.vertexBindingDescriptionCount = vertexArray->GetVertexBindingDescriptionCount();
-    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexArray->GetVertexAttributeDescriptionCount());
+    
+    auto bindingDescriptions = material->GetShader()->GetLayout().GetVertexBindingDescriptions();
+    auto attributeDescriptions = material->GetShader()->GetLayout().GetVertexAttributeDescriptions();
+    
+    vertexInputInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
+    vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
+    vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+    
+    // Depth and stencil state
+    VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencil.depthTestEnable = VK_TRUE;
+    depthStencil.depthWriteEnable = VK_TRUE;
+    depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencil.depthBoundsTestEnable = VK_FALSE;
+    depthStencil.minDepthBounds = 0.0f; // Optional
+    depthStencil.maxDepthBounds = 1.0f; // Optional
+    depthStencil.stencilTestEnable = VK_FALSE;
+    depthStencil.front = {}; // Optional
+    depthStencil.back = {}; // Optional
+    
+    VkPipelineDynamicStateCreateInfo dynamicState{};
+    dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+    dynamicState.pDynamicStates = dynamicStates.data();
+    
+    //material->BakePipelineLayout();
+    //layout.Bake(shader);
+    
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = material->GetShader()->CreateShaderStageCreateInfos();
+    
+    VkGraphicsPipelineCreateInfo pipelineInfo{};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.stageCount = shaderStages.size();
+    pipelineInfo.pStages = shaderStages.data();
+    
+    pipelineInfo.pVertexInputState = &vertexInputInfo;
+    pipelineInfo.pInputAssemblyState = &inputAssembly;
+    pipelineInfo.pViewportState = &viewportState;
+    pipelineInfo.pRasterizationState = &rasterizer;
+    pipelineInfo.pMultisampleState = &multisampling;
+    pipelineInfo.pDepthStencilState = &depthStencil;
+    pipelineInfo.pColorBlendState = &colorBlending;
+    pipelineInfo.pDynamicState = &dynamicState;
+    
+    
+    pipelineInfo.layout = material->pipelineLayout;
+    
+    pipelineInfo.renderPass = renderPass;
+    pipelineInfo.subpass = 0;
+    
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+    pipelineInfo.basePipelineIndex = -1; // Optional
+    
+    CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
+    
+    material->GetShader()->DestroyShaderModules();
+  }
+  /*void Pipeline::Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass)
+  {
+    // Vertex input
+    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    
+    
+    
+    
+    auto bindingDescriptions = shader->GetLayout().GetVertexBindingDescriptions();
+    
+    auto attributeDescriptions = shader->GetLayout().GetVertexAttributeDescriptions();
+    
+    vertexInputInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
+    vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
     vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
     
@@ -174,17 +247,18 @@ namespace Candy::Graphics
     
     shader->DestroyShaderModules();
   
-  }
+  }*/
   
   void Pipeline::Destroy()
   {
     vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);
-    vkDestroyPipelineLayout(Vulkan::LogicalDevice(), layout, nullptr);
+    vkDestroyPipelineLayout(Vulkan::LogicalDevice(), material->pipelineLayout, nullptr);
   }
   
-  PipelineLayout& Pipeline::GetLayout()
+  VkPipelineLayout& Pipeline::GetLayout()
   {
-    return layout;
+    return material->pipelineLayout;
+    //return layout;
   }
   
   uint32_t Pipeline::GetID()const{return id;}

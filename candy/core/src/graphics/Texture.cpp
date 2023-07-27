@@ -5,6 +5,7 @@
 #include <CandyPch.hpp>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <utility>
 
 namespace Candy::Graphics
 {
@@ -14,7 +15,7 @@ namespace Candy::Graphics
     //Vulkan::PushDeleter([=, this](){Destroy();});
   
   }
-  Texture::Texture(const std::filesystem::path& path)
+  Texture::Texture(std::filesystem::path  filePath) : path(std::move(filePath))
   {
     //Vulkan::PushDeleter([=, this](){Destroy();});
   
@@ -25,7 +26,7 @@ namespace Candy::Graphics
   }
   
   
-  void Texture::CreateSampler()
+ /* void Texture::CreateSampler()
   {
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -50,15 +51,16 @@ namespace Candy::Graphics
     samplerInfo.maxLod = 0.0f;
     
     CANDY_CORE_ASSERT(vkCreateSampler(Vulkan::LogicalDevice(), &samplerInfo, nullptr, &sampler) == VK_SUCCESS, "Failed to create texture sampler!");
-  }
+  }*/
   
   uint64_t TextureSpecification::ImageSize()const
   {
     return size.x*size.y*channels;
   }
   
-  bool Texture::Load(const std::filesystem::path& path)
+  bool Texture::Load(const std::filesystem::path& texturePath)
   {
+    path = texturePath;
     int texWidth, texHeight, texChannels;
     
     stbi_uc* pixels = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -165,7 +167,7 @@ namespace Candy::Graphics
     image.Destroy();
     //vmaDestroyImage(Vulkan::Allocator(), image, allocation);
     
-    vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);
+    //vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);
   }
   
 }

@@ -54,9 +54,12 @@ TestLayer::TestLayer() : Layer("Test Layer")
 
   //Shader
   shader = Shader::Create("assets/shaders/temp/test.glsl");
-  texture.Load("assets/textures/statue.jpg");
-  textureImageView.Set(texture);
-  texture.CreateSampler();
+  material.shader = shader.get();
+  material.texture.Load("assets/textures/statue.jpg");
+  material.textureImageView.Set(material.texture);
+  //texture.Load("assets/textures/statue.jpg");
+  //textureImageView.Set(texture);
+  //texture.CreateSampler();
 
   //Buffers
   vertexArray = VertexArray::Create();
@@ -91,12 +94,12 @@ TestLayer::TestLayer() : Layer("Test Layer")
   
   vertexArray->AddVertexBuffer(vertexBuffer);
   vertexArray->SetIndexBuffer(indexBuffer);
-  CreateDescriptorSets();
-  Renderer::Submit(vertexArray, shader);
+  //CreateDescriptorSets();
+  Renderer::Submit(&material);
   
   
 }
-void TestLayer::CreateDescriptorSets()
+/*void TestLayer::CreateDescriptorSets()
 {
   
 
@@ -115,15 +118,15 @@ void TestLayer::CreateDescriptorSets()
     
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageInfo.imageView = textureImageView;
-    imageInfo.sampler = texture.GetSampler();
+    imageInfo.imageView = material.textureImageView;
+    imageInfo.sampler = material.textureImageView.GetSampler();
     DescriptorBuilder::Begin()
     .BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(ShaderData::Stage::Fragment))
     .BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(ShaderData::Stage::Fragment))
     .Build(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor);
   }
 
-}
+}*/
 void TestLayer::OnAttach()
 {
   Layer::OnAttach();
@@ -133,12 +136,13 @@ void TestLayer::OnDetach()
 {
   //CANDY_CORE_INFO("ON DETACH");
   vkDeviceWaitIdle(Vulkan::LogicalDevice());
+  material.Destroy();
   //Vulkan::GetCurrentContext().CleanSwapChain();
   //vkDeviceWaitIdle(Vulkan::LogicalDevice());
-  textureImageView.Destroy();
-  texture.Destroy();
+  //textureImageView.Destroy();
+  //texture.Destroy();
   //uniformBuffer->Destroy();
-  vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), shader->GetDescriptorSetLayout(), nullptr);
+  //vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), shader->GetDescriptorSetLayout(), nullptr);
   vertexArray->Clear();
   //CANDY_CORE_INFO("DETACHED TEST LAYER");
 }
