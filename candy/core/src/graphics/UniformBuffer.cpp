@@ -5,10 +5,8 @@ namespace Candy::Graphics
 {
   UniformBuffer::UniformBuffer(uint64_t origSize) : size(origSize)
   {
-    
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
-    //Vulkan::PushDeleter([=, this](){Destroy();});
-    //vmaMapMemory(Vulkan::Allocator(), allocation, &data);
+
   }
   
   UniformBuffer::operator VkBuffer()const
@@ -43,7 +41,6 @@ namespace Candy::Graphics
   
   void UniformBuffer::Destroy()
   {
-    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
     VulkanBuffer::DestroyBuffer(buffer, allocation);
   }
   

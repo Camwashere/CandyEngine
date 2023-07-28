@@ -3,6 +3,7 @@
 //#include <Candy/Graphics.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <GLFW/glfw3.h>
+#include <candy/graphics/RenderCommand.hpp>
 namespace Candy
 {
     using namespace Events;
@@ -24,9 +25,10 @@ namespace Candy
         mainWindow = CreateUniquePtr<Window>(WindowData(appData.name, 3000, 1500));
         
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
-        
-        
-        
+        RenderCommand::Init();
+        //Renderer::Start();
+        uiLayer = new UILayer();
+        PushOverlay(uiLayer);
         
     }
     
@@ -43,15 +45,6 @@ namespace Candy
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowResize));
-        
-        /*for (auto& it : std::ranges::reverse_view(layerStack))
-        {
-            if (event.IsHandled())
-            {
-                break;
-            }
-            it->OnEvent(event);
-        }*/
     }
   
   
@@ -93,11 +86,17 @@ namespace Candy
     {
         CANDY_PROFILE_FUNCTION();
         isRunning=true;
-        
+        Renderer::Start();
         while(isRunning)
         {
           frameTime.Update();
-          //UpdateLayers();
+          UpdateLayers();
+          uiLayer->Begin();
+          for (Layer* layer : layerStack)
+          {
+            layer->OnRenderUI();
+          }
+          uiLayer->End();
           mainWindow->OnUpdate();
         }
         CleanUp();
@@ -112,6 +111,7 @@ namespace Candy
       {
         layer->OnDetach();
       }
+      RenderCommand::Shutdown();
       //Renderer::Shutdown();
       Vulkan::Shutdown();
       glfwTerminate();

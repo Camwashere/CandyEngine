@@ -18,10 +18,11 @@ namespace Candy::Graphics
   {
     instance.pipeline.Bake(material, *instance.target->renderPass);
   }
-  /*void Renderer::Submit(const SharedPtr<Shader>& shader)
+  void Renderer::Start()
   {
-    instance.pipeline.Bake(shader, *instance.target->renderPass);
-  }*/
+    instance.target->SwapBuffers();
+    Renderer::BeginPass();
+  }
  
   void Renderer::SetTarget(GraphicsContext* target)
   {

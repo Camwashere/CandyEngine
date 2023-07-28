@@ -9,16 +9,10 @@ namespace Candy::Graphics
   private:
     VkBuffer buffer;
     VmaAllocation allocation;
-    //void* data;
     uint64_t size;
-    //uint64_t paddedSize;
-    //uint64_t originalSize;
-    //uint64_t totalSize;
-    
     
   public:
     explicit UniformBuffer(uint64_t originalObjectSize);
-    //~UniformBuffer();
     
   public:
     operator VkBuffer()const;
@@ -27,9 +21,7 @@ namespace Candy::Graphics
   public:
     void SetData(uint64_t dataSize, const void* data);
     void SetData(uint64_t offset, uint64_t size, const void* data);
-    //void* GetData();
     void Destroy();
-   
     
   public:
     static SharedPtr<UniformBuffer> Create(uint64_t size);

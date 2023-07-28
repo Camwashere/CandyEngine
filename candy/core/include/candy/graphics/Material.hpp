@@ -17,7 +17,6 @@ namespace Candy::Graphics
     std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
   public:
     void BakePipelineLayout();
-    //VkPipelineLayout GetPipelineLayout();
     Shader* GetShader();
     
     void Destroy();

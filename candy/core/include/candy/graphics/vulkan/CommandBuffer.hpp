@@ -21,6 +21,8 @@ namespace Candy::Graphics
         explicit CommandBuffer(uint32_t currentFrame=0);
         ~CommandBuffer()=default;
         
+        operator VkCommandBuffer(){return mainCommandBuffer;}
+        
         
     public:
         void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);

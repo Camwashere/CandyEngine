@@ -173,9 +173,6 @@ namespace Candy::Graphics
     {
       outputLayoutProperties.push_back({name, stage, type, binding, set, offset, stride, location, isInput});
     }
-    
-    
-  
   }
   uint32_t ShaderLayout::PushConstant(const std::string& name, const void* data)
   {

@@ -113,14 +113,57 @@ namespace Candy::Graphics
   }
   
   
+  
+  uint32_t Shader::SetFloat(const std::string& name, float value)
+  {
+    return GetLayout().SetUniform(name, &value);
+  }
+  uint32_t Shader::SetVector2(const std::string& name, const Math::Vector2& vector)
+  {
+    return GetLayout().SetUniform(name, &vector);
+  }
+  uint32_t Shader::SetVector3(const std::string& name, const Math::Vector3& vector)
+  {
+    return GetLayout().SetUniform(name, &vector);
+  }
+  uint32_t Shader::SetVector4(const std::string& name, const Math::Vector4& vector)
+  {
+    return GetLayout().SetUniform(name, &vector);
+  }
   uint32_t Shader::SetColor(const std::string& name, const Color& color)
   {
     return GetLayout().SetUniform(name, &color);
   }
-  uint32_t Shader::SetVector4(const std::string& name, const Math::Vector4& vector)
+  uint32_t Shader::SetMatrix(const std::string& name, const Math::Matrix4& matrix)
   {
-  
+    return GetLayout().SetUniform(name, &matrix);
   }
+  
+  void Shader::SetFloat(uint32_t id, float value)
+  {
+    GetLayout().SetUniform(id, &value);
+  }
+  void Shader::SetVector2(uint32_t id, const Math::Vector2& vector)
+  {
+    GetLayout().SetUniform(id, &vector);
+  }
+  void Shader::SetVector3(uint32_t id, const Math::Vector3& vector)
+  {
+    GetLayout().SetUniform(id, &vector);
+  }
+  void Shader::SetVector4(uint32_t id, const Math::Vector4& vector)
+  {
+    GetLayout().SetUniform(id, &vector);
+  }
+  void Shader::SetColor(uint32_t id, const Color& color)
+  {
+    GetLayout().SetUniform(id, &color);
+  }
+  void Shader::SetMatrix(uint32_t id, const Math::Matrix4& matrix)
+  {
+    GetLayout().SetUniform(id, &matrix);
+  }
+  
     VkShaderModule Shader::CreateShaderModule(ShaderData::Stage stage)
     {
         const auto& valuePair = postProcessor.spirvBinaries.find(stage);
@@ -135,146 +178,7 @@ namespace Candy::Graphics
         
         return shaderModule;
     }
-    
-    /*void Shader::CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string> &sources)
-    {
-        shaderc::Compiler compiler;
-        shaderc::CompileOptions options;
-        options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
-        
-        if (optimize)
-            options.SetOptimizationLevel(shaderc_optimization_level_performance);
-        
-        
-        
-        
-        std::filesystem::path cacheDirectory = GetCacheDirectory();
-        
-        auto& shaderData = spirvBinaries;
-        shaderData.clear();
-        
-        for (auto&& [stage, source] : sources)
-        {
-            std::filesystem::path shaderFilePath = filepath;
-            std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + ShaderData::StageToCachedFileExtension(stage));
-            
-            std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-            if (in.is_open() && !recompileOnLoad)
-            {
-                CANDY_CORE_INFO("ALREADY HAS SHADER CACHED");
-                in.seekg(0, std::ios::end);
-                auto size = in.tellg();
-                in.seekg(0, std::ios::beg);
-                
-                auto& data = shaderData[stage];
-                data.resize(size / sizeof(uint32_t));
-                in.read((char*)data.data(), size);
-            }
-            else
-            {
-                CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
-                shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
-                if (mod.GetCompilationStatus() != shaderc_compilation_status_success)
-                {
-                    CANDY_CORE_ERROR(mod.GetErrorMessage());
-                    CANDY_CORE_ASSERT(false);
-                }
-                
-                shaderData[stage] = std::vector<uint32_t>(mod.cbegin(), mod.cend());
-                
-                std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
-                if (out.is_open())
-                {
-                    auto& data = shaderData[stage];
-                    out.write((char*)data.data(), data.size() * sizeof(uint32_t));
-                    out.flush();
-                    out.close();
-                }
-            }
-        }
-       
-        std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
-        for (auto&& [stage, data] : shaderData)
-        {
-            Reflect(stage, data, layoutBindings);
-        }
-      
-      VkDescriptorSetLayoutCreateInfo layoutInfo{};
-      layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      layoutInfo.bindingCount = layoutBindings.size();
-      layoutInfo.pBindings = layoutBindings.data();
-      
-      CANDY_CORE_ASSERT(vkCreateDescriptorSetLayout(Vulkan::LogicalDevice(), &layoutInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS, "Failed to create descriptor set layout!");
-      
-        
-        
-    }*/
-    
-    /*void Shader::Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary, std::vector<VkDescriptorSetLayoutBinding>& layoutBindings)
-    {
-      spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
-      auto resources = compiler.get_shader_resources();
-      
-     
-      
-      for (auto& resource : resources.uniform_buffers)
-      {
-        CANDY_CORE_INFO("UNIFORM NAME: {}", resource.name);
-        CANDY_CORE_INFO("UNIFORM SIZE: {}", compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)));
-        auto memberNames = compiler.get_type(resource.base_type_id).member_name_cache;
-        for (auto& memberName : memberNames)
-        {
-          CANDY_CORE_INFO("UNIFORM MEMBER NAME: {}", memberName);
-        }
-        uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-        uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-        
-        VkDescriptorSetLayoutBinding layoutBinding{};
-        
-        layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        layoutBinding.descriptorCount = 1;
-        layoutBinding.binding = binding;
-        layoutBinding.stageFlags = ShaderData::StageToVulkan(stage);
-        layoutBinding.pImmutableSamplers = nullptr;
-        layoutBindings.push_back(layoutBinding);
-        
-      }
-      
-      for (auto& resource : resources.sampled_images)
-      {
-        VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-        uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
-        samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        samplerLayoutBinding.descriptorCount = 1;
-        samplerLayoutBinding.binding = binding;
-        samplerLayoutBinding.stageFlags = ShaderData::StageToVulkan(stage);
-        samplerLayoutBinding.pImmutableSamplers = nullptr;
-        layoutBindings.push_back(samplerLayoutBinding);
-      }
-      VkPushConstantRange pushRange{};
-      pushRange.stageFlags = ShaderData::StageToVulkan(stage);
-      pushRange.offset = 0;
-      
-      
-      uint32_t id = compiler.get_shader_resources().push_constant_buffers[0].id;
-      uint32_t base_type_id = compiler.get_shader_resources().push_constant_buffers[0].base_type_id;
-      uint32_t pcrSize=0;
-      std::vector<spirv_cross::BufferRange> ranges = (std::vector<spirv_cross::BufferRange>)compiler.get_active_buffer_ranges(id);
-      for (auto& range : ranges)
-      {
-        
-        CANDY_CORE_INFO("MEMBER NAME {}", compiler.get_member_name(base_type_id, range.index));
-        CANDY_CORE_INFO("Member: {0}, Offset: {1}, Size: {2}", range.index, range.offset, range.range);
-        pcrSize += range.range;
-      }
-      pushRange.size = pcrSize;
-      if (pushRange.size > 0)
-      {
-        pushConstantRanges.push_back(pushRange);
-      }
-      
-      
-    }*/
+
     
     
     
@@ -286,14 +190,7 @@ namespace Candy::Graphics
         shaderModules.clear();
     }
   
-  //uint32_t Shader::PushConstantRangeCount(){return postProcessor.pushConstantRanges.size();}
-  //const VkPushConstantRange* Shader::PushConstantRangeData(){return postProcessor.pushConstantRanges.data();}
-  
- /* std::vector<VkDescriptorSetLayout> Shader::GetDescriptorSetLayouts()
-  {
-      return GetLayout().GetDescriptorSetLayouts();
-  
-  }*/
+
   std::vector<VkPushConstantRange> Shader::GetPushConstantRanges()
   {
       return GetLayout().GetPushConstantRanges();

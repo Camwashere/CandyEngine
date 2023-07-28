@@ -1,4 +1,5 @@
 #include "TestLayer.hpp"
+#include "imgui/imgui.h"
 using namespace Candy;
 using namespace Math;
 using namespace Graphics;
@@ -93,8 +94,6 @@ TestLayer::TestLayer() : Layer("Test Layer")
   vertexArray->AddVertexBuffer(vertexBuffer);
   vertexArray->SetIndexBuffer(indexBuffer);
   Renderer::Submit(&material);
-  
-  
 }
 
 void TestLayer::OnAttach()
@@ -104,17 +103,9 @@ void TestLayer::OnAttach()
 
 void TestLayer::OnDetach()
 {
-  //CANDY_CORE_INFO("ON DETACH");
   vkDeviceWaitIdle(Vulkan::LogicalDevice());
   material.Destroy();
-  //Vulkan::GetCurrentContext().CleanSwapChain();
-  //vkDeviceWaitIdle(Vulkan::LogicalDevice());
-  //textureImageView.Destroy();
-  //texture.Destroy();
-  //uniformBuffer->Destroy();
-  //vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), shader->GetDescriptorSetLayout(), nullptr);
   vertexArray->Clear();
-  //CANDY_CORE_INFO("DETACHED TEST LAYER");
 }
 
 void TestLayer::OnEvent(Event &event)
@@ -136,20 +127,22 @@ void TestLayer::OnUpdate()
   
   proj[1,1] *= -1;
 
-  color.x = (Math::Sin(time) + 1.0f) / 2.0f;
-  color.y = (Math::Cos(time) + 1.0f) / 2.0f;
-  color.z = (Math::Sin(time) + 1.0f) / 2.0f;
+  //color.x = (Math::Sin(time) + 1.0f) / 2.0f;
+  //color.y = (Math::Cos(time) + 1.0f) / 2.0f;
+  //color.z = (Math::Sin(time) + 1.0f) / 2.0f;
   shader->SetColor("uColor", color);
 
-  vertexArray->Bind();
   shader->PushMatrix("model", model);
   shader->PushMatrix("view", view);
   shader->PushMatrix("proj", proj);
   
+  vertexArray->Bind();
   Renderer::DrawIndexed(vertexArray);
 }
 
 void TestLayer::OnRenderUI()
 {
-  Layer::OnRenderUI();
+  ImGui::Begin("Test Layer");
+  ImGui::ColorEdit3("Color", &color[0]);
+  ImGui::End();
 }

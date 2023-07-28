@@ -32,8 +32,10 @@ namespace Candy::Graphics
     
     
   public:
+    //TODO Finish immediate submit
+    static void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
     static void Submit(Material* material);
-    //static void Submit(const SharedPtr<Shader>& shader);
+    static void Start();
     static void SetTarget(GraphicsContext* target);
     static void BeginPass();
     static void EndPass();

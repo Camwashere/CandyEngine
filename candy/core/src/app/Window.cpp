@@ -158,13 +158,13 @@ namespace Candy
     void Window::OnUpdate()
     {
         CANDY_PROFILE_FUNCTION();
+        
         glfwPollEvents();
-        graphicsContext->SwapBuffers();
-        Renderer::BeginPass();
-        Application::Instance().UpdateLayers();
-        //renderer->Draw();
         Renderer::EndPass();
         graphicsContext->Present();
+        graphicsContext->SwapBuffers();
+        Renderer::BeginPass();
+        
     }
     
     void Window::Close() const

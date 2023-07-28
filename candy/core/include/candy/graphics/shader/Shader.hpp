@@ -43,8 +43,20 @@ namespace Candy::Graphics
       void PushMatrix(uint32_t id, const Math::Matrix4& matrix);
       
       // Set uniform functions
-      uint32_t SetColor(const std::string& name, const Color& color);
+      uint32_t SetFloat(const std::string& name, float value);
+      uint32_t SetVector2(const std::string& name, const Math::Vector2& vector);
+      uint32_t SetVector3(const std::string& name, const Math::Vector3& vector);
       uint32_t SetVector4(const std::string& name, const Math::Vector4& vector);
+      uint32_t SetColor(const std::string& name, const Color& color);
+      uint32_t SetMatrix(const std::string& name, const Math::Matrix4& matrix);
+      
+      void SetFloat(uint32_t id, float value);
+      void SetVector2(uint32_t id, const Math::Vector2& vector);
+      void SetVector3(uint32_t id, const Math::Vector3& vector);
+      void SetVector4(uint32_t id, const Math::Vector4& vector);
+      void SetColor(uint32_t id, const Color& color);
+      void SetMatrix(uint32_t id, const Math::Matrix4& matrix);
+      
       
       
       

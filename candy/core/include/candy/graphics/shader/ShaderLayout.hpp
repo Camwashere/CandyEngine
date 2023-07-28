@@ -76,8 +76,6 @@ namespace Candy::Graphics
     ShaderData::Stage stage;
     uint32_t offset;
     std::vector<ShaderPushConstantProperty> properties;
-    
-  
   };
   // Responsible for pipelines vertex input info and vertex binding info replacements
   // Grab the layout properties from the 'vertex' stage and calculate the stride/offsets with them there based on the location variables
@@ -123,7 +121,6 @@ namespace Candy::Graphics
     void CalculateOffsetsAndStride();
     void CalculateProperties();
     size_t MaxSetCount()const;
-    //std::vector<VkDescriptorSetLayout> GetDescriptorSetLayouts();
     std::vector<VkPushConstantRange> GetPushConstantRanges();
     std::vector<VkVertexInputBindingDescription> GetVertexBindingDescriptions()const;
     std::vector<VkVertexInputAttributeDescription> GetVertexAttributeDescriptions()const;

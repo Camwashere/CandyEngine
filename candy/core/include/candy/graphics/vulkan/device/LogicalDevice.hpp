@@ -6,7 +6,7 @@ namespace Candy::Graphics
     
     class LogicalDevice
     {
-    private:
+    public:
         VkDevice device=VK_NULL_HANDLE;
         VkQueue graphicsQueue = VK_NULL_HANDLE;
         VkQueue presentQueue = VK_NULL_HANDLE;

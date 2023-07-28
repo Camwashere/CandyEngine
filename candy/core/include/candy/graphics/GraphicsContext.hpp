@@ -96,6 +96,8 @@ namespace Candy::Graphics
       VkDescriptorSet globalDescriptor=VK_NULL_HANDLE;
       SharedPtr<UniformBuffer> uniformBuffer;
     };
+    
+    
     class GraphicsContext
     {
     
@@ -109,6 +111,8 @@ namespace Candy::Graphics
         FrameData frames[FRAME_OVERLAP];
         
         bool frameBufferResized=false;
+        
+    
 
         
     private:
@@ -125,6 +129,8 @@ namespace Candy::Graphics
         void RebuildSwapChain();
         void OnFrameBufferResize();
         void CleanSwapChain();
+        VkRenderPass GetRenderPass();
+        VkSurfaceKHR GetSurface();
         
         
         [[nodiscard]] uint32_t GetCurrentFrameIndex()const;

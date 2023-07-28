@@ -4,7 +4,7 @@
 #include <set>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
-
+#include <candy/graphics/RenderCommand.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -26,6 +26,9 @@ namespace Candy::Graphics
     VkFenceCreateInfo fenceCreateInfo{};
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    
+    
+    
     
     VkSemaphoreCreateInfo semaphoreCreateInfo{};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -109,7 +112,7 @@ namespace Candy::Graphics
       
       
       
-      CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
+      //CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
       
       
       
@@ -200,6 +203,14 @@ namespace Candy::Graphics
   FrameData& GraphicsContext::GetFrame(uint32_t index)
   {
       return frames[index];
+  }
+  VkRenderPass GraphicsContext::GetRenderPass()
+  {
+      return *renderPass;
+  }
+  VkSurfaceKHR GraphicsContext::GetSurface()
+  {
+      return surface;
   }
   void GraphicsContext::UpdateFrameIndex()
   {
