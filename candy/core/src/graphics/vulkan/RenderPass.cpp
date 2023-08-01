@@ -63,7 +63,7 @@ namespace Candy::Graphics
         renderPassInfo.pDependencies = &dependency;
         
         CANDY_CORE_ASSERT(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass) == VK_SUCCESS, "Failed to create render pass!");
-        //Vulkan::PushDeleter([=, this](){Destroy();});
+        Vulkan::PushDeleter([=, this](){vkDestroyRenderPass(Vulkan::LogicalDevice(), renderPass, nullptr);});
     }
     
     RenderPass::~RenderPass()
@@ -71,10 +71,11 @@ namespace Candy::Graphics
         //vkDestroyRenderPass(Vulkan::LogicalDevice(), renderPass, nullptr);
     }
     
-    void RenderPass::Destroy()
+    /*void RenderPass::Destroy()
     {
       vkDestroyRenderPass(Vulkan::LogicalDevice(), renderPass, nullptr);
-    }
+      renderPass = VK_NULL_HANDLE;
+    }*/
     
     
     

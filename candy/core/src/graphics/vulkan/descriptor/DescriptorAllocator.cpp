@@ -6,6 +6,7 @@ namespace Candy::Graphics
   DescriptorAllocator::DescriptorAllocator(const VkDevice& logicalDevice)
   {
     pool = UniquePtr<vke::DescriptorAllocatorPool>(vke::DescriptorAllocatorPool::Create(logicalDevice, 1));
+    Vulkan::PushDeleter([=, this](){pool->Flip(); pool.reset();});
     //pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 2.);
     //Vulkan::PushDeleter([=, this](){Destroy();});
     
@@ -28,8 +29,8 @@ namespace Candy::Graphics
     pool->Flip();
   }
   
-  void DescriptorAllocator::Destroy()
+  /*void DescriptorAllocator::Destroy()
   {
     pool.reset();
-  }
+  }*/
 }

@@ -35,6 +35,7 @@ namespace Candy::Graphics
   {
     
     vulkan = new Vulkan();
+    Renderer::Init();
     
   }
   
@@ -70,7 +71,16 @@ namespace Candy::Graphics
   {
     return vulkan->descriptorLayoutCache;
   }
-  
+  VkSurfaceFormatKHR Vulkan::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+  {
+    for (const auto& availableFormat : availableFormats)
+    {
+      if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+        return availableFormat;
+      }
+    }
+    return availableFormats[0];
+  }
   void Vulkan::RegisterContext(GraphicsContext* context)
   {
     vulkan->contexts.push_back(context);
@@ -120,32 +130,19 @@ namespace Candy::Graphics
     GetCurrentCommandBuffer().CopyBufferToImage(buffer, image, width, height);
   
   }
-  /*void Vulkan::PushDeleter(std::function<void()>&& function)
+  void Vulkan::PushDeleter(std::function<void()>&& function)
   {
     vulkan->deletionQueue.PushFunction(std::move(function));
-  }*/
+  }
   void Vulkan::Shutdown()
   {
-    //vulkan->renderer->Shutdown();
-    //Renderer::Shutdown();
-    //vkWaitForFences(LogicalDevice(), 1, &GetCurrentContext().GetCurrentFrame().renderFence, true, 1000000000);
     vkDeviceWaitIdle(LogicalDevice());
-    //vulkan->deletionQueue.Flush();
-    
-    for (GraphicsContext* context : vulkan->contexts)
-    {
-      context->Terminate();
-    }
-    Renderer::Shutdown();
-    
-    vmaDestroyAllocator(vulkan->allocator);
-    vulkan->descriptorAllocator->Destroy();
+    //vulkan->contexts[0]->Terminate();
+    vulkan->deletionQueue.Flush();
+    //vulkan->descriptorAllocator->Destroy();
     vulkan->descriptorLayoutCache.Destroy();
-    vkDestroyDevice(LogicalDevice(), nullptr);
-    vulkan->instance->Shutdown();
-    CANDY_CORE_INFO("SHUTDOWN VULKAN");
-    //vulkanInstance->debugManager->Terminate();
-    //vkDestroyInstance(instance, nullptr);
-    //vkDestroyInstance(vulkanInstance->instance, nullptr);
+    vmaDestroyAllocator(vulkan->allocator);
+    vulkan->deviceManager->Destroy();
+   
   }
 }

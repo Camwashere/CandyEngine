@@ -30,6 +30,7 @@ namespace Candy::Graphics
     pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data(); // Optional
     
     CANDY_CORE_ASSERT(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) == VK_SUCCESS, "Failed to create pipeline layout!");
+    Vulkan::PushDeleter([=, this](){vkDestroyPipelineLayout(Vulkan::LogicalDevice(), pipelineLayout, nullptr);});
   }
   std::vector<VkDescriptorSetLayout> Material::BakeDescriptorSetLayouts()
   {
@@ -65,6 +66,8 @@ namespace Candy::Graphics
       }
       
       builder.Build(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor, layouts[i]);
+      
+      //Vulkan::PushDeleter([=, this](){vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), layouts[i], nullptr);});
     }
     return layouts;
     
@@ -74,10 +77,11 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot fetch shader!");
     return shader;
   }
-  void Material::Destroy()
+  /*void Material::Destroy()
   {
-    textureImageView.Destroy();
+    //vkDestroyPipelineLayout(Vulkan::LogicalDevice(), pipelineLayout, nullptr);
     texture.Destroy();
+    textureImageView.Destroy();
     
-  }
+  }*/
 }

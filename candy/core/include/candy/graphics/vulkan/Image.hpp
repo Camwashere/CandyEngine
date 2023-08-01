@@ -24,7 +24,8 @@ namespace Candy::Graphics
     void Create(Math::Vector2u size, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags);
     VkImage GetImageHandle(){return image;}
     VkFormat GetFormatHandle(){return format;}
-    void Destroy();
+    VmaAllocation GetAllocation(){return allocation;}
+    //void Destroy();
     
     
     

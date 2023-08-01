@@ -10,7 +10,7 @@ namespace Candy::Graphics
     {
         //CreateCommandPool(surface);
         //CreateCommandBuffers();
-      //Vulkan::PushDeleter([=, this](){Destroy();});
+      
     }
     
     
@@ -30,6 +30,7 @@ namespace Candy::Graphics
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
         
         CANDY_CORE_ASSERT(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &commandPool) == VK_SUCCESS, "Failed to create command pool!");
+        Vulkan::PushDeleter([=, this](){vkDestroyCommandPool(Vulkan::LogicalDevice(), this->commandPool, nullptr);});
     }
     
     void CommandBuffer::CreateCommandBuffers()
@@ -297,8 +298,8 @@ namespace Candy::Graphics
     vkCmdPushConstants(mainCommandBuffer, layout, ShaderData::StageToVulkan(shaderStage), offset, dataSize, data);
   }
   
-  void CommandBuffer::Destroy()
+  /*void CommandBuffer::Destroy()
   {
     vkDestroyCommandPool(Vulkan::LogicalDevice(), commandPool, nullptr);
-  }
+  }*/
 }

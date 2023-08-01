@@ -1,6 +1,7 @@
 #include <candy/graphics/vulkan/VulkanDebugManager.hpp>
 #include <CandyPch.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <GLFW/glfw3.h>
 const std::vector<const char*> validationLayers= {
         "VK_LAYER_KHRONOS_validation"
 };
@@ -93,32 +94,92 @@ namespace Candy::Graphics
         return true;
     }
     
-    VulkanDebugManager::VulkanDebugManager()
+    VulkanDebugManager::VulkanDebugManager(VkInstance instance)
     {
-    
-    }
-    
-    void VulkanDebugManager::Init(VkInstance instance)
-    {
-        if (!enableValidationLayers)
-        {
-            return;
-        }
-        
+      if (enableValidationLayers)
+      {
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
         
         CANDY_CORE_ASSERT(CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) == VK_SUCCESS, "FAILED TO SET UP DEBUG MESSENGER!");
-        
+      }
+      
     }
     
-    void VulkanDebugManager::Terminate()
+    VulkanDebugManager::~VulkanDebugManager()
     {
-        if (enableValidationLayers)
-        {
-            DestroyDebugUtilsMessengerEXT(Vulkan::Instance(), debugMessenger, nullptr);
-        }
+      if (enableValidationLayers)
+      {
+        DestroyDebugUtilsMessengerEXT(Vulkan::Instance(), debugMessenger, nullptr);
+      }
     }
+  
+  std::vector<const char*> VulkanDebugManager::GetRequiredExtensions()
+  {
+    uint32_t glfwExtensionCount = 0;
+    const char** glfwExtensions;
+    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+    
+    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+    if (VulkanDebugManager::ValidationLayersEnabled())
+    {
+      extensions.push_back("VK_EXT_debug_utils");
+    }
+    return extensions;
+  }
+  
+  std::vector<std::string> VulkanDebugManager::GetAvailableExtensions()
+  {
+    uint32_t extensionCount = 0;
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+    std::vector<VkExtensionProperties> extensions(extensionCount);
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+    std::vector<std::string> availableExtensions;
+    for (auto extension : extensions)
+    {
+      availableExtensions.emplace_back(extension.extensionName);
+    }
+    return availableExtensions;
+  }
+  
+  void VulkanDebugManager::DisplayAvailableExtensions()
+  {
+    std::vector<std::string> extensions = GetAvailableExtensions();
+    CANDY_CORE_INFO("Available Vulkan Extensions: ");
+    for (const auto& extension : extensions)
+    {
+      CANDY_CORE_INFO("\t{0}", extension);
+    }
+  }
+  
+  VkInstanceCreateInfo VulkanDebugManager::GetInstanceCreateInfo()
+  {
+    VkInstanceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    
+    auto extensions = VulkanDebugManager::GetRequiredExtensions();
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    createInfo.ppEnabledExtensionNames = extensions.data();
+    
+    // TODO Figure out how to move this section to VulkanDebugManager
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    if (VulkanDebugManager::ValidationLayersEnabled())
+    {
+      createInfo.enabledLayerCount = static_cast<uint32_t>(VulkanDebugManager::GetValidationLayerCount());
+      createInfo.ppEnabledLayerNames = VulkanDebugManager::GetValidationLayers().data();
+      
+      VulkanDebugManager::PopulateDebugMessengerCreateInfo(debugCreateInfo);
+      createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
+    }
+    else
+    {
+      createInfo.enabledLayerCount=0;
+      createInfo.pNext = nullptr;
+    }
+    return createInfo;
+  }
+    
+    
     
     bool VulkanDebugManager::ValidationLayersEnabled()
     {

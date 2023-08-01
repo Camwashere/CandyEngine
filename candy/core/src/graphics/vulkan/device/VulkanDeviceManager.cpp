@@ -23,6 +23,12 @@ namespace Candy::Graphics
         
         logicalDevice = LogicalDevice(physicalDevice, physicalDevice.FindQueueFamilies(surface));
     }
+  
+  void VulkanDeviceManager::Destroy()
+  {
+      vkDeviceWaitIdle(logicalDevice);
+      vkDestroyDevice(logicalDevice, nullptr);
+  }
     
     
     

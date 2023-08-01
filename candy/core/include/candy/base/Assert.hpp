@@ -18,7 +18,9 @@
 // Currently accepts at least the condition and one additional parameter (the message) being optional
 #define CANDY_ASSERT(...) CANDY_EXPAND_MACRO( CANDY_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
 #define CANDY_CORE_ASSERT(...) CANDY_EXPAND_MACRO( CANDY_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
+
 #else
 #define CANDY_ASSERT(...)
 #define CANDY_CORE_ASSERT(...)
+
 #endif

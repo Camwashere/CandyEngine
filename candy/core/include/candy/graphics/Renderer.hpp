@@ -18,14 +18,16 @@ namespace Candy::Graphics
   class Renderer
   {
   private:
-    static Renderer instance;
+    static Renderer* instance;
     
   private:
     Pipeline pipeline;
     GraphicsContext* target;
+    UniquePtr<RenderPass> renderPass;
     
   private:
-    static FrameData& GetCurrentFrame();
+    
+    static VkRenderPassBeginInfo BeginRenderPass();
     
   private:
     Renderer();
@@ -36,15 +38,21 @@ namespace Candy::Graphics
     static void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
     static void Submit(Material* material);
     static void Start();
+    static void Init();
     static void SetTarget(GraphicsContext* target);
+    static void InitRenderPass(VkSurfaceKHR surface);
     static void BeginPass();
     static void EndPass();
+    static FrameData& GetCurrentFrame();
+    static VkRenderPass GetRenderPass();
     static void BindDescriptorSets(uint32_t uniformOffset);
     static void PushConstants(ShaderData::Stage stage, uint32_t dataSize, const void* data);
     static void PushConstants(ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data);
     static void SetUniform(uint32_t offset, uint32_t size, const void* data);
     static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
     static void Shutdown();
+    //static void DestroyPipeline();
+    //static void DestroyRenderPass();
   private:
     friend class Vulkan;
   };

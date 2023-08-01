@@ -12,7 +12,7 @@ namespace Candy::Graphics
         CANDY_CORE_ASSERT(context->surface != VK_NULL_HANDLE, "SwapChain's surface is null!");
         Build();
         CreateImageViews();
-        //Vulkan::PushDeleter([=, this](){Clean();});
+        Vulkan::PushDeleter([=, this](){vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);});
     }
     
     void SwapChain::Rebuild(VkRenderPass renderPass)
@@ -32,14 +32,21 @@ namespace Candy::Graphics
     
     void SwapChain::Clean()
     {
-      depthImageView.Destroy();
-      depthImage.Destroy();
-        for (auto & swapChainFrameBuffer : frameBuffers) {
-            vkDestroyFramebuffer(Vulkan::LogicalDevice(), swapChainFrameBuffer, nullptr);
+      //depthImageView.Destroy();
+      //depthImage.Destroy();
+      vmaDestroyImage(Vulkan::Allocator(), depthImage, depthImage.GetAllocation());
+      vkDestroyImageView(Vulkan::LogicalDevice(), depthImageView, nullptr);
+      vkDestroySampler(Vulkan::LogicalDevice(), depthImageView.GetSampler(), nullptr);
+        for (auto & buffer : frameBuffers) {
+            vkDestroyFramebuffer(Vulkan::LogicalDevice(), buffer, nullptr);
+            //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainBuffer.view, nullptr);
         }
         
         for (auto & swapChainImageView : imageViews) {
-          swapChainImageView.Destroy();
+          
+          vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
+          vkDestroySampler(Vulkan::LogicalDevice(), swapChainImageView.GetSampler(), nullptr);
+          //swapChainImageView.Destroy();
         }
         
         vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
@@ -48,7 +55,7 @@ namespace Candy::Graphics
     void SwapChain::Build()
     {
         SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(context->surface);
-        VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
+        VkSurfaceFormatKHR surfaceFormat = Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D swapExtent = ChooseSwapExtent(swapChainSupport.capabilities);
         
@@ -87,6 +94,7 @@ namespace Candy::Graphics
         createInfo.oldSwapchain = VK_NULL_HANDLE;
         CANDY_CORE_ASSERT(vkCreateSwapchainKHR(Vulkan::LogicalDevice(), &createInfo, nullptr, &swapChain) == VK_SUCCESS, "Failed to create swap chain!");
         vkGetSwapchainImagesKHR(Vulkan::LogicalDevice(), swapChain, &imageCount, nullptr);
+        
         images.resize(imageCount);
         vkGetSwapchainImagesKHR(Vulkan::LogicalDevice(), swapChain, &imageCount, images.data());
         
@@ -131,7 +139,7 @@ namespace Candy::Graphics
             
             
             CANDY_CORE_ASSERT(vkCreateFramebuffer(Vulkan::LogicalDevice(), &framebufferInfo, nullptr, &frameBuffers[i]) == VK_SUCCESS, "Failed to create framebuffer");
-            
+            Vulkan::PushDeleter([=, this](){vkDestroyFramebuffer(Vulkan::LogicalDevice(), frameBuffers[i], nullptr);});
         }
     }
   
@@ -142,7 +150,7 @@ namespace Candy::Graphics
   
   VkFramebuffer SwapChain::GetCurrentFrameBuffer(){return frameBuffers[imageIndex];}
     
-    VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+    /*VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
     {
         for (const auto& availableFormat : availableFormats)
         {
@@ -151,7 +159,7 @@ namespace Candy::Graphics
             }
         }
         return availableFormats[0];
-    }
+    }*/
     
     VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
     {

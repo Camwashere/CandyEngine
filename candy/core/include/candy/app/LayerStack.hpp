@@ -11,7 +11,7 @@ namespace Candy
   
   public:
     LayerStack()=default;
-    ~LayerStack();
+    ~LayerStack()=default;
     
     void PushLayer(Layer* layer);
     void PushOverlay(Layer* overlay);

@@ -12,6 +12,7 @@ namespace Candy::Graphics
     {
         vertexBuffers.clear();
         vertexBufferOffsets.clear();
+        indexBuffer;
         indexBuffer = nullptr;
     }
     void VertexArray::Bind()

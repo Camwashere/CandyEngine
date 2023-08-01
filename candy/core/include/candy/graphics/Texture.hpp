@@ -49,7 +49,7 @@ namespace Candy::Graphics
     //VkSampler GetSampler(){return sampler;}
     bool Load(const std::filesystem::path& path);
     [[nodiscard]] VkFormat GetVulkanFormat()const;
-    void Destroy();
+    //void Destroy();
   
   };
 }

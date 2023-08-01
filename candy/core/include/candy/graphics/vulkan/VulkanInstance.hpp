@@ -18,19 +18,20 @@ namespace Candy::Graphics
         
         
     private:
-        void CreateInstance();
+        //void CreateInstance();
         
     public:
         VulkanInstance();
-        void Shutdown();
+        ~VulkanInstance();
+        //void Shutdown();
         
     
         
     public:
 
-        static std::vector<const char*> GetRequiredExtensions();
-        static std::vector<std::string> GetAvailableExtensions();
-        static void DisplayAvailableExtensions();
+        //static std::vector<const char*> GetRequiredExtensions();
+        //static std::vector<std::string> GetAvailableExtensions();
+        //static void DisplayAvailableExtensions();
 
         
     private:

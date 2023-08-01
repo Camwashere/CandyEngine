@@ -18,6 +18,7 @@ namespace Candy
   
   void UILayer::OnAttach()
   {
+    
     //1: create descriptor pool for IMGUI
     // the size of the pool is very oversize, but its copied from imgui demo itself.
     VkDescriptorPoolSize pool_sizes[] =
@@ -75,7 +76,9 @@ namespace Candy
     init_info.MinImageCount = 3;
     init_info.ImageCount = 3;
     
-    ImGui_ImplVulkan_Init(&init_info, Vulkan::GetCurrentContext().GetRenderPass());
+    
+    
+    ImGui_ImplVulkan_Init(&init_info, Renderer::GetRenderPass());
     
     
     //execute a gpu command to upload imgui font textures
@@ -89,9 +92,9 @@ namespace Candy
   {
     //clear font textures from cpu data
     ImGui_ImplVulkan_DestroyFontUploadObjects();
-    vkDestroyDescriptorPool(Vulkan::LogicalDevice(), uiPool, nullptr);
     ImGui_ImplVulkan_Shutdown();
     ImGui::DestroyContext();
+    vkDestroyDescriptorPool(Vulkan::LogicalDevice(), uiPool, nullptr);
   }
   
   void UILayer::OnEvent(Events::Event &e)
@@ -115,6 +118,8 @@ namespace Candy
     
     // Rendering
     ImGui::Render();
+    
+    
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), Vulkan::GetCurrentCommandBuffer());
     
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

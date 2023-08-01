@@ -11,7 +11,7 @@ namespace Candy
     using namespace Math;
     Application* Application::instance = nullptr;
     
-    Application::Application(ApplicationData  applicationData) : appData(std::move(applicationData)), isRunning(false), minimized(false)
+    Application::Application(ApplicationData  applicationData) : appData(std::move(applicationData)), isRunning(false), minimized(false)//, uiLayer(nullptr)
     {
         CANDY_PROFILE_FUNCTION();
         Log::Init();
@@ -25,19 +25,15 @@ namespace Candy
         mainWindow = CreateUniquePtr<Window>(WindowData(appData.name, 3000, 1500));
         
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
+        
         RenderCommand::Init();
         //Renderer::Start();
-        uiLayer = new UILayer();
-        PushOverlay(uiLayer);
+        //uiLayer = new UILayer();
+        //PushOverlay(uiLayer);
         
     }
     
-    Application::~Application()
-    {
-        CANDY_PROFILE_FUNCTION();
-        
-        //Renderer::Shutdown();
-    }
+    
     
     void Application::OnEvent(Events::Event &event)
     {
@@ -45,6 +41,7 @@ namespace Candy
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowResize));
+        dispatcher.Dispatch<FrameBufferResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnFrameBufferResize));
     }
   
   
@@ -91,12 +88,12 @@ namespace Candy
         {
           frameTime.Update();
           UpdateLayers();
-          uiLayer->Begin();
+          /*uiLayer->Begin();
           for (Layer* layer : layerStack)
           {
             layer->OnRenderUI();
           }
-          uiLayer->End();
+          uiLayer->End();*/
           mainWindow->OnUpdate();
         }
         CleanUp();
@@ -105,17 +102,24 @@ namespace Candy
     
     void Application::CleanUp()
     {
+      CANDY_CORE_INFO("STARTED APPLICATION CLEANUP");
       //renderer->Shutdown();
       //graphicsContext->Terminate();
-      for (Layer* layer : layerStack)
+      
+      for (Layer *layer: layerStack)
       {
         layer->OnDetach();
       }
-      RenderCommand::Shutdown();
-      //Renderer::Shutdown();
+      CANDY_CORE_INFO("DETACHED LAYERS");
+      //Renderer::DestroyPipeline();
+      CANDY_CORE_INFO("DESTROYED PIPELINE");
+      //RenderCommand::Shutdown();
+      CANDY_CORE_INFO("SHUTDOWN RENDER COMMAND");
       Vulkan::Shutdown();
+      CANDY_CORE_INFO("SHUTDOWN VULKAN");
       glfwTerminate();
-      CANDY_CORE_INFO("TERMINATED APPLICATION");
+      CANDY_CORE_INFO("TERMINATED GLFW");
+      
     }
     
     void Application::Close()
@@ -139,10 +143,17 @@ namespace Candy
             return false;
         }
         minimized = false;
-        
+        mainWindow->OnWindowResize(event);
         //Renderer::OnWindowResize((int)event.GetWidth(), (int)event.GetHeight());
         return false;
     }
+  
+  bool Application::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
+  {
+      CANDY_PROFILE_FUNCTION();
+      mainWindow->OnFrameBufferResize(event);
+      return false;
+  }
     
     
 }

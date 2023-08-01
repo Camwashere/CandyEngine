@@ -15,7 +15,7 @@ namespace Candy::Graphics
     vke::DescriptorAllocatorHandle GetHandle();
     bool Allocate(VkDescriptorSet* set, VkDescriptorSetLayout layout);
     void Flip();
-    void Destroy();
+    //void Destroy();
   
   };
 }

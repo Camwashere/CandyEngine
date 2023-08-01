@@ -19,7 +19,7 @@ namespace Candy::Graphics
         
     private:
         void CreateStagingBuffer(VkBuffer& buffer, VmaAllocation* allocation);
-        void Destroy();
+        //void Destroy();
         
         
     public:

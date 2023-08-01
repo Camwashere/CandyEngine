@@ -88,6 +88,7 @@ namespace Candy::Graphics
     }
     
     vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
+    
     //bindings.clear();
     //writes.clear();
     return true;

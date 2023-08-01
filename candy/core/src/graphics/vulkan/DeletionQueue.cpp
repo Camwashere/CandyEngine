@@ -9,6 +9,7 @@ namespace Candy::Graphics
   }
   void DeletionQueue::Flush()
   {
+    
     for (auto & f : std::ranges::reverse_view(queue))
     {
       f();

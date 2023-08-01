@@ -26,6 +26,7 @@ namespace Candy::Graphics
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create allocated buffer!");
       //Vulkan::PushDeleter([=, this](){Destroy();});
+      Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
         
     
     }
@@ -66,16 +67,17 @@ namespace Candy::Graphics
         
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
+        Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
         
     }
     VertexBuffer::~VertexBuffer()
     {
-        vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
+        //vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }
-    void VertexBuffer::Destroy()
+    /*void VertexBuffer::Destroy()
     {
       vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
-    }
+    }*/
     
     void VertexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
     {

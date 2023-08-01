@@ -25,7 +25,6 @@ namespace Candy::Graphics
     std::unordered_map<DescriptorLayoutInfo, VkDescriptorSetLayout, DescriptorLayoutHash> layoutCache;
     
   public:
-    
     VkDescriptorSetLayout CreateDescriptorSetLayout(VkDescriptorSetLayoutCreateInfo* info);
     void Destroy();
     

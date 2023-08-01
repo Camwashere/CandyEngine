@@ -34,17 +34,18 @@ namespace Candy::Graphics
         //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
+        Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
       
     }
     
     IndexBuffer::~IndexBuffer()
     {
-        vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
+        //vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }
-    void IndexBuffer::Destroy()
+    /*void IndexBuffer::Destroy()
     {
       vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
-    }
+    }*/
     
     void IndexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
     {

@@ -19,6 +19,6 @@ namespace Candy::Graphics
     void BakePipelineLayout();
     Shader* GetShader();
     
-    void Destroy();
+    //void Destroy();
   };
 }

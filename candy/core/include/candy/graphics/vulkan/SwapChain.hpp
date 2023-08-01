@@ -7,15 +7,23 @@ struct GLFWwindow;
 namespace Candy::Graphics
 {
     class GraphicsContext;
-    
+    struct SwapChainBuffer
+    {
+      VkImage image;
+      VkImageView view;
+      VkFramebuffer frameBuffer;
+    };
     class SwapChain
     {
     private:
         GraphicsContext* context;
         VkSwapchainKHR swapChain;
+        //VkSurfaceFormatKHR surfaceFormat;
+        //SwapChainSupportDetails swapChainSupport;
         std::vector<VkImage> images;
         VkFormat imageFormat;
         VkExtent2D extent;
+        //std::vector<SwapChainBuffer> buffers;
         std::vector<ImageView> imageViews;
         std::vector<VkFramebuffer> frameBuffers;
         Image depthImage;
@@ -23,7 +31,7 @@ namespace Candy::Graphics
         uint32_t imageIndex=0;
         
     private:
-        VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+        //VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
         VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
         void CreateImageViews();

@@ -47,7 +47,7 @@ namespace Candy::Graphics
         void EndRenderPass();
         void EndRecording();
         void EndAll();
-        void Destroy();
+        //void Destroy();
         void PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t dataSize, const void* data);
         void PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t offset, uint32_t dataSize, const void* data);
         

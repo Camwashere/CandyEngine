@@ -9,6 +9,7 @@ namespace Candy::Graphics
     
     
     CANDY_CORE_ASSERT(vkCreateFence(Vulkan::LogicalDevice(), &uploadFenceCreateInfo, nullptr, &uploadContext.uploadFence)==VK_SUCCESS);
+    Vulkan::PushDeleter([=](){vkDestroyFence(Vulkan::LogicalDevice(), uploadContext.uploadFence, nullptr);});
   }
   UploadContext RenderCommand::uploadContext;
   VkCommandBufferBeginInfo RenderCommand::CommandBufferBeginInfo(VkCommandBufferUsageFlags flags)
@@ -47,7 +48,7 @@ namespace Candy::Graphics
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     //create pool for upload context
     CANDY_CORE_ASSERT(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &uploadContext.commandPool)==VK_SUCCESS);
-    
+    Vulkan::PushDeleter([=](){vkDestroyCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, nullptr);});
     
     
     //allocate the default command buffer that we will use for the instant commands
@@ -94,9 +95,10 @@ namespace Candy::Graphics
     vkResetCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, 0);
   }
   
-  void RenderCommand::Shutdown()
+  /*void RenderCommand::Shutdown()
   {
-    vkDestroyFence(Vulkan::LogicalDevice(), uploadContext.uploadFence, nullptr);
     vkDestroyCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, nullptr);
-  }
+    vkDestroyFence(Vulkan::LogicalDevice(), uploadContext.uploadFence, nullptr);
+    
+  }*/
 }

@@ -10,7 +10,7 @@ namespace Candy::Graphics
     InitRasterizer();
     InitMultisampling();
     InitColorBlending();
-    //Vulkan::PushDeleter([=, this](){Destroy();});
+    //Vulkan::PushDeleter([=, this](){vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);});
   }
   
   void Pipeline::InitInputAssembly()
@@ -176,7 +176,7 @@ namespace Candy::Graphics
     pipelineInfo.basePipelineIndex = -1; // Optional
     
     CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
-    
+    Vulkan::PushDeleter([=, this](){ vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr); });
     material->GetShader()->DestroyShaderModules();
   }
   /*void Pipeline::Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass)
@@ -249,11 +249,11 @@ namespace Candy::Graphics
   
   }*/
   
-  void Pipeline::Destroy()
+  /*void Pipeline::Destroy()
   {
-    vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);
     vkDestroyPipelineLayout(Vulkan::LogicalDevice(), material->pipelineLayout, nullptr);
-  }
+    vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);
+  }*/
   
   VkPipelineLayout& Pipeline::GetLayout()
   {

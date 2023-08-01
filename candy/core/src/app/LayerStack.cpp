@@ -1,14 +1,14 @@
 #include <candy/app/LayerStack.hpp>
 #include <algorithm>
 namespace Candy{
-  LayerStack::~LayerStack()
+  /*LayerStack::~LayerStack()
   {
     for (Layer* layer : layers)
     {
-      layer->OnDetach();
+      //layer->OnDetach();
       delete layer;
     }
-  }
+  }*/
   
   void LayerStack::PushLayer(Layer* layer)
   {

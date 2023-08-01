@@ -20,10 +20,12 @@ namespace Candy::Graphics
         operator VkRenderPass()const{return renderPass;}
         operator VkRenderPass(){return renderPass;}
         
+        bool IsValid()const{return renderPass != VK_NULL_HANDLE;}
+        
         
     public:
         [[nodiscard]] VkRenderPassBeginInfo BeginPass(VkFramebuffer frameBuffer, VkExtent2D extent);
-        void Destroy();
+        //void Destroy();
         
     };
 }

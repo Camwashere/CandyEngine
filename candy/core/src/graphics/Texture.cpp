@@ -162,12 +162,12 @@ namespace Candy::Graphics
     return VK_FORMAT_R8G8B8A8_SRGB;
   }
   
-  void Texture::Destroy()
+  /*void Texture::Destroy()
   {
     image.Destroy();
     //vmaDestroyImage(Vulkan::Allocator(), image, allocation);
     
     //vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);
-  }
+  }*/
   
 }

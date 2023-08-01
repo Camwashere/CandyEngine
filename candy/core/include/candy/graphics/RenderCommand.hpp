@@ -22,7 +22,7 @@ namespace Candy::Graphics
   public:
     static void Init();
     static void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
-    static void Shutdown();
+    //static void Shutdown();
     
   };
 }

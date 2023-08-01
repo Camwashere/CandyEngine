@@ -55,6 +55,7 @@ namespace Candy
         void OnUpdate();
         void SetVSync(bool enabled);
         void OnWindowResize(Events::WindowResizeEvent& event);
+        void OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
     
     public:
         void SetEventCallback(const EventCallbackFunction& callback){windowData.eventCallback = callback;}

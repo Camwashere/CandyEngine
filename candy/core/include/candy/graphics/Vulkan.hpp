@@ -40,7 +40,7 @@ namespace Candy::Graphics
   public:
     static void Init();
     static void Shutdown();
-    //static void PushDeleter(std::function<void()>&& function);
+    static void PushDeleter(std::function<void()>&& function);
     static VkInstance Instance();
     static VmaAllocator Allocator();
     static PhysicalDevice& PhysicalDevice();
@@ -52,7 +52,7 @@ namespace Candy::Graphics
     static GraphicsContext& GetCurrentContext();
     static CommandBuffer& GetCurrentCommandBuffer();
     static float GetContextSizeRatio();
-    
+    static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 
     static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);

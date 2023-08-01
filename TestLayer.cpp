@@ -104,7 +104,7 @@ void TestLayer::OnAttach()
 void TestLayer::OnDetach()
 {
   vkDeviceWaitIdle(Vulkan::LogicalDevice());
-  material.Destroy();
+  //material.Destroy();
   vertexArray->Clear();
 }
 

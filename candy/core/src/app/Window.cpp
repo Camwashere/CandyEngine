@@ -180,7 +180,15 @@ namespace Candy
           Application::Shutdown();
         }
     }
-    
+  void Window::OnWindowResize(Events::WindowResizeEvent& event)
+  {
+      windowData.windowSize.Set(event.GetWidth(), event.GetHeight());
+  }
+  
+  void Window::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
+  {
+      graphicsContext->OnFrameBufferResize(event);
+  }
     void Window::SetVSync(bool enabled)
     {
         if (enabled)

@@ -54,6 +54,7 @@ namespace Candy::Graphics
     samplerInfo.maxLod = 0.0f;
     
     CANDY_CORE_ASSERT(vkCreateSampler(Vulkan::LogicalDevice(), &samplerInfo, nullptr, &sampler) == VK_SUCCESS, "Failed to create texture sampler!");
+    Vulkan::PushDeleter([=, this](){vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);});
   }
   void ImageView::Set(Texture& texture, VkImageAspectFlags aspectFlags)
   {
@@ -73,6 +74,7 @@ namespace Candy::Graphics
     viewInfo.subresourceRange.layerCount = 1;
     
     CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
     CreateSampler();
   }
   bool ImageView::IsValid()const
@@ -80,10 +82,10 @@ namespace Candy::Graphics
     return imageView != VK_NULL_HANDLE;
   }
   
-  void ImageView::Destroy()
+  /*void ImageView::Destroy()
   {
     vkDestroyImageView(Vulkan::LogicalDevice(), imageView, nullptr);
     imageView = VK_NULL_HANDLE;
     vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);
-  }
+  }*/
 }

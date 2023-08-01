@@ -56,7 +56,7 @@ namespace Candy::Graphics
     //void Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass);
     void Bake(Material* material, const RenderPass& renderPass);
     VkPipelineLayout& GetLayout();
-    void Destroy();
+    //void Destroy();
     
     [[nodiscard]] uint32_t GetID()const;
     

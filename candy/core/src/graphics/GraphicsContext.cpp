@@ -14,12 +14,13 @@ namespace Candy::Graphics
       handle = windowHandle;
       CANDY_CORE_ASSERT(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface) == VK_SUCCESS, "Failed to create vulkan window surface!");
       Vulkan::InitDeviceManager(surface);
-      
-      swapChain = new SwapChain(this);
-      renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
+      swapChain = CreateUniquePtr<SwapChain>(this);
+      //renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
       InitSyncStructures();
-      swapChain->CreateFrameBuffers(*renderPass);
+      //swapChain->CreateFrameBuffers(*renderPass);
       Vulkan::RegisterContext(this);
+      Renderer::InitRenderPass(surface);
+      swapChain->CreateFrameBuffers(Renderer::GetRenderPass());
     }
   void GraphicsContext::InitSyncStructures()
   {
@@ -39,6 +40,12 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
       frames[i].uniformBuffer = UniformBuffer::Create(Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color))*FRAME_OVERLAP);
+      Vulkan::PushDeleter([=, this](){
+        vkDestroyFence(Vulkan::LogicalDevice(), frames[i].renderFence, nullptr);
+        vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].presentSemaphore, nullptr);
+        vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].renderSemaphore, nullptr);
+        //frames[i].uniformBuffer.reset();
+      });
     }
   }
   
@@ -77,24 +84,16 @@ namespace Candy::Graphics
     
   }
   
-  VkRenderPassBeginInfo GraphicsContext::BeginRenderPass()
+  /*VkRenderPassBeginInfo GraphicsContext::BeginRenderPass()
   {
       return renderPass->BeginPass(swapChain->GetCurrentFrameBuffer(), swapChain->extent);
-  }
-
-  
-  
-  
-  
+  }*/
 
 
-    
-    
-
-  
   
     void GraphicsContext::SwapBuffers()
     {
+      //Present();
       CANDY_PROFILE_FUNCTION();
       CANDY_CORE_ASSERT(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, true, UINT64_MAX) == VK_SUCCESS);
       
@@ -103,7 +102,7 @@ namespace Candy::Graphics
       if (result == VK_ERROR_OUT_OF_DATE_KHR)
       {
         frameBufferResized = false;
-        swapChain->Rebuild(*renderPass);
+        swapChain->Rebuild(Renderer::GetRenderPass());
       }
       else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
       {
@@ -132,9 +131,10 @@ namespace Candy::Graphics
       presentInfo.pImageIndices = &swapChain->imageIndex;
       
       VkResult result = vkQueuePresentKHR(Vulkan::LogicalDevice().graphicsQueue, &presentInfo);
-      if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+      if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || frameBufferResized)
       {
-        swapChain->Rebuild(*renderPass);
+        frameBufferResized = false;
+        swapChain->Rebuild(Renderer::GetRenderPass());
       }
       else
       {
@@ -145,36 +145,41 @@ namespace Candy::Graphics
       UpdateFrameIndex();
     }
     
-    void GraphicsContext::RebuildSwapChain()
+    void GraphicsContext::RebuildSwapChain(VkRenderPass renderPass)
     {
-      swapChain->Rebuild(*renderPass);
+      swapChain->Rebuild(renderPass);
     }
     
     void GraphicsContext::Terminate()
     {
-        vkDeviceWaitIdle(Vulkan::LogicalDevice());
+        //vkDeviceWaitIdle(Vulkan::LogicalDevice());
+        //swapChain->Clean();
+        
        //renderPass.reset();
-      renderPass->Destroy();
-      for (size_t i=0; i<FRAME_OVERLAP; i++)
+      //renderPass->Destroy();
+      /*for (size_t i=0; i<FRAME_OVERLAP; i++)
       {
         
+        frames[i].uniformBuffer->Destroy();
         vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].renderSemaphore, nullptr);
         vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].presentSemaphore, nullptr);
         vkDestroyFence(Vulkan::LogicalDevice(), frames[i].renderFence, nullptr);
-        frames[i].uniformBuffer->Destroy();
         frames[i].commandBuffer.Destroy();
         
-      }
+      }*/
       
-        swapChain->Clean();
-        vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
+      //Renderer::DestroyRenderPass();
+      //vkDestroyDevice(Vulkan::LogicalDevice(), nullptr);
+      //Renderer::DestroyRenderPass();
+        //swapChain->Clean();
+        //vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
       
       //CANDY_CORE_INFO("DESTROYED GRAPHICS CONTEXT");
         
       
     }
   
-  void GraphicsContext::OnFrameBufferResize()
+  void GraphicsContext::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
   {
       frameBufferResized = true;
   }
@@ -204,10 +209,10 @@ namespace Candy::Graphics
   {
       return frames[index];
   }
-  VkRenderPass GraphicsContext::GetRenderPass()
+  /*VkRenderPass GraphicsContext::GetRenderPass()
   {
       return *renderPass;
-  }
+  }*/
   VkSurfaceKHR GraphicsContext::GetSurface()
   {
       return surface;

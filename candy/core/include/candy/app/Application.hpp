@@ -5,6 +5,7 @@
 #include <candy/utils/FrameTime.hpp>
 #include "LayerStack.hpp"
 #include <candy/ui/UILayer.hpp>
+#include <candy/utils/Version.hpp>
 int main(int argc, char **argv);
 
 namespace Candy
@@ -20,7 +21,7 @@ namespace Candy
   struct ApplicationData
   {
     std::string name = "Candy Application";
-    double version = 1.0;
+    Version version = Version(1, 0, 0);
     std::string workingDirectory;
     ApplicationCommandLineArgs commandLineArgs;
   };
@@ -33,12 +34,13 @@ namespace Candy
     bool isRunning;
     bool minimized;
     FrameTime frameTime;
-    UILayer* uiLayer;
+    //UILayer* uiLayer;
     LayerStack layerStack;
   
   private:
     bool OnWindowClose(Events::WindowCloseEvent &event);
     bool OnWindowResize(Events::WindowResizeEvent &event);
+    bool OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
     
     void Run();
     void Close();
@@ -46,7 +48,7 @@ namespace Candy
   
   public:
     explicit Application(ApplicationData applicationData);
-    ~Application();
+    ~Application()=default;
   
   public:
     void OnEvent(Events::Event &event);

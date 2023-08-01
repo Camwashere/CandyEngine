@@ -2,6 +2,7 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/app/Application.hpp>
+#include <candy/graphics/RenderCommand.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -12,21 +13,35 @@ namespace Candy::Graphics
   }
 
   
-  Renderer Renderer::instance;
+  Renderer* Renderer::instance = nullptr;
   
   void Renderer::Submit(Material* material)
   {
-    instance.pipeline.Bake(material, *instance.target->renderPass);
+    instance->pipeline.Bake(material, *instance->renderPass);
+  }
+  void Renderer::Init()
+  {
+    Renderer::instance = new Renderer();
   }
   void Renderer::Start()
   {
-    instance.target->SwapBuffers();
+    instance->target->SwapBuffers();
     Renderer::BeginPass();
   }
  
   void Renderer::SetTarget(GraphicsContext* target)
   {
-    instance.target = target;
+    instance->target = target;
+    /*SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(target->surface);
+    VkSurfaceFormatKHR surfaceFormat = Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
+    instance->renderPass = CreateUniquePtr<RenderPass>(surfaceFormat.format);*/
+  }
+  
+  void Renderer::InitRenderPass(VkSurfaceKHR surface)
+  {
+    SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
+    VkSurfaceFormatKHR surfaceFormat = Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
+    instance->renderPass = CreateUniquePtr<RenderPass>(surfaceFormat.format);
   }
   void Renderer::BeginPass()
   {
@@ -40,15 +55,18 @@ namespace Candy::Graphics
     clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
     clearValues[1].depthStencil = {1.0f, 0};
     
-    VkRenderPassBeginInfo rpInfo = instance.target->BeginRenderPass();
+    VkRenderPassBeginInfo rpInfo = BeginRenderPass();
     rpInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
     rpInfo.pClearValues = clearValues.data();
     
     GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
-    GetCurrentFrame().commandBuffer.BindPipeline(instance.pipeline);
-    GetCurrentFrame().commandBuffer.SetViewport(instance.target->swapChain->extent);
+    GetCurrentFrame().commandBuffer.BindPipeline(instance->pipeline);
+    GetCurrentFrame().commandBuffer.SetViewport(instance->target->swapChain->extent);
   }
-  
+  VkRenderPassBeginInfo Renderer::BeginRenderPass()
+  {
+      return instance->renderPass->BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), instance->target->swapChain->extent);
+  }
   void Renderer::EndPass()
   {
     GetCurrentFrame().commandBuffer.EndRenderPass();
@@ -72,11 +90,16 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, GetCurrentFrame().renderFence)==VK_SUCCESS);
   }
   
+  VkRenderPass Renderer::GetRenderPass()
+  {
+    return *instance->renderPass;
+  }
+  
 
   void Renderer::BindDescriptorSets(uint32_t uniformOffset)
   {
-    //uint32_t uniformOffset = paddedOffset * instance.target->currentFrameIndex;
-    GetCurrentFrame().commandBuffer.BindDescriptorSets(instance.pipeline.GetLayout(), GetCurrentFrame().globalDescriptor, &uniformOffset);
+    //uint32_t uniformOffset = paddedOffset * instance->target->currentFrameIndex;
+    GetCurrentFrame().commandBuffer.BindDescriptorSets(instance->pipeline.GetLayout(), GetCurrentFrame().globalDescriptor, &uniformOffset);
   }
   
   void Renderer::SetUniform(uint32_t offset, uint32_t size, const void* data)
@@ -90,22 +113,22 @@ namespace Candy::Graphics
   {
     GetCurrentFrame().commandBuffer.DrawIndexed(vertexArray);
   }
-  FrameData& Renderer::GetCurrentFrame(){return instance.target->GetCurrentFrame();}
+  FrameData& Renderer::GetCurrentFrame(){return instance->target->GetCurrentFrame();}
   
   void Renderer::PushConstants(ShaderData::Stage stage, uint32_t dataSize, const void* data)
   {
-    GetCurrentFrame().commandBuffer.PushConstants(instance.pipeline.GetLayout(), stage, dataSize, data);
+    GetCurrentFrame().commandBuffer.PushConstants(instance->pipeline.GetLayout(), stage, dataSize, data);
   }
   void Renderer::PushConstants(ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data)
   {
-    GetCurrentFrame().commandBuffer.PushConstants(instance.pipeline.GetLayout(), stage, offset, dataSize, data);
+    GetCurrentFrame().commandBuffer.PushConstants(instance->pipeline.GetLayout(), stage, offset, dataSize, data);
   }
   void Renderer::Shutdown()
   {
     //vkDeviceWaitIdle(Vulkan::LogicalDevice());
     
     
-   //instance.target->swapChain->Clean();
+   //instance->target->swapChain->Clean();
    /*textureImageView.Destroy();
    texture.Destroy();
    uniformBuffer->Destroy();
@@ -120,9 +143,27 @@ namespace Candy::Graphics
     
     vertexArray->Clear();*/
     
-    instance.pipeline.Destroy();
+    //instance->pipeline.Destroy();
     
-    CANDY_CORE_INFO("SHUTDOWN RENDERER");
+    //CANDY_CORE_INFO("SHUTDOWN RENDERER");
     
   }
+  
+  /*void Renderer::DestroyPipeline()
+  {
+    instance->pipeline.Destroy();
+  }
+  void Renderer::DestroyRenderPass()
+  {
+    if (instance->renderPass->IsValid())
+    {
+      instance->renderPass->Destroy();
+      instance->renderPass = VK_NULL_HANDLE;
+    }
+    else
+    {
+      CANDY_CORE_WARN("Attempted to destroy invalid render pass");
+    }
+    
+  }*/
 }
