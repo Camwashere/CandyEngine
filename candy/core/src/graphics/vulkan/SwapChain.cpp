@@ -14,7 +14,7 @@ namespace Candy::Graphics
         Build();
         CreateImageViews();
         //Vulkan::GetDeletionQueue().PushSwapChain(swapChain);
-        Vulkan::DeletionQueue().Push(swapChain);
+        //Vulkan::DeletionQueue().Push(swapChain);
         //Vulkan::PushDeleter([=, this](){vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);});
     }
     
@@ -37,22 +37,27 @@ namespace Candy::Graphics
     {
       //depthImageView.Destroy();
       //depthImage.Destroy();
-      vmaDestroyImage(Vulkan::Allocator(), depthImage, depthImage.GetAllocation());
+      /*vmaDestroyImage(Vulkan::Allocator(), depthImage, depthImage.GetAllocation());
       vkDestroyImageView(Vulkan::LogicalDevice(), depthImageView, nullptr);
-      vkDestroySampler(Vulkan::LogicalDevice(), depthImageView.GetSampler(), nullptr);
+      vkDestroySampler(Vulkan::LogicalDevice(), depthImageView.GetSampler(), nullptr);*/
+      Vulkan::DeletionQueue().Delete(&depthImage);
+      Vulkan::DeletionQueue().Delete(&depthImageView);
         for (auto & buffer : frameBuffers) {
-            vkDestroyFramebuffer(Vulkan::LogicalDevice(), buffer, nullptr);
+          Vulkan::DeletionQueue().Delete(buffer);
+            //vkDestroyFramebuffer(Vulkan::LogicalDevice(), buffer, nullptr);
             //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainBuffer.view, nullptr);
         }
         
         for (auto & swapChainImageView : imageViews) {
           
-          vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
-          vkDestroySampler(Vulkan::LogicalDevice(), swapChainImageView.GetSampler(), nullptr);
+          //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
+          //vkDestroySampler(Vulkan::LogicalDevice(), swapChainImageView.GetSampler(), nullptr);
+          Vulkan::DeletionQueue().Delete(&swapChainImageView);
           //swapChainImageView.Destroy();
         }
         
-        vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
+        Vulkan::DeletionQueue().Delete(swapChain);
+        //vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
     }
     
     void SwapChain::Build()
@@ -96,6 +101,7 @@ namespace Candy::Graphics
         createInfo.clipped = VK_TRUE;
         createInfo.oldSwapchain = VK_NULL_HANDLE;
         CANDY_CORE_ASSERT(vkCreateSwapchainKHR(Vulkan::LogicalDevice(), &createInfo, nullptr, &swapChain) == VK_SUCCESS, "Failed to create swap chain!");
+        Vulkan::DeletionQueue().Push(swapChain);
         vkGetSwapchainImagesKHR(Vulkan::LogicalDevice(), swapChain, &imageCount, nullptr);
         
         images.resize(imageCount);
@@ -109,6 +115,7 @@ namespace Candy::Graphics
     VkFormat depthFormat = GraphicsContext::FindDepthFormat();
     depthImage.Create(Math::Vector2u(extent.width, extent.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
     depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    
     context->GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     
   }
@@ -125,6 +132,7 @@ namespace Candy::Graphics
     void SwapChain::CreateFrameBuffers(VkRenderPass renderPass)
     {
         CreateDepthResources();
+        
         frameBuffers.resize(imageViews.size());
         for (size_t i = 0; i < imageViews.size(); i++)
         {
@@ -140,11 +148,12 @@ namespace Candy::Graphics
             framebufferInfo.height = extent.height;
             framebufferInfo.layers = 1;
             
-            
+            //Vulkan::DeletionQueue().RemoveFrameBuffer(frameBuffers[i]);
             CANDY_CORE_ASSERT(vkCreateFramebuffer(Vulkan::LogicalDevice(), &framebufferInfo, nullptr, &frameBuffers[i]) == VK_SUCCESS, "Failed to create framebuffer");
             Vulkan::DeletionQueue().Push(frameBuffers[i]);
             //Vulkan::PushDeleter([=, this](){vkDestroyFramebuffer(Vulkan::LogicalDevice(), frameBuffers[i], nullptr);});
         }
+        //Vulkan::DeletionQueue().CleanFrameBuffers();
     }
   
   VkResult SwapChain::AcquireNextImage(VkSemaphore semaphore, uint64_t timeout, VkFence fence)

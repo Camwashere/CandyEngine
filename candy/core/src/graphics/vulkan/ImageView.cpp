@@ -5,10 +5,12 @@ namespace Candy::Graphics
   ImageView::ImageView() : imageView(VK_NULL_HANDLE)
   {
     //Vulkan::PushDeleter([=, this](){Destroy();});
+    //Vulkan::DeletionQueue().Push(this);
   }
   ImageView::ImageView(Texture& texture, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
     Set(texture, aspectFlags);
+    //Vulkan::DeletionQueue().Push(this);
     //Vulkan::PushDeleter([=, this](){Destroy();});
   }
   ImageView::ImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
@@ -81,6 +83,7 @@ namespace Candy::Graphics
     //Vulkan::Push(imageView);
     CreateSampler();
     Vulkan::DeletionQueue().Push(this);
+    
   }
   bool ImageView::IsValid()const
   {

@@ -6,23 +6,25 @@
 #include <candy/graphics/vulkan/Image.hpp>
 #include <candy/graphics/vulkan/ImageView.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
+#include <list>
+#include <set>
 namespace Candy::Graphics
 {
   class DeletionQueue
   {
   private:
     //std::deque<std::function<void()>> queue;
-    std::vector<VkSwapchainKHR> swapChains;
-    std::vector<VkFramebuffer> frameBuffers;
-    std::vector<Image*> images;
-    std::vector<ImageView*> imageViews;
-    std::vector<VkRenderPass> renderPasses;
-    std::vector<VkPipelineLayout> pipelineLayouts;
-    std::vector<VkPipeline> pipelines;
-    std::vector<VkCommandPool> commandPools;
-    std::vector<VkFence> fences;
-    std::vector<VkSemaphore> semaphores;
-    std::vector<VulkanBuffer*> buffers;
+    std::set<VkSwapchainKHR> swapChains;
+    std::set<VkFramebuffer> frameBuffers;
+    std::set<Image*> images;
+    std::set<ImageView*> imageViews;
+    std::set<VkRenderPass> renderPasses;
+    std::set<VkPipelineLayout> pipelineLayouts;
+    std::set<VkPipeline> pipelines;
+    std::set<VkCommandPool> commandPools;
+    std::set<VkFence> fences;
+    std::set<VkSemaphore> semaphores;
+    std::set<VulkanBuffer*> buffers;
     
     
     
@@ -41,8 +43,17 @@ namespace Candy::Graphics
     template<typename T>
     void Push(T vulkanObject);
     
+    template<typename T>
+    void Delete(T vulkanObject);
+    
+    //void RemoveFrameBuffer(VkFramebuffer frameBuffer);
+    
+    /*void CleanFrameBuffers();
+    void CleanImages();
+    void CleanImageViews();
+    void Clean();*/
   
-  void Flush();
+    void Flush();
     
   };
   template<>
@@ -73,61 +84,16 @@ namespace Candy::Graphics
   void DeletionQueue::Push<VkFence>(VkFence vulkanObject);
   template<>
   void DeletionQueue::Push<VkSemaphore>(VkSemaphore vulkanObject);
-  /*template<>
-  void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject)
-  {
-    swapChains.push_back(vulkanObject);
-  }
+  
+  
   template<>
-  void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject)
-  {
-    frameBuffers.push_back(vulkanObject);
-  }
+  void DeletionQueue::Delete<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
   template<>
-  void DeletionQueue::Push<Image*>(Image* vulkanObject)
-  {
-    images.push_back(vulkanObject);
-  }
+  void DeletionQueue::Delete<VkFramebuffer>(VkFramebuffer vulkanObject);
   template<>
-  void DeletionQueue::Push<ImageView*>(ImageView* vulkanObject)
-  {
-    imageViews.push_back(vulkanObject);
-  }
+  void DeletionQueue::Delete<Image*>(Image* vulkanObject);
   template<>
-  void DeletionQueue::Push<VkRenderPass>(VkRenderPass vulkanObject)
-  {
-    renderPasses.push_back(vulkanObject);
-  }
-  template<>
-  void DeletionQueue::Push<VkPipelineLayout>(VkPipelineLayout vulkanObject)
-  {
-    pipelineLayouts.push_back(vulkanObject);
-  }
-  template<>
-  void DeletionQueue::Push<VkPipeline>(VkPipeline vulkanObject)
-  {
-    pipelines.push_back(vulkanObject);
-  }
-  template<>
-  void DeletionQueue::Push<VkCommandPool>(VkCommandPool vulkanObject)
-  {
-    commandPools.push_back(vulkanObject);
-  }
-  template<>
-  void DeletionQueue::Push<VulkanBuffer*>(VulkanBuffer* vulkanObject)
-  {
-    buffers.push_back(vulkanObject);
-  }
-  template<>
-  void DeletionQueue::Push<VkFence>(VkFence vulkanObject)
-  {
-    fences.push_back(vulkanObject);
-  }
-  template<>
-  void DeletionQueue::Push<VkSemaphore>(VkSemaphore vulkanObject)
-  {
-    semaphores.push_back(vulkanObject);
-  }*/
+  void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject);
   
   
 }

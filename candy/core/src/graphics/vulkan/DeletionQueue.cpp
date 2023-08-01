@@ -39,7 +39,7 @@ namespace Candy::Graphics
   
   void DeletionQueue::Flush()
   {
-   
+    //Clean();
     for (auto fence : fences)
     {
       vkDestroyFence(Vulkan::LogicalDevice(), fence, nullptr);
@@ -116,15 +116,41 @@ namespace Candy::Graphics
     }
     swapChains.clear();
   }
-  /*void DeletionQueue::Flush()
+  /*void DeletionQueue::RemoveFrameBuffer(VkFramebuffer frameBuffer)
   {
-    
-    for (auto & f : std::ranges::reverse_view(queue))
-    {
-      f();
-    }
-    queue.clear();
+    vkDestroyFramebuffer(Vulkan::LogicalDevice(), frameBuffer, nullptr);
+    frameBuffers.erase(frameBuffer);
   }*/
+  template<typename T>
+  void DeletionQueue::Delete(T vulkanObject)
+  {
+    CANDY_CORE_ASSERT(false, "DeletionQueue::Delete<T> is not implemented for this type!");
+  }
+  template<>
+  void DeletionQueue::Delete<VkSwapchainKHR>(VkSwapchainKHR vulkanObject)
+  {
+    vkDestroySwapchainKHR(Vulkan::LogicalDevice(), vulkanObject, nullptr);
+    swapChains.erase(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Delete<VkFramebuffer>(VkFramebuffer vulkanObject)
+  {
+    vkDestroyFramebuffer(Vulkan::LogicalDevice(), vulkanObject, nullptr);
+    frameBuffers.erase(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Delete<Image*>(Image* vulkanObject)
+  {
+    vmaDestroyImage(Vulkan::Allocator(), *vulkanObject, vulkanObject->GetAllocation());
+    images.erase(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject)
+  {
+    vkDestroyImageView(Vulkan::LogicalDevice(), *vulkanObject, nullptr);
+    vkDestroySampler(Vulkan::LogicalDevice(), vulkanObject->GetSampler(), nullptr);
+    imageViews.erase(vulkanObject);
+  }
   
   template<typename T>
   void DeletionQueue::Push(T vulkanObject)
@@ -134,73 +160,74 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject)
   {
-    swapChains.push_back(vulkanObject);
+    swapChains.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject)
   {
-    frameBuffers.push_back(vulkanObject);
+    frameBuffers.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<Image*>(Image* vulkanObject)
   {
-    images.push_back(vulkanObject);
+    images.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<ImageView*>(ImageView* vulkanObject)
   {
-    imageViews.push_back(vulkanObject);
+    imageViews.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkRenderPass>(VkRenderPass vulkanObject)
   {
-    renderPasses.push_back(vulkanObject);
+    renderPasses.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkPipelineLayout>(VkPipelineLayout vulkanObject)
   {
-    pipelineLayouts.push_back(vulkanObject);
+    pipelineLayouts.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkPipeline>(VkPipeline vulkanObject)
   {
-    pipelines.push_back(vulkanObject);
+    pipelines.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkCommandPool>(VkCommandPool vulkanObject)
   {
-    commandPools.push_back(vulkanObject);
+    commandPools.insert(vulkanObject);
+    //commandPools.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VulkanBuffer*>(VulkanBuffer* vulkanObject)
   {
-    buffers.push_back(vulkanObject);
+    buffers.insert(vulkanObject);
   }
   
   template<>
   void DeletionQueue::Push<UniformBuffer*>(UniformBuffer* vulkanObject)
   {
-    buffers.push_back(vulkanObject);
+    buffers.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VertexBuffer*>(VertexBuffer* vulkanObject)
   {
-    buffers.push_back(vulkanObject);
+    buffers.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<IndexBuffer*>(IndexBuffer* vulkanObject)
   {
-    buffers.push_back(vulkanObject);
+    buffers.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkFence>(VkFence vulkanObject)
   {
-    fences.push_back(vulkanObject);
+    fences.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkSemaphore>(VkSemaphore vulkanObject)
   {
-    semaphores.push_back(vulkanObject);
+    semaphores.insert(vulkanObject);
   }
 
 }

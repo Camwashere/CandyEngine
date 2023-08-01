@@ -4,10 +4,12 @@ namespace Candy::Graphics
 {
   Image::Image() : image(VK_NULL_HANDLE), format(VK_FORMAT_UNDEFINED), allocation(VK_NULL_HANDLE)
   {
+    //Vulkan::DeletionQueue().Push(this);
     //Vulkan::PushDeleter([=, this](){Destroy();});
   }
   Image::Image(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags) : image(VK_NULL_HANDLE), format(imgFormat), allocation(VK_NULL_HANDLE)
   {
+    //Vulkan::DeletionQueue().Push(this);
     Create(size, imgFormat, tiling, usageFlags, requiredFlags, allocationCreateFlags);
     //Vulkan::PushDeleter([=, this](){Destroy();});
   }
