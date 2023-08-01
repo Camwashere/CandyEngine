@@ -30,7 +30,8 @@ namespace Candy::Graphics
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
         
         CANDY_CORE_ASSERT(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &commandPool) == VK_SUCCESS, "Failed to create command pool!");
-        Vulkan::PushDeleter([=, this](){vkDestroyCommandPool(Vulkan::LogicalDevice(), this->commandPool, nullptr);});
+        Vulkan::DeletionQueue().Push(commandPool);
+        //Vulkan::PushDeleter([=, this](){vkDestroyCommandPool(Vulkan::LogicalDevice(), this->commandPool, nullptr);});
     }
     
     void CommandBuffer::CreateCommandBuffers()

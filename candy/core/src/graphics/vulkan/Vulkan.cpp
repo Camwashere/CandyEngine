@@ -38,7 +38,19 @@ namespace Candy::Graphics
     Renderer::Init();
     
   }
-  
+ /* DeletionQueue& Vulkan::GetDeletionQueue()
+  {
+    return vulkan->deletionQueue;
+  }*/
+ /*template<typename T>
+ void Vulkan::Push(T object)
+ {
+   vulkan->deletionQueue.Push<T>(object);
+ }*/
+ DeletionQueue& Vulkan::DeletionQueue()
+ {
+   return vulkan->deletionQueue;
+ }
   VkInstance Vulkan::Instance()
   {
     
@@ -130,16 +142,17 @@ namespace Candy::Graphics
     GetCurrentCommandBuffer().CopyBufferToImage(buffer, image, width, height);
   
   }
-  void Vulkan::PushDeleter(std::function<void()>&& function)
+  /*void Vulkan::PushDeleter(std::function<void()>&& function)
   {
     vulkan->deletionQueue.PushFunction(std::move(function));
-  }
+  }*/
   void Vulkan::Shutdown()
   {
     vkDeviceWaitIdle(LogicalDevice());
     //vulkan->contexts[0]->Terminate();
     vulkan->deletionQueue.Flush();
-    //vulkan->descriptorAllocator->Destroy();
+    vulkan->descriptorAllocator->Flip();
+    vulkan->descriptorAllocator.reset();
     vulkan->descriptorLayoutCache.Destroy();
     vmaDestroyAllocator(vulkan->allocator);
     vulkan->deviceManager->Destroy();

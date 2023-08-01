@@ -40,12 +40,16 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
       frames[i].uniformBuffer = UniformBuffer::Create(Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color))*FRAME_OVERLAP);
-      Vulkan::PushDeleter([=, this](){
+      Vulkan::DeletionQueue().Push(frames[i].renderFence);
+      Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
+      Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
+      //Vulkan::Push(&frames[i]);
+      /*Vulkan::PushDeleter([=, this](){
         vkDestroyFence(Vulkan::LogicalDevice(), frames[i].renderFence, nullptr);
         vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].presentSemaphore, nullptr);
         vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].renderSemaphore, nullptr);
         //frames[i].uniformBuffer.reset();
-      });
+      });*/
     }
   }
   

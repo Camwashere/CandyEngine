@@ -3,7 +3,7 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-    IndexBuffer::IndexBuffer(uint32_t* indices, uint64_t indexCount) : count(indexCount), size(sizeof(uint32_t)*count)
+    IndexBuffer::IndexBuffer(uint32_t* indices, uint64_t indexCount) : VulkanBuffer(sizeof(uint32_t)*indexCount), count(indexCount)
     {
         
         VkBuffer stagingBuffer;
@@ -34,7 +34,8 @@ namespace Candy::Graphics
         //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
-        Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
+        Vulkan::DeletionQueue().Push(this);
+        //Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
       
     }
     
@@ -47,7 +48,7 @@ namespace Candy::Graphics
       vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }*/
     
-    void IndexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
+    /*void IndexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
     {
         VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         VkBufferCreateInfo bufferInfo{};
@@ -63,7 +64,7 @@ namespace Candy::Graphics
         
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create index staging buffer!");
-    }
+    }*/
     
     SharedPtr<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint64_t count)
     {

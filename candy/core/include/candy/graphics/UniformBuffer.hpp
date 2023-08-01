@@ -1,22 +1,24 @@
 #pragma once
 #include "candy/graphics/shader/ShaderData.hpp"
 #include <CandyPch.hpp>
+#include "vulkan/VulkanBuffer.hpp"
 #include "vma/vk_mem_alloc.h"
 namespace Candy::Graphics
 {
-  class UniformBuffer
+  class UniformBuffer : public VulkanBuffer
   {
   private:
-    VkBuffer buffer;
-    VmaAllocation allocation;
-    uint64_t size;
+    //VkBuffer buffer;
+    //VmaAllocation allocation;
+    //uint64_t size;
     
   public:
     explicit UniformBuffer(uint64_t originalObjectSize);
     
   public:
-    operator VkBuffer()const;
-    operator VkBuffer();
+    using VulkanBuffer::operator VkBuffer;
+    //operator VkBuffer()const;
+    //operator VkBuffer();
     
   public:
     void SetData(uint64_t dataSize, const void* data);

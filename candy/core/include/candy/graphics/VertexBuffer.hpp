@@ -1,24 +1,24 @@
 #pragma once
 #include "CandyPch.hpp"
 #include "BufferLayout.hpp"
-
+#include "vulkan/VulkanBuffer.hpp"
 #include "vma/vk_mem_alloc.h"
 namespace Candy::Graphics
 {
     class GraphicsContext;
     class CommandBuffer;
     
-    class VertexBuffer
+    class VertexBuffer : public VulkanBuffer
     {
     private:
-        VkBuffer buffer=VK_NULL_HANDLE;
-        VmaAllocation allocation=VK_NULL_HANDLE;
+        //VkBuffer buffer=VK_NULL_HANDLE;
+        //VmaAllocation allocation=VK_NULL_HANDLE;
         //CommandBuffer* commandBuffer;
         BufferLayout layout;
-        uint64_t size=0;
+        //uint64_t size=0;
         
     private:
-        void CreateStagingBuffer(VkBuffer& buffer, VmaAllocation* allocation);
+        //void CreateStagingBuffer(VkBuffer& buffer, VmaAllocation* allocation);
         //void Destroy();
         
         
@@ -28,15 +28,16 @@ namespace Candy::Graphics
         ~VertexBuffer();
         
     public:
-        operator VkBuffer()const{return buffer;}
-        operator VkBuffer(){return buffer;}
+      using VulkanBuffer::operator VkBuffer;
+        //operator VkBuffer()const{return buffer;}
+        //operator VkBuffer(){return buffer;}
         
     public:
       
       void SetData(float* data);
       void SetLayout(const BufferLayout& bufferLayout);
       [[nodiscard]] const BufferLayout& GetLayout()const;
-      [[nodiscard]] uint64_t Size()const;
+      //[[nodiscard]] uint64_t Size()const;
       [[nodiscard]] VkVertexInputBindingDescription GetVertexBindingDescription()const;
       
         

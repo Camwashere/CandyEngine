@@ -8,7 +8,7 @@
 namespace Candy::Graphics
 {
     
-    VertexBuffer::VertexBuffer(BufferLayout  bufferLayout, uint64_t countPerElement) : layout(std::move(bufferLayout)), size(layout.CalculateSize(countPerElement))
+    VertexBuffer::VertexBuffer(BufferLayout  bufferLayout, uint64_t countPerElement) : VulkanBuffer(bufferLayout.CalculateSize(countPerElement)), layout(std::move(bufferLayout))
     {
       
         VkBufferCreateInfo bufferInfo{};
@@ -26,12 +26,13 @@ namespace Candy::Graphics
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create allocated buffer!");
       //Vulkan::PushDeleter([=, this](){Destroy();});
-      Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
+      Vulkan::DeletionQueue().Push(this);
+      //Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
         
     
     }
     
-    VertexBuffer::VertexBuffer(float* vertices, uint64_t bufferSize) : size(bufferSize)
+    VertexBuffer::VertexBuffer(float* vertices, uint64_t bufferSize) : VulkanBuffer(bufferSize)
     {
        
         
@@ -67,7 +68,8 @@ namespace Candy::Graphics
         
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
-        Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
+        Vulkan::DeletionQueue().Push(this);
+        //Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
         
     }
     VertexBuffer::~VertexBuffer()
@@ -79,7 +81,7 @@ namespace Candy::Graphics
       vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }*/
     
-    void VertexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
+    /*void VertexBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)
     {
         VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         VkBufferCreateInfo bufferInfo{};
@@ -95,7 +97,7 @@ namespace Candy::Graphics
         
         
         CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create vertex staging buffer!");
-    }
+    }*/
   
   
   
@@ -124,10 +126,10 @@ namespace Candy::Graphics
         return layout;
     }
     
-    uint64_t VertexBuffer::Size()const
+    /*uint64_t VertexBuffer::Size()const
     {
         return size;
-    }
+    }*/
     
     VkVertexInputBindingDescription VertexBuffer::GetVertexBindingDescription()const
     {

@@ -47,7 +47,8 @@ namespace Candy::Graphics
     allocCreateInfo.priority = 1.0f;
     
     CANDY_CORE_ASSERT(vmaCreateImage(Vulkan::Allocator(), &imageInfo, &allocCreateInfo, &image, &allocation, &allocInfo) == VK_SUCCESS, "Failed to create image!");
-    Vulkan::PushDeleter([=, this](){vmaDestroyImage(Vulkan::Allocator(), image, allocation);});
+    Vulkan::DeletionQueue().Push(this);
+    //Vulkan::PushDeleter([=, this](){vmaDestroyImage(Vulkan::Allocator(), image, allocation);});
   }
   
   /*void Image::Destroy()

@@ -40,7 +40,14 @@ namespace Candy::Graphics
   public:
     static void Init();
     static void Shutdown();
-    static void PushDeleter(std::function<void()>&& function);
+    //static void PushDeleter(std::function<void()>&& function);
+    /*template<typename T>
+    static void Push(T object)
+    {
+      CANDY_CORE_ASSERT(false, "Unknown vulkan object type");
+      vulkan->deletionQueue.Push<T>(object);
+    }*/
+    static DeletionQueue& DeletionQueue();
     static VkInstance Instance();
     static VmaAllocator Allocator();
     static PhysicalDevice& PhysicalDevice();

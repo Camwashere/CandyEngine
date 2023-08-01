@@ -103,22 +103,16 @@ namespace Candy
     void Application::CleanUp()
     {
       CANDY_CORE_INFO("STARTED APPLICATION CLEANUP");
-      //renderer->Shutdown();
-      //graphicsContext->Terminate();
       
       for (Layer *layer: layerStack)
       {
         layer->OnDetach();
       }
-      CANDY_CORE_INFO("DETACHED LAYERS");
-      //Renderer::DestroyPipeline();
-      CANDY_CORE_INFO("DESTROYED PIPELINE");
-      //RenderCommand::Shutdown();
-      CANDY_CORE_INFO("SHUTDOWN RENDER COMMAND");
       Vulkan::Shutdown();
-      CANDY_CORE_INFO("SHUTDOWN VULKAN");
+      
       glfwTerminate();
       CANDY_CORE_INFO("TERMINATED GLFW");
+      
       
     }
     
@@ -144,7 +138,7 @@ namespace Candy
         }
         minimized = false;
         mainWindow->OnWindowResize(event);
-        //Renderer::OnWindowResize((int)event.GetWidth(), (int)event.GetHeight());
+        
         return false;
     }
   

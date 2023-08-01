@@ -5,6 +5,7 @@
 
 namespace Candy::Graphics
 {
+  //TODO: THE DELETION QUEUE FUCKS UP WHEN OBJECTS ARE DELETED MANUALLY (SUCH AS IN SWAPCHAIN RECREATION) PRIOR TO DELETING EVERYTHING
     SwapChain::SwapChain(GraphicsContext* gc) : context(gc)
     {
         CANDY_CORE_ASSERT(Vulkan::HasDeviceManager(), "SwapChain's device manager is null!");
@@ -12,7 +13,9 @@ namespace Candy::Graphics
         CANDY_CORE_ASSERT(context->surface != VK_NULL_HANDLE, "SwapChain's surface is null!");
         Build();
         CreateImageViews();
-        Vulkan::PushDeleter([=, this](){vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);});
+        //Vulkan::GetDeletionQueue().PushSwapChain(swapChain);
+        Vulkan::DeletionQueue().Push(swapChain);
+        //Vulkan::PushDeleter([=, this](){vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);});
     }
     
     void SwapChain::Rebuild(VkRenderPass renderPass)
@@ -139,7 +142,8 @@ namespace Candy::Graphics
             
             
             CANDY_CORE_ASSERT(vkCreateFramebuffer(Vulkan::LogicalDevice(), &framebufferInfo, nullptr, &frameBuffers[i]) == VK_SUCCESS, "Failed to create framebuffer");
-            Vulkan::PushDeleter([=, this](){vkDestroyFramebuffer(Vulkan::LogicalDevice(), frameBuffers[i], nullptr);});
+            Vulkan::DeletionQueue().Push(frameBuffers[i]);
+            //Vulkan::PushDeleter([=, this](){vkDestroyFramebuffer(Vulkan::LogicalDevice(), frameBuffers[i], nullptr);});
         }
     }
   

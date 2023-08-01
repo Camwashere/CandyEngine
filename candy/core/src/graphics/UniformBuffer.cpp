@@ -3,20 +3,21 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  UniformBuffer::UniformBuffer(uint64_t origSize) : size(origSize)
+  UniformBuffer::UniformBuffer(uint64_t origSize) : VulkanBuffer(origSize)
   {
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
-    Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
+    Vulkan::DeletionQueue().Push(this);
+    //Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
   }
   
-  UniformBuffer::operator VkBuffer()const
+  /*UniformBuffer::operator VkBuffer()const
   {
     return buffer;
   }
   UniformBuffer::operator VkBuffer()
   {
     return buffer;
-  }
+  }*/
   
   void UniformBuffer::SetData(uint64_t dataSize, const void* newData)
   {

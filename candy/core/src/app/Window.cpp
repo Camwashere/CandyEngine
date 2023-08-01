@@ -31,7 +31,7 @@ namespace Candy
         //VulkanInstance::Init(handle);
         
         ++GLFW_WINDOW_COUNT;
-        graphicsContext = new GraphicsContext(handle);
+        graphicsContext = CreateUniquePtr<GraphicsContext>(handle);
        
         //renderer = new Renderer(graphicsContext);
         
@@ -151,7 +151,7 @@ namespace Candy
     
     Window::~Window()
     {
-        Close();
+    
         
     }
     

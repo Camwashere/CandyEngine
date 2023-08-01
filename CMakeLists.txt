@@ -34,7 +34,9 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/include/candy/utils/Version.hpp
         candy/core/src/utils/Version.cpp
         candy/core/src/app/Project.cpp
-        candy/editor/src/panels/ContentBrowserPanel.cpp)
+        candy/editor/src/panels/ContentBrowserPanel.cpp
+        candy/core/include/candy/graphics/FrameBuffer.hpp
+        candy/core/src/graphics/FrameBuffer.cpp)
 
 
 

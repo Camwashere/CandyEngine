@@ -39,7 +39,7 @@ namespace Candy
         WindowData windowData;
         bool fullscreen;
         //Graphics::Renderer* renderer;
-        Graphics::GraphicsContext* graphicsContext;
+        UniquePtr<Graphics::GraphicsContext> graphicsContext;
         
     public:
         GLFWwindow* handle;

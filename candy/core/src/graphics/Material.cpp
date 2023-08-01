@@ -30,7 +30,8 @@ namespace Candy::Graphics
     pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data(); // Optional
     
     CANDY_CORE_ASSERT(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) == VK_SUCCESS, "Failed to create pipeline layout!");
-    Vulkan::PushDeleter([=, this](){vkDestroyPipelineLayout(Vulkan::LogicalDevice(), pipelineLayout, nullptr);});
+    Vulkan::DeletionQueue().Push(pipelineLayout);
+    //Vulkan::PushDeleter([=, this](){vkDestroyPipelineLayout(Vulkan::LogicalDevice(), pipelineLayout, nullptr);});
   }
   std::vector<VkDescriptorSetLayout> Material::BakeDescriptorSetLayouts()
   {

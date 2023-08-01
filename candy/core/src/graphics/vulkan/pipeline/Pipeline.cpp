@@ -176,7 +176,8 @@ namespace Candy::Graphics
     pipelineInfo.basePipelineIndex = -1; // Optional
     
     CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
-    Vulkan::PushDeleter([=, this](){ vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr); });
+    //Vulkan::PushDeleter([=, this](){ vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr); });
+    Vulkan::DeletionQueue().Push(pipeline);
     material->GetShader()->DestroyShaderModules();
   }
   /*void Pipeline::Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass)

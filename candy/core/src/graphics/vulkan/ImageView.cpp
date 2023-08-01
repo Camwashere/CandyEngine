@@ -26,6 +26,8 @@ namespace Candy::Graphics
     
     
     CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    Vulkan::DeletionQueue().Push(this);
+    //Vulkan::Push(imageView);
     //Vulkan::PushDeleter([=, this](){Destroy();});
   }
   
@@ -54,7 +56,8 @@ namespace Candy::Graphics
     samplerInfo.maxLod = 0.0f;
     
     CANDY_CORE_ASSERT(vkCreateSampler(Vulkan::LogicalDevice(), &samplerInfo, nullptr, &sampler) == VK_SUCCESS, "Failed to create texture sampler!");
-    Vulkan::PushDeleter([=, this](){vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);});
+    //Vulkan::Push(sampler);
+    //Vulkan::PushDeleter([=, this](){vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);});
   }
   void ImageView::Set(Texture& texture, VkImageAspectFlags aspectFlags)
   {
@@ -74,8 +77,10 @@ namespace Candy::Graphics
     viewInfo.subresourceRange.layerCount = 1;
     
     CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
-    Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
+    //Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
+    //Vulkan::Push(imageView);
     CreateSampler();
+    Vulkan::DeletionQueue().Push(this);
   }
   bool ImageView::IsValid()const
   {
