@@ -3,22 +3,24 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_vulkan.h"
+#include <candy/graphics/Vulkan.hpp>
 namespace Candy
 {
   using namespace Graphics;
   ContentBrowserPanel::ContentBrowserPanel(std::filesystem::path  contentRoot) : rootDirectory(std::move(contentRoot)), currentDirectory(rootDirectory)
   {
-    /*Texture directoryIconTex;
-    Texture fileIconTex;
+    
+    directoryImage = new Texture("assets/icons/DirectoryIcon.png");
+    fileImage = new Texture("assets/icons/FileIcon.png");
     descriptorSets.resize(2);
-    directoryIconTex.Load("assets/icons/DirectoryIcon.png");
-    fileIconTex.Load("assets/icons/FileIcon.png");
+    
     directoryIcon = CreateSharedPtr<ImageView>();
     fileIcon = CreateSharedPtr<ImageView>();
-    directoryIcon->Set(directoryIconTex);
-    fileIcon->Set(fileIconTex);
+    
+    directoryIcon->Set(*directoryImage);
+    fileIcon->Set(*fileImage);
     descriptorSets[0] = ImGui_ImplVulkan_AddTexture(directoryIcon->GetSampler(), *directoryIcon, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    descriptorSets[1] = ImGui_ImplVulkan_AddTexture(fileIcon->GetSampler(), *fileIcon, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
+    descriptorSets[1] = ImGui_ImplVulkan_AddTexture(fileIcon->GetSampler(), *fileIcon, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     
     
     
@@ -27,7 +29,7 @@ namespace Candy
   
   void ContentBrowserPanel::OnRenderUI()
   {
-    /*ImGui::Begin("Content Browser");
+    ImGui::Begin("Content Browser");
     
     if (currentDirectory != rootDirectory)
     {
@@ -71,12 +73,18 @@ namespace Candy
       ImGui::PopID();
     }
     ImGui::Columns(1);
-    ImGui::End();*/
+    ImGui::End();
     
     /*ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     ImGui::ImageButton(descriptorSets[0], ImVec2{viewportPanelSize.x, viewportPanelSize.y});
     ImGui::End();*/
     //ImGui::Image(descriptorSets[1], ImVec2{viewportPanelSize.x, viewportPanelSize.y});
   
+  }
+  
+  void ContentBrowserPanel::OnDetach()
+  {
+    //Vulkan::DeletionQueue().Delete(directoryIcon.get());
+    //Vulkan::DeletionQueue().Delete(fileIcon.get());
   }
 }

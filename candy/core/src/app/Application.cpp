@@ -28,9 +28,8 @@ namespace Candy
         
         RenderCommand::Init();
         //Renderer::Start();
-        //uiLayer = new UILayer();
-        //PushOverlay(uiLayer);
-        
+        uiLayer = new UILayer();
+        PushOverlay(uiLayer);
     }
     
     
@@ -88,12 +87,12 @@ namespace Candy
         {
           frameTime.Update();
           UpdateLayers();
-          /*uiLayer->Begin();
+          uiLayer->Begin();
           for (Layer* layer : layerStack)
           {
             layer->OnRenderUI();
           }
-          uiLayer->End();*/
+          uiLayer->End();
           mainWindow->OnUpdate();
         }
         CleanUp();
@@ -104,7 +103,7 @@ namespace Candy
     {
       CANDY_CORE_INFO("STARTED APPLICATION CLEANUP");
       
-      for (Layer *layer: layerStack)
+      for (Layer *layer: std::ranges::reverse_view(layerStack))
       {
         layer->OnDetach();
       }

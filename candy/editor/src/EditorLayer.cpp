@@ -102,7 +102,7 @@ namespace Candy
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
     Renderer::Submit(&material);
-    //contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(project->GetRootWorkingDirectory());
+    contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(project->GetRootWorkingDirectory());
     color = Color::blue;
   
   }
@@ -116,10 +116,8 @@ namespace Candy
   
   void EditorLayer::OnDetach()
   {
-    //vkDeviceWaitIdle(Vulkan::LogicalDevice());
-    //material.Destroy();
-    //vertexArray->Clear();
-    //shader->Destroy();
+    contentBrowserPanel->OnDetach();
+  
   }
   
   void EditorLayer::OnUpdate()
@@ -151,7 +149,7 @@ namespace Candy
   void EditorLayer::OnRenderUI()
   {
     // Note: Switch this to true to enable dockspace
-    /*static bool dockspaceOpen = true;
+    static bool dockspaceOpen = true;
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -203,7 +201,7 @@ namespace Candy
     
     contentBrowserPanel->OnRenderUI();
     
-    ImGui::End();*/
+    ImGui::End();
   }
   
   void EditorLayer::OnEvent(Events::Event &event)

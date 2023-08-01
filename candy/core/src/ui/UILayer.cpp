@@ -64,6 +64,7 @@ namespace Candy
     
     GLFWwindow* window = Application::GetMainWindowReference().handle;
     ImGui_ImplGlfw_InitForVulkan(window, true);
+    
     //ImGui_ImplSDL2_InitForVulkan(_window);
     
     //this initializes imgui for Vulkan
@@ -75,6 +76,7 @@ namespace Candy
     init_info.DescriptorPool = uiPool;
     init_info.MinImageCount = 3;
     init_info.ImageCount = 3;
+    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
     
     
     
@@ -86,15 +88,20 @@ namespace Candy
     ImGui_ImplVulkan_CreateFontsTexture(cmd);
     });
     
+    // Clear font texture from cpu memory
+    ImGui_ImplVulkan_DestroyFontUploadObjects();
+    
   }
   
   void UILayer::OnDetach()
   {
-    //clear font textures from cpu data
-    ImGui_ImplVulkan_DestroyFontUploadObjects();
-    ImGui_ImplVulkan_Shutdown();
-    ImGui::DestroyContext();
+   
+    vkDeviceWaitIdle(Vulkan::LogicalDevice());
+    
     vkDestroyDescriptorPool(Vulkan::LogicalDevice(), uiPool, nullptr);
+    ImGui_ImplVulkan_Shutdown();
+    //ImGui::DestroyContext();
+    
   }
   
   void UILayer::OnEvent(Events::Event &e)

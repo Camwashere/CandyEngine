@@ -34,7 +34,7 @@ namespace Candy
     bool isRunning;
     bool minimized;
     FrameTime frameTime;
-    //UILayer* uiLayer;
+    UILayer* uiLayer;
     LayerStack layerStack;
   
   private:

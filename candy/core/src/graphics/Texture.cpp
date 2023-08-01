@@ -17,6 +17,7 @@ namespace Candy::Graphics
   }
   Texture::Texture(std::filesystem::path  filePath) : path(std::move(filePath))
   {
+    Load(path);
     //Vulkan::PushDeleter([=, this](){Destroy();});
   
   }
