@@ -61,8 +61,50 @@ namespace Candy::Graphics
     writes.push_back(newWrite);
     return *this;
   }
-  bool DescriptorBuilder::Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout){
-    //build layout first
+  
+  DescriptorBuilder& DescriptorBuilder::AddBinding(uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlags)
+  {
+    VkDescriptorSetLayoutBinding newBinding{};
+    
+    newBinding.descriptorCount = 1;
+    newBinding.descriptorType = type;
+    newBinding.pImmutableSamplers = nullptr;
+    newBinding.stageFlags = stageFlags;
+    newBinding.binding = binding;
+    bindings.push_back(newBinding);
+    return *this;
+  }
+  
+  DescriptorBuilder& DescriptorBuilder::AddImageWrite(uint32_t binding,  VkDescriptorImageInfo* imageInfo, VkDescriptorType type)
+  {
+    VkWriteDescriptorSet newWrite{};
+    newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    newWrite.pNext = nullptr;
+    
+    newWrite.descriptorCount = 1;
+    newWrite.descriptorType = type;
+    newWrite.pImageInfo = imageInfo;
+    newWrite.dstBinding = binding;
+    
+    writes.push_back(newWrite);
+    return *this;
+  }
+  DescriptorBuilder& DescriptorBuilder::AddBufferWrite(uint32_t binding,  VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type)
+  {
+    VkWriteDescriptorSet newWrite{};
+    newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    newWrite.pNext = nullptr;
+    
+    newWrite.descriptorCount = 1;
+    newWrite.descriptorType = type;
+    newWrite.pBufferInfo = bufferInfo;
+    newWrite.dstBinding = binding;
+    
+    writes.push_back(newWrite);
+    return *this;
+  }
+  bool DescriptorBuilder::BuildLayout(VkDescriptorSet* set, VkDescriptorSetLayout& layout)
+  {
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.pNext = nullptr;
@@ -81,6 +123,14 @@ namespace Candy::Graphics
       CANDY_CORE_ERROR("Failed to allocate descriptor set!");
       return false;
     };
+    return true;
+  }
+  bool DescriptorBuilder::Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout){
+    //build layout first
+    if (! BuildLayout(set, layout))
+    {
+      return false;
+    }
     
     //write descriptor
     for (VkWriteDescriptorSet& w : writes) {
@@ -98,5 +148,13 @@ namespace Candy::Graphics
   {
     VkDescriptorSetLayout layout;
     return Build(set, layout);
+  }
+  void DescriptorBuilder::Write(VkDescriptorSet* set)
+  {
+    for (VkWriteDescriptorSet& w : writes) {
+      w.dstSet = *set;
+    }
+    
+    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
   }
 }

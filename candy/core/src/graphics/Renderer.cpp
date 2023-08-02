@@ -9,15 +9,23 @@ namespace Candy::Graphics
   
   Renderer::Renderer() : target(nullptr)
   {
-    pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
-  }
-
   
+  }
+  
+  VkPipelineLayout Renderer::GetPipelineLayout()
+  {
+    if (!instance->materials.empty())
+    {
+      return instance->materials[0]->GetShader()->GetPipelineLayout();
+    }
+    return VK_NULL_HANDLE;
+  }
   Renderer* Renderer::instance = nullptr;
   
   void Renderer::Submit(Material* material)
   {
-    instance->pipeline.Bake(material, *instance->renderPass);
+    instance->materials.push_back(material);
+    //instance->pipeline.Bake(material, *instance->renderPass);
   }
   void Renderer::Init()
   {
@@ -46,9 +54,10 @@ namespace Candy::Graphics
   void Renderer::BeginPass()
   {
     CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
+    RenderCommand::Reset();
+    //GetCurrentFrame().commandBuffer.Reset();
     
-    GetCurrentFrame().commandBuffer.Reset();
-    GetCurrentFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+    //GetCurrentFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
     
     std::array<VkClearValue, 2> clearValues{};
     
@@ -60,8 +69,12 @@ namespace Candy::Graphics
     rpInfo.pClearValues = clearValues.data();
     
     GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
-    GetCurrentFrame().commandBuffer.BindPipeline(instance->pipeline);
-    GetCurrentFrame().commandBuffer.SetViewport(instance->target->swapChain->extent);
+    if (! instance->materials.empty())
+    {
+      instance->materials[0]->Bind();
+    }
+    //GetCurrentFrame().commandBuffer.BindPipeline(instance->pipeline);
+    RenderCommand::SetViewport(instance->target->swapChain->extent);
   }
   VkRenderPassBeginInfo Renderer::BeginRenderPass()
   {
@@ -69,25 +82,8 @@ namespace Candy::Graphics
   }
   void Renderer::EndPass()
   {
-    GetCurrentFrame().commandBuffer.EndRenderPass();
-    GetCurrentFrame().commandBuffer.EndRecording();
+    RenderCommand::Submit();
     
-    VkSubmitInfo submitInfo{};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.commandBufferCount=1;
-    submitInfo.pCommandBuffers = &GetCurrentFrame().commandBuffer.mainCommandBuffer;
-    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    
-    submitInfo.pWaitDstStageMask = &waitStage;
-    
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &GetCurrentFrame().presentSemaphore;
-    
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &GetCurrentFrame().renderSemaphore;
-    
-    
-    CANDY_CORE_ASSERT(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, GetCurrentFrame().renderFence)==VK_SUCCESS);
   }
   
   VkRenderPass Renderer::GetRenderPass()
@@ -95,75 +91,10 @@ namespace Candy::Graphics
     return *instance->renderPass;
   }
   
-
-  void Renderer::BindDescriptorSets(uint32_t uniformOffset)
-  {
-    //uint32_t uniformOffset = paddedOffset * instance->target->currentFrameIndex;
-    GetCurrentFrame().commandBuffer.BindDescriptorSets(instance->pipeline.GetLayout(), GetCurrentFrame().globalDescriptor, &uniformOffset);
-  }
-  
-  void Renderer::SetUniform(uint32_t offset, uint32_t size, const void* data)
-  {
-    GetCurrentFrame().uniformBuffer->SetData(offset, size, data);
-    //uint32_t paddedOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(size);
-    BindDescriptorSets(offset);
-  
-  }
-  void Renderer::DrawIndexed(const SharedPtr<VertexArray>& vertexArray)
-  {
-    GetCurrentFrame().commandBuffer.DrawIndexed(vertexArray);
-  }
   FrameData& Renderer::GetCurrentFrame(){return instance->target->GetCurrentFrame();}
   
-  void Renderer::PushConstants(ShaderData::Stage stage, uint32_t dataSize, const void* data)
-  {
-    GetCurrentFrame().commandBuffer.PushConstants(instance->pipeline.GetLayout(), stage, dataSize, data);
-  }
-  void Renderer::PushConstants(ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data)
-  {
-    GetCurrentFrame().commandBuffer.PushConstants(instance->pipeline.GetLayout(), stage, offset, dataSize, data);
-  }
-  void Renderer::Shutdown()
-  {
-    //vkDeviceWaitIdle(Vulkan::LogicalDevice());
-    
-    
-   //instance->target->swapChain->Clean();
-   /*textureImageView.Destroy();
-   texture.Destroy();
-   uniformBuffer->Destroy();
-    for (size_t i = 0; i < FRAME_OVERLAP; i++)
-    {
-      //uniformBuffers[i]->Destroy();
-    }
-    //descriptorAllocator.Destroy();
-    //descriptorLayoutCache.Destroy();
-    //vkDestroyDescriptorPool(Vulkan::LogicalDevice(), descriptorPool, nullptr);
-    vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), shader->GetDescriptorSetLayout(), nullptr);
-    
-    vertexArray->Clear();*/
-    
-    //instance->pipeline.Destroy();
-    
-    //CANDY_CORE_INFO("SHUTDOWN RENDERER");
-    
-  }
+
+
   
-  /*void Renderer::DestroyPipeline()
-  {
-    instance->pipeline.Destroy();
-  }
-  void Renderer::DestroyRenderPass()
-  {
-    if (instance->renderPass->IsValid())
-    {
-      instance->renderPass->Destroy();
-      instance->renderPass = VK_NULL_HANDLE;
-    }
-    else
-    {
-      CANDY_CORE_WARN("Attempted to destroy invalid render pass");
-    }
-    
-  }*/
+
 }

@@ -15,7 +15,8 @@ namespace Candy::Graphics
   private:
     //std::deque<std::function<void()>> queue;
     std::set<VkSwapchainKHR> swapChains;
-    std::set<VkFramebuffer> frameBuffers;
+    //std::set<VkFramebuffer> frameBuffers;
+    std::set<FrameBuffer*> frameBuffers;
     std::set<Image*> images;
     std::set<ImageView*> imageViews;
     std::set<VkRenderPass> renderPasses;
@@ -58,8 +59,8 @@ namespace Candy::Graphics
   };
   template<>
   void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
-  template<>
-  void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject);
+  /*template<>
+  void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject);*/
   template<>
   void DeletionQueue::Push<Image*>(Image* vulkanObject);
   template<>
@@ -81,19 +82,24 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Push<IndexBuffer*>(IndexBuffer* vulkanObject);
   template<>
+  void DeletionQueue::Push<FrameBuffer*>(FrameBuffer* vulkanObject);
+  template<>
   void DeletionQueue::Push<VkFence>(VkFence vulkanObject);
   template<>
   void DeletionQueue::Push<VkSemaphore>(VkSemaphore vulkanObject);
   
   
+  
   template<>
   void DeletionQueue::Delete<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
-  template<>
-  void DeletionQueue::Delete<VkFramebuffer>(VkFramebuffer vulkanObject);
+ /* template<>
+  void DeletionQueue::Delete<VkFramebuffer>(VkFramebuffer vulkanObject);*/
   template<>
   void DeletionQueue::Delete<Image*>(Image* vulkanObject);
   template<>
   void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject);
+  template<>
+  void DeletionQueue::Delete<FrameBuffer*>(FrameBuffer* vulkanObject);
   
   
 }

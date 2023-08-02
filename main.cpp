@@ -14,11 +14,9 @@ int main(int argc, char** argv)
   EditorLayer editorLayer(&project);
   app.PushLayer(&editorLayer);
   
-  //TestLayer testLayer;
-  //app.PushLayer(&testLayer);
-  //CANDY_PROFILE_END_SESSION();
+ 
   app.Run();
-  CANDY_CORE_INFO("Application exited");
+ 
   
   
   return 0;

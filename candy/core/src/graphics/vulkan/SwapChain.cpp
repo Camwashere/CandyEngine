@@ -5,17 +5,14 @@
 
 namespace Candy::Graphics
 {
-  //TODO: THE DELETION QUEUE FUCKS UP WHEN OBJECTS ARE DELETED MANUALLY (SUCH AS IN SWAPCHAIN RECREATION) PRIOR TO DELETING EVERYTHING
-    SwapChain::SwapChain(GraphicsContext* gc) : context(gc)
+  
+    SwapChain::SwapChain(GraphicsContext* gc, VkRenderPass renderPass) : context(gc)
     {
         CANDY_CORE_ASSERT(Vulkan::HasDeviceManager(), "SwapChain's device manager is null!");
         CANDY_CORE_ASSERT(context->handle, "SwapChain's window handle is null!");
         CANDY_CORE_ASSERT(context->surface != VK_NULL_HANDLE, "SwapChain's surface is null!");
         Build();
-        CreateImageViews();
-        //Vulkan::GetDeletionQueue().PushSwapChain(swapChain);
-        //Vulkan::DeletionQueue().Push(swapChain);
-        //Vulkan::PushDeleter([=, this](){vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);});
+        CreateBuffers(renderPass);
     }
     
     void SwapChain::Rebuild(VkRenderPass renderPass)
@@ -29,35 +26,23 @@ namespace Candy::Graphics
         vkDeviceWaitIdle(Vulkan::LogicalDevice());
         Clean();
         Build();
-        CreateImageViews();
-        CreateFrameBuffers(renderPass);
+        CreateBuffers(renderPass);
     }
     
     void SwapChain::Clean()
     {
-      //depthImageView.Destroy();
-      //depthImage.Destroy();
-      /*vmaDestroyImage(Vulkan::Allocator(), depthImage, depthImage.GetAllocation());
-      vkDestroyImageView(Vulkan::LogicalDevice(), depthImageView, nullptr);
-      vkDestroySampler(Vulkan::LogicalDevice(), depthImageView.GetSampler(), nullptr);*/
       Vulkan::DeletionQueue().Delete(&depthImage);
       Vulkan::DeletionQueue().Delete(&depthImageView);
-        for (auto & buffer : frameBuffers) {
-          Vulkan::DeletionQueue().Delete(buffer);
-            //vkDestroyFramebuffer(Vulkan::LogicalDevice(), buffer, nullptr);
-            //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainBuffer.view, nullptr);
-        }
+      
+      for (auto& buffer : buffers)
+      {
+        Vulkan::DeletionQueue().Delete(&buffer.frameBuffer);
+        Vulkan::DeletionQueue().Delete(&buffer.view);
         
-        for (auto & swapChainImageView : imageViews) {
-          
-          //vkDestroyImageView(Vulkan::LogicalDevice(), swapChainImageView, nullptr);
-          //vkDestroySampler(Vulkan::LogicalDevice(), swapChainImageView.GetSampler(), nullptr);
-          Vulkan::DeletionQueue().Delete(&swapChainImageView);
-          //swapChainImageView.Destroy();
-        }
-        
+      }
+      
         Vulkan::DeletionQueue().Delete(swapChain);
-        //vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
+
     }
     
     void SwapChain::Build()
@@ -119,60 +104,30 @@ namespace Candy::Graphics
     context->GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     
   }
-    void SwapChain::CreateImageViews()
+  
+  void SwapChain::CreateBuffers(VkRenderPass renderPass)
+  {
+    CreateDepthResources();
+    buffers.resize(images.size());
+    for (size_t i=0; i<images.size(); i++)
     {
-        imageViews.resize(images.size());
-        
-        for (size_t i = 0; i < images.size(); i++)
-        {
-          imageViews[i].Set(images[i], imageFormat);
-        }
+      buffers[i].view.Set(images[i], imageFormat);
+      std::vector<VkImageView> attachments = {buffers[i].view, depthImageView};
+      buffers[i].frameBuffer.Set(renderPass, {extent.width, extent.height}, attachments);
     }
     
-    void SwapChain::CreateFrameBuffers(VkRenderPass renderPass)
-    {
-        CreateDepthResources();
-        
-        frameBuffers.resize(imageViews.size());
-        for (size_t i = 0; i < imageViews.size(); i++)
-        {
-          std::array<VkImageView, 2> attachments = {imageViews[i], depthImageView};
-            
-            
-            VkFramebufferCreateInfo framebufferInfo{};
-            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-            framebufferInfo.renderPass = renderPass;
-            framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-            framebufferInfo.pAttachments = attachments.data();
-            framebufferInfo.width = extent.width;
-            framebufferInfo.height = extent.height;
-            framebufferInfo.layers = 1;
-            
-            //Vulkan::DeletionQueue().RemoveFrameBuffer(frameBuffers[i]);
-            CANDY_CORE_ASSERT(vkCreateFramebuffer(Vulkan::LogicalDevice(), &framebufferInfo, nullptr, &frameBuffers[i]) == VK_SUCCESS, "Failed to create framebuffer");
-            Vulkan::DeletionQueue().Push(frameBuffers[i]);
-            //Vulkan::PushDeleter([=, this](){vkDestroyFramebuffer(Vulkan::LogicalDevice(), frameBuffers[i], nullptr);});
-        }
-        //Vulkan::DeletionQueue().CleanFrameBuffers();
-    }
+    
+  }
+  
   
   VkResult SwapChain::AcquireNextImage(VkSemaphore semaphore, uint64_t timeout, VkFence fence)
   {
     return vkAcquireNextImageKHR(Vulkan::LogicalDevice(), swapChain, timeout, semaphore, fence, &imageIndex);
   }
   
-  VkFramebuffer SwapChain::GetCurrentFrameBuffer(){return frameBuffers[imageIndex];}
-    
-    /*VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
-    {
-        for (const auto& availableFormat : availableFormats)
-        {
-            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
-                return availableFormat;
-            }
-        }
-        return availableFormats[0];
-    }*/
+  FrameBuffer& SwapChain::GetCurrentFrameBuffer(){return buffers[imageIndex].frameBuffer;}
+  
+  
     
     VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
     {
@@ -185,7 +140,14 @@ namespace Candy::Graphics
         }
         return VK_PRESENT_MODE_FIFO_KHR;
     }
-    
+  ImageView& SwapChain::GetCurrentImageView()
+  {
+      return buffers[imageIndex].view;
+  }
+  VkImage SwapChain::GetCurrentImage()
+  {
+      return images[imageIndex];
+  }
     VkExtent2D SwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
     {
         

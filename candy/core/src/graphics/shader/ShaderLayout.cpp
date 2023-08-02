@@ -1,6 +1,7 @@
 #include <candy/graphics/shader/ShaderLayout.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/utils/IDManager.hpp>
+#include <candy/graphics/RenderCommand.hpp>
 namespace Candy::Graphics
 {
   std::string ShaderProperty::ToString()const
@@ -14,6 +15,78 @@ namespace Candy::Graphics
     std::stringstream ss;
     ss << "Name: " << name << (input? ", Input " : ", Output ") << ", Type: " << ShaderData::TypeToString(type) << ", Binding: " << binding << ", Set: " << set << ", Offset: " << offset << ", Stride: " << stride << ", Location: " << location << ", Input: " << input;
     return ss.str();
+  }
+  
+  ShaderLayout::ShaderLayout()
+  {
+    pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
+  }
+  
+  void ShaderLayout::BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
+  {
+    VkPipelineLayout pipelineLayout = BakePipelineLayout();
+    pipeline.Bake(renderPass, GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
+    //DestroyShaderModules();
+    
+  }
+  
+  VkPipelineLayout ShaderLayout::BakePipelineLayout()
+  {
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+    VkPipelineLayout pipelineLayout;
+    
+    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    
+    
+    auto descriptorSetLayouts = BakeDescriptorSetLayouts();
+    //CANDY_CORE_INFO("DESCRIPTOR SET VECTOR SIZE: {}", descriptorSetLayouts.size());
+    for (auto d : descriptorSetLayouts)
+    {
+      if (d==VK_NULL_HANDLE)
+      {
+        CANDY_CORE_ERROR("NULL DESCRIPTOR SET LAYOUT HANDLE");
+      }
+    }
+    pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
+    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+    
+    auto pushConstantRanges = GetPushConstantRanges();
+    //CANDY_CORE_INFO("Push Constant Range Count: {0}", pushConstantRanges.size());
+    pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size(); // Optional
+    pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data(); // Optional
+    
+    CANDY_CORE_ASSERT(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) == VK_SUCCESS, "Failed to create pipeline layout!");
+    Vulkan::DeletionQueue().Push(pipelineLayout);
+    return pipelineLayout;
+  }
+  std::vector<VkDescriptorSetLayout> ShaderLayout::BakeDescriptorSetLayouts()
+  {
+    std::vector<VkDescriptorSetLayout> layouts;
+    layouts.resize(FRAME_OVERLAP);
+    
+    for (int i=0; i<FRAME_OVERLAP; i++)
+    {
+      DescriptorBuilder builder = DescriptorBuilder::Begin();
+      
+      
+      for (const auto& block : uniformBlockProperties)
+      {
+        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
+        //builder.BindBuffer(block.binding, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
+      }
+      for (const auto& block : uniformImageProperties)
+      {
+        //CANDY_CORE_INFO("IMAGE BINDING: {}", block.binding);
+        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
+        //builder.BindImage(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
+      }
+      
+      builder.BuildLayout(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor, layouts[i]);
+      
+      //Vulkan::PushDeleter([=, this](){vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), layouts[i], nullptr);});
+    }
+    return layouts;
+    
   }
   void ShaderLayout::CalculateOffsetsAndStride()
   {
@@ -191,7 +264,7 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(id < pushProperties.size(), "Push constant id out of range");
     auto& prop = pushProperties[id];
     
-    Renderer::PushConstants(prop.stage, prop.offset, prop.size, data);
+    RenderCommand::PushConstants(pipeline.GetLayout(), prop.stage, prop.offset, prop.size, data);
   }
   uint32_t ShaderLayout::SetUniform(const std::string& name, const void* data)
   {
@@ -212,11 +285,14 @@ namespace Candy::Graphics
     auto& prop = properties[id];
     auto& parent = parentProperties[prop.parentBlockID];
     
-    Renderer::SetUniform(prop.offset, prop.size, data);
+    RenderCommand::SetUniform(pipeline, prop.offset, prop.size, data);
   }
   uint32_t ShaderLayout::GetLayoutVertexStride()const
   {
     return layoutVertexStride;
   }
+  
+  VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
+  VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}
 
 }

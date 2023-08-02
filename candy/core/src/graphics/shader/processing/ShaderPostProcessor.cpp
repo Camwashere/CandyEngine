@@ -63,7 +63,7 @@ namespace Candy::Graphics
       std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
       if (in.is_open() && !recompileOnLoad)
       {
-        CANDY_CORE_INFO("ALREADY HAS SHADER CACHED");
+        //CANDY_CORE_INFO("ALREADY HAS SHADER CACHED");
         in.seekg(0, std::ios::end);
         auto size = in.tellg();
         in.seekg(0, std::ios::beg);
@@ -74,7 +74,7 @@ namespace Candy::Graphics
       }
       else
       {
-        CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
+        //CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
         shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
         if (mod.GetCompilationStatus() != shaderc_compilation_status_success)
         {
@@ -167,7 +167,7 @@ namespace Candy::Graphics
         prop.id = members[i];
         prop.parentBlockID = resource.base_type_id;
         prop.type = ShaderData::SpirvToType(compiler.get_type(prop.id));
-        CANDY_CORE_INFO("MEMBER NAME: {}, MEMBER ID: {}, PARENT ID: {}, TYPE: {}", prop.name, prop.id, prop.parentBlockID, ShaderData::TypeToString(prop.type));
+        //CANDY_CORE_INFO("MEMBER NAME: {}, MEMBER ID: {}, PARENT ID: {}, TYPE: {}", prop.name, prop.id, prop.parentBlockID, ShaderData::TypeToString(prop.type));
         block.properties.push_back(prop);
       }
       
@@ -185,7 +185,7 @@ namespace Candy::Graphics
       prop.type = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
       prop.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
       prop.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-      CANDY_CORE_INFO("IMAGE PROP NAME: {}, ID: {}, TYPE: {},  BINDING: {}, SET: {}", prop.name, prop.id, ShaderData::TypeToString(prop.type), prop.binding, prop.set);
+     // CANDY_CORE_INFO("IMAGE PROP NAME: {}, ID: {}, TYPE: {},  BINDING: {}, SET: {}", prop.name, prop.id, ShaderData::TypeToString(prop.type), prop.binding, prop.set);
       shaderLayout.AddUniformImageProperty(prop);
       //descriptorLayout.BindImage(prop.binding, stage);
       
@@ -208,11 +208,11 @@ namespace Candy::Graphics
     
     spirv_cross::Resource pushResource = compiler.get_shader_resources().push_constant_buffers[0];
     
-    CANDY_CORE_INFO("PUSH RESOURCE ID: {}, Type ID: {}, Base Type ID: {}", pushResource.id, pushResource.type_id, pushResource.base_type_id);
-    CANDY_CORE_INFO("PRE PUSH TYPE");
+    //CANDY_CORE_INFO("PUSH RESOURCE ID: {}, Type ID: {}, Base Type ID: {}", pushResource.id, pushResource.type_id, pushResource.base_type_id);
+    //CANDY_CORE_INFO("PRE PUSH TYPE");
     
    
-    CANDY_CORE_INFO("POST PUSH TYPE");
+    //CANDY_CORE_INFO("POST PUSH TYPE");
    
     
     

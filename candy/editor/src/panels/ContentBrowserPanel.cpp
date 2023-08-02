@@ -29,7 +29,8 @@ namespace Candy
   
   void ContentBrowserPanel::OnRenderUI()
   {
-    ImGui::Begin("Content Browser");
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    ImGui::Begin("Content Browser", nullptr, flags);
     
     if (currentDirectory != rootDirectory)
     {
@@ -41,13 +42,11 @@ namespace Candy
     static float padding = 16.0f;
     static float thumbnailSize = 128.0f;
     float cellSize = thumbnailSize + padding;
-    
     float panelWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1)
       columnCount = 1;
-    
-    ImGui::Columns(columnCount, nullptr, false);
+    ImGui::BeginTable("##content_browser", columnCount, ImGuiTableFlags_Reorderable);
     
     for (auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory))
     {
@@ -57,7 +56,37 @@ namespace Candy
       ImGui::PushID(fileName.c_str());
       VkDescriptorSet icon = directoryEntry.is_directory() ? descriptorSets[0] : descriptorSets[1];
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-      ImGui::ImageButton(icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+      ImGui::ImageButton(icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 0}, {1, 1});
+      
+      ImGui::PopStyleColor();
+      if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+      {
+        if (directoryEntry.is_directory())
+        {
+          currentDirectory /= path.filename();
+        }
+      }
+      
+      ImGui::TextWrapped(fileName.c_str());
+      ImGui::TableNextColumn();
+      ImGui::PopID();
+    }
+    ImGui::EndTable();
+    ImGui::End();
+    
+    
+    //ImGui::BeginTable("##content_browser", columnCount, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_ContextMenuInBody | ImGuiTableFlags_ScrollY);
+    /*ImGui::Columns(columnCount, nullptr, false);
+    
+    for (auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory))
+    {
+      const auto& path = directoryEntry.path();
+      std::string fileName = path.filename().string();
+      
+      ImGui::PushID(fileName.c_str());
+      VkDescriptorSet icon = directoryEntry.is_directory() ? descriptorSets[0] : descriptorSets[1];
+      ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+      ImGui::ImageButton(icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 0}, {1, 1});
       
       ImGui::PopStyleColor();
       if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
@@ -73,12 +102,9 @@ namespace Candy
       ImGui::PopID();
     }
     ImGui::Columns(1);
-    ImGui::End();
-    
-    /*ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-    ImGui::ImageButton(descriptorSets[0], ImVec2{viewportPanelSize.x, viewportPanelSize.y});
     ImGui::End();*/
-    //ImGui::Image(descriptorSets[1], ImVec2{viewportPanelSize.x, viewportPanelSize.y});
+    
+    
   
   }
   

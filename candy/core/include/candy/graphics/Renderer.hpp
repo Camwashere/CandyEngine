@@ -2,7 +2,6 @@
 #include "candy/graphics/shader/Shader.hpp"
 #include "VertexArray.hpp"
 #include "vulkan/RenderPass.hpp"
-#include "vulkan/pipeline/GraphicsPipeline.hpp"
 #include "GraphicsContext.hpp"
 #include "vulkan/pipeline/Pipeline.hpp"
 #include <deque>
@@ -10,6 +9,7 @@
 #include "UniformBuffer.hpp"
 #include "Texture.hpp"
 #include "vulkan/ImageView.hpp"
+#include "Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
 namespace Candy::Graphics
 {
@@ -21,7 +21,7 @@ namespace Candy::Graphics
     static Renderer* instance;
     
   private:
-    Pipeline pipeline;
+    std::vector<Material*> materials{};
     GraphicsContext* target;
     UniquePtr<RenderPass> renderPass;
     
@@ -31,11 +31,9 @@ namespace Candy::Graphics
     
   private:
     Renderer();
-    
+    static VkPipelineLayout GetPipelineLayout();
     
   public:
-    //TODO Finish immediate submit
-    static void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
     static void Submit(Material* material);
     static void Start();
     static void Init();
@@ -45,14 +43,7 @@ namespace Candy::Graphics
     static void EndPass();
     static FrameData& GetCurrentFrame();
     static VkRenderPass GetRenderPass();
-    static void BindDescriptorSets(uint32_t uniformOffset);
-    static void PushConstants(ShaderData::Stage stage, uint32_t dataSize, const void* data);
-    static void PushConstants(ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data);
-    static void SetUniform(uint32_t offset, uint32_t size, const void* data);
-    static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
-    static void Shutdown();
-    //static void DestroyPipeline();
-    //static void DestroyRenderPass();
+    
   private:
     friend class Vulkan;
   };

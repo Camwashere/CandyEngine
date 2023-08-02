@@ -14,21 +14,16 @@ namespace Candy::Graphics
       handle = windowHandle;
       CANDY_CORE_ASSERT(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface) == VK_SUCCESS, "Failed to create vulkan window surface!");
       Vulkan::InitDeviceManager(surface);
-      swapChain = CreateUniquePtr<SwapChain>(this);
-      //renderPass = CreateUniquePtr<RenderPass>(swapChain->imageFormat);
       InitSyncStructures();
-      //swapChain->CreateFrameBuffers(*renderPass);
       Vulkan::RegisterContext(this);
       Renderer::InitRenderPass(surface);
-      swapChain->CreateFrameBuffers(Renderer::GetRenderPass());
+      swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetRenderPass());
     }
   void GraphicsContext::InitSyncStructures()
   {
     VkFenceCreateInfo fenceCreateInfo{};
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-    
-    
     
     
     VkSemaphoreCreateInfo semaphoreCreateInfo{};
@@ -43,13 +38,6 @@ namespace Candy::Graphics
       Vulkan::DeletionQueue().Push(frames[i].renderFence);
       Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
       Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
-      //Vulkan::Push(&frames[i]);
-      /*Vulkan::PushDeleter([=, this](){
-        vkDestroyFence(Vulkan::LogicalDevice(), frames[i].renderFence, nullptr);
-        vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].presentSemaphore, nullptr);
-        vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].renderSemaphore, nullptr);
-        //frames[i].uniformBuffer.reset();
-      });*/
     }
   }
   
@@ -88,13 +76,6 @@ namespace Candy::Graphics
     
   }
   
-  /*VkRenderPassBeginInfo GraphicsContext::BeginRenderPass()
-  {
-      return renderPass->BeginPass(swapChain->GetCurrentFrameBuffer(), swapChain->extent);
-  }*/
-
-
-  
     void GraphicsContext::SwapBuffers()
     {
       //Present();
@@ -112,13 +93,6 @@ namespace Candy::Graphics
       {
         CANDY_CORE_ASSERT(false, "Failed to acquire swap chain image!");
       }
-      
-      
-      
-      //CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
-      
-      
-      
       
     }
     
@@ -144,7 +118,6 @@ namespace Candy::Graphics
       {
         CANDY_CORE_ASSERT(result == VK_SUCCESS, "failed to present swap chain image!");
       }
-      //descriptorAllocator.Flip();
       
       UpdateFrameIndex();
     }
@@ -154,34 +127,6 @@ namespace Candy::Graphics
       swapChain->Rebuild(renderPass);
     }
     
-    void GraphicsContext::Terminate()
-    {
-        //vkDeviceWaitIdle(Vulkan::LogicalDevice());
-        //swapChain->Clean();
-        
-       //renderPass.reset();
-      //renderPass->Destroy();
-      /*for (size_t i=0; i<FRAME_OVERLAP; i++)
-      {
-        
-        frames[i].uniformBuffer->Destroy();
-        vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].renderSemaphore, nullptr);
-        vkDestroySemaphore(Vulkan::LogicalDevice(), frames[i].presentSemaphore, nullptr);
-        vkDestroyFence(Vulkan::LogicalDevice(), frames[i].renderFence, nullptr);
-        frames[i].commandBuffer.Destroy();
-        
-      }*/
-      
-      //Renderer::DestroyRenderPass();
-      //vkDestroyDevice(Vulkan::LogicalDevice(), nullptr);
-      //Renderer::DestroyRenderPass();
-        //swapChain->Clean();
-        //vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
-      
-      //CANDY_CORE_INFO("DESTROYED GRAPHICS CONTEXT");
-        
-      
-    }
   
   void GraphicsContext::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
   {
@@ -191,6 +136,11 @@ namespace Candy::Graphics
   void GraphicsContext::CleanSwapChain()
   {
       swapChain->Clean();
+  }
+  
+  SwapChain& GraphicsContext::GetSwapChain()
+  {
+      return *swapChain;
   }
   
   uint32_t GraphicsContext::GetCurrentFrameIndex()const
@@ -213,10 +163,7 @@ namespace Candy::Graphics
   {
       return frames[index];
   }
-  /*VkRenderPass GraphicsContext::GetRenderPass()
-  {
-      return *renderPass;
-  }*/
+
   VkSurfaceKHR GraphicsContext::GetSurface()
   {
       return surface;

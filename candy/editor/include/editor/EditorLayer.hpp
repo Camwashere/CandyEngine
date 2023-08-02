@@ -1,15 +1,16 @@
 #pragma once
 #include <candy/app/Layer.hpp>
 #include <candy/app/Project.hpp>
-#include "panels/ContentBrowserPanel.hpp"
 #include <candy/graphics/Material.hpp>
+
 namespace Candy
 {
   class EditorLayer : public Layer
   {
   private:
     Project* project;
-    UniquePtr<ContentBrowserPanel> contentBrowserPanel;
+    //UniquePtr<ContentBrowserPanel> contentBrowserPanel;
+    //UniquePtr<Viewport> viewport;
     Candy::SharedPtr<Candy::Graphics::Shader> shader;
     Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
     Candy::Graphics::Material material;

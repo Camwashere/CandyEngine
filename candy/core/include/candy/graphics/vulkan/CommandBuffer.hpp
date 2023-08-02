@@ -36,13 +36,17 @@ namespace Candy::Graphics
         void Reset();
         void StartRecording(VkCommandBufferUsageFlags flags=0);
         void StartRenderPass(const VkRenderPassBeginInfo* renderPassInfo);
-        void BindPipeline(VkPipeline pipeline);
+        
+    private:
+        void BindGraphicsPipeline(VkPipeline pipeline);
+        void BindComputePipeline(VkPipeline pipeline);
         void SetViewport(VkExtent2D extent);
+        void SetViewport(VkViewport viewport);
         void BindVertexBuffers(const std::vector<VkBuffer>& vertexBuffers);
         void BindIndexBuffer(const IndexBuffer& indexBuffer);
         void BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset);
         
-        void Bind(const VertexArray* vertexArray);
+        void BindVertexArray(const VertexArray* vertexArray);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
         void EndRenderPass();
         void EndRecording();
@@ -53,6 +57,7 @@ namespace Candy::Graphics
         
     private:
         friend class GraphicsContext;
-        friend class Renderer;
+        //friend class Renderer;
+        friend class RenderCommand;
     };
 }

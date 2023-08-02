@@ -3,29 +3,48 @@
 #include <utility>
 namespace Candy::Graphics
 {
-  static bool IsDepthFormat(FrameBufferTextureFormat format)
+  FrameBuffer::FrameBuffer() : renderPass(VK_NULL_HANDLE), size(0, 0), layers(1)
   {
-    switch (format)
-    {
-      case FrameBufferTextureFormat::DEPTH24STENCIL8:  return true;
-    }
+  
+  }
+  FrameBuffer::FrameBuffer(VkRenderPass pass, Math::Vector2u bufferSize, const std::vector<VkImageView>& bufferAttachments, uint32_t bufferLayers) : renderPass(pass), size(bufferSize), attachments(bufferAttachments), layers(bufferLayers)
+  {
+    VkFramebufferCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    createInfo.flags = 0;
+    createInfo.height = size.height;
+    createInfo.width = size.width;
+    createInfo.layers = layers;
+    createInfo.attachmentCount = attachments.size();
+    createInfo.pAttachments = attachments.data();
+    createInfo.renderPass = renderPass;
     
-    return false;
+    vkCreateFramebuffer(Vulkan::LogicalDevice(), &createInfo, nullptr, &buffer);
   }
-  FrameBuffer::FrameBuffer(FrameBufferSpecification spec) : specification(std::move(spec))
+  
+  void FrameBuffer::Set(VkRenderPass pass, Math::Vector2u bufferSize, const std::vector<VkImageView>& bufferAttachments, uint32_t bufferLayers)
   {
-    for (auto s : specification.attachments)
-    {
-      if (!IsDepthFormat(s.textureFormat))
-      {
-        colorAttachmentSpecifications.emplace_back(s);
-      }
-      else
-      {
-        depthAttachmentSpecification = s;
-      }
-      
-    }
-    //Invalidate();
+    renderPass = pass;
+    size = bufferSize;
+    attachments = bufferAttachments;
+    layers = bufferLayers;
+    
+    VkFramebufferCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    createInfo.flags = 0;
+    createInfo.height = size.height;
+    createInfo.width = size.width;
+    createInfo.layers = layers;
+    createInfo.attachmentCount = attachments.size();
+    createInfo.pAttachments = attachments.data();
+    createInfo.renderPass = renderPass;
+    
+    vkCreateFramebuffer(Vulkan::LogicalDevice(), &createInfo, nullptr, &buffer);
+    
+    Vulkan::DeletionQueue().Push(this);
   }
+  
+
+  
+
 }

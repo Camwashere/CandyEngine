@@ -58,6 +58,7 @@ namespace Candy
   
   
   public:
+    static UILayer& GetUILayer();
     static inline Window &GetMainWindowReference() {return *instance->mainWindow;}
     static Application &Instance() {return *instance;}
     static float DeltaTime();

@@ -7,6 +7,7 @@ namespace Candy
     {
     private:
       VkDescriptorPool uiPool;
+      bool blockEvents=false;
     
     public:
       UILayer();
@@ -16,8 +17,9 @@ namespace Candy
       virtual void OnDetach() override;
       virtual void OnEvent(Events::Event& e)override;
       
-      void Begin();
-      void End();
+      void BlockEvents(bool block);
+      //void Begin();
+      //void End();
       
       
         

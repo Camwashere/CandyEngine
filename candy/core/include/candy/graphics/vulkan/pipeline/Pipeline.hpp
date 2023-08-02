@@ -1,24 +1,25 @@
 #pragma once
 #include "vulkan/vulkan.h"
 #include <vector>
-#include "candy/graphics/shader/Shader.hpp"
-#include "PipelineLayout.hpp"
-#include "../../VertexArray.hpp"
-#include "candy/graphics/shader/Shader.hpp"
-#include "../RenderPass.hpp"
-#include "../../Material.hpp"
+
 namespace Candy::Graphics
 {
   
-  
+  enum class PipelineType
+  {
+    Graphics=0,
+    Compute,
+    RayTracing,
+    None,
+  };
   
   class Pipeline
   {
   private:
     uint32_t id;
-    Material* material;
-    //PipelineLayout layout;
+    PipelineType type;
     VkPipeline pipeline=VK_NULL_HANDLE;
+    VkPipelineLayout layout = VK_NULL_HANDLE;
     std::vector<VkDynamicState> dynamicStates;
     VkPipelineInputAssemblyStateCreateInfo inputAssembly;
     VkPipelineViewportStateCreateInfo viewportState;
@@ -36,7 +37,7 @@ namespace Candy::Graphics
     
   
   public:
-    explicit Pipeline();
+    explicit Pipeline(PipelineType type=PipelineType::Graphics);
     
   public:
     operator VkPipeline()const{return pipeline;}
@@ -53,14 +54,16 @@ namespace Candy::Graphics
   
   public:
     void RestoreDefaultSettings();
-    //void Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass);
-    void Bake(Material* material, const RenderPass& renderPass);
-    VkPipelineLayout& GetLayout();
-    //void Destroy();
+    void Bake(VkRenderPass renderPass, const std::vector<VkVertexInputBindingDescription>& bindingDescriptions, const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions,
+              const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineLayout pipelineLayout);
     
     [[nodiscard]] uint32_t GetID()const;
+    [[nodiscard]] PipelineType GetType()const;
+    [[nodiscard]] VkPipelineLayout GetLayout()const;
     
-  private:
-    friend class PipelineManager;
+  public:
+    static VkPipelineBindPoint TypeToVulkan(PipelineType type);
+    
+ 
   };
 }

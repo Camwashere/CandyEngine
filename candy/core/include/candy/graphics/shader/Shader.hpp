@@ -7,6 +7,7 @@
 #include "vulkan/vulkan.h"
 #include "processing/ShaderPreProcessor.hpp"
 #include "processing/ShaderPostProcessor.hpp"
+#include "../vulkan/pipeline/Pipeline.hpp"
 namespace Candy::Graphics
 {
   
@@ -18,16 +19,24 @@ namespace Candy::Graphics
         
       UniquePtr<ShaderPreProcessor> preProcessor;
       ShaderPostProcessor postProcessor;
-      std::vector<VkShaderModule> shaderModules;
+      //std::vector<VkShaderModule> shaderModules;
+      //Pipeline pipeline;
+      //VkPipelineLayout pipelineLayout;
     
     private:
       VkShaderModule CreateShaderModule(ShaderData::Stage stage);
       std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
-        
+      std::vector<VkPushConstantRange> GetPushConstantRanges();
+      //VkPipelineLayout BakePipelineLayout();
+      //std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
+      //void BakePipeline(VkRenderPass renderPass);
     
     public:
       explicit Shader(std::filesystem::path  shaderFilePath);
-    
+      
+    public:
+      void Bind();
+      
     public:
       // Push constant functions
       uint32_t PushFloat(const std::string& name, float value);
@@ -58,16 +67,18 @@ namespace Candy::Graphics
       void SetMatrix(uint32_t id, const Math::Matrix4& matrix);
       
       
-      
-      
+    public:
       const std::string& GetName()const{return shaderName;}
       const std::filesystem::path& GetFilepath()const{return filepath;}
-      void DestroyShaderModules();
+      VkPipeline GetPipeline()const;
+      VkPipelineLayout GetPipelineLayout()const;
+      //void DestroyShaderModules();
       
         
-      std::vector<VkPushConstantRange> GetPushConstantRanges();
+      
       ShaderPostProcessor& GetPostProcessor(){return postProcessor;}
       ShaderLayout& GetLayout(){return postProcessor.shaderLayout;}
+      const ShaderLayout& GetLayout()const{return postProcessor.shaderLayout;}
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);

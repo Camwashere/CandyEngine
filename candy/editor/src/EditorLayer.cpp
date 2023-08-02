@@ -1,10 +1,10 @@
 #include <editor/EditorLayer.hpp>
 #include <CandyPch.hpp>
-#include <imgui/imgui.h>
 #include <candy/math/Vector.hpp>
 #include <candy/math/Matrix.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/RenderCommand.hpp>
 
 using namespace Candy::Math;
 using namespace Candy::Graphics;
@@ -102,7 +102,8 @@ namespace Candy
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
     Renderer::Submit(&material);
-    contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(project->GetRootWorkingDirectory());
+    //contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(project->GetRootWorkingDirectory());
+    //viewport = CreateUniquePtr<Viewport>();
     color = Color::blue;
   
   }
@@ -116,7 +117,7 @@ namespace Candy
   
   void EditorLayer::OnDetach()
   {
-    contentBrowserPanel->OnDetach();
+    //contentBrowserPanel->OnDetach();
   
   }
   
@@ -143,16 +144,21 @@ namespace Candy
     shader->PushMatrix("proj", proj);
     
     vertexArray->Bind();
-    Renderer::DrawIndexed(vertexArray);
+    RenderCommand::DrawIndexed(vertexArray);
   }
   
   void EditorLayer::OnRenderUI()
+  {
+  
+  }
+  /*void EditorLayer::OnRenderUI()
   {
     // Note: Switch this to true to enable dockspace
     static bool dockspaceOpen = true;
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_AutoHideTabBar;
+    
     
     // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
     // because it would be confusing to have two docking targets within each others.
@@ -180,6 +186,7 @@ namespace Candy
     // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     
+    
     ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
     ImGui::PopStyleVar();
     
@@ -196,13 +203,14 @@ namespace Candy
       ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
       ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
-    
     style.WindowMinSize.x = minWinSizeX;
-    
+
     contentBrowserPanel->OnRenderUI();
+    viewport->OnRenderUI();
     
     ImGui::End();
-  }
+    
+  }*/
   
   void EditorLayer::OnEvent(Events::Event &event)
   {

@@ -3,43 +3,37 @@
 #include <vector>
 #include "device/VulkanDeviceManager.hpp"
 #include "ImageView.hpp"
+#include "../FrameBuffer.hpp"
 struct GLFWwindow;
 namespace Candy::Graphics
 {
     class GraphicsContext;
     struct SwapChainBuffer
     {
-      VkImage image;
-      VkImageView view;
-      VkFramebuffer frameBuffer;
+      ImageView view;
+      FrameBuffer frameBuffer;
     };
     class SwapChain
     {
     private:
         GraphicsContext* context;
         VkSwapchainKHR swapChain;
-        //VkSurfaceFormatKHR surfaceFormat;
-        //SwapChainSupportDetails swapChainSupport;
         std::vector<VkImage> images;
+        std::vector<SwapChainBuffer> buffers;
         VkFormat imageFormat;
         VkExtent2D extent;
-        //std::vector<SwapChainBuffer> buffers;
-        std::vector<ImageView> imageViews;
-        std::vector<VkFramebuffer> frameBuffers;
         Image depthImage;
         ImageView depthImageView;
         uint32_t imageIndex=0;
         
     private:
-        //VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
         VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-        void CreateImageViews();
         void Build();
         void CreateDepthResources();
         
     public:
-        explicit SwapChain(GraphicsContext* context);
+        explicit SwapChain(GraphicsContext* context, VkRenderPass renderPass);
         
     public:
         operator VkSwapchainKHR(){return swapChain;}
@@ -48,9 +42,11 @@ namespace Candy::Graphics
     public:
         void Rebuild(VkRenderPass renderPass);
         void Clean();
-        void CreateFrameBuffers(VkRenderPass renderPass);
+        void CreateBuffers(VkRenderPass renderPass);
         VkResult AcquireNextImage(VkSemaphore semaphore, uint64_t timeout=UINT64_MAX, VkFence fence=nullptr);
-        VkFramebuffer GetCurrentFrameBuffer();
+        FrameBuffer& GetCurrentFrameBuffer();
+        ImageView& GetCurrentImageView();
+        VkImage GetCurrentImage();
     private:
         friend class GraphicsContext;
         friend class Renderer;

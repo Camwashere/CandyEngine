@@ -6,6 +6,7 @@
 #include "candy/utils/FileUtils.hpp"
 #include "shaderc/libshaderc/include/shaderc/shaderc.hpp"
 #include "SPIRV-Cross/spirv_glsl.hpp"
+#include <candy/graphics/RenderCommand.hpp>
 
 using namespace Candy::Utils;
 namespace Candy::Graphics
@@ -43,15 +44,89 @@ namespace Candy::Graphics
       
       preProcessor = ShaderPreProcessor::Create(filepath);
       postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
-      CANDY_CORE_INFO("GOT BINARIES");
-      //CompileOrGetBinaries(preProcessor->GetSourceStrings());
+      
+      //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
+      
         
       // Extract name from filepath
       shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
-        
+      
+      GetLayout().BakePipeline(Renderer::GetRenderPass(), CreateShaderStageCreateInfos());
+      //BakePipeline(Renderer::GetRenderPass());
         
     }
+  
+  void Shader::Bind()
+  {
+    RenderCommand::BindPipeline(GetLayout().pipeline);
+    //Vulkan::GetCurrentCommandBuffer().BindPipeline(pipeline);
+  }
+  /*void Shader::BakePipeline(VkRenderPass renderPass)
+  {
+    VkPipelineLayout pipelineLayout = BakePipelineLayout();
+    GetLayout().BakePipeline(renderPass, CreateShaderStageCreateInfos());
+    //DestroyShaderModules();
+  
+  }
+  
+  VkPipelineLayout Shader::BakePipelineLayout()
+  {
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+    VkPipelineLayout pipelineLayout;
     
+    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    
+    
+    auto descriptorSetLayouts = BakeDescriptorSetLayouts();
+    //CANDY_CORE_INFO("DESCRIPTOR SET VECTOR SIZE: {}", descriptorSetLayouts.size());
+    for (auto d : descriptorSetLayouts)
+    {
+      if (d==VK_NULL_HANDLE)
+      {
+        CANDY_CORE_ERROR("NULL DESCRIPTOR SET LAYOUT HANDLE");
+      }
+    }
+    pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
+    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+    
+    auto pushConstantRanges = GetPushConstantRanges();
+    //CANDY_CORE_INFO("Push Constant Range Count: {0}", pushConstantRanges.size());
+    pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size(); // Optional
+    pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data(); // Optional
+    
+    CANDY_CORE_ASSERT(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) == VK_SUCCESS, "Failed to create pipeline layout!");
+    Vulkan::DeletionQueue().Push(pipelineLayout);
+    return pipelineLayout;
+  }
+  std::vector<VkDescriptorSetLayout> Shader::BakeDescriptorSetLayouts()
+  {
+    std::vector<VkDescriptorSetLayout> layouts;
+    layouts.resize(FRAME_OVERLAP);
+    
+    for (int i=0; i<FRAME_OVERLAP; i++)
+    {
+      DescriptorBuilder builder = DescriptorBuilder::Begin();
+      
+      
+      for (const auto& block : GetLayout().uniformBlockProperties)
+      {
+        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
+        //builder.BindBuffer(block.binding, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
+      }
+      for (const auto& block : GetLayout().uniformImageProperties)
+      {
+        //CANDY_CORE_INFO("IMAGE BINDING: {}", block.binding);
+        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
+        //builder.BindImage(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
+      }
+      
+      builder.BuildLayout(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor, layouts[i]);
+      
+      //Vulkan::PushDeleter([=, this](){vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), layouts[i], nullptr);});
+    }
+    return layouts;
+    
+  }*/
     std::vector<VkPipelineShaderStageCreateInfo> Shader::CreateShaderStageCreateInfos()
     {
         std::vector<VkPipelineShaderStageCreateInfo> ShaderStageCreateInfos;
@@ -64,12 +139,13 @@ namespace Candy::Graphics
             ShaderStageCreateInfo.module = shaderModule;
             ShaderStageCreateInfo.pName = "main";
             
-            shaderModules.push_back(shaderModule);
+            //shaderModules.push_back(shaderModule);
             ShaderStageCreateInfos.push_back(ShaderStageCreateInfo);
         }
         return ShaderStageCreateInfos;
     }
-  
+  VkPipeline Shader::GetPipeline()const{return GetLayout().GetPipeline();}
+  VkPipelineLayout Shader::GetPipelineLayout()const{return GetLayout().GetPipelineLayout();}
   uint32_t Shader::PushFloat(const std::string& name, float value)
   {
     return GetLayout().PushConstant(name, &value);
@@ -183,12 +259,12 @@ namespace Candy::Graphics
     
     
     
-    void Shader::DestroyShaderModules()
+    /*void Shader::DestroyShaderModules()
     {
         for (auto& shaderModule : shaderModules)
             vkDestroyShaderModule(Vulkan::LogicalDevice(), shaderModule, nullptr);
         shaderModules.clear();
-    }
+    }*/
   
 
   std::vector<VkPushConstantRange> Shader::GetPushConstantRanges()

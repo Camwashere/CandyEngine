@@ -65,6 +65,10 @@ namespace Candy
         layer->OnUpdate();
       }
   }
+  UILayer& Application::GetUILayer()
+  {
+      return *instance->uiLayer;
+  }
   float Application::DeltaTime()
   {
       return instance->frameTime.GetDeltaTime();
@@ -87,12 +91,12 @@ namespace Candy
         {
           frameTime.Update();
           UpdateLayers();
-          uiLayer->Begin();
+          //uiLayer->Begin();
           for (Layer* layer : layerStack)
           {
             layer->OnRenderUI();
           }
-          uiLayer->End();
+          //uiLayer->End();
           mainWindow->OnUpdate();
         }
         CleanUp();
@@ -101,7 +105,7 @@ namespace Candy
     
     void Application::CleanUp()
     {
-      CANDY_CORE_INFO("STARTED APPLICATION CLEANUP");
+      //CANDY_CORE_INFO("STARTED APPLICATION CLEANUP");
       
       for (Layer *layer: std::ranges::reverse_view(layerStack))
       {

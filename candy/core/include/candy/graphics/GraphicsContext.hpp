@@ -11,7 +11,6 @@
 #include "IndexBuffer.hpp"
 #include "vulkan/CommandBuffer.hpp"
 #include "vulkan/RenderPass.hpp"
-#include "vulkan/pipeline/GraphicsPipeline.hpp"
 #include "vma/vk_mem_alloc.h"
 #include "candy/graphics/shader/Shader.hpp"
 #include "UniformBuffer.hpp"
@@ -61,10 +60,10 @@ namespace Candy::Graphics
     public:
         void SwapBuffers();
         void Present();
-        void Terminate();
         void RebuildSwapChain(VkRenderPass renderPass);
         void OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
         void CleanSwapChain();
+        SwapChain& GetSwapChain();
         //VkRenderPass GetRenderPass();
         VkSurfaceKHR GetSurface();
         

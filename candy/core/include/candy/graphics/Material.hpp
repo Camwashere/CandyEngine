@@ -1,8 +1,8 @@
 #pragma once
-#include "shader/Shader.hpp"
 #include "Texture.hpp"
 #include "vulkan/ImageView.hpp"
-#include "vulkan/pipeline/PipelineLayout.hpp"
+//#include "vulkan/pipeline/PipelineLayout.hpp"
+#include "shader/Shader.hpp"
 namespace Candy::Graphics
 {
   class Material
@@ -11,14 +11,9 @@ namespace Candy::Graphics
     Shader* shader=nullptr;
     Texture texture;
     ImageView textureImageView;
-    VkPipelineLayout pipelineLayout=VK_NULL_HANDLE;
     
-  private:
-    std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
   public:
-    void BakePipelineLayout();
+    void Bind();
     Shader* GetShader();
-    
-    //void Destroy();
   };
 }

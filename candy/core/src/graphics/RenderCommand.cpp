@@ -69,6 +69,19 @@ namespace Candy::Graphics
     InitSyncStructures();
     InitCommands();
   }
+  
+  CommandBuffer& RenderCommand::GetCommandBuffer()
+  {
+    return Vulkan::GetCurrentCommandBuffer();
+  }
+  VkDescriptorSet RenderCommand::GetGlobalDescriptorSet()
+  {
+    return Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor;
+  }
+  FrameData& RenderCommand::GetFrame()
+  {
+    return Vulkan::GetCurrentContext().GetCurrentFrame();
+  }
   void RenderCommand::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function)
   {
     VkCommandBuffer cmd = uploadContext.commandBuffer;
@@ -97,10 +110,102 @@ namespace Candy::Graphics
     vkResetCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, 0);
   }
   
-  /*void RenderCommand::Shutdown()
+  void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray)
   {
-    vkDestroyCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, nullptr);
-    vkDestroyFence(Vulkan::LogicalDevice(), uploadContext.uploadFence, nullptr);
+    vertexArray->Bind();
+    GetCommandBuffer().DrawIndexed(vertexArray);
+  
+  }
+  void RenderCommand::BindPipeline(const Pipeline& pipeline)
+  {
+    switch(pipeline.GetType())
+    {
+      case PipelineType::Graphics:
+        GetCommandBuffer().BindGraphicsPipeline(pipeline);
+        break;
+      case PipelineType::Compute:
+        GetCommandBuffer().BindComputePipeline(pipeline);
+        break;
+      default:
+        CANDY_CORE_ASSERT(false, "Unknown pipeline type");
+    }
+  
+  }
+  
+  void RenderCommand::BindVertexArray(const VertexArray* vertexArray)
+  {
+    GetCommandBuffer().BindVertexArray(vertexArray);
+  }
+  
+  void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, uint32_t uniformOffset)
+  {
+    GetCommandBuffer().BindDescriptorSets(pipeline.GetLayout(), GetGlobalDescriptorSet(), &uniformOffset);
+  }
+  
+  void RenderCommand::SetViewport(VkExtent2D extent)
+  {
+    GetCommandBuffer().SetViewport(extent);
+  }
+  void RenderCommand::SetViewport(const Math::Vector2u& size)
+  {
+    GetCommandBuffer().SetViewport(VkExtent2D{size.x, size.y});
+  }
+  void RenderCommand::SetViewport(uint32_t width, uint32_t height)
+  {
+    GetCommandBuffer().SetViewport(VkExtent2D{width, height});
+  }
+  void RenderCommand::SetViewport(const Math::Vector2u& position, const Math::Vector2u& size)
+  {
+  
+  }
+  void RenderCommand::SetViewport(VkViewport viewport)
+  {
+    GetCommandBuffer().SetViewport(viewport);
+  }
+  void RenderCommand::SetUniform(const Pipeline& pipeline, uint32_t offset, uint32_t size, const void* data)
+  {
+    GetFrame().uniformBuffer->SetData(offset, size, data);
+    //uint32_t paddedOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(size);
+    BindDescriptorSets(pipeline, offset);
     
-  }*/
+  }
+  
+  
+  
+  void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t dataSize, const void* data)
+  {
+    GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, dataSize, data);
+  }
+  void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data)
+  {
+    GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, offset, dataSize, data);
+  }
+  
+  void RenderCommand::Reset()
+  {
+    GetFrame().commandBuffer.Reset();
+    GetFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
+  }
+  void RenderCommand::Submit()
+  {
+    GetCommandBuffer().EndRenderPass();
+    GetCommandBuffer().EndRecording();
+    
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount=1;
+    submitInfo.pCommandBuffers = &GetCommandBuffer().mainCommandBuffer;
+    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    
+    submitInfo.pWaitDstStageMask = &waitStage;
+    
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = &GetFrame().presentSemaphore;
+    
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &GetFrame().renderSemaphore;
+    
+    
+    CANDY_CORE_ASSERT(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, GetFrame().renderFence)==VK_SUCCESS);
+  }
 }

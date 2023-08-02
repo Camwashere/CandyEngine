@@ -2,6 +2,7 @@
 #include "ShaderData.hpp"
 #include "../UniformBuffer.hpp"
 #include <candy/math/Matrix.hpp>
+#include "../vulkan/pipeline/Pipeline.hpp"
 namespace Candy::Graphics
 {
   // Responsible for automatically creating descriptor sets
@@ -97,8 +98,11 @@ namespace Candy::Graphics
   };
   class ShaderLayout
   {
+  private:
+    Pipeline pipeline;
+  
   public:
-    uint32_t layoutVertexStride;
+    uint32_t layoutVertexStride=0;
     UniquePtr<UniformBuffer> uniformBuffer;
     std::unordered_map<std::string, uint32_t> propertyMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
@@ -113,7 +117,13 @@ namespace Candy::Graphics
     std::vector<ShaderLayoutProperty> inputLayoutProperties;
     std::vector<ShaderLayoutProperty> outputLayoutProperties;
     
+  private:
+    VkPipelineLayout BakePipelineLayout();
+    std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
+    void BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
+    
   public:
+    ShaderLayout();
     uint32_t PushConstant(const std::string& name, const void* data);
     void PushConstant(uint32_t id, const void* data);
     uint32_t SetUniform(const std::string& name, const void* data);
@@ -135,6 +145,11 @@ namespace Candy::Graphics
     
   public:
     [[nodiscard]] uint32_t GetLayoutVertexStride()const;
+    [[nodiscard]] VkPipeline GetPipeline()const;
+    [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
+    
+  private:
+    friend class Shader;
   
     
   };

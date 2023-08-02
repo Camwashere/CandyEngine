@@ -216,9 +216,13 @@ namespace Candy::Graphics
         vkCmdBeginRenderPass(mainCommandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
     
-    void CommandBuffer::BindPipeline(VkPipeline pipeline)
+    void CommandBuffer::BindGraphicsPipeline(VkPipeline pipeline)
     {
         vkCmdBindPipeline(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    }
+    void CommandBuffer::BindComputePipeline(VkPipeline pipeline)
+    {
+        vkCmdBindPipeline(mainCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
     }
     void CommandBuffer::SetViewport(VkExtent2D extent)
     {
@@ -238,6 +242,20 @@ namespace Candy::Graphics
         vkCmdSetViewport(mainCommandBuffer, 0, 1, &viewport);
         vkCmdSetScissor(mainCommandBuffer, 0, 1, &scissor);
     }
+  
+  void CommandBuffer::SetViewport(VkViewport viewport)
+  {
+    viewport.minDepth=0.0f;
+    viewport.maxDepth=1.0f;
+    VkRect2D scissor{};
+    scissor.offset = {0, 0};
+    scissor.extent = VkExtent2D(static_cast<uint32_t>(viewport.width), static_cast<uint32_t>(viewport.height));
+    
+    vkCmdSetViewport(mainCommandBuffer, 0, 1, &viewport);
+    vkCmdSetScissor(mainCommandBuffer, 0, 1, &scissor);
+  }
+    
+    
     
     void CommandBuffer::BindVertexBuffers(const std::vector<VkBuffer>& vertexBuffers)
     {
@@ -259,8 +277,9 @@ namespace Candy::Graphics
   
   
  
-    void CommandBuffer::Bind(const VertexArray* vertexArray)
+    void CommandBuffer::BindVertexArray(const VertexArray* vertexArray)
     {
+      
         VkBuffer data[vertexArray->vertexBuffers.size()];
         for (int i = 0; i < vertexArray->vertexBuffers.size(); i++)
         {

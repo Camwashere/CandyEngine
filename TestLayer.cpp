@@ -1,5 +1,6 @@
 #include "TestLayer.hpp"
 #include "imgui/imgui.h"
+#include <candy/graphics/RenderCommand.hpp>
 using namespace Candy;
 using namespace Math;
 using namespace Graphics;
@@ -137,7 +138,7 @@ void TestLayer::OnUpdate()
   shader->PushMatrix("proj", proj);
   
   vertexArray->Bind();
-  Renderer::DrawIndexed(vertexArray);
+  RenderCommand::DrawIndexed(vertexArray);
 }
 
 void TestLayer::OnRenderUI()

@@ -2,7 +2,7 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  Pipeline::Pipeline() : id(0)
+  Pipeline::Pipeline(PipelineType pipelineType) : id(0), type(pipelineType)
   {
     
     InitInputAssembly();
@@ -109,20 +109,19 @@ namespace Candy::Graphics
     InitColorBlending();
     dynamicStates.clear();
   }
-  
-  void Pipeline::Bake(Material* bakeMaterial, const RenderPass& renderPass)
+  void Pipeline::Bake(VkRenderPass renderPass, const std::vector<VkVertexInputBindingDescription>& bindingDescriptions, const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions,
+                      const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineLayout pipelineLayout)
   {
-    material = bakeMaterial;
-    material->BakePipelineLayout();
-    
+    //shader->BakePipelineLayout();
+    layout = pipelineLayout;
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     
     
     
     
-    auto bindingDescriptions = material->GetShader()->GetLayout().GetVertexBindingDescriptions();
-    auto attributeDescriptions = material->GetShader()->GetLayout().GetVertexAttributeDescriptions();
+    //auto bindingDescriptions = shader->GetLayout().GetVertexBindingDescriptions();
+    //auto attributeDescriptions = shader->GetLayout().GetVertexAttributeDescriptions();
     
     vertexInputInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
     vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
@@ -150,76 +149,7 @@ namespace Candy::Graphics
     //material->BakePipelineLayout();
     //layout.Bake(shader);
     
-    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = material->GetShader()->CreateShaderStageCreateInfos();
-    
-    VkGraphicsPipelineCreateInfo pipelineInfo{};
-    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount = shaderStages.size();
-    pipelineInfo.pStages = shaderStages.data();
-    
-    pipelineInfo.pVertexInputState = &vertexInputInfo;
-    pipelineInfo.pInputAssemblyState = &inputAssembly;
-    pipelineInfo.pViewportState = &viewportState;
-    pipelineInfo.pRasterizationState = &rasterizer;
-    pipelineInfo.pMultisampleState = &multisampling;
-    pipelineInfo.pDepthStencilState = &depthStencil;
-    pipelineInfo.pColorBlendState = &colorBlending;
-    pipelineInfo.pDynamicState = &dynamicState;
-    
-    
-    pipelineInfo.layout = material->pipelineLayout;
-    
-    pipelineInfo.renderPass = renderPass;
-    pipelineInfo.subpass = 0;
-    
-    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-    pipelineInfo.basePipelineIndex = -1; // Optional
-    
-    CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
-    //Vulkan::PushDeleter([=, this](){ vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr); });
-    Vulkan::DeletionQueue().Push(pipeline);
-    material->GetShader()->DestroyShaderModules();
-  }
-  /*void Pipeline::Bake(const SharedPtr<Shader>& shader, const RenderPass& renderPass)
-  {
-    // Vertex input
-    VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    
-    
-    
-    
-    auto bindingDescriptions = shader->GetLayout().GetVertexBindingDescriptions();
-    
-    auto attributeDescriptions = shader->GetLayout().GetVertexAttributeDescriptions();
-    
-    vertexInputInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
-    vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
-    vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
-    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-    
-    // Depth and stencil state
-    VkPipelineDepthStencilStateCreateInfo depthStencil{};
-    depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-    depthStencil.depthTestEnable = VK_TRUE;
-    depthStencil.depthWriteEnable = VK_TRUE;
-    depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-    depthStencil.depthBoundsTestEnable = VK_FALSE;
-    depthStencil.minDepthBounds = 0.0f; // Optional
-    depthStencil.maxDepthBounds = 1.0f; // Optional
-    depthStencil.stencilTestEnable = VK_FALSE;
-    depthStencil.front = {}; // Optional
-    depthStencil.back = {}; // Optional
-    
-    VkPipelineDynamicStateCreateInfo dynamicState{};
-    dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-    dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
-    dynamicState.pDynamicStates = dynamicStates.data();
-    
-    
-    layout.Bake(shader);
-    
-    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = shader->CreateShaderStageCreateInfos();
+    //std::vector<VkPipelineShaderStageCreateInfo> shaderStages = shader->CreateShaderStageCreateInfos();
     
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -245,22 +175,38 @@ namespace Candy::Graphics
     pipelineInfo.basePipelineIndex = -1; // Optional
     
     CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
+    //Vulkan::PushDeleter([=, this](){ vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr); });
+    Vulkan::DeletionQueue().Push(pipeline);
     
-    shader->DestroyShaderModules();
-  
-  }*/
-  
-  /*void Pipeline::Destroy()
-  {
-    vkDestroyPipelineLayout(Vulkan::LogicalDevice(), material->pipelineLayout, nullptr);
-    vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);
-  }*/
-  
-  VkPipelineLayout& Pipeline::GetLayout()
-  {
-    return material->pipelineLayout;
-    //return layout;
+    for (auto createInfo : shaderStages)
+    {
+      //createInfo.module
+      vkDestroyShaderModule(Vulkan::LogicalDevice(), createInfo.module, nullptr);
+    }
+    //shader->DestroyShaderModules();
   }
+
   
   uint32_t Pipeline::GetID()const{return id;}
+  PipelineType Pipeline::GetType()const{return type;}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+  VkPipelineBindPoint Pipeline::TypeToVulkan(PipelineType type)
+  {
+    switch(type)
+    {
+      case PipelineType::Graphics:
+        return VK_PIPELINE_BIND_POINT_GRAPHICS;
+        case PipelineType::Compute:
+        return VK_PIPELINE_BIND_POINT_COMPUTE;
+        default:
+        CANDY_CORE_ASSERT(false, "Invalid pipeline type!");
+        
+    }
+  }
+#pragma GCC diagnostic pop
+  VkPipelineLayout Pipeline::GetLayout()const
+  {
+    return layout;
+  }
 }

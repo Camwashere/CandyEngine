@@ -12,6 +12,7 @@ namespace Candy
     std::filesystem::path currentDirectory;
     Graphics::Texture* directoryImage;
     Graphics::Texture* fileImage;
+    
     SharedPtr<Graphics::ImageView> directoryIcon;
     SharedPtr<Graphics::ImageView> fileIcon;
     std::vector<VkDescriptorSet> descriptorSets;

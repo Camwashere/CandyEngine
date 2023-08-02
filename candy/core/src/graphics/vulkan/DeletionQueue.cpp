@@ -105,7 +105,7 @@ namespace Candy::Graphics
 // 10. Frame Buffers
     
     for(auto& framebuffer : frameBuffers) {
-      vkDestroyFramebuffer(Vulkan::LogicalDevice(), framebuffer, nullptr);
+      vkDestroyFramebuffer(Vulkan::LogicalDevice(), *framebuffer, nullptr);
     }
     frameBuffers.clear();
 
@@ -132,10 +132,16 @@ namespace Candy::Graphics
     vkDestroySwapchainKHR(Vulkan::LogicalDevice(), vulkanObject, nullptr);
     swapChains.erase(vulkanObject);
   }
-  template<>
+  /*template<>
   void DeletionQueue::Delete<VkFramebuffer>(VkFramebuffer vulkanObject)
   {
     vkDestroyFramebuffer(Vulkan::LogicalDevice(), vulkanObject, nullptr);
+    frameBuffers.erase(vulkanObject);
+  }*/
+  template<>
+  void DeletionQueue::Delete<FrameBuffer*>(FrameBuffer* vulkanObject)
+  {
+    vkDestroyFramebuffer(Vulkan::LogicalDevice(), *vulkanObject, nullptr);
     frameBuffers.erase(vulkanObject);
   }
   template<>
@@ -162,11 +168,11 @@ namespace Candy::Graphics
   {
     swapChains.insert(vulkanObject);
   }
-  template<>
+  /*template<>
   void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject)
   {
     frameBuffers.insert(vulkanObject);
-  }
+  }*/
   template<>
   void DeletionQueue::Push<Image*>(Image* vulkanObject)
   {
@@ -218,6 +224,11 @@ namespace Candy::Graphics
   void DeletionQueue::Push<IndexBuffer*>(IndexBuffer* vulkanObject)
   {
     buffers.insert(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Push<FrameBuffer*>(FrameBuffer* vulkanObject)
+  {
+    frameBuffers.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkFence>(VkFence vulkanObject)
