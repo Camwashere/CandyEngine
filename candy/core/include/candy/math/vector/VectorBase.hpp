@@ -105,8 +105,10 @@ namespace Candy::Math
             return vec / vec.Magnitude();
         }
         
+        
     public:
         T data[DIMENSIONS];
+        typedef T VALUE_TYPE;
         
     public:
         constexpr inline T& operator[](std::size_t index) noexcept {return data[index];}

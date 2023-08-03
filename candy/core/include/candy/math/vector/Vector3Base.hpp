@@ -68,6 +68,8 @@ namespace Candy::Math
         VectorBase();
         explicit VectorBase(T value);
         VectorBase(T xValue, T yValue, T zValue);
+      
+      typedef T VALUE_TYPE;
         
         template<typename U>
         requires(std::is_convertible_v<U, T>)

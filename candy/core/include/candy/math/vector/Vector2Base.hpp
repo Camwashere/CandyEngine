@@ -129,6 +129,7 @@ namespace Candy::Math
     
     
     public:
+        typedef T VALUE_TYPE;
         void Set(T value);
         void Set(T xValue, T yValue);
         void Set(const VectorBase<T, 2> &other);

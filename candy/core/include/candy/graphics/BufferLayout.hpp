@@ -5,6 +5,9 @@
 #include "CandyPch.hpp"
 #include <typeinfo>
 #include <typeindex>
+#include <variant>
+#include <candy/base/CandyConcepts.hpp>
+#include <candy/math/Vector.hpp>
 
 namespace Candy::Graphics
 {
@@ -59,91 +62,60 @@ namespace Candy::Graphics
     
     [[nodiscard]] size_t GetElementCount() const;
     
-    //[[nodiscard]] VkVertexInputBindingDescription GetBindingDescription()const;
     [[nodiscard]] const std::vector<BufferElement> &GetElements() const;
     
-    //[[nodiscard]] std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()const;
     
     template<typename T>
-    struct is_vector : std::false_type
+    static constexpr size_t GetFlattenSizes(const std::vector<Math::VectorVariantList<T>>& vectorList)
     {
-    };
-    
-    template<typename T, typename A>
-    struct is_vector<std::vector<T, A>> : std::true_type
-    {
-    };
-
-// Helper struct to check if T is a vector and get its value_type, falling back to T itself for non-vectors
-    template<typename T, typename = void>
-    struct container_value_type
-    {
-      using type = T;
-    };
-    
-    template<typename T>
-    struct container_value_type<T, std::enable_if_t<is_vector<std::decay_t<T>>::value>>
-    {
-      using type = typename std::decay_t<T>::value_type;
-    };
-    
-    template<typename T> using container_value_type_t = typename container_value_type<T>::type;
-    
-    template<typename T, typename... Args>
-    static constexpr bool AreTypesValidForFlatten(const std::vector<BufferElement>& bufferElements, Args &&... args)
-    {
-      std::vector<ShaderData::Type> types{};
-      auto args_pack = std::make_tuple(std::forward<Args>(args)...);
-      std::apply([&](auto &&... values)
-                 {
-                 ((types.push_back(ShaderData::TypeFrom<std::remove_cv_t<std::remove_reference_t<container_value_type_t<decltype(values)>>>>())), ...);
-                 }, args_pack);
+      size_t totalSize = 0;
       
-      for (int i=0; i<types.size(); i++)
+      
+      for (const auto& list : vectorList)
       {
-        if (types[i] != bufferElements[i].type)
-        {
-          return false;
-        }
-        if (ShaderData::TypeFrom<T>() != ShaderData::ToBaseType(bufferElements[i].type))
-        {
-          return false;
-        }
-      }
-      
-      return true;
-      
-    }
-    
-    template<typename... Args>
-    static constexpr std::vector<ShaderData::Type> GetFlattenTypes(Args &&... args)
-    {
-      std::vector<ShaderData::Type> types{};
-      auto args_pack = std::make_tuple(std::forward<Args>(args)...);
-      std::apply([&](auto &&... values)
-                 {
-                 ((types.push_back(ShaderData::TypeFrom<std::remove_cv_t<std::remove_reference_t<container_value_type_t<decltype(values)>>>>())), ...);
-                 }, args_pack);
-      
-      return types;
-      
-      
-    }
-    
-    template<typename T, typename... Args>
-    static constexpr std::vector<T> Flatten(const std::vector<BufferElement>& bufferElements, Args &&... args)
-    {
-      if (AreTypesValidForFlatten<T>(bufferElements, std::forward<Args>(args)...))
-      {
-        std::vector<T> result{};
-        return result;
+        auto FindSize = std::visit([](const auto& elementList) { return elementList.size(); }, list);
         
+        
+        
+        totalSize += FindSize;
       }
-      else
+      size_t perElementSize = totalSize / vectorList.size();
+      
+      return perElementSize;
+    }
+    
+    template<typename T, typename...VECTOR_LIST>
+    requires(IsVectorContainer<VECTOR_LIST> && ...)
+    static constexpr std::vector<T> Flatten(const BufferLayout &layout, const VECTOR_LIST&... vector)
+    {
+      std::vector<T> result{};
+      std::vector<Math::VectorVariantList<T>> vectorList{(vector)...};
+      size_t countPerElement = GetFlattenSizes<T>(vectorList);
+      size_t totalComponentCount = layout.CalculateTotalComponentCount(countPerElement);
+      size_t incrementSize = countPerElement;
+      result.resize(totalComponentCount);
+      for (size_t i=0, a=0; i<totalComponentCount; i+=incrementSize, a++)
       {
-        CANDY_CORE_ERROR("Flatten types are not valid");
-        return {};
+        size_t currentIncOffset=0;
+        for (size_t b=0; b<vectorList.size(); b++)
+        {
+          std::visit([&result, a, i, &currentIncOffset](const auto& elementList)
+          {
+            auto element = elementList[a];
+            for (size_t e=0; e<element.Size(); e++)
+            {
+              result[i+currentIncOffset] = element[e];
+              currentIncOffset++;
+            }
+            
+          }, vectorList[b]);
+        }
       }
+      
+     
+      
+      return result;
+      
       
     }
     

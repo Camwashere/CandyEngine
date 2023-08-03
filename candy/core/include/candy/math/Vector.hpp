@@ -3,7 +3,8 @@
 #include "vector/Vector2Base.hpp"
 #include "vector/Vector3Base.hpp"
 #include "vector/Vector4Base.hpp"
-
+#include <variant>
+#include <vector>
 namespace Candy::Math
 {
   typedef VectorBase<float, 2> Vector2;
@@ -31,6 +32,17 @@ namespace Candy::Math
   typedef VectorBase<uint32_t, 2> Vector2u;
   typedef VectorBase<uint32_t, 3> Vector3u;
   typedef VectorBase<uint32_t, 4> Vector4u;
+  
+  template<typename T>
+  using VectorVariant = std::variant<Math::VectorBase<T, 2>, Math::VectorBase<T, 3>, Math::VectorBase<T, 4>>;
+  template<typename T>
+  using VectorVariantList = std::variant<std::vector<Math::VectorBase<T, 2>>, std::vector<Math::VectorBase<T, 3>>, std::vector<Math::VectorBase<T, 4>>>;
+  
+  typedef VectorVariant<float> VectorVariantF;
+  typedef VectorVariantList<float> VectorVariantListF;
+  
+  
+  
   
   
   

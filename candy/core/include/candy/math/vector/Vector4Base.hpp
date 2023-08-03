@@ -132,6 +132,7 @@ namespace Candy::Math
         void ScaleToLength(T newLength);
     
     public:
+      typedef T VALUE_TYPE;
         [[nodiscard]] VectorBase<T, 4> Normalized() const;
         [[nodiscard]] T Magnitude() const;
         [[nodiscard]] T SqrMagnitude() const;
