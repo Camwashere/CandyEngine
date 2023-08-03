@@ -12,20 +12,11 @@ namespace Candy::Graphics
   
   }
   
-  VkPipelineLayout Renderer::GetPipelineLayout()
-  {
-    if (!instance->materials.empty())
-    {
-      return instance->materials[0]->GetShader()->GetPipelineLayout();
-    }
-    return VK_NULL_HANDLE;
-  }
   Renderer* Renderer::instance = nullptr;
   
   void Renderer::Submit(Material* material)
   {
     instance->materials.push_back(material);
-    //instance->pipeline.Bake(material, *instance->renderPass);
   }
   void Renderer::Init()
   {
@@ -40,24 +31,15 @@ namespace Candy::Graphics
   void Renderer::SetTarget(GraphicsContext* target)
   {
     instance->target = target;
-    /*SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(target->surface);
-    VkSurfaceFormatKHR surfaceFormat = Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
-    instance->renderPass = CreateUniquePtr<RenderPass>(surfaceFormat.format);*/
-  }
-  
-  void Renderer::InitRenderPass(VkSurfaceKHR surface)
-  {
-    SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
-    VkSurfaceFormatKHR surfaceFormat = Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
+    VkSurfaceFormatKHR surfaceFormat = instance->target->GetSurfaceFormat();
     instance->renderPass = CreateUniquePtr<RenderPass>(surfaceFormat.format);
   }
+  
+  
   void Renderer::BeginPass()
   {
     CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
     RenderCommand::Reset();
-    //GetCurrentFrame().commandBuffer.Reset();
-    
-    //GetCurrentFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
     
     std::array<VkClearValue, 2> clearValues{};
     
@@ -73,7 +55,7 @@ namespace Candy::Graphics
     {
       instance->materials[0]->Bind();
     }
-    //GetCurrentFrame().commandBuffer.BindPipeline(instance->pipeline);
+   
     RenderCommand::SetViewport(instance->target->swapChain->extent);
   }
   VkRenderPassBeginInfo Renderer::BeginRenderPass()

@@ -23,10 +23,7 @@ namespace Candy::Graphics
         void SetIndexBuffer(const SharedPtr<IndexBuffer>& indexBuffer);
         void Clear();
         void Bind() const;
-        [[nodiscard]] std::vector<VkVertexInputBindingDescription> GetVertexBindingDescriptions()const;
-        [[nodiscard]] std::vector<VkVertexInputAttributeDescription> GetVertexAttributeDescriptions()const;
-        [[nodiscard]] uint64_t GetVertexBindingDescriptionCount()const;
-        [[nodiscard]] uint64_t GetVertexAttributeDescriptionCount()const;
+        
         
     public:
         static SharedPtr<VertexArray> Create();

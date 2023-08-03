@@ -3,6 +3,7 @@
 #include "../UniformBuffer.hpp"
 #include <candy/math/Matrix.hpp>
 #include "../vulkan/pipeline/Pipeline.hpp"
+#include <candy/graphics/BufferLayout.hpp>
 namespace Candy::Graphics
 {
   // Responsible for automatically creating descriptor sets
@@ -102,7 +103,8 @@ namespace Candy::Graphics
     Pipeline pipeline;
   
   public:
-    uint32_t layoutVertexStride=0;
+    //uint32_t layoutVertexStride=0;
+    BufferLayout bufferLayout;
     UniquePtr<UniformBuffer> uniformBuffer;
     std::unordered_map<std::string, uint32_t> propertyMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
@@ -130,6 +132,7 @@ namespace Candy::Graphics
     void SetUniform(uint32_t id, const void* data);
     void CalculateOffsetsAndStride();
     void CalculateProperties();
+    BufferLayout GetBufferLayout()const;
     size_t MaxSetCount()const;
     std::vector<VkPushConstantRange> GetPushConstantRanges();
     std::vector<VkVertexInputBindingDescription> GetVertexBindingDescriptions()const;
@@ -144,7 +147,7 @@ namespace Candy::Graphics
     void AddLayoutProperty(const std::string& name, bool isInput, ShaderData::Stage stage, ShaderData::Type type, std::uint32_t binding, std::uint32_t set, std::uint32_t offset, std::uint32_t stride, std::uint32_t location);
     
   public:
-    [[nodiscard]] uint32_t GetLayoutVertexStride()const;
+    //[[nodiscard]] uint32_t GetLayoutVertexStride()const;
     [[nodiscard]] VkPipeline GetPipeline()const;
     [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
     

@@ -90,12 +90,14 @@ namespace Candy::Graphics
   }
   void ShaderLayout::CalculateOffsetsAndStride()
   {
+    
     std::uint64_t offset=0;
     uint32_t stride=0;
     for (auto& element : inputLayoutProperties)
     {
       if (element.stage == ShaderData::Stage::Vertex)
       {
+        bufferLayout.AddElement(element.type, element.name);
         element.offset = offset;
         uint64_t elementSize = ShaderData::TypeSize(element.type);
         offset += elementSize;
@@ -103,7 +105,7 @@ namespace Candy::Graphics
       }
       
     }
-    layoutVertexStride = stride;
+    //layoutVertexStride = stride;
   
   }
   void ShaderLayout::CalculateProperties()
@@ -159,6 +161,11 @@ namespace Candy::Graphics
       }
     }
   }
+  
+  BufferLayout ShaderLayout::GetBufferLayout()const
+  {
+    return bufferLayout;
+  }
   size_t ShaderLayout::MaxSetCount()const
   {
     uint32_t maxSet=0;
@@ -199,7 +206,9 @@ namespace Candy::Graphics
   std::vector<VkVertexInputBindingDescription> ShaderLayout::GetVertexBindingDescriptions()const
   {
     std::vector<VkVertexInputBindingDescription> descriptions{};
-    descriptions.push_back({0, layoutVertexStride, VK_VERTEX_INPUT_RATE_VERTEX});
+    //descriptions.push_back({0, layoutVertexStride, VK_VERTEX_INPUT_RATE_VERTEX});
+    
+    descriptions.push_back({0, bufferLayout.GetStride(), VK_VERTEX_INPUT_RATE_VERTEX});
     return descriptions;
   }
   std::vector<VkVertexInputAttributeDescription> ShaderLayout::GetVertexAttributeDescriptions()const
@@ -287,11 +296,11 @@ namespace Candy::Graphics
     
     RenderCommand::SetUniform(pipeline, prop.offset, prop.size, data);
   }
-  uint32_t ShaderLayout::GetLayoutVertexStride()const
+  /*uint32_t ShaderLayout::GetLayoutVertexStride()const
   {
     return layoutVertexStride;
   }
-  
+  */
   VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
   VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}
 

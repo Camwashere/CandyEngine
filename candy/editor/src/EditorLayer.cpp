@@ -71,10 +71,21 @@ namespace Candy
     //Buffers
     vertexArray = VertexArray::Create();
     
-    BufferLayout layout;
-    layout.AddElement(ShaderData::Type::Float3, "inPosition");
-    layout.AddElement(ShaderData::Type::Float3, "inColor");
-    layout.AddElement(ShaderData::Type::Float2, "inTexCoord");
+    
+    BufferLayout layout = shader->GetBufferLayout();
+    
+    //layout.Flatten<std::vector<Vector3>, std::vector<Vector3>, std::vector<Vector2>>(vertices, colors, uvs);
+    
+    Vector2 b;
+    Vector3 c;
+    
+    
+    auto types = BufferLayout::Flatten(vertices, colors, uvs);
+    for (auto t : types)
+    {
+      CANDY_CORE_INFO("Type: {0}", ShaderData::TypeToString(t));
+    }
+    
     
     SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(layout, vertices.size());
     

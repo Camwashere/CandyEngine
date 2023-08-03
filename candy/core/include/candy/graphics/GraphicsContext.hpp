@@ -38,7 +38,7 @@ namespace Candy::Graphics
     
     private:
         GLFWwindow* handle;
-        VkSurfaceKHR surface;
+        VkSurfaceKHR surface=VK_NULL_HANDLE;
         UniquePtr<SwapChain> swapChain;
         //UniquePtr<RenderPass> renderPass;
         uint32_t currentFrameIndex = 0;
@@ -66,6 +66,7 @@ namespace Candy::Graphics
         SwapChain& GetSwapChain();
         //VkRenderPass GetRenderPass();
         VkSurfaceKHR GetSurface();
+        VkSurfaceFormatKHR GetSurfaceFormat();
         
         
         [[nodiscard]] uint32_t GetCurrentFrameIndex()const;

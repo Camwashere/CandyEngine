@@ -4,7 +4,8 @@
 #include <array>
 #include <unordered_map>
 #include <vulkan/vulkan.h>
-
+#include <typeinfo>
+#include <candy/math/Vector.hpp>
 namespace spirv_cross
 {
   struct SPIRType;
@@ -120,6 +121,30 @@ namespace Candy::Graphics
     static size_t ComponentCount(Type type);
     static size_t ComponentSize(Type type);
     static size_t TypeSize(Type type);
+    
+    template<typename T>
+    static constexpr Type TypeFrom()
+    {
+      return Type::None;
+    }
+    
+    
   };
+  
+  
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<void>() { return ShaderData::Type::Void; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<char>() { return ShaderData::Type::Byte; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<unsigned char>() { return ShaderData::Type::UByte; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<bool>() { return ShaderData::Type::Bool; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<int>() { return ShaderData::Type::Int; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<unsigned int>() { return ShaderData::Type::UInt; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<float>() { return ShaderData::Type::Float; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<double>() { return ShaderData::Type::Double; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<Math::Vector2>() { return ShaderData::Type::Vector2; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<Math::Vector3>() { return ShaderData::Type::Vector3; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<Math::Vector4>() { return ShaderData::Type::Vector4; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<Math::Vector2d>() { return ShaderData::Type::Vector2Double; }
+  template<> constexpr ShaderData::Type ShaderData::TypeFrom<Math::Vector3d>() { return ShaderData::Type::Vector3Double; }
+  
   
 }

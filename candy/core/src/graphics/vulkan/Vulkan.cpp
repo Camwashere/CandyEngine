@@ -99,6 +99,7 @@ namespace Candy::Graphics
     vulkan->currentContext = context;
     Renderer::SetTarget(context);
     
+    
   }
   
 

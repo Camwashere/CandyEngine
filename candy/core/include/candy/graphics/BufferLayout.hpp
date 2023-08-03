@@ -2,6 +2,9 @@
 #include "candy/graphics/shader/ShaderData.hpp"
 #include <vector>
 #include "CandyPch.hpp"
+#include <typeinfo>
+#include <typeindex>
+
 namespace Candy::Graphics
 {
     struct BufferElement
@@ -44,14 +47,28 @@ namespace Candy::Graphics
         [[nodiscard]] uint32_t GetStride()const;
         [[nodiscard]] size_t GetElementCount()const;
         
-        [[nodiscard]] VkVertexInputBindingDescription GetBindingDescription()const;
+        //[[nodiscard]] VkVertexInputBindingDescription GetBindingDescription()const;
         [[nodiscard]] const std::vector<BufferElement>& GetElements()const;
         
-        [[nodiscard]] std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()const;
+        //[[nodiscard]] std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()const;
         
         
         
-        
+        template<typename... Args>
+        static constexpr std::vector<ShaderData::Type> Flatten(Args&&... args)
+        {
+          std::vector<ShaderData::Type> types{};
+          auto args_pack = std::make_tuple(std::forward<Args>(args)...);
+          std::apply([&](auto&&... values)
+                     {
+                        ((types.push_back(ShaderData::TypeFrom<std::remove_cv_t<std::remove_reference_t<decltype(values)>>>())), ...);
+                      }, args_pack);
+          
+          return types;
+          
+          
+        }
+
         
         [[nodiscard]] uint64_t CalculateSize(uint64_t countPerElement)const
         {

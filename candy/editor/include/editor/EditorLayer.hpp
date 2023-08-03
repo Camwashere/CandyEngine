@@ -9,14 +9,12 @@ namespace Candy
   {
   private:
     Project* project;
-    //UniquePtr<ContentBrowserPanel> contentBrowserPanel;
-    //UniquePtr<Viewport> viewport;
     Candy::SharedPtr<Candy::Graphics::Shader> shader;
     Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
     Candy::Graphics::Material material;
     Color color;
   public:
-    EditorLayer(Project* project);
+    explicit EditorLayer(Project* project);
     
     
     void OnAttach() override;

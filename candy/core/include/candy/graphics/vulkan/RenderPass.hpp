@@ -5,14 +5,18 @@
 #include "../Color.hpp"
 namespace Candy::Graphics
 {
+  
+  
+  
     class RenderPass
     {
     private:
-        VkRenderPass renderPass;
+        VkRenderPass renderPass=VK_NULL_HANDLE;
         Math::Vector2i offset = {0, 0};
         Color clearColor;
    
     public:
+      explicit RenderPass(const VkAttachmentDescription& depthAttachment, const std::vector<VkAttachmentDescription>& colorAttachments,const std::vector<VkAttachmentDescription>& inputAttachments);
         explicit RenderPass(VkFormat colorAttachmentFormat);
         ~RenderPass();
         
@@ -20,7 +24,7 @@ namespace Candy::Graphics
         operator VkRenderPass()const{return renderPass;}
         operator VkRenderPass(){return renderPass;}
         
-        bool IsValid()const{return renderPass != VK_NULL_HANDLE;}
+        [[nodiscard]] bool IsValid()const{return renderPass != VK_NULL_HANDLE;}
         
         
     public:

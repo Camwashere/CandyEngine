@@ -26,19 +26,17 @@ namespace Candy::Graphics
     UniquePtr<RenderPass> renderPass;
     
   private:
-    
     static VkRenderPassBeginInfo BeginRenderPass();
     
   private:
     Renderer();
-    static VkPipelineLayout GetPipelineLayout();
+    
     
   public:
     static void Submit(Material* material);
     static void Start();
     static void Init();
     static void SetTarget(GraphicsContext* target);
-    static void InitRenderPass(VkSurfaceKHR surface);
     static void BeginPass();
     static void EndPass();
     static FrameData& GetCurrentFrame();

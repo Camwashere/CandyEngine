@@ -16,7 +16,6 @@ namespace Candy::Graphics
       Vulkan::InitDeviceManager(surface);
       InitSyncStructures();
       Vulkan::RegisterContext(this);
-      Renderer::InitRenderPass(surface);
       swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetRenderPass());
     }
   void GraphicsContext::InitSyncStructures()
@@ -167,6 +166,12 @@ namespace Candy::Graphics
   VkSurfaceKHR GraphicsContext::GetSurface()
   {
       return surface;
+  }
+  
+  VkSurfaceFormatKHR GraphicsContext::GetSurfaceFormat()
+  {
+    SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
+    return Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
   }
   void GraphicsContext::UpdateFrameIndex()
   {
