@@ -112,6 +112,7 @@ namespace Candy::Graphics
     static const std::string& TypeToString(Type type);
     static Type StringToType(const std::string& type);
     static Type SpirvToType(const spirv_cross::SPIRType& spirvType);
+    static Type ToBaseType(Type type);
     static const std::string& StageToString(Stage stage);
     static Stage StringToStage(const std::string& stage);
     static VkFormat TypeToVulkan(Type type);

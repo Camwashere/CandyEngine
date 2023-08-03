@@ -47,6 +47,8 @@ const std::vector<Vector2> uvs = {
   {1.0f, 1.0f}
 };
 
+
+
 const std::vector<uint32_t> indices = {
   0, 1, 2, 2, 3, 0,
   //SECOND SQUARE
@@ -76,15 +78,18 @@ namespace Candy
     
     //layout.Flatten<std::vector<Vector3>, std::vector<Vector3>, std::vector<Vector2>>(vertices, colors, uvs);
     
+    Vector3 a;
     Vector2 b;
     Vector3 c;
     
     
-    auto types = BufferLayout::Flatten(vertices, colors, uvs);
-    for (auto t : types)
+    std::vector<float> types = BufferLayout::Flatten<float>(layout.GetElements(), vertices, colors, uvs);
+    //auto types = BufferLayout::Flatten<float>(a, b, c);
+    
+    /*for (auto t : types)
     {
       CANDY_CORE_INFO("Type: {0}", ShaderData::TypeToString(t));
-    }
+    }*/
     
     
     SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(layout, vertices.size());

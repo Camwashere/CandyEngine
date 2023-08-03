@@ -215,7 +215,33 @@ namespace Candy::Graphics
     return Type::Unknown;
     
   }
-  
+  ShaderData::Type ShaderData::ToBaseType(Type type)
+  {
+    switch (type)
+    {
+      case Type::Float:
+      case Type::Vec2:
+      case Type::Vec3:
+      case Type::Vec4:
+      case Type::Matrix2:
+      case Type::Matrix3:
+      case Type::Matrix4:
+        return Type::Float;
+      case Type::Int:
+      case Type::IVec2:
+      case Type::IVec3:
+      case Type::IVec4:
+        return Type::Int;
+      case Type::Bool:
+      case Type::BVec2:
+      case Type::BVec3:
+      case Type::BVec4:
+        return Type::Bool;
+      default:
+        return Type::Unknown;
+        break;
+    }
+  }
   
   const std::string& ShaderData::StageToString(Stage stage)
   {
