@@ -55,5 +55,9 @@ namespace Candy::Graphics
     {
         vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }
+  void VulkanBuffer::DestroyBuffer(VulkanBuffer* vulkanBuffer)
+  {
+    vmaDestroyBuffer(Vulkan::Allocator(), *vulkanBuffer, vulkanBuffer->allocation);
+  }
 
 }

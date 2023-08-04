@@ -200,7 +200,7 @@ namespace Candy::Graphics
   ShaderSource::ShaderSource(ShaderData::Stage shaderStage, std::string sourceCode) : metaData{shaderStage}, source(std::move(sourceCode))
   {
     //std::cout << "Starting: " << ShaderData::StageToString(shaderStage) << std::endl;
-    Tokenize(source);
+    //Tokenize(source);
     
   }
   

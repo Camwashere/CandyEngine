@@ -1,20 +1,23 @@
 #pragma once
 #include "CandyPch.hpp"
-#include "vke/descriptor_allocator.h"
+#include <vulkan/vulkan.h>
+#include "DescriptorAllocatorPool.hpp"
 namespace Candy::Graphics
 {
+  
   class DescriptorAllocator
   {
   private:
-    UniquePtr<vke::DescriptorAllocatorPool> pool;
+    UniquePtr<DescriptorAllocatorPool> pool;
     
   public:
-    explicit DescriptorAllocator(const VkDevice& logicalDevice);
+    explicit DescriptorAllocator();
     
   public:
-    vke::DescriptorAllocatorHandle GetHandle();
+    DescriptorAllocatorHandle GetHandle();
     bool Allocate(VkDescriptorSet* set, VkDescriptorSetLayout layout);
-    void Flip();
+    void Flip(uint32_t frameIndex);
+    void Reset();
     //void Destroy();
   
   };

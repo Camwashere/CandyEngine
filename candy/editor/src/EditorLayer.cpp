@@ -65,9 +65,12 @@ namespace Candy
     
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
-    material.shader = shader.get();
+    material.SetShader(shader.get());
+    material.SetTexture("texSampler", "assets/textures/statue.jpg");
+    
+    /*material.shader = shader.get();
     material.texture.Load("assets/textures/statue.jpg");
-    material.textureImageView.Set(material.texture);
+    material.textureImageView.Set(material.texture);*/
     
     
     //Buffers
@@ -114,11 +117,15 @@ namespace Candy
     color.x = (Math::Sin(time) + 1.0f) / 2.0f;
     color.y = (Math::Cos(time) + 1.0f) / 2.0f;
     color.z = (Math::Sin(time) + 1.0f) / 2.0f;
+    shader->SetMatrix("model", model);
+    shader->SetMatrix("view", view);
+    shader->SetMatrix("proj", proj);
     shader->SetColor("uColor", color);
     
-    shader->PushMatrix("model", model);
-    shader->PushMatrix("view", view);
-    shader->PushMatrix("proj", proj);
+    //RenderCommand::BindDescriptorSets(shader->GetLayout().pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor}, {0, 0});
+    //shader->PushMatrix("model", model);
+    //shader->PushMatrix("view", view);
+    //shader->PushMatrix("proj", proj);
     
     vertexArray->Bind();
     RenderCommand::DrawIndexed(vertexArray);

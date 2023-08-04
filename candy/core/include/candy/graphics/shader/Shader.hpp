@@ -19,17 +19,11 @@ namespace Candy::Graphics
         
       UniquePtr<ShaderPreProcessor> preProcessor;
       ShaderPostProcessor postProcessor;
-      //std::vector<VkShaderModule> shaderModules;
-      //Pipeline pipeline;
-      //VkPipelineLayout pipelineLayout;
     
     private:
       VkShaderModule CreateShaderModule(ShaderData::Stage stage);
       std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
       std::vector<VkPushConstantRange> GetPushConstantRanges();
-      //VkPipelineLayout BakePipelineLayout();
-      //std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
-      //void BakePipeline(VkRenderPass renderPass);
     
     public:
       explicit Shader(std::filesystem::path  shaderFilePath);
@@ -72,8 +66,6 @@ namespace Candy::Graphics
       const std::filesystem::path& GetFilepath()const{return filepath;}
       VkPipeline GetPipeline()const;
       VkPipelineLayout GetPipelineLayout()const;
-      //void DestroyShaderModules();
-      
         
       
       ShaderPostProcessor& GetPostProcessor(){return postProcessor;}

@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 #include <typeinfo>
 #include <candy/math/Vector.hpp>
+#include <candy/math/Matrix.hpp>
 namespace spirv_cross
 {
   struct SPIRType;
@@ -128,6 +129,14 @@ namespace Candy::Graphics
     {
       return Type::None;
     }
+    
+    using Value = std::variant<bool,
+    int8_t, Math::Vector2b, Math::Vector3b, Math::Vector4b,
+    uint8_t, Math::Vector2ub, Math::Vector3ub, Math::Vector4ub,
+    int32_t, Math::Vector2i, Math::Vector3i, Math::Vector4i,
+    uint32_t, Math::Vector2u, Math::Vector3u, Math::Vector4u,
+    float, Math::Vector2, Math::Vector3, Math::Vector4, Math::Matrix4,
+    double, Math::Vector2d, Math::Vector3d, Math::Vector4d>;
     
     
   };

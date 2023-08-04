@@ -46,7 +46,8 @@ namespace Candy::Graphics
         [[nodiscard]] uint32_t GetDeviceID()const;
         [[nodiscard]] size_t GetMinUniformBufferOffsetAlignment()const;
         [[nodiscard]] uint32_t GetMaxPushConstantSize()const;
-        [[nodiscard]] uint32_t GetMaxDynamicUniformBuffers()const;
+        [[nodiscard]] uint32_t GetMaxDynamicUniformBufferCount()const;
+        [[nodiscard]] uint32_t GetMaxUniformBufferSize()const;
         
         [[nodiscard]] size_t PadUniformBufferSize(size_t originalSize)const;
         

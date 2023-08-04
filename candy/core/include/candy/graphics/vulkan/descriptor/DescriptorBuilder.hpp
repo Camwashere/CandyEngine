@@ -20,7 +20,8 @@ namespace Candy::Graphics
     DescriptorBuilder& AddImageWrite(uint32_t binding,  VkDescriptorImageInfo* imageInfo, VkDescriptorType type);
     DescriptorBuilder& AddBufferWrite(uint32_t binding,  VkDescriptorBufferInfo* imageInfo, VkDescriptorType type);
     
-    bool BuildLayout(VkDescriptorSet* set, VkDescriptorSetLayout& layout);
+    VkDescriptorSetLayout BuildLayout();
+    bool AllocateDescriptorSet(VkDescriptorSet* set, VkDescriptorSetLayout layout);
     bool Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout);
     bool Build(VkDescriptorSet* set);
     void Write(VkDescriptorSet* set);

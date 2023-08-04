@@ -153,9 +153,14 @@ namespace Candy::Graphics
   {
       return properties.limits.maxPushConstantsSize;
   }
-  uint32_t PhysicalDevice::GetMaxDynamicUniformBuffers()const
+  uint32_t PhysicalDevice::GetMaxDynamicUniformBufferCount()const
   {
     return properties.limits.maxDescriptorSetUniformBuffersDynamic;
+  }
+  
+  uint32_t PhysicalDevice::GetMaxUniformBufferSize()const
+  {
+      return properties.limits.maxUniformBufferRange;
   }
   
   size_t PhysicalDevice::PadUniformBufferSize(size_t originalSize)const

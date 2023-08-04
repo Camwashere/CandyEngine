@@ -3,17 +3,21 @@
 #include <candy/graphics/GraphicsContext.hpp>
 namespace Candy::Graphics
 {
-  DescriptorAllocator::DescriptorAllocator(const VkDevice& logicalDevice)
+  DescriptorAllocator::DescriptorAllocator()
   {
-    pool = UniquePtr<vke::DescriptorAllocatorPool>(vke::DescriptorAllocatorPool::Create(logicalDevice, 1));
+    pool = DescriptorAllocatorPool::Create();
     //Vulkan::PushDeleter([=, this](){pool->Flip(); pool.reset();});
     //pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 2.);
     //Vulkan::PushDeleter([=, this](){Destroy();});
+    pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10.f);
+    pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 10.f);
+    pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10.f);
+    pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 10.f);
     
     
   }
   
-  vke::DescriptorAllocatorHandle DescriptorAllocator::GetHandle()
+  DescriptorAllocatorHandle DescriptorAllocator::GetHandle()
   {
     return pool->GetAllocator();
   }
@@ -24,13 +28,13 @@ namespace Candy::Graphics
     return (handle.Allocate(layout, *set));
   }
   
-  void DescriptorAllocator::Flip()
+  void DescriptorAllocator::Flip(uint32_t frameIndex)
   {
-    pool->Flip();
+    pool->Flip(frameIndex);
+  }
+  void DescriptorAllocator::Reset()
+  {
+    pool->Reset();
   }
   
-  /*void DescriptorAllocator::Destroy()
-  {
-    pool.reset();
-  }*/
 }

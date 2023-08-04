@@ -24,7 +24,7 @@ namespace Candy::Graphics
     
     CANDY_CORE_ASSERT(vmaCreateAllocator(&allocatorCreateInfo, &allocator) == VK_SUCCESS, "FAILED TO CREATE ALLOCATOR");
     
-    descriptorAllocator = CreateUniquePtr<DescriptorAllocator>(deviceManager->logicalDevice);
+    descriptorAllocator = CreateUniquePtr<DescriptorAllocator>();
   }
   void Vulkan::InitDeviceManager(VkSurfaceKHR surface)
   {
@@ -152,7 +152,8 @@ namespace Candy::Graphics
     vkDeviceWaitIdle(LogicalDevice());
     //vulkan->contexts[0]->Terminate();
     vulkan->deletionQueue.Flush();
-    vulkan->descriptorAllocator->Flip();
+    //vulkan->descriptorAllocator->Flip();
+    vulkan->descriptorAllocator->Reset();
     vulkan->descriptorAllocator.reset();
     vulkan->descriptorLayoutCache.Destroy();
     vmaDestroyAllocator(vulkan->allocator);

@@ -24,7 +24,7 @@ namespace Candy::Graphics
     void Set(Texture& texture, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     void Set(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     [[nodiscard]] bool IsValid()const;
-    VkSampler GetSampler(){return sampler;}
+    [[nodiscard]] VkSampler GetSampler()const{return sampler;}
     //void Destroy();
   };
 }

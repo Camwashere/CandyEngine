@@ -26,7 +26,6 @@ namespace Candy::Graphics
   {
     VkPipelineLayout pipelineLayout = BakePipelineLayout();
     pipeline.Bake(renderPass, GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
-    //DestroyShaderModules();
     
   }
   
@@ -39,19 +38,12 @@ namespace Candy::Graphics
     
     
     auto descriptorSetLayouts = BakeDescriptorSetLayouts();
-    //CANDY_CORE_INFO("DESCRIPTOR SET VECTOR SIZE: {}", descriptorSetLayouts.size());
-    for (auto d : descriptorSetLayouts)
-    {
-      if (d==VK_NULL_HANDLE)
-      {
-        CANDY_CORE_ERROR("NULL DESCRIPTOR SET LAYOUT HANDLE");
-      }
-    }
+    
+    
     pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
     pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
     
     auto pushConstantRanges = GetPushConstantRanges();
-    //CANDY_CORE_INFO("Push Constant Range Count: {0}", pushConstantRanges.size());
     pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size(); // Optional
     pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data(); // Optional
     
@@ -62,9 +54,10 @@ namespace Candy::Graphics
   std::vector<VkDescriptorSetLayout> ShaderLayout::BakeDescriptorSetLayouts()
   {
     std::vector<VkDescriptorSetLayout> layouts;
-    layouts.resize(FRAME_OVERLAP);
+    int LAYOUT_NUM = 1;
+    layouts.resize(LAYOUT_NUM);
     
-    for (int i=0; i<FRAME_OVERLAP; i++)
+    for (int i=0; i<LAYOUT_NUM; i++)
     {
       DescriptorBuilder builder = DescriptorBuilder::Begin();
       
@@ -72,16 +65,19 @@ namespace Candy::Graphics
       for (const auto& block : uniformBlockProperties)
       {
         builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
-        //builder.BindBuffer(block.binding, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
       }
       for (const auto& block : uniformImageProperties)
       {
-        //CANDY_CORE_INFO("IMAGE BINDING: {}", block.binding);
         builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
-        //builder.BindImage(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
+      }
+      layouts[i] = builder.BuildLayout();
+      
+      for (int f=0; f<FRAME_OVERLAP; f++)
+      {
+        builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).globalDescriptor, layouts[i]);
       }
       
-      builder.BuildLayout(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor, layouts[i]);
+      
       
       //Vulkan::PushDeleter([=, this](){vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), layouts[i], nullptr);});
     }
@@ -112,14 +108,18 @@ namespace Candy::Graphics
   {
     Utils::IDManager<uint32_t> parentIDManager;
     Utils::IDManager<uint32_t> propertyIDManager;
+    uint32_t parentOffset=0;
     for (const auto& block : uniformBlockProperties)
     {
       ShaderParentProperty parentProperty{};
       parentProperty.name = block.name;
       parentProperty.id = parentIDManager.Assign();
       parentProperty.binding = block.binding;
+      parentProperty.offset = parentOffset;
+      
       uint32_t offset = 0;
-      parentProperties.push_back(parentProperty);
+      uint32_t pSize=0;
+      //parentProperties.push_back(parentProperty);
       for (const auto& value : block.properties)
       {
         ShaderProperty property{};
@@ -130,9 +130,13 @@ namespace Candy::Graphics
         property.size = ShaderData::TypeSize(property.type);
         property.offset = offset;
         offset += property.size;
+        pSize += property.size;
         propertyMap[property.name] = properties.size();
         properties.push_back(property);
       }
+      parentProperty.size = pSize;
+      parentOffset += pSize;
+      parentProperties.push_back(parentProperty);
     }
     Utils::IDManager<uint32_t> imageIDManager;
     for (const auto& image : uniformImageProperties)
@@ -224,7 +228,10 @@ namespace Candy::Graphics
     return descriptions;
   }
   
-  
+  void ShaderLayout::AddStorageBlockProperty(const ShaderStorageBlockProperty& prop)
+  {
+    storageBlockProperties.push_back(prop);
+  }
   void ShaderLayout::AddPushConstantBlockProperty(const ShaderPushConstantBlockProperty& prop)
   {
     pushConstantBlockProperties.push_back(prop);
@@ -288,19 +295,26 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(false);
     return 0;
   }
+  //TODO: Figure this out. Don't bind all descriptor sets every time this is called. Find a better way to store/handle/calculate offsets.
   void ShaderLayout::SetUniform(uint32_t id, const void* data)
   {
     CANDY_CORE_ASSERT(id < properties.size(), "Uniform id out of range");
     auto& prop = properties[id];
-    auto& parent = parentProperties[prop.parentBlockID];
     
-    RenderCommand::SetUniform(pipeline, prop.offset, prop.size, data);
+    
+    auto& parent = parentProperties[prop.parentBlockID];
+    //CANDY_CORE_INFO("Uniform name: {0}, Parent Name: {1}", prop.name, parent.name);
+    //CANDY_CORE_INFO("Parent properties size: {0}", parentProperties.size());
+    //CANDY_CORE_INFO("Parent Property size: {}", parent.size);
+    std::vector<uint32_t> offsets = {0, parentProperties[0].size};
+    
+    //size_t dynamicOffsetCount = parentProperties.size();
+    //RenderCommand::SetUniform(prop.offset, prop.size, data);
+    //RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor}, {prop.offset});
+    RenderCommand::SetUniform(prop.offset + parent.offset, prop.size, data);
+    RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor}, offsets);
   }
-  /*uint32_t ShaderLayout::GetLayoutVertexStride()const
-  {
-    return layoutVertexStride;
-  }
-  */
+  
   VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
   VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}
 

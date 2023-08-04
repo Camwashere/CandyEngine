@@ -44,7 +44,8 @@ namespace Candy::Graphics
         void SetViewport(VkViewport viewport);
         void BindVertexBuffers(const std::vector<VkBuffer>& vertexBuffers);
         void BindIndexBuffer(const IndexBuffer& indexBuffer);
-        void BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset);
+        //void BindDescriptorSet(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset);
+        void BindDescriptorSets(VkPipelineLayout layout, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets);
         
         void BindVertexArray(const VertexArray* vertexArray);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);

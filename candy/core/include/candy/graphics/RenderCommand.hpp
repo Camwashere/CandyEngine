@@ -26,6 +26,7 @@ namespace Candy::Graphics
     static void InitSyncStructures();
     static CommandBuffer& GetCommandBuffer();
     static VkDescriptorSet GetGlobalDescriptorSet();
+    
     static FrameData& GetFrame();
     
   public:
@@ -36,7 +37,8 @@ namespace Candy::Graphics
     static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray);
     static void BindPipeline(const Pipeline& pipeline);
     static void BindVertexArray(const VertexArray* vertexArray);
-    static void BindDescriptorSets(const Pipeline& pipeline, uint32_t uniformOffset);
+    //static void BindDescriptorSet(const Pipeline& pipeline, VkDescriptorSet descriptorSet, uint32_t uniformOffset);
+    static void BindDescriptorSets(const Pipeline& pipeline, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets);
     static void SetViewport(VkExtent2D extent);
     static void SetViewport(const Math::Vector2u& size);
     static void SetViewport(uint32_t width, uint32_t height);
@@ -44,7 +46,7 @@ namespace Candy::Graphics
     static void SetViewport(VkViewport viewport);
     static void PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t dataSize, const void* data);
     static void PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data);
-    static void SetUniform(const Pipeline& pipeline, uint32_t offset, uint32_t size, const void* data);
+    static void SetUniform(uint32_t offset, uint32_t size, const void* data);
     
     static void Reset();
     static void Submit();

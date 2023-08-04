@@ -9,7 +9,7 @@
 #include "UniformBuffer.hpp"
 #include "Texture.hpp"
 #include "vulkan/ImageView.hpp"
-#include "Material.hpp"
+#include "candy/graphics/material/Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
 namespace Candy::Graphics
 {

@@ -8,7 +8,12 @@
 namespace Candy::Graphics
 {
   using namespace Math;
-  
+  struct CameraData
+  {
+    Matrix4 model;
+    Matrix4 view;
+    Matrix4 proj;
+  };
     GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
     {
       handle = windowHandle;
@@ -33,7 +38,7 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
-      frames[i].uniformBuffer = UniformBuffer::Create(Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color))*FRAME_OVERLAP);
+      frames[i].uniformBuffer = UniformBuffer::Create();
       Vulkan::DeletionQueue().Push(frames[i].renderFence);
       Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
       Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
@@ -80,7 +85,7 @@ namespace Candy::Graphics
       //Present();
       CANDY_PROFILE_FUNCTION();
       CANDY_CORE_ASSERT(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, true, UINT64_MAX) == VK_SUCCESS);
-      
+      //Vulkan::GetDescriptorAllocator().Flip(currentFrameIndex);
       VkResult result = swapChain->AcquireNextImage(GetCurrentFrame().presentSemaphore, UINT64_MAX);
       
       if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -177,6 +182,7 @@ namespace Candy::Graphics
   {
       previousFrameIndex = currentFrameIndex;
       currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
+      
   }
     
 }

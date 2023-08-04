@@ -3,21 +3,18 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
+  UniformBuffer::UniformBuffer() : VulkanBuffer(MaxSize())
+  {
+    VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
+    Vulkan::DeletionQueue().Push(this);
+  }
   UniformBuffer::UniformBuffer(uint64_t origSize) : VulkanBuffer(origSize)
   {
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
     Vulkan::DeletionQueue().Push(this);
-    //Vulkan::PushDeleter([=, this](){vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);});
   }
   
-  /*UniformBuffer::operator VkBuffer()const
-  {
-    return buffer;
-  }
-  UniformBuffer::operator VkBuffer()
-  {
-    return buffer;
-  }*/
+  
   
   void UniformBuffer::SetData(uint64_t dataSize, const void* newData)
   {
@@ -36,18 +33,14 @@ namespace Candy::Graphics
     vmaUnmapMemory(Vulkan::Allocator(), allocation);
   }
   
-  
-  
-  
-  
-  /*void UniformBuffer::Destroy()
+  uint32_t UniformBuffer::MaxSize()
   {
-    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
-    VulkanBuffer::DestroyBuffer(buffer, allocation);
-  }*/
-  
-  
-  
+    return Vulkan::PhysicalDevice().GetMaxUniformBufferSize();
+  }
+  SharedPtr<UniformBuffer> UniformBuffer::Create()
+  {
+    return CreateSharedPtr<UniformBuffer>();
+  }
   SharedPtr<UniformBuffer> UniformBuffer::Create(uint64_t size)
   {
     return CreateSharedPtr<UniformBuffer>(size);

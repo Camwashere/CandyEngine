@@ -27,5 +27,6 @@ namespace Candy::Graphics
     public:
       static void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation* allocation, VmaAllocationInfo* allocInfo=nullptr);
       static void DestroyBuffer(VkBuffer buffer, VmaAllocation allocation);
+      static void DestroyBuffer(VulkanBuffer* vulkanBuffer);
     };
 }

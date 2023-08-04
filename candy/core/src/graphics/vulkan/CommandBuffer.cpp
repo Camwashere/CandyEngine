@@ -270,9 +270,15 @@ namespace Candy::Graphics
         
     }
   
-  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset)
+  /*void CommandBuffer::BindDescriptorSet(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset)
   {
       vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 1, uniformOffset);
+  }*/
+  
+  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
+  {
+    //CANDY_CORE_INFO("descriptorSets.size()={0}, uniformOffsets.size()={1}", descriptorSets.size(), uniformOffsets.size());
+    vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, descriptorSets.size(), descriptorSets.data(), uniformOffsets.size(), uniformOffsets.data());
   }
   
   

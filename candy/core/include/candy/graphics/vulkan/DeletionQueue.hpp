@@ -6,6 +6,7 @@
 #include <candy/graphics/vulkan/Image.hpp>
 #include <candy/graphics/vulkan/ImageView.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
+#include <candy/graphics/StorageBuffer.hpp>
 #include <list>
 #include <set>
 namespace Candy::Graphics
@@ -16,6 +17,7 @@ namespace Candy::Graphics
     //std::deque<std::function<void()>> queue;
     std::set<VkSwapchainKHR> swapChains;
     //std::set<VkFramebuffer> frameBuffers;
+    //std::set<StorageBuffer*> storageBuffers;
     std::set<FrameBuffer*> frameBuffers;
     std::set<Image*> images;
     std::set<ImageView*> imageViews;
@@ -78,6 +80,8 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Push<UniformBuffer*>(UniformBuffer* vulkanObject);
   template<>
+  void DeletionQueue::Push<StorageBuffer*>(StorageBuffer* vulkanObject);
+  template<>
   void DeletionQueue::Push<VertexBuffer*>(VertexBuffer* vulkanObject);
   template<>
   void DeletionQueue::Push<IndexBuffer*>(IndexBuffer* vulkanObject);
@@ -100,6 +104,8 @@ namespace Candy::Graphics
   void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject);
   template<>
   void DeletionQueue::Delete<FrameBuffer*>(FrameBuffer* vulkanObject);
+  template<>
+  void DeletionQueue::Delete<StorageBuffer*>(StorageBuffer* vulkanObject);
   
   
 }

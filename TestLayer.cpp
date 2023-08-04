@@ -56,9 +56,9 @@ TestLayer::TestLayer() : Layer("Test Layer")
 
   //Shader
   shader = Shader::Create("assets/shaders/temp/test.glsl");
-  material.shader = shader.get();
+  /*material.shader = shader.get();
   material.texture.Load("assets/textures/statue.jpg");
-  material.textureImageView.Set(material.texture);
+  material.textureImageView.Set(material.texture);*/
 
 
   //Buffers

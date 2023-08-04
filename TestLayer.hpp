@@ -7,7 +7,7 @@
 #include <candy/app/Layer.hpp>
 #include <candy/event/Events.hpp>
 #include <CandyPch.hpp>
-#include <candy/graphics/Material.hpp>
+#include "candy/graphics/material/Material.hpp"
 class TestLayer : public Candy::Layer
 {
 private:

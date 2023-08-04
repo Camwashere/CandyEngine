@@ -71,6 +71,7 @@ namespace Candy::Graphics
     newBinding.pImmutableSamplers = nullptr;
     newBinding.stageFlags = stageFlags;
     newBinding.binding = binding;
+    
     bindings.push_back(newBinding);
     return *this;
   }
@@ -103,7 +104,7 @@ namespace Candy::Graphics
     writes.push_back(newWrite);
     return *this;
   }
-  bool DescriptorBuilder::BuildLayout(VkDescriptorSet* set, VkDescriptorSetLayout& layout)
+  VkDescriptorSetLayout DescriptorBuilder::BuildLayout()
   {
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -112,11 +113,12 @@ namespace Candy::Graphics
     layoutInfo.pBindings = bindings.data();
     layoutInfo.bindingCount = bindings.size();
     
+    return cache->CreateDescriptorSetLayout(&layoutInfo);
     
-    layout = cache->CreateDescriptorSetLayout(&layoutInfo);
-    
-    //allocate descriptor
-    
+  }
+  
+  bool DescriptorBuilder::AllocateDescriptorSet(VkDescriptorSet* set, VkDescriptorSetLayout layout)
+  {
     bool success = alloc->Allocate(set, layout);
     if (!success)
     {
@@ -127,7 +129,8 @@ namespace Candy::Graphics
   }
   bool DescriptorBuilder::Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout){
     //build layout first
-    if (! BuildLayout(set, layout))
+    layout = BuildLayout();
+    if (!AllocateDescriptorSet(set, layout))
     {
       return false;
     }

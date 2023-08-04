@@ -59,6 +59,7 @@ namespace Candy::Graphics
   void Shader::Bind()
   {
     RenderCommand::BindPipeline(GetLayout().pipeline);
+    
     //Vulkan::GetCurrentCommandBuffer().BindPipeline(pipeline);
   }
   /*void Shader::BakePipeline(VkRenderPass renderPass)

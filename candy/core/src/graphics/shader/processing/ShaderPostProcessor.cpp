@@ -2,14 +2,14 @@
 #include "candy/graphics/Vulkan.hpp"
 #include "candy/utils/FileUtils.hpp"
 #include "shaderc/libshaderc/include/shaderc/shaderc.hpp"
+
+#include "SPIRV-Cross/spirv_cross.hpp"
 #include "SPIRV-Cross/spirv_glsl.hpp"
 namespace Candy::Graphics
 {
   static std::filesystem::path GetCacheDirectory()
   {
     return "assets/cache/shader";
-    //CANDY_CORE_ASSERT(shaderLibrary->IsValid(), "Shader library is not valid!");
-    //return shaderLibrary->GetCacheDirectory();
   }
   static shaderc_shader_kind StageToShaderC(ShaderData::Stage stage)
   {
@@ -33,6 +33,7 @@ namespace Candy::Graphics
   {
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
+    spirv_cross::SmallVector<float> t;
     options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
     if (generateDebugInfo)
     {
@@ -96,23 +97,15 @@ namespace Candy::Graphics
     }
     
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
-    //descriptorBuilder = DescriptorBuilder::Begin();
     
     for (auto&& [stage, data] : shaderData)
     {
       Reflect(stage, data);
     }
     
-    //descriptorLayout.Build();
     shaderLayout.CalculateOffsetsAndStride();
     shaderLayout.CalculateProperties();
-    
-    /*VkDescriptorSetLayoutCreateInfo layoutInfo{};
-    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = layoutBindings.size();
-    layoutInfo.pBindings = layoutBindings.data();
-    
-    CANDY_CORE_ASSERT(vkCreateDescriptorSetLayout(Vulkan::LogicalDevice(), &layoutInfo, nullptr, &descriptorSetLayout) == VK_SUCCESS, "Failed to create descriptor set layout!");*/
+ 
   
   }
   
@@ -120,9 +113,19 @@ namespace Candy::Graphics
   void ShaderPostProcessor::Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary)
   {
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
-    auto resources = compiler.get_shader_resources();
     
-    for (auto& resource : resources.stage_inputs)
+    auto resources = compiler.get_shader_resources();
+    ReflectStageInputs(compiler, stage, resources.stage_inputs);
+    ReflectStageOutputs(compiler, stage, resources.stage_outputs);
+    ReflectStageStorageBuffers(compiler, stage, resources.storage_buffers);
+    ReflectStageUniformBuffers(compiler, stage, resources.uniform_buffers);
+    ReflectStageSampledImages(compiler, stage, resources.sampled_images);
+    ReflectStagePushConstants(compiler, stage);
+    spirv_cross::SmallVector<spirv_cross::Resource> stageInputs;
+  }
+  void ShaderPostProcessor::ReflectStageInputs(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageInputs)
+  {
+    for (auto& resource : stageInputs)
     {
       uint32_t location = compiler.get_decoration(resource.id, spv::DecorationLocation);
       uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
@@ -133,7 +136,11 @@ namespace Candy::Graphics
       ShaderData::Type shaderType = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
       shaderLayout.AddInputLayoutProperty(compiler.get_name(resource.id), stage, shaderType, binding, set, offset, stride, location);
     }
-    for (auto& resource : resources.stage_outputs)
+  }
+  
+  void ShaderPostProcessor::ReflectStageOutputs(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageOutputs)
+  {
+    for (auto& resource : stageOutputs)
     {
       uint32_t location = compiler.get_decoration(resource.id, spv::DecorationLocation);
       uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
@@ -144,8 +151,37 @@ namespace Candy::Graphics
       ShaderData::Type shaderType = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
       shaderLayout.AddOutputLayoutProperty(compiler.get_name(resource.id), stage, shaderType, binding, set, offset, stride, location);
     }
-    
-    for (auto& resource : resources.uniform_buffers)
+  }
+  void ShaderPostProcessor::ReflectStageStorageBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageStorageBuffers)
+  {
+    for (auto& resource : stageStorageBuffers)
+    {
+      ShaderStorageBlockProperty block;
+      block.name = compiler.get_name(resource.id);
+      block.id = resource.base_type_id;
+      block.stage = stage;
+      block.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+      block.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+      //compiler.get_type(resource.base_type_id).member_types;
+      block.name = compiler.get_member_name(resource.base_type_id, 0);
+      CANDY_CORE_INFO("STORAGE BLOCK NAME: {}, BINDING: {}, SET: {}", block.name, block.binding, block.set);
+      auto members = compiler.get_type(resource.base_type_id).member_types;
+      if (!members.empty())
+      {
+        for (auto& member : members)
+        {
+          ShaderData::Type shaderType = ShaderData::SpirvToType(compiler.get_type(member));
+          CANDY_CORE_INFO("STORAGE MEMVER TYPE: {}", ShaderData::TypeToString(shaderType));
+        }
+      }
+      
+      
+      shaderLayout.AddStorageBlockProperty(block);
+    }
+  }
+  void ShaderPostProcessor::ReflectStageUniformBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageUniformBuffers)
+  {
+    for (auto& resource : stageUniformBuffers)
     {
       //CANDY_CORE_INFO("UNIFORM NAME: {}", resource.name);
       //CANDY_CORE_INFO("UNIFORM SIZE: {}", compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id)));
@@ -155,6 +191,9 @@ namespace Candy::Graphics
       block.stage = stage;
       block.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
       block.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+      
+      //uint32_t offset = compiler.get_decoration(resource.id, spv::DecorationOffset);
+      //CANDY_CORE_INFO("UNIFORM BLOCK OFFSET: {}", offset);
       size_t blockSize = compiler.get_declared_struct_size(compiler.get_type(resource.base_type_id));
       //CANDY_CORE_INFO("BLOCK NAME: {}, BLOCK ID: {}, BLOCK SIZE: {}", block.name, block.id, blockSize);
       auto members = compiler.get_type(resource.base_type_id).member_types;
@@ -172,11 +211,11 @@ namespace Candy::Graphics
       }
       
       shaderLayout.AddUniformBlockProperty(block);
-
-      
     }
-    
-    for (auto& resource : resources.sampled_images)
+  }
+  void ShaderPostProcessor::ReflectStageSampledImages(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageSampledImages)
+  {
+    for (auto& resource : stageSampledImages)
     {
       ShaderUniformImageProperty prop;
       prop.id = resource.id;
@@ -185,7 +224,7 @@ namespace Candy::Graphics
       prop.type = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
       prop.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
       prop.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-     // CANDY_CORE_INFO("IMAGE PROP NAME: {}, ID: {}, TYPE: {},  BINDING: {}, SET: {}", prop.name, prop.id, ShaderData::TypeToString(prop.type), prop.binding, prop.set);
+      // CANDY_CORE_INFO("IMAGE PROP NAME: {}, ID: {}, TYPE: {},  BINDING: {}, SET: {}", prop.name, prop.id, ShaderData::TypeToString(prop.type), prop.binding, prop.set);
       shaderLayout.AddUniformImageProperty(prop);
       //descriptorLayout.BindImage(prop.binding, stage);
       
@@ -198,7 +237,9 @@ namespace Candy::Graphics
       samplerLayoutBinding.pImmutableSamplers = nullptr;
       layoutBindings.push_back(samplerLayoutBinding);*/
     }
-    
+  }
+  void ShaderPostProcessor::ReflectStagePushConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage)
+  {
     ShaderPushConstantBlockProperty pushBlock{};
     pushBlock.stage = stage;
     pushBlock.offset = 0;
@@ -208,16 +249,7 @@ namespace Candy::Graphics
     
     spirv_cross::Resource pushResource = compiler.get_shader_resources().push_constant_buffers[0];
     
-    //CANDY_CORE_INFO("PUSH RESOURCE ID: {}, Type ID: {}, Base Type ID: {}", pushResource.id, pushResource.type_id, pushResource.base_type_id);
-    //CANDY_CORE_INFO("PRE PUSH TYPE");
-    
-   
-    //CANDY_CORE_INFO("POST PUSH TYPE");
-   
-    
-    
     uint32_t id = pushResource.id;
-    
     
     pushBlock.id = id;
     uint32_t base_type_id = pushResource.base_type_id;
@@ -237,21 +269,19 @@ namespace Candy::Graphics
       prop.size = range.range;
       prop.type = ShaderData::SpirvToType(compiler.get_type(pushMembers[range.index]));
       
-      //CANDY_CORE_INFO("PUSH CONSTANT VAR TYPE: {}", ShaderData::TypeToString(prop.type));
       prop.parentBlockID = pushBlock.id;
       
       
       pushBlock.properties.push_back(prop);
-      //CANDY_CORE_INFO("MEMBER NAME {}", compiler.get_member_name(base_type_id, range.index));
-      //CANDY_CORE_INFO("Member: {0}, Offset: {1}, Size: {2}", range.index, range.offset, range.range);
+      
       pcrSize += range.range;
     }
     pushRange.size = pcrSize;
     if (pushRange.size > 0)
     {
       shaderLayout.AddPushConstantBlockProperty(pushBlock);
-      //pushConstantRanges.push_back(pushRange);
     }
+  
   }
   
   ShaderLayout& ShaderPostProcessor::GetLayout()

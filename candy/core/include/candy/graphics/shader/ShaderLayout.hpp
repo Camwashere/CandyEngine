@@ -25,6 +25,8 @@ namespace Candy::Graphics
     std::string name;
     uint32_t id;
     uint32_t binding;
+    uint32_t size;
+    uint32_t offset;
   };
   
   struct ShaderPushProperty
@@ -36,7 +38,20 @@ namespace Candy::Graphics
     ShaderData::Stage stage;
     ShaderData::Type type;
   };
-  
+  struct ShaderStorageProperty
+  {
+    std::string name;
+    uint32_t id;
+  };
+  struct ShaderStorageBlockProperty
+  {
+    std::string name;
+    uint32_t id;
+    uint32_t set;
+    uint32_t binding;
+    ShaderData::Stage stage;
+    std::vector<ShaderStorageProperty> properties;
+  };
   struct ShaderUniformProperty
   {
     std::string name;
@@ -105,13 +120,15 @@ namespace Candy::Graphics
   public:
     //uint32_t layoutVertexStride=0;
     BufferLayout bufferLayout;
-    UniquePtr<UniformBuffer> uniformBuffer;
+    //UniquePtr<UniformBuffer> uniformBuffer;
     std::unordered_map<std::string, uint32_t> propertyMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
     std::vector<ShaderProperty> properties;
     std::vector<ShaderParentProperty> parentProperties;
     std::vector<ShaderParentProperty> imageProperties;
     std::vector<ShaderPushProperty> pushProperties;
+    std::vector<ShaderStorageBlockProperty> storageBlockProperties;
+    
     
     std::vector<ShaderPushConstantBlockProperty> pushConstantBlockProperties;
     std::vector<ShaderUniformBlockProperty> uniformBlockProperties;
@@ -139,6 +156,7 @@ namespace Candy::Graphics
     std::vector<VkVertexInputAttributeDescription> GetVertexAttributeDescriptions()const;
     
   public:
+    void AddStorageBlockProperty(const ShaderStorageBlockProperty& prop);
     void AddPushConstantBlockProperty(const ShaderPushConstantBlockProperty& prop);
     void AddUniformBlockProperty(const ShaderUniformBlockProperty& prop);
     void AddUniformImageProperty(const ShaderUniformImageProperty& prop);

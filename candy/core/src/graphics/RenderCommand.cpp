@@ -78,6 +78,7 @@ namespace Candy::Graphics
   {
     return Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor;
   }
+  
   FrameData& RenderCommand::GetFrame()
   {
     return Vulkan::GetCurrentContext().GetCurrentFrame();
@@ -137,9 +138,10 @@ namespace Candy::Graphics
     GetCommandBuffer().BindVertexArray(vertexArray);
   }
   
-  void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, uint32_t uniformOffset)
+  
+  void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
   {
-    GetCommandBuffer().BindDescriptorSets(pipeline.GetLayout(), GetGlobalDescriptorSet(), &uniformOffset);
+    GetCommandBuffer().BindDescriptorSets(pipeline.GetLayout(), descriptorSets, uniformOffsets);
   }
   
   void RenderCommand::SetViewport(VkExtent2D extent)
@@ -162,11 +164,11 @@ namespace Candy::Graphics
   {
     GetCommandBuffer().SetViewport(viewport);
   }
-  void RenderCommand::SetUniform(const Pipeline& pipeline, uint32_t offset, uint32_t size, const void* data)
+  void RenderCommand::SetUniform(uint32_t offset, uint32_t size, const void* data)
   {
     GetFrame().uniformBuffer->SetData(offset, size, data);
     //uint32_t paddedOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(size);
-    BindDescriptorSets(pipeline, offset);
+    //BindDescriptorSet(pipeline, GetGlobalDescriptorSet(), offset);
     
   }
   

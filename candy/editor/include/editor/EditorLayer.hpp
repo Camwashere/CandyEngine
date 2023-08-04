@@ -1,7 +1,7 @@
 #pragma once
 #include <candy/app/Layer.hpp>
 #include <candy/app/Project.hpp>
-#include <candy/graphics/Material.hpp>
+#include "candy/graphics/material/Material.hpp"
 
 namespace Candy
 {
