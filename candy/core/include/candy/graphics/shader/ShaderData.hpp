@@ -7,6 +7,7 @@
 #include <typeinfo>
 #include <candy/math/Vector.hpp>
 #include <candy/math/Matrix.hpp>
+#include "../Color.hpp"
 namespace spirv_cross
 {
   struct SPIRType;
@@ -75,29 +76,30 @@ namespace Candy::Graphics
       
     };
     
-    enum class Stage
+    enum Stage : char
     {
       None = 0,
-      Vertex = 1,
-      Fragment = 2,
-      Compute = 3,
-      Geometry = 4,
-      TessellationControl=5,
-      TessellationEvaluation=6,
-      End,
+      Vertex = BIT(0),
+      TessellationControl=BIT(1),
+      TessellationEvaluation=BIT(2),
+      Geometry = BIT(3),
+      Fragment = BIT(4),
+      Compute = BIT(5),
+      VertexAndFragment=Vertex|Fragment,
+      All=Vertex|TessellationControl|TessellationEvaluation|Geometry|Fragment|Compute
     };
   
   private:
     static const std::array<std::string, static_cast<size_t>(Type::End)> typeToStringArray;
     static const std::array<VkFormat, static_cast<size_t>(Type::End)> typeToVulkanArray;
     
-    static const std::array<std::string, static_cast<size_t>(Stage::End)> stageToStringArray;
+    //static const std::array<std::string, static_cast<size_t>(Stage::End)> stageToStringArray;
     
     static const std::unordered_map<std::string, Type> stringToTypeMap;
     static const std::unordered_map<std::string, Stage> stringToStageMap;
     
     static std::array<std::string, static_cast<size_t>(Type::End)> InitTypeToStringArray();
-    static std::array<std::string, static_cast<size_t>(Stage::End)> InitStageToStringArray();
+    //static std::array<std::string, static_cast<size_t>(Stage::End)> InitStageToStringArray();
     static std::array<VkFormat, static_cast<size_t>(Type::End)> InitTypeToVulkanArray();
     
     
@@ -114,7 +116,7 @@ namespace Candy::Graphics
     static Type StringToType(const std::string& type);
     static Type SpirvToType(const spirv_cross::SPIRType& spirvType);
     static Type ToBaseType(Type type);
-    static const std::string& StageToString(Stage stage);
+    static std::string StageToString(Stage stage);
     static Stage StringToStage(const std::string& stage);
     static VkFormat TypeToVulkan(Type type);
     static VkShaderStageFlagBits StageToVulkan(Stage stage);
@@ -130,15 +132,8 @@ namespace Candy::Graphics
       return Type::None;
     }
     
-    using Value = std::variant<bool,
-    int8_t, Math::Vector2b, Math::Vector3b, Math::Vector4b,
-    uint8_t, Math::Vector2ub, Math::Vector3ub, Math::Vector4ub,
-    int32_t, Math::Vector2i, Math::Vector3i, Math::Vector4i,
-    uint32_t, Math::Vector2u, Math::Vector3u, Math::Vector4u,
-    float, Math::Vector2, Math::Vector3, Math::Vector4, Math::Matrix4,
-    double, Math::Vector2d, Math::Vector3d, Math::Vector4d>;
-    
-    
+    using Value = std::variant<
+    float, Math::Vector2, Math::Vector3, Math::Vector4, Math::Matrix4>;
   };
   
   

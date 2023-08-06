@@ -8,7 +8,7 @@
 #include "grammer/GLSLBaseListener.h"
 namespace Candy::Graphics
 {
-  class SourceListener : public GLSLBaseListener
+  /*class SourceListener : public GLSLBaseListener
   {
   private:
     ShaderSource* source;
@@ -98,7 +98,7 @@ namespace Candy::Graphics
     
     void enterShader_uniform_block(GLSLParser::Shader_uniform_blockContext * ctx) override
     {
-      ShaderBlock uniformBlock{};
+      ShaderBlockObject uniformBlock{};
       
       uniformBlock.blockName = ctx->IDENTIFIER()->getText();
       if (ctx->shader_uniform_object())
@@ -196,7 +196,7 @@ namespace Candy::Graphics
       
     }
     
-  };
+  };*/
   ShaderSource::ShaderSource(ShaderData::Stage shaderStage, std::string sourceCode) : metaData{shaderStage}, source(std::move(sourceCode))
   {
     //std::cout << "Starting: " << ShaderData::StageToString(shaderStage) << std::endl;
@@ -204,7 +204,7 @@ namespace Candy::Graphics
     
   }
   
-  void ShaderSource::Tokenize(const std::string& sourceCode)
+  /*void ShaderSource::Tokenize(const std::string& sourceCode)
   {
     
     std::string_view sourceView(sourceCode);
@@ -219,14 +219,10 @@ namespace Candy::Graphics
     SourceListener sourceListener(this);
     walker.walk(&sourceListener, tree);
     
-    //std::cout << "Tokenizing source!" << std::endl;
-    
-    //std::cout << ToString() << std::endl;
     
     
-    
-  }
-  ShaderData::Stage ShaderSource::GetStage()const
+  }*/
+  /*ShaderData::Stage ShaderSource::GetStage()const
   {
     return metaData.stage;
   }
@@ -268,7 +264,7 @@ namespace Candy::Graphics
     
     return str;
     
-  }
+  }*/
   
   std::string ShaderSource::GetSource()const
   {

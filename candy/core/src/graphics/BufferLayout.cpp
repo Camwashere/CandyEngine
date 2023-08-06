@@ -5,9 +5,9 @@
 namespace Candy::Graphics
 {
     
-    BufferElement::BufferElement(ShaderData::Type dataType, std::string elementName) : type(dataType), name(std::move(elementName))
+    BufferElement::BufferElement(std::string elementName, ShaderData::Type dataType, uint32_t loc) : type(dataType), name(std::move(elementName)), location(loc)
     {
-    
+        CANDY_CORE_INFO("BufferElement: {0} {1} {2}", name, ShaderData::TypeToString(type), location);
     }
     
     uint64_t BufferElement::Size()const
@@ -47,10 +47,13 @@ namespace Candy::Graphics
             stride += elementSize;
         }
     }
-    
-    void BufferLayout::AddElement(ShaderData::Type type, const std::string& name)
+  void BufferLayout::Recalculate()
+  {
+    CalculateOffsetsAndStride();
+  }
+    void BufferLayout::AddElement(std::string elementName, ShaderData::Type dataType, uint32_t location)
     {
-        BufferElement element(type, name);
+        BufferElement element(std::move(elementName), dataType, location);
         size_t size = element.Size();
         uint64_t offset = 0;
         if (!elements.empty())
@@ -62,7 +65,10 @@ namespace Candy::Graphics
         stride += size;
         elements.push_back(element);
     }
-    
+  uint32_t BufferLayout::GetBinding()const
+  {
+        return binding;
+  }
     const BufferElement& BufferLayout::GetElement(uint64_t index)const
     {
         return elements[index];

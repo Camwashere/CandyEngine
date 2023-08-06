@@ -15,9 +15,10 @@ namespace Candy::Graphics
   {
     std::string name = "Empty";
     ShaderData::Type type = ShaderData::Type::None;
-    uint64_t offset = 0;
+    uint32_t location=0;
+    uint32_t offset = 0;
     
-    BufferElement(ShaderData::Type dataType, std::string elementName);
+    BufferElement(std::string elementName, ShaderData::Type dataType, uint32_t location);
     
     [[nodiscard]] uint64_t Size() const;
     
@@ -54,11 +55,15 @@ namespace Candy::Graphics
     [[nodiscard]] std::vector<BufferElement>::const_iterator end() const {return elements.end();}
   
   public:
-    void AddElement(ShaderData::Type type, const std::string &name);
+    void Recalculate();
+    void AddElement(std::string elementName, ShaderData::Type dataType, uint32_t location);
+    uint32_t GetBinding()const;
     
     [[nodiscard]] const BufferElement &GetElement(uint64_t index) const;
     
     [[nodiscard]] uint32_t GetStride() const;
+    
+    [[nodiscard]]
     
     [[nodiscard]] size_t GetElementCount() const;
     

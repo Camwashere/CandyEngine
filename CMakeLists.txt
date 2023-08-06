@@ -51,6 +51,8 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/src/graphics/vulkan/descriptor/DescriptorAllocatorPool.cpp
         candy/core/include/candy/graphics/material/MaterialData.hpp
         candy/core/src/graphics/material/MaterialData.cpp
+        candy/core/include/candy/graphics/shader/ShaderProperty.hpp
+        candy/core/src/graphics/shader/ShaderProperty.cpp
 )
 
 
@@ -68,6 +70,6 @@ target_include_directories(CandyEngine PRIVATE tools)
 target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan shaderc_shared spirv-cross-c EnTT antlr4_static)
 
 
-add_executable(CandyEngineTest main.cpp TestLayer.hpp TestLayer.cpp)
+add_executable(CandyEngineTest main.cpp)
 
 target_link_libraries(CandyEngineTest PRIVATE CandyEngine)

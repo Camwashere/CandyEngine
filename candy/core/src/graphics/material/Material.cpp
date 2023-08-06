@@ -8,22 +8,27 @@ namespace Candy::Graphics
     CalculateParameterLayout();
     CalculateBufferSize();
   }
+  
+  //TODO: Make explicit descriptor set for material parameters. Shader.SetInt() etc functions set global values. Material.SetInt() etc functions set material values.
+  // We should also only store parameters in this class that are material parameters. Rather than storing things like camera data
   void Material::Bind()
   {
     CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot bind!");
     shader->Bind();
-    VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = *Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer;
-    bufferInfo.offset=0;
-    bufferInfo.range = bufferSize;
+    
     
     
     
     
     DescriptorBuilder builder = DescriptorBuilder::Begin();
-    
+    size_t count=0;
     for (const auto& param : parameters)
     {
+      VkDescriptorBufferInfo bufferInfo{};
+      bufferInfo.buffer = *Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer;
+      bufferInfo.offset=0;
+      bufferInfo.range = bufferSize;
+      
       builder.AddBufferWrite(param.GetBinding(), &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
     }
     
@@ -39,39 +44,9 @@ namespace Candy::Graphics
     
     
     
-    builder.Write(&Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor);
+    builder.Write(&Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
   }
-  /*void Material::Bind()
-  {
-    CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot bind!");
-    shader->Bind();
-    VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = *Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer;
-    size_t bufferSize = Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Math::Matrix4)*3 + sizeof(Math::Vector4));
-    bufferInfo.offset=0;
-    bufferInfo.range = bufferSize;
-    
-    
-    
-    VkDescriptorImageInfo imageInfo{};
-    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageInfo.imageView = textureImageView;
-    //imageInfo.imageView = textureParameter.GetImageView();
-    
-    imageInfo.sampler = textureImageView.GetSampler();
-    //imageInfo.sampler = textureParameter.GetSampler();
-    DescriptorBuilder builder = DescriptorBuilder::Begin();
-    for (const auto& block : shader->GetLayout().uniformBlockProperties)
-    {
-      builder.AddBufferWrite(block.binding, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
-    }
-    
-    for (const auto& block : shader->GetLayout().uniformImageProperties)
-    {
-      builder.AddImageWrite(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-    }
-    builder.Write(&Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor);
-  }*/
+  
   
   void Material::SetParameter(const std::string& name, const ShaderData::Value& value)
   {
@@ -87,7 +62,7 @@ namespace Candy::Graphics
   }
   void Material::SetTexture(const std::string& name, const std::filesystem::path& path)
   {
-    auto it = nameToTextureParameterMap.find(name);
+    const auto& it = nameToTextureParameterMap.find(name);
     if (it != nameToTextureParameterMap.end())
     {
       textureParameters[nameToTextureParameterMap[name]].SetTexture(path);
@@ -104,7 +79,7 @@ namespace Candy::Graphics
     nameToTextureParameterMap.clear();
     parameters.clear();
     textureParameters.clear();
-    for (const auto& block : shader->GetLayout().uniformBlockProperties)
+    for (const auto& block : shader->GetLayout().sets[0].blocks)
     {
       for (const auto &p: block.properties)
       {
@@ -115,7 +90,7 @@ namespace Candy::Graphics
       
     }
     
-    for (const auto& block : shader->GetLayout().uniformImageProperties)
+    for (const auto& block : shader->GetLayout().sets[0].textures)
     {
       MaterialTextureParameter parameter(block.name, block.binding, block.set);
       nameToTextureParameterMap[parameter.GetName()] = textureParameters.size();

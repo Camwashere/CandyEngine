@@ -8,4 +8,9 @@ namespace Candy::Graphics
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer, &allocation);
     Vulkan::DeletionQueue().Push(this);
   }
+  
+  SharedPtr<StorageBuffer> StorageBuffer::Create(uint64_t objectSize, uint64_t objectCount)
+  {
+    return CreateSharedPtr<StorageBuffer>(objectSize, objectCount);
+  }
 }

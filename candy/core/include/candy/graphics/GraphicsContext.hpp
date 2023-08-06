@@ -14,6 +14,7 @@
 #include "vma/vk_mem_alloc.h"
 #include "candy/graphics/shader/Shader.hpp"
 #include "UniformBuffer.hpp"
+#include "StorageBuffer.hpp"
 #include <candy/event/Events.hpp>
 
 
@@ -21,6 +22,9 @@ struct GLFWwindow;
 namespace Candy::Graphics
 {
     static constexpr unsigned int FRAME_OVERLAP = 2;
+    static constexpr unsigned int MAX_OBJECTS = 10000;
+    static constexpr int GLOBAL_SET=0;
+    static constexpr int OBJECT_SET=1;
   
     struct FrameData
     {
@@ -28,8 +32,17 @@ namespace Candy::Graphics
       VkSemaphore presentSemaphore=VK_NULL_HANDLE;
       VkFence renderFence=VK_NULL_HANDLE;
       CommandBuffer commandBuffer;
-      VkDescriptorSet globalDescriptor=VK_NULL_HANDLE;
+      std::array<VkDescriptorSet, 2> descriptorSets;
+      //VkDescriptorSet globalDescriptor=VK_NULL_HANDLE;
+      //VkDescriptorSet objectDescriptor=VK_NULL_HANDLE;
       SharedPtr<UniformBuffer> uniformBuffer;
+      //SharedPtr<StorageBuffer> storageBuffer;
+      
+      VkDescriptorSet& GlobalDescriptor(){return descriptorSets[GLOBAL_SET];}
+      VkDescriptorSet& ObjectDescriptor(){return descriptorSets[OBJECT_SET];}
+      VkDescriptorSet& GetDescriptorSet(uint32_t index){return descriptorSets[index];}
+      [[nodiscard]] VkDescriptorSet GlobalDescriptor()const{return descriptorSets[GLOBAL_SET];}
+      [[nodiscard]] VkDescriptorSet ObjectDescriptor()const{return descriptorSets[OBJECT_SET];}
     };
     
     

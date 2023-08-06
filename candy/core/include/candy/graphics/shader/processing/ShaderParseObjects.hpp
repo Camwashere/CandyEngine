@@ -48,7 +48,7 @@ namespace Candy::Graphics
     }
   };
   
-  struct ShaderVariable : public ShaderParseObject
+  /*struct ShaderVariable : public ShaderParseObject
   {
     ShaderData::Type type=ShaderData::Type::None;
     std::string name={};
@@ -86,14 +86,14 @@ namespace Candy::Graphics
     
     [[nodiscard]] std::string ToString()const;
   };
-  struct ShaderBlock : public ShaderParseObject
+  struct ShaderBlockObject : public ShaderParseObject
   {
     std::string blockName={};
     std::string objectName={};
     ShaderObjectLayout layout={};
     std::vector<ShaderVariable> variables{};
     
-    ShaderBlock() = default;
+    ShaderBlockObject() = default;
     
     [[nodiscard]] std::string ToString()const
     {
@@ -183,5 +183,5 @@ namespace Candy::Graphics
       }
       return start;
     }
-  };
+  };*/
 }

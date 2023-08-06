@@ -76,7 +76,7 @@ namespace Candy::Graphics
   }
   VkDescriptorSet RenderCommand::GetGlobalDescriptorSet()
   {
-    return Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor;
+    return Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor();
   }
   
   FrameData& RenderCommand::GetFrame()

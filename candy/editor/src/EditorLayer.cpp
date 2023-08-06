@@ -117,6 +117,15 @@ namespace Candy
     color.x = (Math::Sin(time) + 1.0f) / 2.0f;
     color.y = (Math::Cos(time) + 1.0f) / 2.0f;
     color.z = (Math::Sin(time) + 1.0f) / 2.0f;
+    
+    float blend = (Math::Sin(time)+1.0f)/2.0f;
+    //material.SetParameter("model", model);
+    //material.SetParameter("view", view);
+    //material.SetParameter("proj", proj);
+    //material.SetParameter("uColor", color);
+    
+    shader->PushFloat("colorBlend", blend);
+    
     shader->SetMatrix("model", model);
     shader->SetMatrix("view", view);
     shader->SetMatrix("proj", proj);
@@ -126,8 +135,9 @@ namespace Candy
     //shader->PushMatrix("model", model);
     //shader->PushMatrix("view", view);
     //shader->PushMatrix("proj", proj);
+    //material.Bind();
     
-    vertexArray->Bind();
+    //vertexArray->Bind();
     RenderCommand::DrawIndexed(vertexArray);
   }
   

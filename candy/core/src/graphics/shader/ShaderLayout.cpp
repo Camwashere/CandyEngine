@@ -4,21 +4,10 @@
 #include <candy/graphics/RenderCommand.hpp>
 namespace Candy::Graphics
 {
-  std::string ShaderProperty::ToString()const
-  {
-    std::stringstream ss;
-    //ss << "Name: " << name << ", Type: " << ShaderData::TypeToString(type) << ", Binding: " << binding << ", Set: " << set << ", Offset: " << offset << ", Size: " << size;
-    return ss.str();
-  }
-  std::string ShaderLayoutProperty::ToString()const
-  {
-    std::stringstream ss;
-    ss << "Name: " << name << (input? ", Input " : ", Output ") << ", Type: " << ShaderData::TypeToString(type) << ", Binding: " << binding << ", Set: " << set << ", Offset: " << offset << ", Stride: " << stride << ", Location: " << location << ", Input: " << input;
-    return ss.str();
-  }
-  
+
   ShaderLayout::ShaderLayout()
   {
+    sets.emplace_back();
     pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
   }
   
@@ -54,151 +43,43 @@ namespace Candy::Graphics
   std::vector<VkDescriptorSetLayout> ShaderLayout::BakeDescriptorSetLayouts()
   {
     std::vector<VkDescriptorSetLayout> layouts;
-    int LAYOUT_NUM = 1;
+    //int LAYOUT_NUM = 2;
+    size_t LAYOUT_NUM = sets.size();
     layouts.resize(LAYOUT_NUM);
     
-    for (int i=0; i<LAYOUT_NUM; i++)
+    for (size_t i=0; i<LAYOUT_NUM; i++)
     {
       DescriptorBuilder builder = DescriptorBuilder::Begin();
-      
-      
-      for (const auto& block : uniformBlockProperties)
+      for (const auto& block : sets[i].blocks)
       {
         builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
       }
-      for (const auto& block : uniformImageProperties)
+      for (const auto& tex : sets[i].textures)
       {
-        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
+        builder.AddBinding(tex.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(tex.stage));
       }
       layouts[i] = builder.BuildLayout();
-      
       for (int f=0; f<FRAME_OVERLAP; f++)
       {
-        builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).globalDescriptor, layouts[i]);
+        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GlobalDescriptor(), layouts[i]), "Failed to allocate descriptor set!");
       }
-      
-      
-      
-      //Vulkan::PushDeleter([=, this](){vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), layouts[i], nullptr);});
     }
     return layouts;
     
   }
-  void ShaderLayout::CalculateOffsetsAndStride()
-  {
-    
-    std::uint64_t offset=0;
-    uint32_t stride=0;
-    for (auto& element : inputLayoutProperties)
-    {
-      if (element.stage == ShaderData::Stage::Vertex)
-      {
-        bufferLayout.AddElement(element.type, element.name);
-        element.offset = offset;
-        uint64_t elementSize = ShaderData::TypeSize(element.type);
-        offset += elementSize;
-        stride += elementSize;
-      }
-      
-    }
-    //layoutVertexStride = stride;
   
-  }
-  void ShaderLayout::CalculateProperties()
-  {
-    Utils::IDManager<uint32_t> parentIDManager;
-    Utils::IDManager<uint32_t> propertyIDManager;
-    uint32_t parentOffset=0;
-    for (const auto& block : uniformBlockProperties)
-    {
-      ShaderParentProperty parentProperty{};
-      parentProperty.name = block.name;
-      parentProperty.id = parentIDManager.Assign();
-      parentProperty.binding = block.binding;
-      parentProperty.offset = parentOffset;
-      
-      uint32_t offset = 0;
-      uint32_t pSize=0;
-      //parentProperties.push_back(parentProperty);
-      for (const auto& value : block.properties)
-      {
-        ShaderProperty property{};
-        property.name = value.name;
-        property.id = propertyIDManager.Assign();
-        property.type = value.type;
-        property.parentBlockID = parentProperty.id;
-        property.size = ShaderData::TypeSize(property.type);
-        property.offset = offset;
-        offset += property.size;
-        pSize += property.size;
-        propertyMap[property.name] = properties.size();
-        properties.push_back(property);
-      }
-      parentProperty.size = pSize;
-      parentOffset += pSize;
-      parentProperties.push_back(parentProperty);
-    }
-    Utils::IDManager<uint32_t> imageIDManager;
-    for (const auto& image : uniformImageProperties)
-    {
-      ShaderParentProperty parentProperty{};
-      parentProperty.name = image.name;
-      parentProperty.id = imageIDManager.Assign();
-      parentProperty.binding = image.binding;
-      imageProperties.push_back(parentProperty);
-    }
-    
-    Utils::IDManager<uint32_t> pushConstantIDManager;
-    for (const auto& block : pushConstantBlockProperties)
-    {
-      for (const auto& push : block.properties)
-      {
-        ShaderPushProperty property{};
-        property.id = pushConstantIDManager.Assign();
-        property.name = push.name;
-        property.stage = block.stage;
-        property.type = push.type;
-        property.size = push.size;
-        property.offset = push.offset;
-        pushPropertyMap[property.name] = pushProperties.size();
-        pushProperties.push_back(property);
-      }
-    }
-  }
-  
-  BufferLayout ShaderLayout::GetBufferLayout()const
-  {
-    return bufferLayout;
-  }
-  size_t ShaderLayout::MaxSetCount()const
-  {
-    uint32_t maxSet=0;
-    for(const auto& block : uniformBlockProperties)
-    {
-      if (block.set > maxSet)
-      {
-        maxSet = block.set;
-      }
-    }
-    for (const auto& block : uniformImageProperties)
-    {
-      if (block.set > maxSet)
-      {
-        maxSet = block.set;
-      }
-    }
-    return maxSet+1;
-  }
+
 
   std::vector<VkPushConstantRange> ShaderLayout::GetPushConstantRanges()
   {
     std::vector<VkPushConstantRange> pushConstantRanges;
-    for (const auto& block : pushConstantBlockProperties)
+    for (const auto& block : pushBlocks)
     {
       VkPushConstantRange range{};
       range.size = 0;
       range.offset = block.offset;
-      range.stageFlags = ShaderData::StageToVulkan(block.stage);
+      //range.stageFlags = ShaderData::StageToVulkan(block.stage);
+      range.stageFlags = ShaderData::StageToVulkan(ShaderData::Stage::All);
       for(const auto& prop : block.properties)
       {
         range.size += prop.size;
@@ -210,82 +91,92 @@ namespace Candy::Graphics
   std::vector<VkVertexInputBindingDescription> ShaderLayout::GetVertexBindingDescriptions()const
   {
     std::vector<VkVertexInputBindingDescription> descriptions{};
-    //descriptions.push_back({0, layoutVertexStride, VK_VERTEX_INPUT_RATE_VERTEX});
     
-    descriptions.push_back({0, bufferLayout.GetStride(), VK_VERTEX_INPUT_RATE_VERTEX});
+    descriptions.push_back({vertexLayout.GetBinding(), vertexLayout.GetStride(), VK_VERTEX_INPUT_RATE_VERTEX});
     return descriptions;
   }
   std::vector<VkVertexInputAttributeDescription> ShaderLayout::GetVertexAttributeDescriptions()const
   {
     std::vector<VkVertexInputAttributeDescription> descriptions{};
-    for (const auto& buf : inputLayoutProperties)
+    
+    for (const auto& e : vertexLayout)
     {
-      if (buf.stage == ShaderData::Stage::Vertex)
-      {
-        descriptions.push_back({buf.location, buf.binding, ShaderData::TypeToVulkan(buf.type), buf.offset});
-      }
+      CANDY_CORE_INFO("NAME: {0}, LOCATION: {1}, TYPE: {2}, OFFSET: {3}", e.name, e.location, ShaderData::TypeToString(e.type), e.offset);
+      descriptions.push_back({e.location, 0, ShaderData::TypeToVulkan(e.type), e.offset});
     }
     return descriptions;
   }
+  uint32_t ShaderLayout::AddBlock(const ShaderBlock& block)
+  {
+    ShaderBlock b = block;
+    if (b.set >= sets.size())
+    {
+      sets.resize(b.set+1);
+    }
+    return sets[b.set].AddBlock(b);
+    
+  }
+  void ShaderLayout::AddPushBlock(const ShaderPushBlock& block)
+  {
+    ShaderPushBlock b = block;
+    b.id = pushBlocks.size();
+    pushBlocks.push_back(b);
+    pushBlockMap[b.name] = b.id;
+    ShaderPushBlock& blockRef = pushBlocks.back();
+    for (auto& p : blockRef.properties)
+    {
+      AddPushProperty(blockRef.id, &p);
+    }
+  }
+  void ShaderLayout::AddPushProperty(uint32_t pushBlockID, ShaderPushProperty* property)
+  {
+    property->parentID = pushBlockID;
+    property->id = pushProperties.size();
+    pushProperties.push_back(property);
+    pushPropertyMap[property->name] = property->id;
   
-  void ShaderLayout::AddStorageBlockProperty(const ShaderStorageBlockProperty& prop)
-  {
-    storageBlockProperties.push_back(prop);
   }
-  void ShaderLayout::AddPushConstantBlockProperty(const ShaderPushConstantBlockProperty& prop)
+  void ShaderLayout::AddTexture(const ShaderTexture& texture)
   {
-    pushConstantBlockProperties.push_back(prop);
-  }
-  void ShaderLayout::AddUniformBlockProperty(const ShaderUniformBlockProperty& prop)
-  {
-    uniformBlockProperties.push_back(prop);
-  }
-  void ShaderLayout::AddUniformImageProperty(const ShaderUniformImageProperty& prop)
-  {
-    uniformImageProperties.push_back(prop);
-  }
-  void ShaderLayout::AddInputLayoutProperty(const std::string& name, ShaderData::Stage stage, ShaderData::Type type, std::uint32_t binding, std::uint32_t set, std::uint32_t offset, std::uint32_t stride, std::uint32_t location)
-  {
-    AddLayoutProperty(name, true, stage,  type, binding, set, offset, stride, location);
-  }
-  void ShaderLayout::AddOutputLayoutProperty(const std::string& name, ShaderData::Stage stage, ShaderData::Type type, std::uint32_t binding, std::uint32_t set, std::uint32_t offset, std::uint32_t stride, std::uint32_t location)
-  {
-    AddLayoutProperty(name, false, stage,  type, binding, set, offset, stride, location);
-  }
-  void ShaderLayout::AddLayoutProperty(const std::string& name, bool isInput, ShaderData::Stage stage, ShaderData::Type type, std::uint32_t binding, std::uint32_t set, std::uint32_t offset, std::uint32_t stride, std::uint32_t location)
-  {
-    if (isInput)
+    ShaderTexture t = texture;
+    if (t.set >= sets.size())
     {
-      inputLayoutProperties.push_back({name, stage, type, binding, set, offset, stride, location, isInput});
+      sets.resize(t.set+1);
     }
-    else
-    {
-      outputLayoutProperties.push_back({name, stage, type, binding, set, offset, stride, location, isInput});
-    }
+    sets[t.set].AddTexture(t);
   }
+
+  void ShaderLayout::AddVertexInput(const std::string& name, ShaderData::Type type, uint32_t location)
+  {
+    vertexLayout.AddElement(name, type, location);
+  }
+
   uint32_t ShaderLayout::PushConstant(const std::string& name, const void* data)
   {
-    auto it = pushPropertyMap.find(name);
+    const auto& it = pushPropertyMap.find(name);
     if (it != pushPropertyMap.end())
     {
-      uint32_t id = it->second;
+      auto id = it->second;
       PushConstant(id, data);
       return id;
     }
     CANDY_CORE_ASSERT(false, "Push constant name not found");
-    return 0;
+    return {};
   }
   void ShaderLayout::PushConstant(uint32_t id, const void* data)
   {
-    CANDY_CORE_ASSERT(id < pushProperties.size(), "Push constant id out of range");
-    auto& prop = pushProperties[id];
+    CANDY_CORE_ASSERT(id < pushBlocks.size());
     
-    RenderCommand::PushConstants(pipeline.GetLayout(), prop.stage, prop.offset, prop.size, data);
+    auto& prop = pushProperties[id];
+    RenderCommand::PushConstants(pipeline.GetLayout(), ShaderData::Stage::All, prop->offset, prop->size, data);
+    //auto& prop = pushBlocks[key.blockID].properties[key.propertyID];
+    
+    //RenderCommand::PushConstants(pipeline.GetLayout(), pushBlocks[0].stage, prop.offset, prop.size, data);
   }
   uint32_t ShaderLayout::SetUniform(const std::string& name, const void* data)
   {
-    auto it = propertyMap.find(name);
-    if (it != propertyMap.end())
+    const auto& it = sets[0].propertyMap.find(name);
+    if (it != sets[0].propertyMap.end())
     {
       uint32_t id = it->second;
       SetUniform(id, data);
@@ -293,27 +184,18 @@ namespace Candy::Graphics
     }
     CANDY_CORE_ERROR("Uniform name: {0} was not found", name);
     CANDY_CORE_ASSERT(false);
-    return 0;
+    return {};
   }
-  //TODO: Figure this out. Don't bind all descriptor sets every time this is called. Find a better way to store/handle/calculate offsets.
-  void ShaderLayout::SetUniform(uint32_t id, const void* data)
+  void ShaderLayout::SetUniform(uint32_t key, const void* data)
   {
-    CANDY_CORE_ASSERT(id < properties.size(), "Uniform id out of range");
-    auto& prop = properties[id];
+    const auto& set = sets[0];
+    const auto& prop = set.GetProperty(key);
+    std::vector<uint32_t> offsets = {0, set.GetBlock(0).size};
     
-    
-    auto& parent = parentProperties[prop.parentBlockID];
-    //CANDY_CORE_INFO("Uniform name: {0}, Parent Name: {1}", prop.name, parent.name);
-    //CANDY_CORE_INFO("Parent properties size: {0}", parentProperties.size());
-    //CANDY_CORE_INFO("Parent Property size: {}", parent.size);
-    std::vector<uint32_t> offsets = {0, parentProperties[0].size};
-    
-    //size_t dynamicOffsetCount = parentProperties.size();
-    //RenderCommand::SetUniform(prop.offset, prop.size, data);
-    //RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor}, {prop.offset});
-    RenderCommand::SetUniform(prop.offset + parent.offset, prop.size, data);
-    RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor}, offsets);
+    RenderCommand::SetUniform(prop.GlobalOffset(), prop.size, data);
+    RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor()}, offsets);
   }
+  
   
   VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
   VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}

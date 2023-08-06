@@ -1,5 +1,5 @@
 #include <candy/app/Application.hpp>
-#include "TestLayer.hpp"
+
 #include <editor/EditorLayer.hpp>
 using namespace Candy;
 int main(int argc, char** argv)

@@ -43,8 +43,9 @@ namespace Candy::Graphics
         CANDY_PROFILE_FUNCTION();
       
       preProcessor = ShaderPreProcessor::Create(filepath);
+      CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
       postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
-      
+      CANDY_CORE_INFO("FINISHED POST PROCESSOR");
       //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
       
         

@@ -39,6 +39,7 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
       frames[i].uniformBuffer = UniformBuffer::Create();
+      //frames[i].storageBuffer = StorageBuffer::Create(sizeof(Matrix4), MAX_OBJECTS);
       Vulkan::DeletionQueue().Push(frames[i].renderFence);
       Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
       Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);

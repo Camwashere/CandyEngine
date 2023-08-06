@@ -19,8 +19,13 @@
 #define CANDY_ASSERT(...) CANDY_EXPAND_MACRO( CANDY_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
 #define CANDY_CORE_ASSERT(...) CANDY_EXPAND_MACRO( CANDY_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
 
+#define VULKAN_CHECK(x) {CANDY_CORE_ASSERT(x==VK_SUCCESS, "Vulkan Check Error: {0}", x);}
+
+
+
 #else
 #define CANDY_ASSERT(...)
 #define CANDY_CORE_ASSERT(...)
+#define VulkanCheck(x) x
 
 #endif

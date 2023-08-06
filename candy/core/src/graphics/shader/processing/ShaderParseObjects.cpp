@@ -17,7 +17,7 @@ namespace Candy::Graphics
   uint32_t ShaderParseObject::GetID()const{return id;}
   
   
-  bool ShaderObjectLayout::HasAttribute()const
+ /* bool ShaderObjectLayout::HasAttribute()const
   {
     return !attribute.empty();
   }
@@ -78,5 +78,5 @@ namespace Candy::Graphics
     return result;
     
     
-  }
+  }*/
 }

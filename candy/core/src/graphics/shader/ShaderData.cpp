@@ -63,7 +63,7 @@ namespace Candy::Graphics
     
   
   }
-  std::array<std::string, static_cast<size_t>(ShaderData::Stage::End)> ShaderData::InitStageToStringArray()
+  /*std::array<std::string, static_cast<size_t>(ShaderData::Stage::End)> ShaderData::InitStageToStringArray()
   {
     std::array<std::string, static_cast<size_t>(Stage::End)> arr;
     arr[static_cast<size_t>(Stage::None)] = "none";
@@ -73,8 +73,9 @@ namespace Candy::Graphics
     arr[static_cast<size_t>(Stage::Compute)] = "compute";
     arr[static_cast<size_t>(Stage::TessellationControl)] = "tessellation_control";
     arr[static_cast<size_t>(Stage::TessellationEvaluation)] = "tessellation_evaluation";
+    arr[static_cast<size_t>(Stage::All)] = "all";
     return arr;
-  }
+  }*/
   
   const std::unordered_map<std::string, ShaderData::Type> ShaderData::stringToTypeMap = {
     {"float", Type::Float},
@@ -101,10 +102,11 @@ namespace Candy::Graphics
     {"geometry", Stage::Geometry},
     {"compute", Stage::Compute},
     {"tessellation_control", Stage::TessellationControl},
-    {"tessellation_evaluation", Stage::TessellationEvaluation}
+    {"tessellation_evaluation", Stage::TessellationEvaluation},
+    { "all", Stage::All}
   };
   const std::array<std::string, static_cast<size_t>(ShaderData::Type::End)> ShaderData::typeToStringArray = InitTypeToStringArray();
-  const std::array<std::string, static_cast<size_t>(ShaderData::Stage::End)> ShaderData::stageToStringArray = ShaderData::InitStageToStringArray();
+  //const std::array<std::string, static_cast<size_t>(ShaderData::Stage::End)> ShaderData::stageToStringArray = ShaderData::InitStageToStringArray();
   const std::array<VkFormat, static_cast<size_t>(ShaderData::Type::End)> ShaderData::typeToVulkanArray=ShaderData::InitTypeToVulkanArray();
   
   
@@ -243,9 +245,21 @@ namespace Candy::Graphics
     }
   }
   
-  const std::string& ShaderData::StageToString(Stage stage)
+  std::string ShaderData::StageToString(Stage stage)
   {
-    return stageToStringArray[static_cast<size_t>(stage)];
+    switch(stage)
+    {
+      case Stage::Vertex: return "vertex";
+      case Stage::Fragment: return "fragment";
+      case Stage::Compute: return "compute";
+      case Stage::Geometry: return "geometry";
+      case Stage::TessellationControl: return "tessellation_control";
+      case Stage::TessellationEvaluation: return "tessellation_evaluation";
+      case Stage::All: return "all";
+      default:
+        return "none";
+        break;
+    }
   }
   ShaderData::Stage ShaderData::StringToStage(const std::string& stage)
   {
@@ -256,7 +270,8 @@ namespace Candy::Graphics
   }
   VkShaderStageFlagBits ShaderData::StageToVulkan(Stage stage)
   {
-    switch (stage)
+    return static_cast<VkShaderStageFlagBits>(stage);
+    /*switch (stage)
     {
       case Stage::Vertex: return VK_SHADER_STAGE_VERTEX_BIT;
       case Stage::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -264,16 +279,18 @@ namespace Candy::Graphics
       case Stage::Geometry: return VK_SHADER_STAGE_GEOMETRY_BIT;
       case Stage::TessellationControl: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
       case Stage::TessellationEvaluation: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+      case Stage::All: return VK_SHADER_STAGE_ALL;
       default:
       CANDY_CORE_ASSERT(false, "Unknown shader stage!");
         return (VkShaderStageFlagBits)0;
-    }
+    }*/
   
   }
   
   ShaderData::Stage ShaderData::VulkanToStage(VkShaderStageFlagBits stage)
   {
-    switch(stage)
+    return (ShaderData::Stage)stage;
+    /*switch(stage)
     {
       case VK_SHADER_STAGE_VERTEX_BIT: return Stage::Vertex;
       case VK_SHADER_STAGE_FRAGMENT_BIT: return Stage::Fragment;
@@ -281,10 +298,11 @@ namespace Candy::Graphics
       case VK_SHADER_STAGE_GEOMETRY_BIT: return Stage::Geometry;
       case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: return Stage::TessellationControl;
       case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: return Stage::TessellationEvaluation;
+      case VK_SHADER_STAGE_ALL: return Stage::All;
       default:
       CANDY_CORE_ASSERT(false, "Unknown shader stage!");
         return Stage::None;
-    }
+    }*/
   
   }
   

@@ -71,7 +71,7 @@ namespace Candy::Graphics
       ShaderPostProcessor& GetPostProcessor(){return postProcessor;}
       ShaderLayout& GetLayout(){return postProcessor.shaderLayout;}
       const ShaderLayout& GetLayout()const{return postProcessor.shaderLayout;}
-      BufferLayout GetBufferLayout()const{return postProcessor.shaderLayout.bufferLayout;}
+      BufferLayout GetBufferLayout()const{return postProcessor.shaderLayout.vertexLayout;}
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);

@@ -12,26 +12,26 @@ namespace Candy::Graphics
   {
   public:
     ShaderMetaData metaData{};
-    ShaderBlock pushConstantBlock{};
+    /*ShaderBlockObject pushConstantBlock{};
     std::vector<ShaderUniformSingle> uniformSingles{};
-    std::vector<ShaderBlock> uniformBlocks{};
+    std::vector<ShaderBlockObject> uniformBlocks{};
     std::vector<ShaderIOVariable> inputVariables{};
     std::vector<ShaderIOVariable> outputVariables{};
     std::vector<ShaderFunction> functions{};
-    std::vector<ShaderStruct> structs{};
+    std::vector<ShaderStruct> structs{};*/
     
     std::string source{};
     
   private:
-    void Tokenize(const std::string& source);
+    //void Tokenize(const std::string& source);
     
   public:
     ShaderSource(ShaderData::Stage shaderStage, std::string  sourceCode);
     
   public:
-    [[nodiscard]] ShaderData::Stage GetStage()const;
-    [[nodiscard]] uint32_t GetVersion()const;
-    [[nodiscard]] std::string ToString()const;
+    //[[nodiscard]] ShaderData::Stage GetStage()const;
+    //[[nodiscard]] uint32_t GetVersion()const;
+    //[[nodiscard]] std::string ToString()const;
     [[nodiscard]] std::string GetSource()const;
     
   public:

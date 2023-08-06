@@ -51,6 +51,10 @@ namespace Candy::Graphics
     rpInfo.pClearValues = clearValues.data();
     
     GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
+    /*for (auto& mat : instance->materials)
+    {
+      mat->Bind();
+    }*/
     if (! instance->materials.empty())
     {
       instance->materials[0]->Bind();
