@@ -10,7 +10,10 @@ namespace Candy::Graphics
     sets.emplace_back();
     pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
   }
-  
+  void ShaderLayout::Bind(uint32_t set)
+  {
+    RenderCommand::BindDescriptorSets(pipeline, set, {Vulkan::GetCurrentContext().GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);
+  }
   void ShaderLayout::BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {
     VkPipelineLayout pipelineLayout = BakePipelineLayout();
@@ -52,7 +55,7 @@ namespace Candy::Graphics
       DescriptorBuilder builder = DescriptorBuilder::Begin();
       for (const auto& block : sets[i].blocks)
       {
-        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
+        builder.AddBinding(block.binding, GetDescriptorType(i), ShaderData::StageToVulkan(block.stage));
       }
       for (const auto& tex : sets[i].textures)
       {
@@ -61,11 +64,25 @@ namespace Candy::Graphics
       layouts[i] = builder.BuildLayout();
       for (int f=0; f<FRAME_OVERLAP; f++)
       {
-        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GlobalDescriptor(), layouts[i]), "Failed to allocate descriptor set!");
+        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GetDescriptorSet(i), layouts[i]), "Failed to allocate descriptor set!");
       }
     }
     return layouts;
     
+  }
+  
+  VkDescriptorType ShaderLayout::GetDescriptorType(size_t setIndex)
+  {
+    switch(setIndex)
+    {
+      case 0:
+        return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+      case 1:
+        return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+      default:
+        CANDY_CORE_ASSERT(false, "Invalid descriptor set index!");
+        return VK_DESCRIPTOR_TYPE_MAX_ENUM;
+    }
   }
   
 
@@ -78,7 +95,6 @@ namespace Candy::Graphics
       VkPushConstantRange range{};
       range.size = 0;
       range.offset = block.offset;
-      //range.stageFlags = ShaderData::StageToVulkan(block.stage);
       range.stageFlags = ShaderData::StageToVulkan(ShaderData::Stage::All);
       for(const auto& prop : block.properties)
       {
@@ -101,7 +117,7 @@ namespace Candy::Graphics
     
     for (const auto& e : vertexLayout)
     {
-      CANDY_CORE_INFO("NAME: {0}, LOCATION: {1}, TYPE: {2}, OFFSET: {3}", e.name, e.location, ShaderData::TypeToString(e.type), e.offset);
+      //CANDY_CORE_INFO("NAME: {0}, LOCATION: {1}, TYPE: {2}, OFFSET: {3}", e.name, e.location, ShaderData::TypeToString(e.type), e.offset);
       descriptions.push_back({e.location, 0, ShaderData::TypeToVulkan(e.type), e.offset});
     }
     return descriptions;
@@ -169,9 +185,6 @@ namespace Candy::Graphics
     
     auto& prop = pushProperties[id];
     RenderCommand::PushConstants(pipeline.GetLayout(), ShaderData::Stage::All, prop->offset, prop->size, data);
-    //auto& prop = pushBlocks[key.blockID].properties[key.propertyID];
-    
-    //RenderCommand::PushConstants(pipeline.GetLayout(), pushBlocks[0].stage, prop.offset, prop.size, data);
   }
   uint32_t ShaderLayout::SetUniform(const std::string& name, const void* data)
   {
@@ -190,10 +203,9 @@ namespace Candy::Graphics
   {
     const auto& set = sets[0];
     const auto& prop = set.GetProperty(key);
-    std::vector<uint32_t> offsets = {0, set.GetBlock(0).size};
     
     RenderCommand::SetUniform(prop.GlobalOffset(), prop.size, data);
-    RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor()}, offsets);
+    //RenderCommand::BindDescriptorSets(pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor()}, set.offsets);
   }
   
   

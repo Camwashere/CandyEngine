@@ -39,7 +39,8 @@ namespace Candy::Graphics
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
       CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
       frames[i].uniformBuffer = UniformBuffer::Create();
-      //frames[i].storageBuffer = StorageBuffer::Create(sizeof(Matrix4), MAX_OBJECTS);
+      frames[i].storageBuffer = StorageBuffer::Create(sizeof(Matrix4), MAX_OBJECTS);
+      frames[i].materialBuffer = UniformBuffer::Create();
       Vulkan::DeletionQueue().Push(frames[i].renderFence);
       Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
       Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
@@ -83,10 +84,8 @@ namespace Candy::Graphics
   
     void GraphicsContext::SwapBuffers()
     {
-      //Present();
       CANDY_PROFILE_FUNCTION();
       CANDY_CORE_ASSERT(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, true, UINT64_MAX) == VK_SUCCESS);
-      //Vulkan::GetDescriptorAllocator().Flip(currentFrameIndex);
       VkResult result = swapChain->AcquireNextImage(GetCurrentFrame().presentSemaphore, UINT64_MAX);
       
       if (result == VK_ERROR_OUT_OF_DATE_KHR)

@@ -18,7 +18,7 @@ namespace Candy::Graphics
     
     
     
-    
+    writes.clear();
     
     DescriptorBuilder builder = DescriptorBuilder::Begin();
     size_t count=0;
@@ -41,10 +41,15 @@ namespace Candy::Graphics
       builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
     }
     
+    //builder.Write(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
     
+    builder.BindWrites(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
+    writes = builder.GetWrites();
+    //auto writes = builder.GetWrites();
+    //Renderer::AddWrites(writes);
+    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
     
-    
-    builder.Write(&Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
+    //Renderer::AddWrites(builder.GetWrites());
   }
   
   

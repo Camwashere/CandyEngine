@@ -111,10 +111,10 @@ namespace Candy::Graphics
     vkResetCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, 0);
   }
   
-  void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray)
+  void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
   {
-    vertexArray->Bind();
-    GetCommandBuffer().DrawIndexed(vertexArray);
+    //vertexArray->Bind();
+    GetCommandBuffer().DrawIndexed(vertexArray, instanceCount, instanceIndex);
   
   }
   void RenderCommand::BindPipeline(const Pipeline& pipeline)
@@ -139,9 +139,9 @@ namespace Candy::Graphics
   }
   
   
-  void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
+  void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
   {
-    GetCommandBuffer().BindDescriptorSets(pipeline.GetLayout(), descriptorSets, uniformOffsets);
+    GetCommandBuffer().BindDescriptorSets(pipeline.GetLayout(), firstSet, descriptorSets, uniformOffsets);
   }
   
   void RenderCommand::SetViewport(VkExtent2D extent)

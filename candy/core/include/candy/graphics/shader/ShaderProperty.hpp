@@ -83,6 +83,8 @@ namespace Candy::Graphics
     std::unordered_map<std::string, uint32_t> blockMap{};
     std::unordered_map<std::string, uint32_t> propertyMap{};
     
+    std::vector<uint32_t> offsets;
+    
   public:
     explicit ShaderSet(uint32_t set=0);
     

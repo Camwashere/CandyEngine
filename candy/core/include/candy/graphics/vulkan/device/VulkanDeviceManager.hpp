@@ -8,7 +8,7 @@ namespace Candy::Graphics
     class VulkanDeviceManager
     {
     public:
-        static inline const std::vector<const char*> DEVICE_EXTENSIONS = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+        static inline const std::vector<const char*> DEVICE_EXTENSIONS = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME};
         
     public:
         PhysicalDevice physicalDevice;

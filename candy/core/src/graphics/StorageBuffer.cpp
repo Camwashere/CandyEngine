@@ -4,9 +4,19 @@ namespace Candy::Graphics
 {
   StorageBuffer::StorageBuffer(uint64_t objSize, uint64_t objCount) : VulkanBuffer(objSize*objCount), objectSize(objSize), objectCount(objCount)
   {
-    VMA_MEMORY_USAGE_CPU_TO_GPU;
+    
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer, &allocation);
     Vulkan::DeletionQueue().Push(this);
+  }
+  void StorageBuffer::Bind(void** data)
+  {
+    vmaMapMemory(Vulkan::Allocator(), allocation, data);
+    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
+  }
+  
+  void StorageBuffer::Unbind()
+  {
+    vmaUnmapMemory(Vulkan::Allocator(), allocation);
   }
   
   SharedPtr<StorageBuffer> StorageBuffer::Create(uint64_t objectSize, uint64_t objectCount)

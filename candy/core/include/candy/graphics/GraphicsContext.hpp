@@ -25,6 +25,7 @@ namespace Candy::Graphics
     static constexpr unsigned int MAX_OBJECTS = 10000;
     static constexpr int GLOBAL_SET=0;
     static constexpr int OBJECT_SET=1;
+    static constexpr int MATERIAL_SET=2;
   
     struct FrameData
     {
@@ -32,14 +33,16 @@ namespace Candy::Graphics
       VkSemaphore presentSemaphore=VK_NULL_HANDLE;
       VkFence renderFence=VK_NULL_HANDLE;
       CommandBuffer commandBuffer;
-      std::array<VkDescriptorSet, 2> descriptorSets;
+      std::array<VkDescriptorSet, 3> descriptorSets;
       //VkDescriptorSet globalDescriptor=VK_NULL_HANDLE;
       //VkDescriptorSet objectDescriptor=VK_NULL_HANDLE;
       SharedPtr<UniformBuffer> uniformBuffer;
-      //SharedPtr<StorageBuffer> storageBuffer;
+      SharedPtr<StorageBuffer> storageBuffer;
+      SharedPtr<UniformBuffer> materialBuffer;
       
       VkDescriptorSet& GlobalDescriptor(){return descriptorSets[GLOBAL_SET];}
       VkDescriptorSet& ObjectDescriptor(){return descriptorSets[OBJECT_SET];}
+      VkDescriptorSet& MaterialDescriptor(){return descriptorSets[MATERIAL_SET];}
       VkDescriptorSet& GetDescriptorSet(uint32_t index){return descriptorSets[index];}
       [[nodiscard]] VkDescriptorSet GlobalDescriptor()const{return descriptorSets[GLOBAL_SET];}
       [[nodiscard]] VkDescriptorSet ObjectDescriptor()const{return descriptorSets[OBJECT_SET];}

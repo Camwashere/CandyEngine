@@ -29,8 +29,13 @@ namespace Candy::Graphics
     
     // Specify the set of device features we will be using that we queried support for
     // in the IsDeviceSuitable function using vkGetPhysicalDeviceFeatures
-    VkPhysicalDeviceFeatures deviceFeatures{};
-    deviceFeatures.samplerAnisotropy=VK_TRUE;
+    VkPhysicalDeviceFeatures2 deviceFeatures{};
+    deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    deviceFeatures.features.samplerAnisotropy=VK_TRUE;
+    
+    VkPhysicalDeviceShaderDrawParametersFeatures drawParametersFeatures{};
+    drawParametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+    drawParametersFeatures.shaderDrawParameters = VK_TRUE;
     
     // Create the logical device
     VkDeviceCreateInfo createInfo{};
@@ -38,7 +43,9 @@ namespace Candy::Graphics
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
     
-    createInfo.pEnabledFeatures = &deviceFeatures;
+    createInfo.pEnabledFeatures = &deviceFeatures.features;
+    
+    createInfo.pNext = &drawParametersFeatures;
     
     createInfo.enabledExtensionCount = static_cast<uint32_t>(VulkanDeviceManager::DEVICE_EXTENSIONS.size());
     createInfo.ppEnabledExtensionNames = VulkanDeviceManager::DEVICE_EXTENSIONS.data();

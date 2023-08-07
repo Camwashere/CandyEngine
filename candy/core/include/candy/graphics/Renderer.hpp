@@ -11,6 +11,7 @@
 #include "vulkan/ImageView.hpp"
 #include "candy/graphics/material/Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
+
 namespace Candy::Graphics
 {
   
@@ -24,6 +25,7 @@ namespace Candy::Graphics
     std::vector<Material*> materials{};
     GraphicsContext* target;
     UniquePtr<RenderPass> renderPass;
+    std::vector<VkWriteDescriptorSet> writes;
     
   private:
     static VkRenderPassBeginInfo BeginRenderPass();
@@ -31,8 +33,12 @@ namespace Candy::Graphics
   private:
     Renderer();
     
+    static void SubmitWrites();
+    
     
   public:
+    static void AddWrite(VkWriteDescriptorSet write);
+    static void AddWrites(std::vector<VkWriteDescriptorSet> writes);
     static void Submit(Material* material);
     static void Start();
     static void Init();

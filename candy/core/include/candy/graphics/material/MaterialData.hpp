@@ -49,10 +49,13 @@ namespace Candy::Graphics
     [[nodiscard]] VkImageView GetImageView()const;
     [[nodiscard]] uint32_t GetBinding()const;
     [[nodiscard]] uint32_t GetSet()const;
-    
+
+  };
   
-    
-  
-  
+  struct MaterialSet
+  {
+    uint32_t set;
+    std::vector<MaterialParameter> parameters;
+    std::vector<MaterialTextureParameter> textures;
   };
 }

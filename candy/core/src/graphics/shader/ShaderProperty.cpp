@@ -57,7 +57,7 @@ namespace Candy::Graphics
     {
       AddProperty(ref, &property);
     }
-    
+    offsets.push_back(size);
     size+=b.size;
     return b.id;
   }

@@ -275,10 +275,18 @@ namespace Candy::Graphics
       vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 1, uniformOffset);
   }*/
   
-  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
+  void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
   {
     //CANDY_CORE_INFO("descriptorSets.size()={0}, uniformOffsets.size()={1}", descriptorSets.size(), uniformOffsets.size());
-    vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, descriptorSets.size(), descriptorSets.data(), uniformOffsets.size(), uniformOffsets.data());
+    if (uniformOffsets.empty())
+    {
+      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, firstSet, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+    }
+    else
+    {
+      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, firstSet, descriptorSets.size(), descriptorSets.data(), uniformOffsets.size(), uniformOffsets.data());
+    }
+    
   }
   
   
@@ -294,9 +302,10 @@ namespace Candy::Graphics
         vkCmdBindVertexBuffers(mainCommandBuffer, 0, vertexArray->vertexBuffers.size(), data, vertexArray->vertexBufferOffsets.data());
         vkCmdBindIndexBuffer(mainCommandBuffer, *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
     }
-    void CommandBuffer::DrawIndexed(const SharedPtr<VertexArray>& vertexArray)
+    void CommandBuffer::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
     {
-        vkCmdDrawIndexed(mainCommandBuffer, static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), 1, 0, 0, 0);
+    
+        vkCmdDrawIndexed(mainCommandBuffer, static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), instanceCount, 0, 0, instanceIndex);
     }
     void CommandBuffer::EndRenderPass()
     {

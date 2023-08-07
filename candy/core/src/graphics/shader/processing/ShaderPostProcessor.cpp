@@ -140,7 +140,7 @@ namespace Candy::Graphics
       block.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
       block.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
 
-      block.name = compiler.get_member_name(resource.base_type_id, 0);
+      block.name = compiler.get_name(resource.id);
 
       auto members = compiler.get_type(resource.base_type_id).member_types;
       if (!members.empty())

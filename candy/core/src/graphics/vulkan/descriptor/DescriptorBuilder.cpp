@@ -76,7 +76,7 @@ namespace Candy::Graphics
     return *this;
   }
   
-  DescriptorBuilder& DescriptorBuilder::AddImageWrite(uint32_t binding,  VkDescriptorImageInfo* imageInfo, VkDescriptorType type)
+  DescriptorBuilder& DescriptorBuilder::AddImageWrite(uint32_t binding,  const VkDescriptorImageInfo* imageInfo, VkDescriptorType type)
   {
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -90,7 +90,7 @@ namespace Candy::Graphics
     writes.push_back(newWrite);
     return *this;
   }
-  DescriptorBuilder& DescriptorBuilder::AddBufferWrite(uint32_t binding,  VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type)
+  DescriptorBuilder& DescriptorBuilder::AddBufferWrite(uint32_t binding,  const VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type)
   {
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -140,7 +140,7 @@ namespace Candy::Graphics
       w.dstSet = *set;
     }
     
-    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
+    //vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
     
     //bindings.clear();
     //writes.clear();
@@ -152,12 +152,24 @@ namespace Candy::Graphics
     VkDescriptorSetLayout layout;
     return Build(set, layout);
   }
-  void DescriptorBuilder::Write(VkDescriptorSet* set)
+  void DescriptorBuilder::Write(VkDescriptorSet set)
+  {
+    BindWrites(set);
+    /*for (VkWriteDescriptorSet w : writes) {
+      Renderer::AddWrite(w);
+    }*/
+    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
+  }
+  
+  void DescriptorBuilder::BindWrites(VkDescriptorSet set)
   {
     for (VkWriteDescriptorSet& w : writes) {
-      w.dstSet = *set;
+      w.dstSet = set;
     }
-    
-    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
+  }
+  
+  std::vector<VkWriteDescriptorSet> DescriptorBuilder::GetWrites()
+  {
+    return writes;
   }
 }

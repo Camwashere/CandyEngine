@@ -30,6 +30,7 @@ namespace Candy::Graphics
       
     public:
       void Bind();
+      void Commit();
       
     public:
       // Push constant functions

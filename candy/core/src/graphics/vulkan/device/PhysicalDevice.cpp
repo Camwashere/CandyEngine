@@ -68,9 +68,17 @@ namespace Candy::Graphics
       swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     }
     
-    VkPhysicalDeviceFeatures supportedFeatures;
-    vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
-    return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
+    /*VkPhysicalDeviceFeatures supportedFeatures;
+    vkGetPhysicalDeviceFeatures(device, &supportedFeatures);*/
+    VkPhysicalDeviceShaderDrawParametersFeatures parametersFeatures{};
+    
+    parametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+    VkPhysicalDeviceFeatures2 supportedFeatures;
+    supportedFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    supportedFeatures.pNext = &parametersFeatures;
+    vkGetPhysicalDeviceFeatures2(device, &supportedFeatures);
+    
+    return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.features.samplerAnisotropy && parametersFeatures.shaderDrawParameters;
   }
   
   SwapChainSupportDetails PhysicalDevice::QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)

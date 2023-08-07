@@ -13,6 +13,7 @@ namespace Candy::Graphics
     std::vector<MaterialTextureParameter> textureParameters;
     std::unordered_map<std::string, size_t> nameToParameterMap;
     std::unordered_map<std::string, size_t> nameToTextureParameterMap;
+    std::vector<VkWriteDescriptorSet> writes;
     size_t bufferSize=0;
     //Texture texture;
     //ImageView textureImageView;

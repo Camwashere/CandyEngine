@@ -59,9 +59,16 @@ namespace Candy::Graphics
   
   void Shader::Bind()
   {
+    
     RenderCommand::BindPipeline(GetLayout().pipeline);
     
     //Vulkan::GetCurrentCommandBuffer().BindPipeline(pipeline);
+  }
+  
+  void Shader::Commit()
+  {
+    GetLayout().Bind(0);
+    GetLayout().Bind(1);
   }
   /*void Shader::BakePipeline(VkRenderPass renderPass)
   {
@@ -257,16 +264,7 @@ namespace Candy::Graphics
         return shaderModule;
     }
 
-    
-    
-    
-    
-    /*void Shader::DestroyShaderModules()
-    {
-        for (auto& shaderModule : shaderModules)
-            vkDestroyShaderModule(Vulkan::LogicalDevice(), shaderModule, nullptr);
-        shaderModules.clear();
-    }*/
+
   
 
   std::vector<VkPushConstantRange> Shader::GetPushConstantRanges()
@@ -288,8 +286,6 @@ namespace Candy::Graphics
     
     return buffer;
   }
- 
-  
   
     
     SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath)

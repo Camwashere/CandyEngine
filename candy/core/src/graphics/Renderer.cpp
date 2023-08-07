@@ -9,11 +9,18 @@ namespace Candy::Graphics
   
   Renderer::Renderer() : target(nullptr)
   {
-  
+    //writes.resize(10);
   }
   
   Renderer* Renderer::instance = nullptr;
-  
+  void Renderer::AddWrite(VkWriteDescriptorSet write)
+  {
+    instance->writes.push_back(write);
+  }
+  void Renderer::AddWrites(std::vector<VkWriteDescriptorSet> writes)
+  {
+    instance->writes.insert(instance->writes.end(), writes.begin(), writes.end());
+  }
   void Renderer::Submit(Material* material)
   {
     instance->materials.push_back(material);
@@ -59,8 +66,20 @@ namespace Candy::Graphics
     {
       instance->materials[0]->Bind();
     }
+    
+    SubmitWrites();
    
     RenderCommand::SetViewport(instance->target->swapChain->extent);
+  }
+  
+  void Renderer::SubmitWrites()
+  {
+    if (! instance->writes.empty())
+    {
+      CANDY_CORE_INFO("SUBMITTING WRITES SIZE: {}", instance->writes.size());
+      vkUpdateDescriptorSets(Vulkan::LogicalDevice(), instance->writes.size(), instance->writes.data(), 0, nullptr);
+      instance->writes.clear();
+    }
   }
   VkRenderPassBeginInfo Renderer::BeginRenderPass()
   {

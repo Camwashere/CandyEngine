@@ -13,6 +13,7 @@ namespace Candy::Graphics
   private:
     Pipeline pipeline;
     
+    
   public:
     std::vector<ShaderSet> sets{};
     std::vector<ShaderPushProperty*> pushProperties;
@@ -26,10 +27,12 @@ namespace Candy::Graphics
   private:
     VkPipelineLayout BakePipelineLayout();
     std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
+    VkDescriptorType GetDescriptorType(size_t setIndex);
     void BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
   public:
     ShaderLayout();
+    void Bind(uint32_t set);
     uint32_t PushConstant(const std::string& name, const void* data);
     void PushConstant(uint32_t id, const void* data);
     uint32_t SetUniform(const std::string& name, const void* data);
