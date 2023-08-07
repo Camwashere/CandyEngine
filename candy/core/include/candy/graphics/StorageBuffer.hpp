@@ -12,9 +12,7 @@ namespace Candy::Graphics
     
   public:
     explicit StorageBuffer(uint64_t objectSize, uint64_t objectCount);
-    
-    void Bind(void** data);
-    void Unbind();
+    void SetData(const void* data, uint64_t dataSize);
     
     static SharedPtr<StorageBuffer> Create(uint64_t objectSize, uint64_t objectCount);
   };

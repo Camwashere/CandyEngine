@@ -8,16 +8,15 @@ namespace Candy::Graphics
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer, &allocation);
     Vulkan::DeletionQueue().Push(this);
   }
-  void StorageBuffer::Bind(void** data)
+  void StorageBuffer::SetData(const void* data, uint64_t dataSize)
   {
-    vmaMapMemory(Vulkan::Allocator(), allocation, data);
-    //vmaUnmapMemory(Vulkan::Allocator(), allocation);
-  }
-  
-  void StorageBuffer::Unbind()
-  {
+    CANDY_CORE_ASSERT(dataSize <= size, "DATA SIZE IS BIGGER THAN BUFFER SIZE");
+    void* mappedData;
+    vmaMapMemory(Vulkan::Allocator(), allocation, &mappedData);
+    memcpy(mappedData, data, dataSize);
     vmaUnmapMemory(Vulkan::Allocator(), allocation);
   }
+  
   
   SharedPtr<StorageBuffer> StorageBuffer::Create(uint64_t objectSize, uint64_t objectCount)
   {

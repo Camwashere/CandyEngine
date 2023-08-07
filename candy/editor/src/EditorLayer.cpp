@@ -134,7 +134,7 @@ namespace Candy
       objects[i].transform = Matrix4::Rotate(Matrix4::IDENTITY, (time*((float)i+1.0f)) * Math::ToRadians(90.0f), axis);
     }
     
-    void* objectData;
+    /*void* objectData;
     Vulkan::GetCurrentContext().GetCurrentFrame().storageBuffer->Bind(&objectData);
     objectSSBO = (Object*) objectData;
     for (int i=0; i<objects.size(); i++)
@@ -142,7 +142,8 @@ namespace Candy
       Object& object = objects[i];
       objectSSBO[i].transform = object.transform;
     }
-    Vulkan::GetCurrentContext().GetCurrentFrame().storageBuffer->Unbind();
+    Vulkan::GetCurrentContext().GetCurrentFrame().storageBuffer->Unbind();*/
+    Renderer::GetCurrentFrame().storageBuffer->SetData(objects.data(), sizeof(Object) * objects.size());
     
     DescriptorBuilder builder = DescriptorBuilder::Begin();
     VkDescriptorBufferInfo objectInfo;
