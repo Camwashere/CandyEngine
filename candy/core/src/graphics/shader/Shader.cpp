@@ -52,7 +52,7 @@ namespace Candy::Graphics
       // Extract name from filepath
       shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
       
-      GetLayout().BakePipeline(Renderer::GetRenderPass(), CreateShaderStageCreateInfos());
+      GetLayout().BakePipeline(Renderer::GetViewportPass(), CreateShaderStageCreateInfos());
       //BakePipeline(Renderer::GetRenderPass());
         
     }

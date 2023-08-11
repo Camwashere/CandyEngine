@@ -11,12 +11,42 @@ namespace Candy::Graphics
   VulkanBuffer::operator VkBuffer()const{return buffer;}
   VulkanBuffer::operator VkBuffer(){return buffer;}
   
-  VulkanBuffer::VulkanBuffer(uint64_t bufferSize) : size(bufferSize)
+  VulkanBuffer::VulkanBuffer(BufferType bufferType) : type(bufferType)
   {
   
   }
   
+  VulkanBuffer::VulkanBuffer(uint64_t bufferSize, BufferType bufferType) : size(bufferSize), type(bufferType)
+  {
   
+  }
+  
+  bool VulkanBuffer::IsStatic()const
+  {
+    switch(type)
+    {
+      case UNIFORM_DYNAMIC:
+      case STORAGE_DYNAMIC:
+        return false;
+      default:
+        return true;
+    }
+  }
+  bool VulkanBuffer::IsDynamic()const
+  {
+    switch(type)
+    {
+      case UNIFORM_DYNAMIC:
+      case STORAGE_DYNAMIC:
+        return true;
+      default:
+        return false;
+    }
+  }
+  BufferType VulkanBuffer::GetType()const
+  {
+    return type;
+  }
   void VulkanBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)const
   {
     VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
@@ -59,5 +89,25 @@ namespace Candy::Graphics
   {
     vmaDestroyBuffer(Vulkan::Allocator(), *vulkanBuffer, vulkanBuffer->allocation);
   }
+  
+  VkDescriptorType VulkanBuffer::TypeToVulkan(BufferType type)
+  {
+    switch(type)
+    {
+      case UNIFORM:
+        return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      case UNIFORM_DYNAMIC:
+        return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+      case STORAGE:
+        return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+      case STORAGE_DYNAMIC:
+        return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+        return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      default:
+        CANDY_CORE_ASSERT(false, "INVALID BUFFER TYPE, CANNOT CONVERT TO VULKAN!");
+        return (VkDescriptorType)0;
+    }
+  }
+  
 
 }

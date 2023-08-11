@@ -1,5 +1,6 @@
 #include <editor/panels/Viewport.hpp>
 #include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_vulkan.h"
 #include <candy/app/Application.hpp>
 #include <candy/graphics/Vulkan.hpp>
@@ -12,10 +13,17 @@ namespace Candy
   {
   
   }
-  
-  void Viewport::OnUpdate()
+  void Viewport::OnAttach()
   {
   
+  }
+  void Viewport::OnUpdate()
+  {
+    
+    
+  
+    
+    
   }
   void Viewport::OnRenderUI()
   {
@@ -39,17 +47,12 @@ namespace Candy
     viewport.height = size.height;
     viewport.x = bounds.min.x;
     viewport.y = bounds.min.y;
-    RenderCommand::SetViewport(viewport);
-    ImTextureID texID = (ImTextureID)Vulkan::GetCurrentContext().GetSwapChain().GetCurrentImageView();
-    ImGui::Image(texID, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
+   
     
-    //ImGui::Image(texID, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
-    //int64_t textureID = frameBuffer->GetColorAttachmentRendererID();
-    //ImGui::Image(Vulkan::GetCurrentContext().GetSwapChain().)
-    //ImGui::Image(Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 1}, ImVec2{1, 0});
-    //ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+   
+    ImGui::Image(Renderer::GetCurrentFrame().gumDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
     
-    
+
     ImGui::End();
     ImGui::PopStyleVar();
   }

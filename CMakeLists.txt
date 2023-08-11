@@ -42,8 +42,6 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/editor/src/panels/Viewport.cpp
         candy/gum/include/gum/base/GumRenderer.hpp
         candy/gum/include/gum/widget/WidgetBase.hpp
-        candy/gum/include/gum/widget/WidgetShape.hpp
-        candy/gum/src/gum/widget/WidgetShape.cpp
         candy/core/include/candy/graphics/Renderer2D.hpp
         candy/core/include/candy/graphics/StorageBuffer.hpp
         candy/core/src/graphics/StorageBuffer.cpp
@@ -53,6 +51,18 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/src/graphics/material/MaterialData.cpp
         candy/core/include/candy/graphics/shader/ShaderProperty.hpp
         candy/core/src/graphics/shader/ShaderProperty.cpp
+        candy/core/include/candy/graphics/model/Mesh.hpp
+        candy/gum/include/gum/base/GumObject.hpp
+        candy/gum/src/gum/base/GumObject.cpp
+        candy/gum/include/gum/base/GumTree.hpp
+        candy/gum/include/gum/base/GumShape.hpp
+        candy/gum/src/gum/base/GumShape.cpp
+        candy/core/include/candy/graphics/camera/OrthographicCamera.hpp
+        candy/core/src/graphics/camera/OrthographicCamera.cpp
+        candy/gum/src/gum/base/GumRenderer.cpp
+        candy/gum/src/gum/base/GumTree.cpp
+        candy/gum/include/gum/base/GumStyle.hpp
+        candy/gum/include/gum/base/GumLayout.hpp
 )
 
 

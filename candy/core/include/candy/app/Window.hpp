@@ -38,7 +38,6 @@ namespace Candy
     private:
         WindowData windowData;
         bool fullscreen;
-        //Graphics::Renderer* renderer;
         UniquePtr<Graphics::GraphicsContext> graphicsContext;
         
     public:

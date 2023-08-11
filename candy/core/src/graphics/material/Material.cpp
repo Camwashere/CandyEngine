@@ -44,6 +44,7 @@ namespace Candy::Graphics
     //builder.Write(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
     
     builder.BindWrites(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
+    //builder.Write(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
     writes = builder.GetWrites();
     //auto writes = builder.GetWrites();
     //Renderer::AddWrites(writes);

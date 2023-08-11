@@ -3,6 +3,8 @@
 #include <candy/math/Math.hpp>
 //#include <Candy/Graphics.hpp>
 #include <entt/entt.hpp>
+#include <candy/graphics/model/Mesh.hpp>
+#include <candy/graphics/material/Material.hpp>
 namespace Candy::ECS
 {
   struct IDComponent{
@@ -26,6 +28,12 @@ namespace Candy::ECS
     }
     
     
+  };
+  
+  struct MeshComponent
+  {
+    Graphics::Mesh mesh;
+    Graphics::Material material;
   };
   
   /*struct SpriteRendererComponent
@@ -56,5 +64,5 @@ namespace Candy::ECS
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent>;
+  ComponentGroup<IDComponent, TagComponent, TransformComponent, MeshComponent>;
 }

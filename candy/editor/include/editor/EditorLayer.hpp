@@ -2,7 +2,10 @@
 #include <candy/app/Layer.hpp>
 #include <candy/app/Project.hpp>
 #include "candy/graphics/material/Material.hpp"
-
+#include <candy/ecs/Scene.hpp>
+#include <candy/graphics/camera/CameraController.hpp>
+#include "panels/ContentBrowserPanel.hpp"
+#include "panels/Viewport.hpp"
 namespace Candy
 {
   struct Object
@@ -15,8 +18,11 @@ namespace Candy
     Project* project;
     Candy::SharedPtr<Candy::Graphics::Shader> shader;
     Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
+    Candy::SharedPtr<Candy::ECS::Scene> activeScene;
+    Candy::Graphics::CameraController cameraController;
+    UniquePtr<ContentBrowserPanel> contentBrowserPanel;
+    SharedPtr<Viewport> viewport;
     std::vector<Object> objects;
-    Object* objectSSBO;
     
     std::vector<Math::Vector3> positions = {{0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}};
     

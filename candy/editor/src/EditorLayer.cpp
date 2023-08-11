@@ -6,9 +6,12 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/app/Application.hpp>
-
+#include <candy/event/Events.hpp>
+#include <imgui/imgui.h>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
+using namespace Candy::ECS;
+using namespace Candy::Events;
 const std::vector<Vector3> vertices = {
   {-0.5f, -0.5f, 0.0f},
   {0.5f, -0.5f, 0.0f},
@@ -58,9 +61,15 @@ const std::vector<uint32_t> indices = {
 namespace Candy
 {
   
-  EditorLayer::EditorLayer(Project* proj) : project(proj)
+  EditorLayer::EditorLayer(Project* proj) : project(proj), cameraController(new Camera(Vector3(0.0f, 0.0f, 3.27f)))
   {
     CANDY_ASSERT(project != nullptr);
+    
+    activeScene = Scene::Create("Test Scene");
+    
+    contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
+    viewport = CreateSharedPtr<Viewport>();
+    
     color = Color::purple;
     
     //Shader
@@ -68,28 +77,13 @@ namespace Candy
     material.SetShader(shader.get());
     material.SetTexture("texSampler", "assets/textures/statue.jpg");
     
-    /*material.shader = shader.get();
-    material.texture.Load("assets/textures/statue.jpg");
-    material.textureImageView.Set(material.texture);*/
-    
-    
     
     for (const auto& p : positions)
     {
       Matrix4 transform = Matrix4::Translate(Matrix4::IDENTITY, p);
       objects.push_back({transform});
     }
-    /*void* objectData;
-    Vulkan::GetCurrentContext().GetFrame(0).storageBuffer->Bind(&objectData);
-    objectSSBO = (Object*) objectData;
-    for (int i=0; i<objects.size(); i++)
-    {
-      Object& object = objects[i];
-      objectSSBO[i].transform = object.transform;
-    }
-    Vulkan::GetCurrentContext().GetFrame(0).storageBuffer->Unbind();*/
-    
-    
+  
     
     
     //Buffers
@@ -107,15 +101,16 @@ namespace Candy
     
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
-    Renderer::Submit(&material);
-    color = Color::blue;
+    RenderCommand::SetClearColor(0.0f, 0.3f, 0.0f);
+    //Renderer::Submit(&material);
+    //color = Color::blue;
   }
   
   
   
   void EditorLayer::OnAttach()
   {
-    Layer::OnAttach();
+  
   }
   
   void EditorLayer::OnDetach()
@@ -126,6 +121,9 @@ namespace Candy
   
   void EditorLayer::OnUpdate()
   {
+    //RenderCommand::SetClearColor(color.Inverted());
+    material.Bind();
+    cameraController.OnResize(Application::GetMainWindowReference().GetWidth(), Application::GetMainWindowReference().GetHeight());
     float time = Application::CurrentTime();
     for (int i=0; i<objects.size(); i++)
     {
@@ -134,15 +132,8 @@ namespace Candy
       objects[i].transform = Matrix4::Rotate(Matrix4::IDENTITY, (time*((float)i+1.0f)) * Math::ToRadians(90.0f), axis);
     }
     
-    /*void* objectData;
-    Vulkan::GetCurrentContext().GetCurrentFrame().storageBuffer->Bind(&objectData);
-    objectSSBO = (Object*) objectData;
-    for (int i=0; i<objects.size(); i++)
-    {
-      Object& object = objects[i];
-      objectSSBO[i].transform = object.transform;
-    }
-    Vulkan::GetCurrentContext().GetCurrentFrame().storageBuffer->Unbind();*/
+    cameraController.OnUpdate();
+    
     Renderer::GetCurrentFrame().storageBuffer->SetData(objects.data(), sizeof(Object) * objects.size());
     
     DescriptorBuilder builder = DescriptorBuilder::Begin();
@@ -153,7 +144,6 @@ namespace Candy
     builder.AddBufferWrite(0, &objectInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC);
     builder.Write(Vulkan::GetCurrentContext().GetCurrentFrame().ObjectDescriptor());
     
-    //Matrix4 model = Matrix4::Rotate(Matrix4::IDENTITY, time * Math::ToRadians(90.0f), Math::Vector3(0.0f, 0.0f, 1.0f));
     Matrix4 view = Matrix4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
     Matrix4 proj = Matrix4::Perspective(Math::ToRadians(45.0f), Vulkan::GetContextSizeRatio(), 0.1f, 10.0f);
     
@@ -164,24 +154,18 @@ namespace Candy
     color.z = (Math::Sin(time) + 1.0f) / 2.0f;
     
     float blend = (Math::Sin(time)+1.0f)/2.0f;
-    //material.SetParameter("model", model);
-    //material.SetParameter("view", view);
-    //material.SetParameter("proj", proj);
-    //material.SetParameter("uColor", color);
+    
     
     shader->PushFloat("colorBlend", blend);
     
-    //shader->SetMatrix("model", model);
-    shader->SetMatrix("view", view);
-    shader->SetMatrix("proj", proj);
+    //shader->SetMatrix("view", view);
+    //shader->SetMatrix("proj", proj);
+    shader->SetMatrix("view", cameraController.GetCamera().GetViewMatrix());
+    shader->SetMatrix("proj", cameraController.GetCamera().GetProjectionMatrix());
     shader->SetColor("uColor", color);
     
     shader->Commit();
-    //RenderCommand::BindDescriptorSets(shader->GetLayout().pipeline, {Vulkan::GetCurrentContext().GetCurrentFrame().globalDescriptor}, {0, 0});
-    //shader->PushMatrix("model", model);
-    //shader->PushMatrix("view", view);
-    //shader->PushMatrix("proj", proj);
-    //material.Bind();
+    
     
     vertexArray->Bind();
     for (int i=0; i<objects.size(); i++)
@@ -193,12 +177,70 @@ namespace Candy
   
   void EditorLayer::OnRenderUI()
   {
-  
+    // Note: Switch this to true to enable dockspace
+    static bool dockspaceOpen = true;
+    static bool opt_fullscreen_persistant = true;
+    bool opt_fullscreen = opt_fullscreen_persistant;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+    
+    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+    // because it would be confusing to have two docking targets within each others.
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    if (opt_fullscreen)
+    {
+      ImGuiViewport* view = ImGui::GetMainViewport();
+      ImGui::SetNextWindowPos(view->Pos);
+      ImGui::SetNextWindowSize(view->Size);
+      ImGui::SetNextWindowViewport(view->ID);
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+      window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+      window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
+    
+    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
+    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+      window_flags |= ImGuiWindowFlags_NoBackground;
+    
+    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+    // all active windows docked into it will lose their parent and become undocked.
+    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    
+    
+    ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+    ImGui::PopStyleVar();
+    
+    if (opt_fullscreen)
+      ImGui::PopStyleVar(2);
+    
+    // DockSpace
+    ImGuiIO& io = ImGui::GetIO();
+    ImGuiStyle& style = ImGui::GetStyle();
+    float minWinSizeX = style.WindowMinSize.x;
+    style.WindowMinSize.x = 370.0f;
+    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+    {
+      ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+      ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    }
+    
+    style.WindowMinSize.x = minWinSizeX;
+    
+    contentBrowserPanel->OnRenderUI();
+    
+    viewport->OnRenderUI();
+
+    
+    ImGui::End();
   }
 
   
   void EditorLayer::OnEvent(Events::Event &event)
   {
-    Layer::OnEvent(event);
+    
+    cameraController.OnEvent(event);
   }
 }

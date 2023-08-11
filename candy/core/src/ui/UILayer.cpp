@@ -1,6 +1,9 @@
 #include <candy/ui/UILayer.hpp>
 #include <candy/app/Application.hpp>
 #include <GLFW/glfw3.h>
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_vulkan.h"
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
 
@@ -15,7 +18,7 @@ namespace Candy
   
   void UILayer::OnAttach()
   {
-    /*
+    
     //1: create descriptor pool for IMGUI
     // the size of the pool is very oversize, but its copied from imgui demo itself.
     VkDescriptorPoolSize pool_sizes[] =
@@ -79,7 +82,7 @@ namespace Candy
     
     
     
-    ImGui_ImplVulkan_Init(&init_info, Renderer::GetRenderPass());
+    ImGui_ImplVulkan_Init(&init_info, Renderer::GetUIPass());
     
     
     //execute a gpu command to upload imgui font textures
@@ -88,39 +91,46 @@ namespace Candy
     });
     
     // Clear font texture from cpu memory
-    ImGui_ImplVulkan_DestroyFontUploadObjects();*/
+    ImGui_ImplVulkan_DestroyFontUploadObjects();
+    
+    for (int i=0; i<FRAME_OVERLAP; i++)
+    {
+      Renderer::GetFrame(i).gumDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportImageView.GetSampler(), Renderer::GetFrame(i).viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    }
     
   }
   
   void UILayer::OnDetach()
   {
    
-    /*vkDeviceWaitIdle(Vulkan::LogicalDevice());
+    vkDeviceWaitIdle(Vulkan::LogicalDevice());
     
     vkDestroyDescriptorPool(Vulkan::LogicalDevice(), uiPool, nullptr);
-    ImGui_ImplVulkan_Shutdown();*/
+    ImGui_ImplVulkan_Shutdown();
     //ImGui::DestroyContext();
     
   }
   
   void UILayer::OnEvent(Events::Event &e)
   {
-    /*if (blockEvents)
+    if (blockEvents)
     {
       ImGuiIO& io = ImGui::GetIO();
       e.SetHandled(e.IsHandled() | (e.GetClass()==Events::EventClass::MOUSE) & io.WantCaptureMouse);
       e.SetHandled(e.IsHandled() | (e.GetClass()==Events::EventClass::KEYBOARD) & io.WantCaptureKeyboard);
-    }*/
+    }
   }
   void UILayer::BlockEvents(bool block)
   {
     blockEvents = block;
   }
-  /*void UILayer::Begin()
+  void UILayer::Begin()
   {
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    Renderer::BeginUIPass();
+    //Renderer::BeginGumPass();
     
   
   }
@@ -144,5 +154,5 @@ namespace Candy
       //glfwMakeContextCurrent(backup_current_context);
     }
   
-  }*/
+  }
 }

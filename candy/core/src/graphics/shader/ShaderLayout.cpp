@@ -12,7 +12,7 @@ namespace Candy::Graphics
   }
   void ShaderLayout::Bind(uint32_t set)
   {
-    RenderCommand::BindDescriptorSets(pipeline, set, {Vulkan::GetCurrentContext().GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);
+    RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);
   }
   void ShaderLayout::BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {

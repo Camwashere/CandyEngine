@@ -8,7 +8,7 @@
 namespace Candy::Graphics
 {
   
-  VertexBuffer::VertexBuffer(BufferLayout bufferLayout, uint64_t countPerElement) : VulkanBuffer(bufferLayout.CalculateSize(countPerElement)), layout(std::move(bufferLayout))
+  VertexBuffer::VertexBuffer(BufferLayout bufferLayout, uint64_t countPerElement) : VulkanBuffer(bufferLayout.CalculateSize(countPerElement), BufferType::VERTEX), layout(std::move(bufferLayout))
   {
     
     VkBufferCreateInfo bufferInfo{};
@@ -27,7 +27,7 @@ namespace Candy::Graphics
     Vulkan::DeletionQueue().Push(this);
   }
   
-  VertexBuffer::VertexBuffer(float *vertices, uint64_t bufferSize) : VulkanBuffer(bufferSize)
+  VertexBuffer::VertexBuffer(float *vertices, uint64_t bufferSize) : VulkanBuffer(bufferSize, BufferType::VERTEX)
   {
     
     

@@ -124,6 +124,7 @@ namespace Candy::Graphics
   }
   bool CameraController::OnMouseScroll(Events::MouseScrollEvent& event)
   {
+    
     float deltaTime = Application::DeltaTime();
     float velocity = scrollSensitivity * deltaTime;
     Vector3 direction = Vector3::Cross(camera->localUp, camera->localRight)*event.GetOffsetY();

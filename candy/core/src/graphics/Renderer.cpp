@@ -7,96 +7,120 @@ namespace Candy::Graphics
 {
   using namespace Math;
   
+  
+  
   Renderer::Renderer() : target(nullptr)
   {
     //writes.resize(10);
   }
   
   Renderer* Renderer::instance = nullptr;
-  void Renderer::AddWrite(VkWriteDescriptorSet write)
-  {
-    instance->writes.push_back(write);
-  }
-  void Renderer::AddWrites(std::vector<VkWriteDescriptorSet> writes)
-  {
-    instance->writes.insert(instance->writes.end(), writes.begin(), writes.end());
-  }
-  void Renderer::Submit(Material* material)
+  
+  
+  
+  /*void Renderer::Submit(Material* material)
   {
     instance->materials.push_back(material);
-  }
+  }*/
   void Renderer::Init()
   {
     Renderer::instance = new Renderer();
+    
   }
   void Renderer::Start()
   {
     instance->target->SwapBuffers();
-    Renderer::BeginPass();
+    Renderer::BeginViewportPass();
   }
  
   void Renderer::SetTarget(GraphicsContext* target)
   {
     instance->target = target;
     VkSurfaceFormatKHR surfaceFormat = instance->target->GetSurfaceFormat();
-    instance->renderPass = CreateUniquePtr<RenderPass>(surfaceFormat.format);
+    instance->renderPasses[viewportPassIndex] = CreateUniquePtr<RenderPass>(surfaceFormat.format, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    instance->renderPasses[uiPassIndex] = CreateUniquePtr<RenderPass>(surfaceFormat.format, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
   }
-  
-  
-  void Renderer::BeginPass()
+  void Renderer::BeginViewportPass()
   {
     CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
+    GetCurrentFrame().commandBuffer.SetCurrentBuffer(0);
     RenderCommand::Reset();
     
     std::array<VkClearValue, 2> clearValues{};
     
-    clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
-    clearValues[1].depthStencil = {1.0f, 0};
     
-    VkRenderPassBeginInfo rpInfo = BeginRenderPass();
-    rpInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    clearValues[0].color = {0.0f, 0.3f, 0.0f, 1.0f};
+    clearValues[1].depthStencil = {1.0f, 0};
+    Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
+    VkRenderPassBeginInfo rpInfo = GetViewportPass().BeginPass(GetCurrentFrame().viewportFrameBuffer, size);
+    rpInfo.clearValueCount = clearValues.size();
     rpInfo.pClearValues = clearValues.data();
     
-    GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
-    /*for (auto& mat : instance->materials)
-    {
-      mat->Bind();
-    }*/
-    if (! instance->materials.empty())
-    {
-      instance->materials[0]->Bind();
-    }
     
-    SubmitWrites();
-   
-    RenderCommand::SetViewport(instance->target->swapChain->extent);
+    GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
+    
+    Math::Vector2u position = {0, 0};
+    RenderCommand::SetViewport(position, size);
   }
+  void Renderer::BeginUIPass()
+  {
+    GetCurrentFrame().commandBuffer.SetCurrentBuffer(1);
+    RenderCommand::Reset();
+    
+    std::array<VkClearValue, 2> clearValues{};
+    
+    clearValues[0].color = {0.0f, 0.3f, 0.0f, 1.0f};
+    clearValues[1].depthStencil = {1.0f, 0};
+    Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
+    VkRenderPassBeginInfo rpInfo = GetUIPass().BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), size);
+    rpInfo.clearValueCount = clearValues.size();
+    rpInfo.pClearValues = clearValues.data();
+    
+    
+    GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
+    
+    Math::Vector2u position = {0, 0};
+    RenderCommand::SetViewport(position, size);
+  }
+
   
-  void Renderer::SubmitWrites()
+  void Renderer::BeginScene(const Camera& camera)
   {
-    if (! instance->writes.empty())
-    {
-      CANDY_CORE_INFO("SUBMITTING WRITES SIZE: {}", instance->writes.size());
-      vkUpdateDescriptorSets(Vulkan::LogicalDevice(), instance->writes.size(), instance->writes.data(), 0, nullptr);
-      instance->writes.clear();
-    }
+  
   }
-  VkRenderPassBeginInfo Renderer::BeginRenderPass()
+  void Renderer::EndScene()
   {
-      return instance->renderPass->BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), instance->target->swapChain->extent);
+  
+  }
+
+  void Renderer::SetClearColor(Color color)
+  {
+    GetViewportPass().SetClearColor(color);
+  }
+  void Renderer::EndViewportPass()
+  {
+  
   }
   void Renderer::EndPass()
   {
     RenderCommand::Submit();
-    
   }
-  
-  VkRenderPass Renderer::GetRenderPass()
+  RenderPass& Renderer::GetCurrentPass()
   {
-    return *instance->renderPass;
+    return *instance->renderPasses[instance->currentPassIndex];
+  }
+  RenderPass& Renderer::GetUIPass()
+  {
+    return *instance->renderPasses[uiPassIndex];
+  }
+
+  RenderPass& Renderer::GetViewportPass()
+  {
+    return *instance->renderPasses[viewportPassIndex];
   }
   
   FrameData& Renderer::GetCurrentFrame(){return instance->target->GetCurrentFrame();}
+  FrameData& Renderer::GetFrame(uint32_t index){return instance->target->GetFrame(index);}
   
 
 

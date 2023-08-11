@@ -27,6 +27,7 @@ namespace Candy::Graphics
     static constexpr int OBJECT_SET=1;
     static constexpr int MATERIAL_SET=2;
   
+    
     struct FrameData
     {
       VkSemaphore renderSemaphore=VK_NULL_HANDLE;
@@ -34,15 +35,22 @@ namespace Candy::Graphics
       VkFence renderFence=VK_NULL_HANDLE;
       CommandBuffer commandBuffer;
       std::array<VkDescriptorSet, 3> descriptorSets;
-      //VkDescriptorSet globalDescriptor=VK_NULL_HANDLE;
-      //VkDescriptorSet objectDescriptor=VK_NULL_HANDLE;
+      VkDescriptorSet gumDescriptor=VK_NULL_HANDLE;
+      Image viewportImage;
+      Image depthImage;
+      ImageView viewportImageView;
+      ImageView depthImageView;
+      FrameBuffer viewportFrameBuffer;
       SharedPtr<UniformBuffer> uniformBuffer;
       SharedPtr<StorageBuffer> storageBuffer;
       SharedPtr<UniformBuffer> materialBuffer;
       
+      
+      
       VkDescriptorSet& GlobalDescriptor(){return descriptorSets[GLOBAL_SET];}
       VkDescriptorSet& ObjectDescriptor(){return descriptorSets[OBJECT_SET];}
       VkDescriptorSet& MaterialDescriptor(){return descriptorSets[MATERIAL_SET];}
+      //VkDescriptorSet& GumDescriptor(){return gumDescriptor;}
       VkDescriptorSet& GetDescriptorSet(uint32_t index){return descriptorSets[index];}
       [[nodiscard]] VkDescriptorSet GlobalDescriptor()const{return descriptorSets[GLOBAL_SET];}
       [[nodiscard]] VkDescriptorSet ObjectDescriptor()const{return descriptorSets[OBJECT_SET];}
@@ -61,21 +69,34 @@ namespace Candy::Graphics
         uint32_t previousFrameIndex=0;
         FrameData frames[FRAME_OVERLAP];
         
+        //Image targetImage;
+        //Image depthImage;
+        //ImageView depthImageView;
+      //ImageView targetView;
+      //FrameBuffer targetFrameBuffer;
         bool frameBufferResized=false;
-        
+        //VkDescriptorSet gumDescriptor=VK_NULL_HANDLE;
     
 
         
     private:
         void InitSyncStructures();
+        void CleanViewport();
+        void CreateViewport();
+        void RecreateViewport();
         //VkRenderPassBeginInfo BeginRenderPass();
         void UpdateFrameIndex();
+        
+        //void RecreateTarget(const Math::Vector2u& size);
+        void CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size);
     public:
         explicit GraphicsContext(GLFWwindow* windowHandle);
         
     public:
+      //void RecreateTarget();
         void SwapBuffers();
         void Present();
+        //VkDescriptorSet GumDescriptor();
         void RebuildSwapChain(VkRenderPass renderPass);
         void OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
         void CleanSwapChain();
@@ -91,6 +112,9 @@ namespace Candy::Graphics
         FrameData& GetCurrentFrame();
         FrameData& GetFrame(uint32_t index);
         FrameData& GetPreviousFrame();
+        //FrameBuffer& GetTargetFrameBuffer();
+        //ImageView& GetTargetImageView(){return targetView;}
+        //Image& GetTargetImage(){return targetImage;}
         
         
     public:

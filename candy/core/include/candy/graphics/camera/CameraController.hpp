@@ -8,7 +8,7 @@ namespace Candy::Graphics
   private:
     static constexpr float MOVEMENT_SPEED = 1.0f;
     static constexpr float MOUSE_SENSITIVITY = 0.5f;
-    static constexpr float SCROLL_SENSITIVITY = 1.5f;
+    static constexpr float SCROLL_SENSITIVITY = 4.5f;
   private:
     Camera* camera;
     

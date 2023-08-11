@@ -11,7 +11,9 @@
 #include "vulkan/ImageView.hpp"
 #include "candy/graphics/material/Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
-
+#include <candy/graphics/camera/Camera.hpp>
+#include "model/Mesh.hpp"
+#include <candy/math/Matrix.hpp>
 namespace Candy::Graphics
 {
   
@@ -22,33 +24,41 @@ namespace Candy::Graphics
     static Renderer* instance;
     
   private:
-    std::vector<Material*> materials{};
+
     GraphicsContext* target;
-    UniquePtr<RenderPass> renderPass;
-    std::vector<VkWriteDescriptorSet> writes;
+    std::array<UniquePtr<RenderPass>, 2> renderPasses{};
+    uint8_t currentPassIndex=0;
     
   private:
-    static VkRenderPassBeginInfo BeginRenderPass();
+    static void SetClearColor(Color color);
     
   private:
     Renderer();
     
-    static void SubmitWrites();
+    
     
     
   public:
-    static void AddWrite(VkWriteDescriptorSet write);
-    static void AddWrites(std::vector<VkWriteDescriptorSet> writes);
-    static void Submit(Material* material);
+    static constexpr uint8_t viewportPassIndex=0;
+    static constexpr uint8_t uiPassIndex=1;
+    static void BeginScene(const Camera& camera);
+    static void EndScene();
     static void Start();
     static void Init();
     static void SetTarget(GraphicsContext* target);
-    static void BeginPass();
+    static void BeginViewportPass();
+    static void BeginUIPass();
+    static void EndViewportPass();
     static void EndPass();
     static FrameData& GetCurrentFrame();
-    static VkRenderPass GetRenderPass();
+    static FrameData& GetFrame(uint32_t index);
+    static RenderPass& GetCurrentPass();
+    static RenderPass& GetUIPass();
+    static RenderPass& GetViewportPass();
+    
     
   private:
+    friend class RenderCommand;
     friend class Vulkan;
   };
 }

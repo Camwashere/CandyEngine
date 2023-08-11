@@ -10,21 +10,29 @@ namespace Candy::Graphics
     {
     private:
         VkCommandPool commandPool;
-        VkCommandBuffer mainCommandBuffer;
+        std::array<VkCommandBuffer, 2> commandBuffers;
+        uint8_t currentBuffer=0;
+        //VkCommandBuffer mainCommandBuffer;
+        
         
         
     private:
         void CreateCommandBuffers();
         void CreateCommandPool(VkSurfaceKHR surface);
         void Init(VkSurfaceKHR surface);
+        
+    public:
+      static constexpr uint8_t MAIN_BUFFER_INDEX=0;
+      static constexpr uint8_t VIEWPORT_BUFFER_INDEX=1;
     public:
         explicit CommandBuffer(uint32_t currentFrame=0);
         ~CommandBuffer()=default;
         
-        operator VkCommandBuffer(){return mainCommandBuffer;}
+        operator VkCommandBuffer(){return GetCurrentBuffer();}
         
         
     public:
+      void SetCurrentBuffer(uint8_t index);
         void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         VkCommandBuffer BeginSingleTimeCommands();
         void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
@@ -37,11 +45,18 @@ namespace Candy::Graphics
         void StartRecording(VkCommandBufferUsageFlags flags=0);
         void StartRenderPass(const VkRenderPassBeginInfo* renderPassInfo);
         
-    private:
+    public:
+      VkCommandBuffer& GetCurrentBuffer();
+      VkCommandBuffer& GetViewportBuffer();
+      VkCommandBuffer& GetUIBuffer();
+      const std::array<VkCommandBuffer, 2>&  GetBuffers()const;
+      size_t GetBufferCount()const;
+      
         void BindGraphicsPipeline(VkPipeline pipeline);
         void BindComputePipeline(VkPipeline pipeline);
         void SetViewport(VkExtent2D extent);
         void SetViewport(VkViewport viewport);
+        
         void BindVertexBuffers(const std::vector<VkBuffer>& vertexBuffers);
         void BindIndexBuffer(const IndexBuffer& indexBuffer);
         //void BindDescriptorSet(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset);
@@ -49,9 +64,13 @@ namespace Candy::Graphics
         
         void BindVertexArray(const VertexArray* vertexArray);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount=1, int32_t instanceIndex=0);
-        void EndRenderPass();
-        void EndRecording();
+        void EndRenderPass(uint8_t index);
+        void EndRenderPasses();
+        void EndRecording(uint8_t index);
+        void EndRecordings();
+        void End(uint8_t index);
         void EndAll();
+        //void EndAll();
         //void Destroy();
         void PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t dataSize, const void* data);
         void PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t offset, uint32_t dataSize, const void* data);

@@ -146,6 +146,7 @@ namespace Candy::Graphics
   {
     vmaDestroyImage(Vulkan::Allocator(), *vulkanObject, vulkanObject->GetAllocation());
     images.erase(vulkanObject);
+    
   }
   template<>
   void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject)

@@ -2,6 +2,7 @@
 #include <vulkan/vulkan.h>
 #include <candy/math/Vector.hpp>
 #include <candy/math/Rectangle.hpp>
+#include <candy/event/Events.hpp>
 namespace Candy
 {
   class Viewport
@@ -18,7 +19,9 @@ namespace Candy
     Viewport();
     
   public:
+    void OnAttach();
     void OnUpdate();
+    void OnEvent(Events::Event& event);
     void OnRenderUI();
     
   };

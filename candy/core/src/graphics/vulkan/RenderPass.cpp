@@ -80,7 +80,7 @@ namespace Candy::Graphics
   }
   
   
-  RenderPass::RenderPass(VkFormat colorAttachmentFormat) : clearColor(Color::black)
+  RenderPass::RenderPass(VkFormat colorAttachmentFormat, VkImageLayout finalLayout) : clearColor(Color::black)
   {
     
     VkAttachmentDescription colorAttachment{};
@@ -94,7 +94,9 @@ namespace Candy::Graphics
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     
     colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    colorAttachment.finalLayout = finalLayout;
+    //colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    
     
     VkAttachmentDescription depthAttachment{};
     depthAttachment.format = GraphicsContext::FindDepthFormat();
@@ -146,6 +148,7 @@ namespace Candy::Graphics
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
     renderPassInfo.dependencyCount = 1;
+    
     renderPassInfo.pDependencies = &dependency;
     
     
@@ -158,21 +161,53 @@ namespace Candy::Graphics
   {
     //vkDestroyRenderPass(Vulkan::LogicalDevice(), renderPass, nullptr);
   }
-
   
   
-  
-  VkRenderPassBeginInfo RenderPass::BeginPass(VkFramebuffer frameBuffer, VkExtent2D extent)
+  void RenderPass::SetClearColor(Color color)
+  {
+    clearColor = color;
+    clearValues[0].color = {color.r, color.g, color.b, 1.0f};
+  }
+  void RenderPass::SetDepthStencil(float depth, uint32_t stencil)
+  {
+    clearValues[1].depthStencil.depth = depth;
+    clearValues[1].depthStencil.stencil = stencil;
+  }
+  Color RenderPass::GetClearColor()const
+  {
+    return clearColor;
+  }
+  VkRenderPassBeginInfo RenderPass::BeginPass(FrameBuffer& frameBuffer, Math::Vector2u size)
   {
     VkRenderPassBeginInfo beginPassInfo{};
     
     beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     beginPassInfo.renderPass = renderPass;
     beginPassInfo.framebuffer = frameBuffer;
-    beginPassInfo.renderArea.offset = {offset.x, offset.y};
-    beginPassInfo.renderArea.extent = extent;
+    beginPassInfo.renderArea.offset.x = 0;
+    beginPassInfo.renderArea.offset.y = 0;
+    beginPassInfo.renderArea.extent.width = size.width;
+    beginPassInfo.renderArea.extent.height = size.height;
     //VkClearValue clearColorVal = {{{clearColor.x, clearColor.y, clearColor.z, clearColor.w}}};
-    VkClearValue clearColorVal = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+    VkClearValue clearColorVal = {{{clearColor.x, clearColor.y, clearColor.z, 1.0f}}};
+    beginPassInfo.clearValueCount = 1;
+    beginPassInfo.pClearValues = &clearColorVal;
+    
+    return beginPassInfo;
+  }
+  VkRenderPassBeginInfo RenderPass::BeginPass(FrameBuffer& frameBuffer, VkExtent2D extent)
+  {
+    VkRenderPassBeginInfo beginPassInfo{};
+    
+    beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    beginPassInfo.renderPass = renderPass;
+    beginPassInfo.framebuffer = frameBuffer;
+    beginPassInfo.renderArea.offset.x = 0;
+    beginPassInfo.renderArea.offset.y = 0;
+    beginPassInfo.renderArea.extent.width = extent.width;
+    beginPassInfo.renderArea.extent.height = extent.height;
+    //VkClearValue clearColorVal = {{{clearColor.x, clearColor.y, clearColor.z, clearColor.w}}};
+    VkClearValue clearColorVal = {{{clearColor.x, clearColor.y, clearColor.z, 1.0f}}};
     beginPassInfo.clearValueCount = 1;
     beginPassInfo.pClearValues = &clearColorVal;
     

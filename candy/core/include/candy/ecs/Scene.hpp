@@ -58,6 +58,9 @@ namespace Candy::ECS
     bool IsPaused()const;
     void SetPaused(bool paused);
     
+  public:
+    static SharedPtr<Scene> Create(const std::string& name = "Untitled");
+    
   private:
     friend class Entity;
     friend class SceneManager;

@@ -137,6 +137,14 @@ namespace Candy::Graphics
   {
     GetCommandBuffer().BindVertexArray(vertexArray);
   }
+  void RenderCommand::SetClearColor(Color color)
+  {
+    Renderer::SetClearColor(color);
+  }
+  void RenderCommand::SetClearColor(float r, float g, float b)
+  {
+    SetClearColor({r, g, b});
+  }
   
   
   void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
@@ -158,7 +166,14 @@ namespace Candy::Graphics
   }
   void RenderCommand::SetViewport(const Math::Vector2u& position, const Math::Vector2u& size)
   {
-  
+    VkViewport viewport{};
+    viewport.x = position.x;
+    viewport.y = position.y;
+    viewport.width = size.width;
+    viewport.height = size.height;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+    GetCommandBuffer().SetViewport(viewport);
   }
   void RenderCommand::SetViewport(VkViewport viewport)
   {
@@ -190,13 +205,13 @@ namespace Candy::Graphics
   }
   void RenderCommand::Submit()
   {
-    GetCommandBuffer().EndRenderPass();
-    GetCommandBuffer().EndRecording();
+    GetCommandBuffer().EndAll();
+    //GetCommandBuffer().EndRecording();
     
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.commandBufferCount=1;
-    submitInfo.pCommandBuffers = &GetCommandBuffer().mainCommandBuffer;
+    submitInfo.commandBufferCount=GetCommandBuffer().GetBufferCount();
+    submitInfo.pCommandBuffers = GetCommandBuffer().GetBuffers().data();
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     
     submitInfo.pWaitDstStageMask = &waitStage;

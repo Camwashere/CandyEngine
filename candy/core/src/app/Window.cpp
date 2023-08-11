@@ -163,7 +163,7 @@ namespace Candy
         Renderer::EndPass();
         graphicsContext->Present();
         graphicsContext->SwapBuffers();
-        Renderer::BeginPass();
+        Renderer::BeginViewportPass();
         
     }
     

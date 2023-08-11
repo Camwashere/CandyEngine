@@ -18,8 +18,8 @@ namespace Candy
       virtual void OnEvent(Events::Event& e)override;
       
       void BlockEvents(bool block);
-      //void Begin();
-      //void End();
+      void Begin();
+      void End();
       
       
         

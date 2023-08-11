@@ -21,6 +21,7 @@ namespace Candy::Graphics
     glfwGetFramebufferSize(context->handle, &width, &height);
     while (width == 0 || height == 0)
     {
+      
       glfwGetFramebufferSize(context->handle, &width, &height);
       glfwWaitEvents();
     }

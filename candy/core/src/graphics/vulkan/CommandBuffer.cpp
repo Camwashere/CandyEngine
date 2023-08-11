@@ -41,14 +41,18 @@ namespace Candy::Graphics
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.commandPool = commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        //allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
-        allocInfo.commandBufferCount=1;
+        allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
+        //allocInfo.commandBufferCount=1;
         
         //CANDY_CORE_ASSERT(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &commandBuffers[currentFrame]) == VK_SUCCESS, "Failed to allocate command buffers!");
-      CANDY_CORE_ASSERT(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &mainCommandBuffer) == VK_SUCCESS, "Failed to allocate command buffers!");
+      CANDY_CORE_ASSERT(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, commandBuffers.data()) == VK_SUCCESS, "Failed to allocate command buffers!");
         
     }
-    
+  void CommandBuffer::SetCurrentBuffer(uint8_t index)
+  {
+      CANDY_CORE_ASSERT(index<commandBuffers.size(), "Index out of range!");
+      currentBuffer=index;
+  }
     void CommandBuffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
         VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
@@ -148,8 +152,17 @@ namespace Candy::Graphics
       
       sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
       destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    } else {
-      throw std::invalid_argument("unsupported layout transition!");
+    } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+    {
+      barrier.srcAccessMask = 0;
+      barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+      
+      sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+      destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT; // OR VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, depending on usage
+    }
+    else {
+      CANDY_CORE_ASSERT(false, "Unsupported layout transition!");
+      
     }
     
     vkCmdPipelineBarrier(
@@ -197,7 +210,7 @@ namespace Candy::Graphics
   }
     void CommandBuffer::Reset()
     {
-      CANDY_CORE_ASSERT(vkResetCommandBuffer(mainCommandBuffer, 0)==VK_SUCCESS, "Failed to reset command buffer!");
+      CANDY_CORE_ASSERT(vkResetCommandBuffer(commandBuffers[currentBuffer], 0)==VK_SUCCESS, "Failed to reset command buffer!");
     }
     void CommandBuffer::StartRecording(VkCommandBufferUsageFlags flags)
     {
@@ -207,22 +220,41 @@ namespace Candy::Graphics
       cmdBeginInfo.flags = flags;
       cmdBeginInfo.pInheritanceInfo = nullptr;
       
-      CANDY_CORE_ASSERT(vkBeginCommandBuffer(mainCommandBuffer, &cmdBeginInfo)==VK_SUCCESS);
+      CANDY_CORE_ASSERT(vkBeginCommandBuffer(GetCurrentBuffer(), &cmdBeginInfo)==VK_SUCCESS);
     }
     
     
     void CommandBuffer::StartRenderPass(const VkRenderPassBeginInfo* renderPassInfo)
     {
-        vkCmdBeginRenderPass(mainCommandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBeginRenderPass(GetCurrentBuffer(), renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
-    
+  VkCommandBuffer& CommandBuffer::GetCurrentBuffer()
+  {
+      return commandBuffers[currentBuffer];
+  }
+  VkCommandBuffer& CommandBuffer::GetViewportBuffer()
+  {
+      return commandBuffers[0];
+  }
+  VkCommandBuffer& CommandBuffer::GetUIBuffer()
+  {
+      return commandBuffers[1];
+  }
+  const std::array<VkCommandBuffer, 2>&  CommandBuffer::GetBuffers()const
+  {
+      return commandBuffers;
+  }
+  size_t CommandBuffer::GetBufferCount()const
+  {
+      return commandBuffers.size();
+  }
     void CommandBuffer::BindGraphicsPipeline(VkPipeline pipeline)
     {
-        vkCmdBindPipeline(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+        vkCmdBindPipeline(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     }
     void CommandBuffer::BindComputePipeline(VkPipeline pipeline)
     {
-        vkCmdBindPipeline(mainCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+        vkCmdBindPipeline(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
     }
     void CommandBuffer::SetViewport(VkExtent2D extent)
     {
@@ -239,20 +271,23 @@ namespace Candy::Graphics
         scissor.offset = {0, 0};
         scissor.extent = extent;
         
-        vkCmdSetViewport(mainCommandBuffer, 0, 1, &viewport);
-        vkCmdSetScissor(mainCommandBuffer, 0, 1, &scissor);
+        vkCmdSetViewport(GetCurrentBuffer(), 0, 1, &viewport);
+        vkCmdSetScissor(GetCurrentBuffer(), 0, 1, &scissor);
     }
+    
+    
   
   void CommandBuffer::SetViewport(VkViewport viewport)
   {
     viewport.minDepth=0.0f;
     viewport.maxDepth=1.0f;
     VkRect2D scissor{};
-    scissor.offset = {0, 0};
+    scissor.offset.x = viewport.x;
+    scissor.offset.y = viewport.y;
     scissor.extent = VkExtent2D(static_cast<uint32_t>(viewport.width), static_cast<uint32_t>(viewport.height));
     
-    vkCmdSetViewport(mainCommandBuffer, 0, 1, &viewport);
-    vkCmdSetScissor(mainCommandBuffer, 0, 1, &scissor);
+    vkCmdSetViewport(GetCurrentBuffer(), 0, 1, &viewport);
+    vkCmdSetScissor(GetCurrentBuffer(), 0, 1, &scissor);
   }
     
     
@@ -262,17 +297,17 @@ namespace Candy::Graphics
         VkDeviceSize* offsets;
         memset(offsets, 0, vertexBuffers.size() * sizeof(VkDeviceSize));
         
-        vkCmdBindVertexBuffers(mainCommandBuffer, 0, vertexBuffers.size(), vertexBuffers.data(), offsets);
+        vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, vertexBuffers.size(), vertexBuffers.data(), offsets);
     }
     void CommandBuffer::BindIndexBuffer(const IndexBuffer& indexBuffer)
     {
-        vkCmdBindIndexBuffer(mainCommandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindIndexBuffer(GetCurrentBuffer(), indexBuffer, 0, VK_INDEX_TYPE_UINT32);
         
     }
   
   /*void CommandBuffer::BindDescriptorSet(VkPipelineLayout layout, VkDescriptorSet descriptorSet, const uint32_t* uniformOffset)
   {
-      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 1, uniformOffset);
+      vkCmdBindDescriptorSets(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1, &descriptorSet, 1, uniformOffset);
   }*/
   
   void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
@@ -280,11 +315,11 @@ namespace Candy::Graphics
     //CANDY_CORE_INFO("descriptorSets.size()={0}, uniformOffsets.size()={1}", descriptorSets.size(), uniformOffsets.size());
     if (uniformOffsets.empty())
     {
-      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, firstSet, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+      vkCmdBindDescriptorSets(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, layout, firstSet, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
     }
     else
     {
-      vkCmdBindDescriptorSets(mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, firstSet, descriptorSets.size(), descriptorSets.data(), uniformOffsets.size(), uniformOffsets.data());
+      vkCmdBindDescriptorSets(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, layout, firstSet, descriptorSets.size(), descriptorSets.data(), uniformOffsets.size(), uniformOffsets.data());
     }
     
   }
@@ -299,38 +334,56 @@ namespace Candy::Graphics
         {
             data[i] = *vertexArray->vertexBuffers[i];
         }
-        vkCmdBindVertexBuffers(mainCommandBuffer, 0, vertexArray->vertexBuffers.size(), data, vertexArray->vertexBufferOffsets.data());
-        vkCmdBindIndexBuffer(mainCommandBuffer, *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, vertexArray->vertexBuffers.size(), data, vertexArray->vertexBufferOffsets.data());
+        vkCmdBindIndexBuffer(GetCurrentBuffer(), *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
     }
     void CommandBuffer::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
     {
     
-        vkCmdDrawIndexed(mainCommandBuffer, static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), instanceCount, 0, 0, instanceIndex);
+        vkCmdDrawIndexed(GetCurrentBuffer(), static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), instanceCount, 0, 0, instanceIndex);
     }
-    void CommandBuffer::EndRenderPass()
+  void CommandBuffer::EndRenderPass(uint8_t index)
+  {
+    CANDY_CORE_ASSERT(index < commandBuffers.size());
+    vkCmdEndRenderPass(commandBuffers[index]);
+  }
+    void CommandBuffer::EndRenderPasses()
     {
-        vkCmdEndRenderPass(mainCommandBuffer);
+        vkCmdEndRenderPass(commandBuffers[0]);
+        vkCmdEndRenderPass(commandBuffers[1]);
+        //vkCmdEndRenderPass(GetCurrentBuffer());
     }
-    
-    void CommandBuffer::EndRecording()
+  void CommandBuffer::EndRecording(uint8_t index)
+  {
+    CANDY_CORE_ASSERT(vkEndCommandBuffer(commandBuffers[index]) == VK_SUCCESS, "Failed to end record command buffer!");
+  }
+    void CommandBuffer::EndRecordings()
     {
-        CANDY_CORE_ASSERT(vkEndCommandBuffer(mainCommandBuffer) == VK_SUCCESS, "Failed to record command buffer!");
+        CANDY_CORE_ASSERT(vkEndCommandBuffer(commandBuffers[0]) == VK_SUCCESS, "Failed to record command buffer!");
+      CANDY_CORE_ASSERT(vkEndCommandBuffer(commandBuffers[1]) == VK_SUCCESS, "Failed to record command buffer!");
     }
+  
+  void CommandBuffer::End(uint8_t index)
+  {
+    EndRenderPass(index);
+    EndRecording(index);
+  }
+  
     
     void CommandBuffer::EndAll()
     {
-      EndRenderPass();
-      EndRecording();
+      EndRenderPasses();
+      EndRecordings();
     }
   
   void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t dataSize, const void* data)
   {
-    vkCmdPushConstants(mainCommandBuffer, layout, ShaderData::StageToVulkan(shaderStage), 0, dataSize, data);
+    vkCmdPushConstants(GetCurrentBuffer(), layout, ShaderData::StageToVulkan(shaderStage), 0, dataSize, data);
   }
   
   void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t offset, uint32_t dataSize, const void* data)
   {
-    vkCmdPushConstants(mainCommandBuffer, layout, ShaderData::StageToVulkan(shaderStage), offset, dataSize, data);
+    vkCmdPushConstants(GetCurrentBuffer(), layout, ShaderData::StageToVulkan(shaderStage), offset, dataSize, data);
   }
   
   /*void CommandBuffer::Destroy()

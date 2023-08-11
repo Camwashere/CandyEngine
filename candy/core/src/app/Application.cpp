@@ -27,9 +27,10 @@ namespace Candy
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
         
         RenderCommand::Init();
-        //Renderer::Start();
-        uiLayer = new UILayer();
-        PushOverlay(uiLayer);
+      uiLayer = new UILayer();
+      PushOverlay(uiLayer);
+      //mainWindow->GetGraphicsContext().RecreateTarget();
+      
     }
     
     
@@ -41,6 +42,15 @@ namespace Candy
         dispatcher.Dispatch<WindowCloseEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowResize));
         dispatcher.Dispatch<FrameBufferResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnFrameBufferResize));
+      
+      for (auto& it : std::ranges::reverse_view(layerStack))
+      {
+        if (event.IsHandled())
+        {
+          break;
+        }
+        it->OnEvent(event);
+      }
     }
   
   
@@ -91,12 +101,12 @@ namespace Candy
         {
           frameTime.Update();
           UpdateLayers();
-          //uiLayer->Begin();
+          uiLayer->Begin();
           for (Layer* layer : layerStack)
           {
             layer->OnRenderUI();
           }
-          //uiLayer->End();
+          uiLayer->End();
           mainWindow->OnUpdate();
         }
         CleanUp();

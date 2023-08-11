@@ -25,6 +25,7 @@ namespace Candy::Graphics
     VkImage GetImageHandle(){return image;}
     VkFormat GetFormatHandle(){return format;}
     VmaAllocation GetAllocation(){return allocation;}
+    bool IsValid()const{return image!=VK_NULL_HANDLE;}
     //void Destroy();
     
     

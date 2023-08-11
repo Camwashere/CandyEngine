@@ -2,9 +2,10 @@
 #include <candy/ecs/BaseComponents.hpp>
 #include <candy/ecs/Entity.hpp>
 //#include <Candy/Graphics.hpp>
+#include <candy/graphics/Renderer.hpp>
 namespace Candy::ECS
 {
-  //using namespace Graphics;
+  using namespace Graphics;
   using namespace Math;
   Scene::Scene()=default;
   Scene::Scene(std::string sceneName) : name(std::move(sceneName)){}
@@ -154,6 +155,15 @@ namespace Candy::ECS
   void Scene::OnUpdateEditor(Graphics::Camera& camera)
   {
     systemScheduler.Update((void*)&camera);
+    Renderer::BeginScene(camera);
+    auto view = registry.view<TransformComponent, MeshComponent>();
+    for (auto entity : view)
+    {
+      auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
+      //Renderer::SubmitMesh(mesh.mesh, mesh.material, transform.GetTransform());
+    }
+    
+    Renderer::EndScene();
     /*Renderer3D::BeginScene(camera);
     //Renderer3D::RenderGrid();
     // Draw Meshes
@@ -169,7 +179,10 @@ namespace Candy::ECS
     
     
   }
-  
+  SharedPtr<Scene> Scene::Create(const std::string& name)
+  {
+    return CreateSharedPtr<Scene>(name);
+  }
   template<typename T>
   void Scene::OnComponentAdded(Entity entity, T& component)
   {

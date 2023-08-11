@@ -37,7 +37,8 @@ namespace Candy::Graphics
     static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount=1, int32_t instanceIndex=0);
     static void BindPipeline(const Pipeline& pipeline);
     static void BindVertexArray(const VertexArray* vertexArray);
-    //static void BindDescriptorSet(const Pipeline& pipeline, VkDescriptorSet descriptorSet, uint32_t uniformOffset);
+    static void SetClearColor(Color color);
+    static void SetClearColor(float r, float g, float b);
     
     static void BindDescriptorSets(const Pipeline& pipeline, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets);
     static void SetViewport(VkExtent2D extent);

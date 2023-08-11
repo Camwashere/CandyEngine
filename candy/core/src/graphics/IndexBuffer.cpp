@@ -3,7 +3,7 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-    IndexBuffer::IndexBuffer(uint32_t* indices, uint64_t indexCount) : VulkanBuffer(sizeof(uint32_t)*indexCount), count(indexCount)
+    IndexBuffer::IndexBuffer(uint32_t* indices, uint64_t indexCount) : VulkanBuffer(sizeof(uint32_t)*indexCount, BufferType::INDEX), count(indexCount)
     {
         
         VkBuffer stagingBuffer;

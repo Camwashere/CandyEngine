@@ -5,6 +5,7 @@
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include "imgui/backends/imgui_impl_vulkan.h"
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -21,8 +22,50 @@ namespace Candy::Graphics
       Vulkan::InitDeviceManager(surface);
       InitSyncStructures();
       Vulkan::RegisterContext(this);
-      swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetRenderPass());
+      swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetUIPass());
+      CreateViewport();
+      
     }
+  void GraphicsContext::RecreateViewport()
+  {
+      CleanViewport();
+      CreateViewport();
+      
+      for (int i=0; i<FRAME_OVERLAP; i++)
+      {
+        ImGui_ImplVulkan_RemoveTexture(frames[i].gumDescriptor);
+        frames[i].gumDescriptor = ImGui_ImplVulkan_AddTexture(frames[i].viewportImageView.GetSampler(), frames[i].viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      }
+  }
+  void GraphicsContext::CreateViewport()
+  {
+    Vector2u size = {swapChain->extent.width, swapChain->extent.height};
+      for (int i=0; i<FRAME_OVERLAP; i++)
+      {
+        CreateDepthResources(i, size);
+        frames[i].viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+        frames[i].viewportImageView.Set(frames[i].viewportImage, VK_FORMAT_B8G8R8A8_SRGB);
+        frames[i].viewportFrameBuffer.Set(Renderer::GetViewportPass(), size, {frames[i].viewportImageView, frames[i].depthImageView});
+        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        
+        
+        
+      }
+  }
+  
+  void GraphicsContext::CleanViewport()
+  {
+    for (int i=0; i<FRAME_OVERLAP; i++)
+    {
+      Vulkan::DeletionQueue().Delete(&frames[i].depthImage);
+      Vulkan::DeletionQueue().Delete(&frames[i].depthImageView);
+      
+      Vulkan::DeletionQueue().Delete(&frames[i].viewportFrameBuffer);
+      Vulkan::DeletionQueue().Delete(&frames[i].viewportImage);
+      Vulkan::DeletionQueue().Delete(&frames[i].viewportImageView);
+    }
+   
+  }
   void GraphicsContext::InitSyncStructures()
   {
     VkFenceCreateInfo fenceCreateInfo{};
@@ -91,13 +134,14 @@ namespace Candy::Graphics
       if (result == VK_ERROR_OUT_OF_DATE_KHR)
       {
         frameBufferResized = false;
-        swapChain->Rebuild(Renderer::GetRenderPass());
+        swapChain->Rebuild(Renderer::GetUIPass());
+        //RecreateViewport();
       }
       else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
       {
         CANDY_CORE_ASSERT(false, "Failed to acquire swap chain image!");
       }
-      
+     
     }
     
     void GraphicsContext::Present()
@@ -111,12 +155,12 @@ namespace Candy::Graphics
       presentInfo.waitSemaphoreCount = 1;
       
       presentInfo.pImageIndices = &swapChain->imageIndex;
-      
       VkResult result = vkQueuePresentKHR(Vulkan::LogicalDevice().graphicsQueue, &presentInfo);
       if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || frameBufferResized)
       {
         frameBufferResized = false;
-        swapChain->Rebuild(Renderer::GetRenderPass());
+        swapChain->Rebuild(Renderer::GetUIPass());
+        RecreateViewport();
       }
       else
       {
@@ -125,7 +169,7 @@ namespace Candy::Graphics
       
       UpdateFrameIndex();
     }
-    
+
     void GraphicsContext::RebuildSwapChain(VkRenderPass renderPass)
     {
       swapChain->Rebuild(renderPass);
@@ -134,6 +178,9 @@ namespace Candy::Graphics
   
   void GraphicsContext::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
   {
+    
+    Vector2u size = {(uint32_t)event.GetWidth(), (uint32_t)event.GetHeight()};
+    //RecreateTarget(size);
       frameBufferResized = true;
   }
   
@@ -178,11 +225,19 @@ namespace Candy::Graphics
     SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
     return Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
   }
+ 
+  void GraphicsContext::CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size)
+  {
+    VkFormat depthFormat = GraphicsContext::FindDepthFormat();
+    GetFrame(frameIndex).depthImage.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    GetFrame(frameIndex).depthImageView.Set(GetFrame(frameIndex).depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    
+    GetCurrentFrame().commandBuffer.TransitionImageLayout(GetFrame(frameIndex).depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+  }
   void GraphicsContext::UpdateFrameIndex()
   {
       previousFrameIndex = currentFrameIndex;
       currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
-      
   }
     
 }

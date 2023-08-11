@@ -3,6 +3,7 @@
 #include "device/VulkanDeviceManager.hpp"
 #include <Candy/Math/Vector.hpp>
 #include "../Color.hpp"
+#include "../FrameBuffer.hpp"
 namespace Candy::Graphics
 {
   
@@ -12,12 +13,12 @@ namespace Candy::Graphics
     {
     private:
         VkRenderPass renderPass=VK_NULL_HANDLE;
-        Math::Vector2i offset = {0, 0};
+        std::array<VkClearValue, 2> clearValues;
         Color clearColor;
    
     public:
       explicit RenderPass(const VkAttachmentDescription& depthAttachment, const std::vector<VkAttachmentDescription>& colorAttachments,const std::vector<VkAttachmentDescription>& inputAttachments);
-        explicit RenderPass(VkFormat colorAttachmentFormat);
+        explicit RenderPass(VkFormat colorAttachmentFormat, VkImageLayout finalLayout);
         ~RenderPass();
         
     public:
@@ -28,8 +29,15 @@ namespace Candy::Graphics
         
         
     public:
-        [[nodiscard]] VkRenderPassBeginInfo BeginPass(VkFramebuffer frameBuffer, VkExtent2D extent);
+      void SetClearColor(Color color);
+      void SetDepthStencil(float depth, uint32_t stencil);
+      Color GetClearColor()const;
+      VkRenderPassBeginInfo BeginPass(FrameBuffer& frameBuffer, Math::Vector2u size);
+        [[nodiscard]] VkRenderPassBeginInfo BeginPass(FrameBuffer& frameBuffer, VkExtent2D extent);
         //void Destroy();
+        
+    private:
+      //friend class Renderer;
         
     };
 }

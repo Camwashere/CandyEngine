@@ -43,7 +43,9 @@ namespace Candy::Graphics
   
   Math::Matrix4 Camera::GetProjectionMatrix()const
   {
-    return Matrix4::Perspective(Math::ToRadians(zoom), screenSize.x/screenSize.y, nearClip, farClip);
+    Matrix4 proj =  Matrix4::Perspective(Math::ToRadians(zoom), screenSize.x/screenSize.y, nearClip, farClip);
+    proj[1,1] *= -1;
+    return proj;
   }
   
   Math::Matrix4 Camera::GetViewProjectionMatrix()const
