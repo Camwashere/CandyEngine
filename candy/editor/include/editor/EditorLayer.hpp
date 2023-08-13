@@ -16,18 +16,20 @@ namespace Candy
   {
   private:
     Project* project;
-    Candy::SharedPtr<Candy::Graphics::Shader> shader;
-    Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
+    Graphics::Mesh mesh;
+    //Candy::SharedPtr<Candy::Graphics::Shader> shader;
+    //Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
     Candy::SharedPtr<Candy::ECS::Scene> activeScene;
-    Candy::Graphics::CameraController cameraController;
+    //Candy::Graphics::CameraController cameraController;
     UniquePtr<ContentBrowserPanel> contentBrowserPanel;
     SharedPtr<Viewport> viewport;
-    std::vector<Object> objects;
+    ECS::Entity testEntity;
+    //std::vector<Object> objects;
     
-    std::vector<Math::Vector3> positions = {{0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}};
+    //std::vector<Math::Vector3> positions = {{0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}};
     
-    Candy::Graphics::Material material;
-    Color color;
+    //Candy::Graphics::Material material;
+    //Color color;
   public:
     explicit EditorLayer(Project* project);
     

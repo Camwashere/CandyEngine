@@ -166,11 +166,7 @@ namespace Candy::Graphics
   {
     swapChains.insert(vulkanObject);
   }
-  /*template<>
-  void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject)
-  {
-    frameBuffers.insert(vulkanObject);
-  }*/
+  
   template<>
   void DeletionQueue::Push<Image*>(Image* vulkanObject)
   {

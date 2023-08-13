@@ -5,6 +5,7 @@
 #include "vector/Vector4Base.hpp"
 #include <variant>
 #include <vector>
+#include <spdlog/fmt/ostr.h> // must be included
 namespace Candy::Math
 {
   typedef VectorBase<float, 2> Vector2;
@@ -41,9 +42,6 @@ namespace Candy::Math
   typedef VectorVariant<float> VectorVariantF;
   typedef VectorVariantList<float> VectorVariantListF;
   
-  
-  
-  
-  
-  
 }
+
+

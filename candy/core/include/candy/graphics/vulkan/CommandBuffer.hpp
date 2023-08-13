@@ -63,6 +63,7 @@ namespace Candy::Graphics
         void BindDescriptorSets(VkPipelineLayout layout, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets);
         
         void BindVertexArray(const VertexArray* vertexArray);
+        void DrawEmpty(uint32_t count, VkBuffer dummyBuffer);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount=1, int32_t instanceIndex=0);
         void EndRenderPass(uint8_t index);
         void EndRenderPasses();

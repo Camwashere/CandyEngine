@@ -5,6 +5,7 @@
 #include "vulkan/VulkanBuffer.hpp"
 #include "vma/vk_mem_alloc.h"
 
+
 namespace Candy::Graphics
 {
   class GraphicsContext;
@@ -17,11 +18,11 @@ namespace Candy::Graphics
     BufferLayout layout;
   
   private:
-    template<IsPrimitive T>
-    void SetDataInternal(T *vertices);
+    
+    void SetDataInternal(const void* vertices);
   
   public:
-    VertexBuffer(BufferLayout layout, uint64_t countPerElement);
+    VertexBuffer(const BufferLayout& layout, uint64_t countPerElement);
     VertexBuffer(float *vertices, uint64_t size);
     ~VertexBuffer();
   
@@ -29,15 +30,21 @@ namespace Candy::Graphics
     using VulkanBuffer::operator VkBuffer;
   
   public:
-    template<typename T>
-    void SetData(T *vertices);
+
     
     template<typename T, typename...VECTOR_LIST>
     requires(IsVectorContainer<VECTOR_LIST> && ...)
-    void SetData(const VECTOR_LIST &... vector)
+    void SetData(const VECTOR_LIST&... vector)
     {
-      std::vector<T> data = BufferLayout::Flatten<T>(layout, std::forward<const VECTOR_LIST &>(vector)...);
-      SetData(data.data());
+      std::vector<T> data = BufferLayout::Flatten<T>(layout, std::forward<const VECTOR_LIST&>(vector)...);
+      for (int i=0; i<data.size(); i+=8)
+      {
+        Math::Vector3 vertex = {data[i], data[i+1], data[i+2]};
+        Math::Vector3 normal = {data[i+3], data[i+4], data[i+5]};
+        Math::Vector2 uv = {data[i+6], data[i+7]};
+        CANDY_CORE_INFO("Vertex: {0}, Normal: {1}, UV: {2}", vertex, normal, uv);
+      }
+      SetDataInternal(data.data());
     }
     
     void SetLayout(const BufferLayout &bufferLayout);
@@ -52,10 +59,9 @@ namespace Candy::Graphics
     friend class GraphicsContext;
   };
   
-  template<>
-  void VertexBuffer::SetData<float>(float *vertices);
-  template<>
-  void VertexBuffer::SetData<double>(double *vertices);
+
+  
+  
   
   
   

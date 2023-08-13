@@ -1,7 +1,9 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/Renderer3D.hpp>
 namespace Candy::Graphics
 {
+  
   void RenderCommand::InitSyncStructures()
   {
     VkFenceCreateInfo uploadFenceCreateInfo{};
@@ -12,6 +14,7 @@ namespace Candy::Graphics
     Vulkan::DeletionQueue().Push(uploadContext.uploadFence);
     //Vulkan::PushDeleter([=](){vkDestroyFence(Vulkan::LogicalDevice(), uploadContext.uploadFence, nullptr);});
   }
+  VulkanBuffer* RenderCommand::dummyBuffer=nullptr;
   UploadContext RenderCommand::uploadContext;
   VkCommandBufferBeginInfo RenderCommand::CommandBufferBeginInfo(VkCommandBufferUsageFlags flags)
   {
@@ -68,6 +71,10 @@ namespace Candy::Graphics
   {
     InitSyncStructures();
     InitCommands();
+    Renderer3D::Init();
+    dummyBuffer = new VulkanBuffer(BufferType::DUMMY);
+    
+    
   }
   
   CommandBuffer& RenderCommand::GetCommandBuffer()
@@ -110,7 +117,10 @@ namespace Candy::Graphics
     // reset the command buffers inside the command pool
     vkResetCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, 0);
   }
-  
+  void RenderCommand::DrawEmpty(uint32_t count)
+  {
+    GetCommandBuffer().DrawEmpty(count, *dummyBuffer);
+  }
   void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
   {
     //vertexArray->Bind();

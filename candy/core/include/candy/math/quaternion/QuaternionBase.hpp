@@ -65,4 +65,16 @@ namespace Candy::Math
   };
   
 }
+
+template <typename T>
+struct fmt::formatter<Candy::Math::QuaternionBase<T>> {
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  
+  template <typename FormatContext>
+  auto format(const Candy::Math::QuaternionBase<T>& vec, FormatContext& ctx) {
+    return format_to(ctx.out(), "({0}, {1}, {2}, {3})", vec.x, vec.y, vec.z, vec.w);
+  }
+};
 #include "QuaternionBase.inl"

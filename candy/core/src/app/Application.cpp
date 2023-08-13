@@ -29,6 +29,7 @@ namespace Candy
         RenderCommand::Init();
       uiLayer = new UILayer();
       PushOverlay(uiLayer);
+      
       //mainWindow->GetGraphicsContext().RecreateTarget();
       
     }

@@ -337,9 +337,18 @@ namespace Candy::Graphics
         vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, vertexArray->vertexBuffers.size(), data, vertexArray->vertexBufferOffsets.data());
         vkCmdBindIndexBuffer(GetCurrentBuffer(), *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
     }
+  void CommandBuffer::DrawEmpty(uint32_t count, VkBuffer dummyBuffer)
+  {
+    // Define a dummy buffer (can be one time setup and re-used later)
+    
+
+// Bind the dummy buffer
+    size_t offset = 0;
+    vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, 1, &dummyBuffer, &offset);
+    vkCmdDraw(GetCurrentBuffer(), count, 1, 0, 0);
+  }
     void CommandBuffer::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
     {
-    
         vkCmdDrawIndexed(GetCurrentBuffer(), static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), instanceCount, 0, 0, instanceIndex);
     }
   void CommandBuffer::EndRenderPass(uint8_t index)

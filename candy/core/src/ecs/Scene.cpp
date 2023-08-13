@@ -3,6 +3,7 @@
 #include <candy/ecs/Entity.hpp>
 //#include <Candy/Graphics.hpp>
 #include <candy/graphics/Renderer.hpp>
+#include <candy/graphics/Renderer3D.hpp>
 namespace Candy::ECS
 {
   using namespace Graphics;
@@ -155,29 +156,16 @@ namespace Candy::ECS
   void Scene::OnUpdateEditor(Graphics::Camera& camera)
   {
     systemScheduler.Update((void*)&camera);
-    Renderer::BeginScene(camera);
+    Renderer3D::BeginScene(camera);
     auto view = registry.view<TransformComponent, MeshComponent>();
     for (auto entity : view)
     {
+      
       auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
-      //Renderer::SubmitMesh(mesh.mesh, mesh.material, transform.GetTransform());
+      Renderer3D::SubmitMesh(*mesh.mesh, transform.GetMatrix());
     }
     
-    Renderer::EndScene();
-    /*Renderer3D::BeginScene(camera);
-    //Renderer3D::RenderGrid();
-    // Draw Meshes
-    auto view = registry.view<TransformComponent, MeshFilterComponent>();
-    for (auto entity : view)
-    {
-      auto [transform, meshFilter] = view.get<TransformComponent, MeshFilterComponent>(entity);
-      Renderer3D::SubmitMesh(meshFilter.mesh, transform.GetTransform());
-    }
-    
-    Renderer3D::EndScene();*/
-    
-    
-    
+    Renderer3D::EndScene();
   }
   SharedPtr<Scene> Scene::Create(const std::string& name)
   {

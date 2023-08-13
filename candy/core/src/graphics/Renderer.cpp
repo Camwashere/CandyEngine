@@ -3,29 +3,49 @@
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/app/Application.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/Renderer3D.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
   
   
+  struct SceneData
+  {
+    Matrix4 viewMatrix{};
+    Matrix4 projectionMatrix{};
+  };
   
+  static SceneData sceneData{};
   Renderer::Renderer() : target(nullptr)
   {
-    //writes.resize(10);
+  
   }
   
   Renderer* Renderer::instance = nullptr;
   
   
-  
-  /*void Renderer::Submit(Material* material)
-  {
-    instance->materials.push_back(material);
-  }*/
+
   void Renderer::Init()
   {
     Renderer::instance = new Renderer();
     
+  }
+  void Renderer::SubmitMesh(const Mesh& mesh, const Math::Matrix4& transform)
+  {
+    if (mesh.IsValid())
+    {
+    
+    }
+  }
+  void Renderer::Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const Math::Matrix4& transform)
+  {
+    shader->SetMatrix("proj", sceneData.projectionMatrix);
+    shader->SetMatrix("view", sceneData.viewMatrix);
+    shader->SetMatrix("model", transform);
+    shader->Commit();
+    vertexArray->Bind();
+    RenderCommand::DrawIndexed(vertexArray);
+  
   }
   void Renderer::Start()
   {
@@ -49,7 +69,7 @@ namespace Candy::Graphics
     std::array<VkClearValue, 2> clearValues{};
     
     
-    clearValues[0].color = {0.0f, 0.3f, 0.0f, 1.0f};
+    clearValues[0].color = {0.2f, 0.2f, 0.2f, 1.0f};
     clearValues[1].depthStencil = {1.0f, 0};
     Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
     VkRenderPassBeginInfo rpInfo = GetViewportPass().BeginPass(GetCurrentFrame().viewportFrameBuffer, size);
@@ -69,7 +89,7 @@ namespace Candy::Graphics
     
     std::array<VkClearValue, 2> clearValues{};
     
-    clearValues[0].color = {0.0f, 0.3f, 0.0f, 1.0f};
+    clearValues[0].color = {0.2f, 0.2f, 0.2f, 1.0f};
     clearValues[1].depthStencil = {1.0f, 0};
     Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
     VkRenderPassBeginInfo rpInfo = GetUIPass().BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), size);
@@ -86,7 +106,8 @@ namespace Candy::Graphics
   
   void Renderer::BeginScene(const Camera& camera)
   {
-  
+    sceneData.viewMatrix = camera.GetViewMatrix();
+    sceneData.projectionMatrix = camera.GetProjectionMatrix();
   }
   void Renderer::EndScene()
   {

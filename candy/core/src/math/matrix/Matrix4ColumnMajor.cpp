@@ -459,15 +459,62 @@ namespace Candy::Math
     
   }
   
-  VectorBase<float, 4>& AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::Column(index_t index){return columns[index];}
-  [[nodiscard]] const VectorBase<float, 4>& AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::Column(index_t index)const{return columns[index];}
+  VectorBase<float, 4>& AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::GetColumn(index_t index){return columns[index];}
+  const VectorBase<float, 4>& AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::GetColumn(index_t index)const{return columns[index];}
+  VectorBase<float, 4> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::GetRow(index_t index)const
+  {
+    return {data[index], data[index+4], data[index+8], data[index+12]};
+  }
   
+  VectorBase<float, 3> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::GetTranslation()const
+  {
+    return {data[12], data[13], data[14]};
+  }
+  VectorBase<float, 3> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::GetScale()const
+  {
+    float sx = std::sqrt((*this)[0,0] * (*this)[0,0] + (*this)[0,1] * (*this)[0,1] + (*this)[0,2] * (*this)[0,2]);
+    float sy = std::sqrt((*this)[1,0] * (*this)[1,0] + (*this)[1,1] * (*this)[1,1] + (*this)[1,2] * (*this)[1,2]);
+    float sz = std::sqrt((*this)[2,0] * (*this)[2,0] + (*this)[2,1] * (*this)[2,1] + (*this)[2,2] * (*this)[2,2]);
+    return {sx, sy, sz};
+  }
+  VectorBase<float, 3> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::GetRotation()const
+  {
+    AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> m = *this;
+    VectorBase<float, 3> scale = GetScale();
+    float sx = scale.x;
+    float sy = scale.y;
+    float sz = scale.z;
+    if (fabsf(sx) > 0.0001f)
+    {
+      m[0,0] /= sx;
+      m[0,1] /= sx;
+      m[0,2] /= sx;
+    }
+    if (fabsf(sy) > 0.0001f)
+    {
+      m[1,0] /= sy;
+      m[1,1] /= sy;
+      m[1,2] /= sy;
+    }
+    if (fabsf(sz) > 0.0001f)
+    {
+      m[2,0] /= sz;
+      m[2,1] /= sz;
+      m[2,2] /= sz;
+    }
+
+// Extract the angles from the rotation matrix
+    float angle_x = Math::Atan2(m[2,1],m[2,2]);
+    float angle_y = Math::Atan2(-m[2,0],Math::Sqrt(m[2,1]*m[2,1]+m[2,2]*m[2,2]));
+    float angle_z = Math::Atan2(m[1,0],m[0,0]);
+    return {angle_x, angle_y, angle_z};
+  }
 }
 
 
 std::ostream &operator<<(std::ostream &ostream, const Candy::Math::AbstractMatrixBase<float, 4, 4, Candy::Math::LayoutPolicyTopToBottom> &mat)
 {
   ostream << std::fixed << std::setprecision(1);
-  ostream << mat.Column(0) << '\n' << mat.Column(1) << '\n' << mat.Column(2) << '\n' << mat.Column(3) << '\n';
+  ostream << mat.GetColumn(0) << '\n' << mat.GetColumn(1) << '\n' << mat.GetColumn(2) << '\n' << mat.GetColumn(3) << '\n';
   return ostream;
 }

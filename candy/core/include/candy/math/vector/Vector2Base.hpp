@@ -1,5 +1,5 @@
 #pragma once
-
+#include <spdlog/fmt/ostr.h> // must be included
 #include "VectorBase.hpp"
 #include "VectorBaseStaticData.hpp"
 
@@ -189,6 +189,17 @@ namespace Candy::Math
 }
 
 
+template <typename T>
+struct fmt::formatter<Candy::Math::VectorBase<T, 2>> {
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  
+  template <typename FormatContext>
+  auto format(const Candy::Math::VectorBase<T, 2>& vec, FormatContext& ctx) {
+    return format_to(ctx.out(), "({0}, {1})", vec.x, vec.y);
+  }
+};
 template<typename T>
 std::ostream &operator<<(std::ostream &ostream, const Candy::Math::VectorBase<T, 2> &vec);
 

@@ -67,8 +67,9 @@ namespace Candy::Graphics
   
   void Shader::Commit()
   {
-    GetLayout().Bind(0);
-    GetLayout().Bind(1);
+    GetLayout().BindAll();
+    //GetLayout().Bind(0);
+    //GetLayout().Bind(1);
   }
   /*void Shader::BakePipeline(VkRenderPass renderPass)
   {

@@ -13,6 +13,24 @@ namespace Candy::Graphics
   
   VulkanBuffer::VulkanBuffer(BufferType bufferType) : type(bufferType)
   {
+    switch(type)
+    {
+      case BufferType::DUMMY:
+        size = sizeof(float);
+        VkBufferCreateInfo bufferInfo = { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
+        bufferInfo.size = sizeof(float);  // Can be anything as long as non-zero
+        bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+
+// Define the allocation
+        VmaAllocationCreateInfo allocationInfo = {};
+        allocationInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+// Create the buffer
+
+        vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocationInfo, &buffer, &allocation, nullptr);
+        Vulkan::DeletionQueue().Push(this);
+        break;
+    }
   
   }
   

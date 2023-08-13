@@ -61,8 +61,7 @@ namespace Candy::Graphics
   };
   template<>
   void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
-  /*template<>
-  void DeletionQueue::Push<VkFramebuffer>(VkFramebuffer vulkanObject);*/
+  
   template<>
   void DeletionQueue::Push<Image*>(Image* vulkanObject);
   template<>

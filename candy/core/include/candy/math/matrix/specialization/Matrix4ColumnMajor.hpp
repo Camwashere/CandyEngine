@@ -113,8 +113,12 @@ namespace Candy::Math
   
   
   public:
-    VectorBase<float, COLUMNS>& Column(index_t index);
-    [[nodiscard]] const VectorBase<float, COLUMNS>& Column(index_t index)const;
+    VectorBase<float, ROWS>& GetColumn(index_t index);
+    [[nodiscard]] const VectorBase<float, ROWS>& GetColumn(index_t index)const;
+    VectorBase<float, COLUMNS> GetRow(index_t index)const;
+    VectorBase<float, 3> GetTranslation()const;
+    VectorBase<float, 3> GetScale()const;
+    VectorBase<float, 3> GetRotation()const;
   
   
   public:
@@ -129,6 +133,20 @@ namespace Candy::Math
   
 }
 
-
+template<>
+struct fmt::formatter<Candy::Math::AbstractMatrixBase<float, 4, 4, Candy::Math::LayoutPolicyTopToBottom>> {
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  
+  template <typename FormatContext>
+  auto format(const Candy::Math::AbstractMatrixBase<float, 4, 4, Candy::Math::LayoutPolicyTopToBottom>& matrix, FormatContext& ctx) {
+    return format_to(ctx.out(), "{0}\n{1}\n{2}\n{3}",
+                     Candy::Math::Vector4(matrix[0], matrix[4], matrix[8], matrix[12]),
+                     Candy::Math::Vector4(matrix[1], matrix[5], matrix[9], matrix[13]),
+                     Candy::Math::Vector4(matrix[2], matrix[6], matrix[10], matrix[14]),
+                     Candy::Math::Vector4(matrix[3], matrix[7], matrix[11], matrix[15]));
+  }
+};
 
 std::ostream &operator<<(std::ostream &ostream, const Candy::Math::AbstractMatrixBase<float, 4, 4, Candy::Math::LayoutPolicyTopToBottom> &mat);

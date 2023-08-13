@@ -10,6 +10,14 @@ namespace Candy::Graphics
     sets.emplace_back();
     pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
   }
+  void ShaderLayout::BindAll()
+  {
+    //CANDY_CORE_INFO("SETS SIZE: {}", sets.size());
+    for (size_t i=0; i<sets.size(); i++)
+    {
+      Bind(i);
+    }
+  }
   void ShaderLayout::Bind(uint32_t set)
   {
     RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);

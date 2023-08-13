@@ -8,7 +8,7 @@
 namespace Candy::Graphics
 {
   
-  VertexBuffer::VertexBuffer(BufferLayout bufferLayout, uint64_t countPerElement) : VulkanBuffer(bufferLayout.CalculateSize(countPerElement), BufferType::VERTEX), layout(std::move(bufferLayout))
+  VertexBuffer::VertexBuffer(const BufferLayout& bufferLayout, uint64_t countPerElement) : VulkanBuffer(bufferLayout.CalculateSize(countPerElement), BufferType::VERTEX), layout(bufferLayout)
   {
     
     VkBufferCreateInfo bufferInfo{};
@@ -68,9 +68,10 @@ namespace Candy::Graphics
   = default;
 
   
-  template<IsPrimitive T>
-  void VertexBuffer::SetDataInternal(T* vertices)
+
+  void VertexBuffer::SetDataInternal(const void* vertices)
   {
+   
     VkBuffer stagingBuffer;
     VmaAllocation stagingBufferAllocation;
     
@@ -84,23 +85,10 @@ namespace Candy::Graphics
     
     vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
   }
-  template<typename T>
-  void VertexBuffer::SetData(T *vertices)
-  {
-    CANDY_CORE_ASSERT(false, "Unsupported vertex buffer data type!");
-  }
   
-  template<>
-  void VertexBuffer::SetData<float>(float* vertices)
-  {
-    SetDataInternal(vertices);
-  }
   
-  template<>
-  void VertexBuffer::SetData<double>(double* vertices)
-  {
-    SetDataInternal(vertices);
-  }
+  
+  
   
   void VertexBuffer::SetLayout(const BufferLayout &bufferLayout)
   {

@@ -18,6 +18,7 @@ namespace Candy::Graphics
   class RenderCommand
   {
     private:
+    static VulkanBuffer* dummyBuffer;
     static UploadContext uploadContext;
   private:
     static VkCommandBufferBeginInfo CommandBufferBeginInfo(VkCommandBufferUsageFlags flags=0);
@@ -34,6 +35,7 @@ namespace Candy::Graphics
     static void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
     
   public:
+    static void DrawEmpty(uint32_t count);
     static void DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount=1, int32_t instanceIndex=0);
     static void BindPipeline(const Pipeline& pipeline);
     static void BindVertexArray(const VertexArray* vertexArray);

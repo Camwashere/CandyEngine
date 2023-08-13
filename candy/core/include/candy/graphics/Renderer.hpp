@@ -45,6 +45,8 @@ namespace Candy::Graphics
     static void EndScene();
     static void Start();
     static void Init();
+    static void SubmitMesh(const Mesh& mesh, const Math::Matrix4& transform);
+    static void Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
     static void SetTarget(GraphicsContext* target);
     static void BeginViewportPass();
     static void BeginUIPass();

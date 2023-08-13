@@ -16,6 +16,13 @@ namespace Candy
     SharedPtr<Graphics::ImageView> directoryIcon;
     SharedPtr<Graphics::ImageView> fileIcon;
     std::vector<VkDescriptorSet> descriptorSets;
+    
+    std::filesystem::path popupPath;
+    bool showFileMenuPopup=false;
+    
+  private:
+    void ShowFileMenu(const std::filesystem::path& path);
+    void RenderFileMenu();
   public:
     explicit ContentBrowserPanel(std::filesystem::path  contentRoot);
     

@@ -63,6 +63,10 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/gum/src/gum/base/GumTree.cpp
         candy/gum/include/gum/base/GumStyle.hpp
         candy/gum/include/gum/base/GumLayout.hpp
+        candy/core/src/graphics/model/Mesh.cpp
+        candy/core/include/candy/graphics/Renderer3D.hpp
+        candy/core/src/graphics/Renderer3D.cpp
+        candy/core/src/graphics/Renderer2D.cpp
 )
 
 

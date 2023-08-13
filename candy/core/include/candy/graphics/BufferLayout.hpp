@@ -17,7 +17,7 @@ namespace Candy::Graphics
     ShaderData::Type type = ShaderData::Type::None;
     uint32_t location=0;
     uint32_t offset = 0;
-    
+    BufferElement(const BufferElement& other)=default;
     BufferElement(std::string elementName, ShaderData::Type dataType, uint32_t location);
     
     [[nodiscard]] uint64_t Size() const;
@@ -42,7 +42,7 @@ namespace Candy::Graphics
   
   public:
     BufferLayout() = default;
-    
+    BufferLayout(const BufferLayout& other)=default;
     BufferLayout(std::initializer_list<BufferElement> bufferElements);
   
   public:
@@ -79,18 +79,15 @@ namespace Candy::Graphics
       for (const auto& list : vectorList)
       {
         auto FindSize = std::visit([](const auto& elementList) { return elementList.size(); }, list);
-        
-        
-        
         totalSize += FindSize;
       }
+     
       size_t perElementSize = totalSize / vectorList.size();
-      
       return perElementSize;
     }
     
     template<typename T, typename...VECTOR_LIST>
-    requires(IsVectorContainer<VECTOR_LIST> && ...)
+    requires(IsVectorContainer<VECTOR_LIST>&& ...)
     static constexpr std::vector<T> Flatten(const BufferLayout &layout, const VECTOR_LIST&... vector)
     {
       std::vector<T> result{};
@@ -98,30 +95,27 @@ namespace Candy::Graphics
       size_t countPerElement = GetFlattenSizes<T>(vectorList);
       size_t totalComponentCount = layout.CalculateTotalComponentCount(countPerElement);
       size_t incrementSize = countPerElement;
+      size_t localIncSize = totalComponentCount / incrementSize;
       result.resize(totalComponentCount);
-      for (size_t i=0, a=0; i<totalComponentCount; i+=incrementSize, a++)
+      for (size_t i=0, a=0; i<totalComponentCount; i+=localIncSize, a++)
       {
-        size_t currentIncOffset=0;
+        size_t currentIncOffset=i;
         for (size_t b=0; b<vectorList.size(); b++)
         {
-          std::visit([&result, a, i, &currentIncOffset](const auto& elementList)
+          std::visit([&result, a, &currentIncOffset](const auto& elementList)
           {
             auto element = elementList[a];
             for (size_t e=0; e<element.Size(); e++)
             {
-              result[i+currentIncOffset] = element[e];
+              result[currentIncOffset] = element[e];
               currentIncOffset++;
             }
             
           }, vectorList[b]);
         }
       }
-      
-     
-      
+      CANDY_CORE_INFO("FLATTENED");
       return result;
-      
-      
     }
     
     
@@ -129,17 +123,18 @@ namespace Candy::Graphics
     {
       
       uint64_t size = 0;
-      for (auto &&element: elements)
+      for (auto&& element : elements)
       {
         size += element.Size();
       }
+      CANDY_CORE_INFO("SIZE: {}", size*countPerElement);
       return size*countPerElement;
     }
     
     [[nodiscard]] uint64_t CalculateTotalComponentCount(uint64_t countPerElement) const
     {
       uint64_t count = 0;
-      for (auto &&element: elements)
+      for (auto&& element : elements)
       {
         count += element.GetComponentCount();
       }

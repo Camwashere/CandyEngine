@@ -213,7 +213,17 @@ namespace Candy::Math
         [[nodiscard]] constexpr VectorBase<T, 3> zzz() const;
     };
 }
-
+template <typename T>
+struct fmt::formatter<Candy::Math::VectorBase<T, 3>> {
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  
+  template <typename FormatContext>
+  auto format(const Candy::Math::VectorBase<T, 3>& vec, FormatContext& ctx) {
+    return format_to(ctx.out(), "({0}, {1}, {2})", vec.x, vec.y, vec.z);
+  }
+};
 template<typename T>
 std::ostream &operator<<(std::ostream &ostream, const Candy::Math::VectorBase<T, 3> &vec);
 

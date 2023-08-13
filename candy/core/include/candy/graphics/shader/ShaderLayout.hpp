@@ -32,6 +32,7 @@ namespace Candy::Graphics
     
   public:
     ShaderLayout();
+    void BindAll();
     void Bind(uint32_t set);
     uint32_t PushConstant(const std::string& name, const void* data);
     void PushConstant(uint32_t id, const void* data);

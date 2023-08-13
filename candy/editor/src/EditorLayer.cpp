@@ -61,16 +61,20 @@ const std::vector<uint32_t> indices = {
 namespace Candy
 {
   
-  EditorLayer::EditorLayer(Project* proj) : project(proj), cameraController(new Camera(Vector3(0.0f, 0.0f, 3.27f)))
+  EditorLayer::EditorLayer(Project* proj) : project(proj)//, cameraController(new Camera(Vector3(0.0f, 0.0f, 3.27f)))
   {
     CANDY_ASSERT(project != nullptr);
     
     activeScene = Scene::Create("Test Scene");
     
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
-    viewport = CreateSharedPtr<Viewport>();
+    viewport = CreateSharedPtr<Viewport>(activeScene.get());
+    testEntity = activeScene->CreateEntity("Test Entity");
+    mesh = Mesh::CreateCubeMesh();
+    testEntity.AddComponent<MeshComponent>(&mesh);
     
-    color = Color::purple;
+    
+    /*color = Color::purple;
     
     //Shader
     shader = Shader::Create("assets/shaders/temp/test.glsl");
@@ -101,7 +105,7 @@ namespace Candy
     
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
-    RenderCommand::SetClearColor(0.0f, 0.3f, 0.0f);
+    RenderCommand::SetClearColor(0.0f, 0.3f, 0.0f);*/
     //Renderer::Submit(&material);
     //color = Color::blue;
   }
@@ -110,6 +114,14 @@ namespace Candy
   
   void EditorLayer::OnAttach()
   {
+    if (testEntity.HasComponent<MeshComponent>())
+    {
+      CANDY_CORE_INFO("HAS MESH COMPONENT");
+    }
+    else
+    {
+      CANDY_CORE_INFO("HAS NO MESH COMPONENT");
+    }
   
   }
   
@@ -121,18 +133,27 @@ namespace Candy
   
   void EditorLayer::OnUpdate()
   {
-    //RenderCommand::SetClearColor(color.Inverted());
-    material.Bind();
-    cameraController.OnResize(Application::GetMainWindowReference().GetWidth(), Application::GetMainWindowReference().GetHeight());
+    Vector3 axis = {0.0f, 0.2f, 1.0f};
     float time = Application::CurrentTime();
+    Matrix4 transform = Matrix4::Rotate(Matrix4::IDENTITY, time * Math::ToRadians(90.0f), axis);
+    testEntity.GetTransform().rotation = axis * time * Math::ToRadians(90.0f);
+    //testEntity.GetTransform().matrix = transform;
+    //testEntity.GetTransform().rotation = axis * time * Math::ToRadians(90.0f);
+    //testEntity.GetTransform().SetTransform(transform);
+    viewport->OnUpdate();
+    //RenderCommand::SetClearColor(color.Inverted());
+    /*material.Bind();
+    //cameraController.OnResize(Application::GetMainWindowReference().GetWidth(), Application::GetMainWindowReference().GetHeight());
+    float time = Application::CurrentTime();
+    
     for (int i=0; i<objects.size(); i++)
     {
       Math::Vector3 axis = {0.0f, 0.0f, 0.0f};
       axis[i] = 1.0f;
       objects[i].transform = Matrix4::Rotate(Matrix4::IDENTITY, (time*((float)i+1.0f)) * Math::ToRadians(90.0f), axis);
     }
-    
-    cameraController.OnUpdate();
+    viewport->OnUpdate();
+    //cameraController.OnUpdate();
     
     Renderer::GetCurrentFrame().storageBuffer->SetData(objects.data(), sizeof(Object) * objects.size());
     
@@ -160,8 +181,8 @@ namespace Candy
     
     //shader->SetMatrix("view", view);
     //shader->SetMatrix("proj", proj);
-    shader->SetMatrix("view", cameraController.GetCamera().GetViewMatrix());
-    shader->SetMatrix("proj", cameraController.GetCamera().GetProjectionMatrix());
+    shader->SetMatrix("view", viewport->cameraController.GetCamera().GetViewMatrix());
+    shader->SetMatrix("proj", viewport->cameraController.GetCamera().GetProjectionMatrix());
     shader->SetColor("uColor", color);
     
     shader->Commit();
@@ -171,7 +192,7 @@ namespace Candy
     for (int i=0; i<objects.size(); i++)
     {
       RenderCommand::DrawIndexed(vertexArray, objects.size(), i);
-    }
+    }*/
     
   }
   
@@ -182,6 +203,7 @@ namespace Candy
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+    ImGuiWindowFlags_NoCollapse;
     
     // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
     // because it would be confusing to have two docking targets within each others.
@@ -240,7 +262,7 @@ namespace Candy
   
   void EditorLayer::OnEvent(Events::Event &event)
   {
-    
-    cameraController.OnEvent(event);
+    viewport->OnEvent(event);
+    //cameraController.OnEvent(event);
   }
 }

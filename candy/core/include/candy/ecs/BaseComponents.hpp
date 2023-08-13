@@ -17,14 +17,19 @@ namespace Candy::ECS
   
   struct TransformComponent
   {
+    //Math::Matrix4 matrix = Math::Matrix4::IDENTITY;
+
     Math::Vector3 position = {0.0f, 0.0f, 0.0f};
     Math::Vector3 rotation = {0.0f, 0.0f, 0.0f};
     Math::Vector3 scale = {1.0f, 1.0f, 1.0f};
     
-    [[nodiscard]] Math::Matrix4 GetTransform()const
+    
+    [[nodiscard]] Math::Matrix4 GetMatrix()const
     {
       Math::Quaternion rot = Math::Quaternion::Euler(rotation);
-      return Math::Matrix4::Translate(Math::Matrix4::IDENTITY, position) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rot) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, scale);
+      Math::Matrix4 matrix = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, position) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rot) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, scale);
+      //matrix[1,1]*=-1;
+      return matrix;
     }
     
     
@@ -32,8 +37,8 @@ namespace Candy::ECS
   
   struct MeshComponent
   {
-    Graphics::Mesh mesh;
-    Graphics::Material material;
+    Graphics::Mesh* mesh;
+    //Graphics::Material material;
   };
   
   /*struct SpriteRendererComponent
