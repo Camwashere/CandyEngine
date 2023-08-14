@@ -339,9 +339,6 @@ namespace Candy::Graphics
     }
   void CommandBuffer::DrawEmpty(uint32_t count, VkBuffer dummyBuffer)
   {
-    // Define a dummy buffer (can be one time setup and re-used later)
-    
-
 // Bind the dummy buffer
     size_t offset = 0;
     vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, 1, &dummyBuffer, &offset);

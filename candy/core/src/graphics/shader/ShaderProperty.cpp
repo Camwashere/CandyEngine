@@ -53,6 +53,7 @@ namespace Candy::Graphics
     blocks.push_back(b);
     blockMap[b.name] = b.id;
     ShaderBlock& ref = blocks.back();
+    set = block.set;
     for (auto& property : ref.properties)
     {
       AddProperty(ref, &property);
@@ -74,6 +75,7 @@ namespace Candy::Graphics
   {
     ShaderTexture t = std::move(texture);
     t.id = textures.size();
+    set = t.set;
     textures.push_back(t);
   }
 

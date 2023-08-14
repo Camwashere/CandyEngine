@@ -4,7 +4,7 @@ namespace Candy::Graphics
 {
   using namespace Math;
   Camera::Camera(const Vector3& pos, const Vector3& upValue, float yawValue, float pitchValue)
-  : localFront(Math::Vector3(0.0f, 0.0f, -1.0f)), position(pos), localUp(upValue), pitch(pitchValue), yaw(yawValue), roll(ROLL), zoom(ZOOM)
+  : localFront(Math::Vector3(0.0f, 0.0f, 1.0f)), position(pos), localUp(upValue), pitch(pitchValue), yaw(yawValue), roll(ROLL), zoom(ZOOM)
   {
     SetScreenSizeToApplicationWindow();
     UpdateCameraVectors();

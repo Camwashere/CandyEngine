@@ -24,6 +24,7 @@ namespace Candy::Graphics
       Vulkan::RegisterContext(this);
       swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetUIPass());
       CreateViewport();
+      CANDY_CORE_INFO("Max descriptor sets: {}", Vulkan::PhysicalDevice().GetProperties().limits.maxBoundDescriptorSets);
       
     }
   void GraphicsContext::RecreateViewport()

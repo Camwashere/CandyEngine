@@ -5,6 +5,7 @@
 #include <candy/ecs/Scene.hpp>
 #include <candy/graphics/camera/CameraController.hpp>
 #include "panels/ContentBrowserPanel.hpp"
+#include "panels/SceneHierarchyPanel.hpp"
 #include "panels/Viewport.hpp"
 namespace Candy
 {
@@ -16,20 +17,17 @@ namespace Candy
   {
   private:
     Project* project;
-    Graphics::Mesh mesh;
-    //Candy::SharedPtr<Candy::Graphics::Shader> shader;
-    //Candy::SharedPtr<Candy::Graphics::VertexArray> vertexArray;
     Candy::SharedPtr<Candy::ECS::Scene> activeScene;
-    //Candy::Graphics::CameraController cameraController;
+    SharedPtr<SceneHierarchyPanel> scenePanel;
     UniquePtr<ContentBrowserPanel> contentBrowserPanel;
     SharedPtr<Viewport> viewport;
     ECS::Entity testEntity;
-    //std::vector<Object> objects;
+    ECS::Entity secondEntity;
     
-    //std::vector<Math::Vector3> positions = {{0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}};
-    
-    //Candy::Graphics::Material material;
-    //Color color;
+  private:
+    bool OnMouseButtonPressed(Events::MousePressedEvent& event);
+    bool OnKeyPressed(Events::KeyPressedEvent& event);
+
   public:
     explicit EditorLayer(Project* project);
     

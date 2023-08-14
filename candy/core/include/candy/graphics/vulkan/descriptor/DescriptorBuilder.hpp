@@ -19,6 +19,8 @@ namespace Candy::Graphics
     DescriptorBuilder& AddBinding(uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlags);
     DescriptorBuilder& AddImageWrite(uint32_t binding,  const VkDescriptorImageInfo* imageInfo, VkDescriptorType type);
     DescriptorBuilder& AddBufferWrite(uint32_t binding,  const VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type);
+    DescriptorBuilder& AddImageWrite(uint32_t binding,  const VkDescriptorImageInfo* imageInfo, VkDescriptorType type, uint32_t set);
+    DescriptorBuilder& AddBufferWrite(uint32_t binding,  const VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, uint32_t set);
     
     VkDescriptorSetLayout BuildLayout();
     bool AllocateDescriptorSet(VkDescriptorSet* set, VkDescriptorSetLayout layout);

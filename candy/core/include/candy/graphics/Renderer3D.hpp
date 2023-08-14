@@ -10,11 +10,17 @@ namespace Candy::Graphics
   class Renderer3D
   {
   private:
+  
+  private:
     SharedPtr<Shader> shader;
     SharedPtr<Shader> gridShader;
+    //SharedPtr<VertexArray> vertexArray;
     Material material;
     Material gridMaterial;
-    BufferLayout layout;
+    
+    //std::vector<MeshData> meshData;
+    std::vector<Mesh> meshes;
+    //Mesh mesh;
     std::vector<Math::Matrix4> transforms;
     static constexpr uint32_t MAX_OBJECTS=100;
     static Renderer3D* instance;
@@ -28,7 +34,7 @@ namespace Candy::Graphics
     static void BeginScene(const Camera& camera);
     static void EndScene();
     static void Init();
-    static void SubmitMesh(const Mesh& mesh, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
+    static void SubmitMesh(const Mesh& data, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
   
   };
 }

@@ -19,6 +19,9 @@ namespace Candy
     Math::Rectangle bounds;
     ECS::Entity hoveredEntity;
     Math::Vector2 size;
+    
+  private:
+    void OnOverlayRender();
   public:
     Viewport(ECS::Scene* scene);
     
@@ -27,6 +30,9 @@ namespace Candy
     void OnUpdate();
     void OnEvent(Events::Event& event);
     void OnRenderUI();
+    
+    bool IsHovered()const;
+    ECS::Entity GetHoveredEntity()const;
     
   private:
     friend class EditorLayer;

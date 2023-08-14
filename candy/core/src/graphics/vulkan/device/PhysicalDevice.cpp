@@ -2,6 +2,7 @@
 #include <set>
 #include <candy/graphics/vulkan/device/VulkanDeviceManager.hpp>
 #include <string>
+#include <CandyPch.hpp>
 namespace Candy::Graphics
 {
   
@@ -13,6 +14,18 @@ namespace Candy::Graphics
   PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : device(physicalDevice)
   {
     vkGetPhysicalDeviceProperties(device, &properties);
+    
+    vkGetPhysicalDeviceMemoryProperties(device, &memoryProperties);
+    maxAllocationSize=0;
+    for (uint32_t i=0; i<memoryProperties.memoryHeapCount; i++)
+    {
+      if (memoryProperties.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+      {
+        maxAllocationSize = memoryProperties.memoryHeaps[i].size;
+        break;
+      }
+    }
+    CANDY_CORE_ASSERT(maxAllocationSize>0, "Failed to find a suitable GPU!");
   }
   PhysicalDevice::PhysicalDevice(const PhysicalDevice& other) = default;
   
@@ -169,6 +182,14 @@ namespace Candy::Graphics
   uint32_t PhysicalDevice::GetMaxUniformBufferSize()const
   {
     return properties.limits.maxUniformBufferRange;
+  }
+  size_t PhysicalDevice::GetMaxAllocationSize()const
+  {
+    return maxAllocationSize;
+  }
+  VkPhysicalDeviceProperties PhysicalDevice::GetProperties()const
+  {
+    return properties;
   }
   
   size_t PhysicalDevice::PadUniformBufferSize(size_t originalSize)const

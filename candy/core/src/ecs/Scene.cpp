@@ -162,7 +162,7 @@ namespace Candy::ECS
     {
       
       auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
-      Renderer3D::SubmitMesh(*mesh.mesh, transform.GetMatrix());
+      Renderer3D::SubmitMesh(mesh.mesh, transform.GetMatrix());
     }
     
     Renderer3D::EndScene();

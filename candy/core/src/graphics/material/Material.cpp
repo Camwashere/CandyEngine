@@ -14,7 +14,7 @@ namespace Candy::Graphics
   void Material::Bind()
   {
     CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot bind!");
-    shader->Bind();
+    //shader->Bind();
     
     
     
@@ -29,7 +29,7 @@ namespace Candy::Graphics
       bufferInfo.offset=0;
       bufferInfo.range = bufferSize;
       
-      builder.AddBufferWrite(param.GetBinding(), &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
+      builder.AddBufferWrite(param.GetBinding(), &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, param.GetSet());
     }
     
     for (const auto& param : textureParameters)
@@ -38,21 +38,63 @@ namespace Candy::Graphics
       imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
       imageInfo.imageView = param.GetImageView();
       imageInfo.sampler = param.GetSampler();
-      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+      
+      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());
     }
     
-    //builder.Write(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
-    
-    builder.BindWrites(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
-    //builder.Write(Vulkan::GetCurrentContext().GetCurrentFrame().GlobalDescriptor());
+
     writes = builder.GetWrites();
-    //auto writes = builder.GetWrites();
-    //Renderer::AddWrites(writes);
+
     vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
-    
-    //Renderer::AddWrites(builder.GetWrites());
+
   }
-  
+  void Material::Bind(uint32_t set)
+  {
+    CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot bind!");
+    //shader->Bind();
+    
+    
+    
+    writes.clear();
+    
+    DescriptorBuilder builder = DescriptorBuilder::Begin();
+    size_t count=0;
+    for (const auto& param : parameters)
+    {
+      if (param.GetSet() != set)
+      {
+        continue;
+      }
+      VkDescriptorBufferInfo bufferInfo{};
+      bufferInfo.buffer = *Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer;
+      bufferInfo.offset=0;
+      bufferInfo.range = bufferSize;
+      
+      builder.AddBufferWrite(param.GetBinding(), &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, param.GetSet());
+      
+    }
+    
+    for (const auto& param : textureParameters)
+    {
+      if (param.GetSet()!=set)
+      {
+        continue;
+      }
+      VkDescriptorImageInfo imageInfo{};
+      imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      imageInfo.imageView = param.GetImageView();
+      imageInfo.sampler = param.GetSampler();
+      
+      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());
+    }
+    
+    
+    writes = builder.GetWrites();
+    if (!writes.empty())
+    {
+      vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
+    }
+  }
   
   void Material::SetParameter(const std::string& name, const ShaderData::Value& value)
   {
@@ -85,24 +127,33 @@ namespace Candy::Graphics
     nameToTextureParameterMap.clear();
     parameters.clear();
     textureParameters.clear();
-    for (const auto& block : shader->GetLayout().sets[0].blocks)
+    for (const auto& set : shader->GetLayout().sets)
     {
-      for (const auto &p: block.properties)
+      CANDY_CORE_INFO("SET NUMBER: {}", set.GetSet());
+      /*if (set.GetSet()!=MATERIAL_SET)
       {
-        MaterialParameter parameter(p.name, p.type, block.binding, block.set);
-        nameToParameterMap[parameter.GetName()] = parameters.size();
-        parameters.push_back(parameter);
+        continue;
+      }*/
+      for (const auto& block : set.blocks)
+      {
+        for (const auto &p: block.properties)
+        {
+          MaterialParameter parameter(p.name, p.type, block.binding, block.set);
+          nameToParameterMap[parameter.GetName()] = parameters.size();
+          parameters.push_back(parameter);
+        }
+        
       }
       
+      for (const auto& block : set.textures)
+      {
+        MaterialTextureParameter parameter(block.name, block.binding, block.set);
+        nameToTextureParameterMap[parameter.GetName()] = textureParameters.size();
+        textureParameters.push_back(parameter);
+        //builder.AddImageWrite(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+      }
     }
     
-    for (const auto& block : shader->GetLayout().sets[0].textures)
-    {
-      MaterialTextureParameter parameter(block.name, block.binding, block.set);
-      nameToTextureParameterMap[parameter.GetName()] = textureParameters.size();
-      textureParameters.push_back(parameter);
-      //builder.AddImageWrite(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-    }
   }
   void Material::CalculateBufferSize()
   {

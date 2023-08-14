@@ -104,6 +104,36 @@ namespace Candy::Graphics
     writes.push_back(newWrite);
     return *this;
   }
+  DescriptorBuilder& DescriptorBuilder::AddImageWrite(uint32_t binding,  const VkDescriptorImageInfo* imageInfo, VkDescriptorType type, uint32_t set)
+  {
+    VkWriteDescriptorSet newWrite{};
+    newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    newWrite.pNext = nullptr;
+    
+    newWrite.descriptorCount = 1;
+    newWrite.descriptorType = type;
+    newWrite.pImageInfo = imageInfo;
+    newWrite.dstBinding = binding;
+    newWrite.dstSet = Renderer::GetCurrentFrame().GetDescriptorSet(set);
+    writes.push_back(newWrite);
+    return *this;
+  }
+  DescriptorBuilder& DescriptorBuilder::AddBufferWrite(uint32_t binding,  const VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, uint32_t set)
+  {
+    VkWriteDescriptorSet newWrite{};
+    newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    newWrite.pNext = nullptr;
+    
+    newWrite.descriptorCount = 1;
+    newWrite.descriptorType = type;
+    newWrite.pBufferInfo = bufferInfo;
+    newWrite.dstBinding = binding;
+    newWrite.dstSet = Renderer::GetCurrentFrame().GetDescriptorSet(set);
+    
+    writes.push_back(newWrite);
+    return *this;
+  }
+  
   VkDescriptorSetLayout DescriptorBuilder::BuildLayout()
   {
     VkDescriptorSetLayoutCreateInfo layoutInfo{};

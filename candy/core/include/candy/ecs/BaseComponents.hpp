@@ -28,7 +28,6 @@ namespace Candy::ECS
     {
       Math::Quaternion rot = Math::Quaternion::Euler(rotation);
       Math::Matrix4 matrix = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, position) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rot) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, scale);
-      //matrix[1,1]*=-1;
       return matrix;
     }
     
@@ -37,7 +36,8 @@ namespace Candy::ECS
   
   struct MeshComponent
   {
-    Graphics::Mesh* mesh;
+    //Graphics::MeshData meshData;
+    Graphics::Mesh mesh;
     //Graphics::Material material;
   };
   

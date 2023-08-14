@@ -1,5 +1,6 @@
 #include <candy/graphics/Renderer3D.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/Renderer.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -12,22 +13,27 @@ namespace Candy::Graphics
   static SceneData sceneData{};
   void Renderer3D::Initialize()
   {
-    shader = Shader::Create("assets/shaders/renderer3D/Mesh.glsl");
     gridShader = Shader::Create("assets/shaders/renderer3D/Grid.glsl");
-    transforms.resize(100);
+    shader = Shader::Create("assets/shaders/renderer3D/Mesh.glsl");
     material.SetShader(shader.get());
     material.SetTexture("texSampler", "assets/textures/statue.jpg");
     gridMaterial.SetShader(gridShader.get());
+    
+    //SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(shader->GetBufferLayout());
+    //SharedPtr<IndexBuffer> indexBuffer = IndexBuffer::Create(nullptr, 6);
   }
   
   void Renderer3D::RenderGrid()
   {
-    instance->gridMaterial.Bind();
-    //instance->gridShader->SetMatrix("model", transform);
+    instance->gridShader->Bind();
+    instance->gridMaterial.Bind(0);
     instance->gridShader->SetMatrix("proj", sceneData.projectionMatrix);
     instance->gridShader->SetMatrix("view", sceneData.viewMatrix);
+    
     instance->gridShader->Commit();
+    
     RenderCommand::DrawEmpty(6);
+    
   }
   
   void Renderer3D::Init()
@@ -45,31 +51,67 @@ namespace Candy::Graphics
     sceneData.viewMatrix = camera.GetViewMatrix();
     sceneData.projectionMatrix = camera.GetProjectionMatrix();
     RenderGrid();
-    /*instance->gridMaterial.Bind();
-    instance->gridShader->SetMatrix("proj", sceneData.projectionMatrix);
-    instance->gridShader->SetMatrix("view", sceneData.viewMatrix);*/
+    
     
   }
   void Renderer3D::EndScene()
   {
-  
-  }
-  void Renderer3D::SubmitMesh(const Mesh& mesh, const Math::Matrix4& transform)
-  {
-    /*CANDY_CORE_INFO("SUBMITTING MESH");
-    instance->material.Bind();
-    CANDY_CORE_INFO("BOUND MESH");
-    instance->shader->SetMatrix("proj", sceneData.projectionMatrix);
-    instance->shader->SetMatrix("view", sceneData.viewMatrix);
-    instance->shader->SetMatrix("model", transform);
-    CANDY_CORE_INFO("SET MATRICES");
+    CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
+    instance->shader->Bind();
+    instance->material.Bind(2);
+    
+    Renderer::GetCurrentFrame().storageBuffer->SetData(instance->transforms.data(), sizeof(Matrix4) * instance->transforms.size());
+    
+    DescriptorBuilder builder = DescriptorBuilder::Begin();
+    VkDescriptorBufferInfo objectInfo;
+    objectInfo.buffer = *Renderer::GetCurrentFrame().storageBuffer;
+    objectInfo.offset=0;
+    objectInfo.range=sizeof(Matrix4) * instance->transforms.size();
+    builder.AddBufferWrite(0, &objectInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC);
+    builder.Write(Renderer::GetCurrentFrame().ObjectDescriptor());
+    
+    
     instance->shader->Commit();
-    CANDY_CORE_INFO("COMMITTED MESH");
-    mesh.vertexArray->Bind();
-    CANDY_CORE_INFO("BOUND VERT ARRAY");
     
-    RenderCommand::DrawIndexed(mesh.vertexArray);
-    CANDY_CORE_INFO("DRAWN INDEXED");*/
+    for (int i=0; i<instance->meshes.size(); i++)
+    {
+      instance->meshes[i].vertexArray->Bind();
+      instance->shader->PushInt("objectIndex", i);
+      RenderCommand::DrawIndexed(instance->meshes[i].vertexArray);
+    }
+    /*instance->mesh.vertexArray->Bind();
+    //instance->vertexArray->Bind();
     
+    for (int i=0; i<instance->transforms.size(); i++)
+    {
+      instance->shader->PushInt("objectIndex", i);
+      
+      RenderCommand::DrawIndexed(instance->mesh.vertexArray);
+      //RenderCommand::DrawIndexed(instance->vertexArray);
+    
+    }*/
+    instance->transforms.clear();
+    instance->meshes.clear();
+    //instance->mesh.clear();
+  }
+  void Renderer3D::SubmitMesh(const Mesh& data, const Math::Matrix4& transform)
+  {
+   
+    //instance->transforms.push_back(transform);
+    if (data.IsValid())
+    {
+      instance->meshes.push_back(data);
+      instance->transforms.push_back(transform);
+      //instance->mesh = data;
+    }
+    /*if (instance->mesh.data.Empty())
+    {
+      instance->meshData.push_back(data);
+      instance->mesh.data = data;
+      instance->mesh.layout = instance->shader->GetBufferLayout();
+      instance->mesh.Apply();
+    }*/
+    //instance->meshData.push_back(data);
+
   }
 }

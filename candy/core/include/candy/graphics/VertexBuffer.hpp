@@ -18,10 +18,10 @@ namespace Candy::Graphics
     BufferLayout layout;
   
   private:
-    
     void SetDataInternal(const void* vertices);
   
   public:
+    explicit VertexBuffer(const BufferLayout& layout);
     VertexBuffer(const BufferLayout& layout, uint64_t countPerElement);
     VertexBuffer(float *vertices, uint64_t size);
     ~VertexBuffer();
@@ -37,13 +37,6 @@ namespace Candy::Graphics
     void SetData(const VECTOR_LIST&... vector)
     {
       std::vector<T> data = BufferLayout::Flatten<T>(layout, std::forward<const VECTOR_LIST&>(vector)...);
-      for (int i=0; i<data.size(); i+=8)
-      {
-        Math::Vector3 vertex = {data[i], data[i+1], data[i+2]};
-        Math::Vector3 normal = {data[i+3], data[i+4], data[i+5]};
-        Math::Vector2 uv = {data[i+6], data[i+7]};
-        CANDY_CORE_INFO("Vertex: {0}, Normal: {1}, UV: {2}", vertex, normal, uv);
-      }
       SetDataInternal(data.data());
     }
     
@@ -52,8 +45,10 @@ namespace Candy::Graphics
     [[nodiscard]] VkVertexInputBindingDescription GetVertexBindingDescription() const;
   
   public:
+    
     static SharedPtr<VertexBuffer> Create(const BufferLayout &layout, uint64_t countPerElement);
     static SharedPtr<VertexBuffer> Create(float *vertices, uint64_t bufferSize);
+    static SharedPtr<VertexBuffer> Create(const BufferLayout& layout);
   
   private:
     friend class GraphicsContext;

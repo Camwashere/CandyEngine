@@ -5,6 +5,11 @@
 #include "SystemScheduler.hpp"
 #include <candy/base/UUID.hpp>
 #include <candy/graphics/camera/Camera.hpp>
+
+namespace Candy
+{
+  class SceneHierarchyPanel;
+}
 namespace Candy::ECS
 {
   class Entity;
@@ -64,6 +69,7 @@ namespace Candy::ECS
   private:
     friend class Entity;
     friend class SceneManager;
+    friend class ::Candy::SceneHierarchyPanel;
     
   };
 }

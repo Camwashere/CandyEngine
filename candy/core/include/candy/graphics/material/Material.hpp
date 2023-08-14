@@ -29,6 +29,8 @@ namespace Candy::Graphics
     void SetParameter(const std::string& name, const ShaderData::Value& value);
     void SetTexture(const std::string& name, const std::filesystem::path& path);
     void Bind();
+    //TODO: Temporary function. Binding sets other than material will be moved to something else
+    void Bind(uint32_t set);
     
     Shader* GetShader();
   };

@@ -27,6 +27,8 @@ namespace Candy::Graphics
     private:
         VkPhysicalDevice device=VK_NULL_HANDLE;
         VkPhysicalDeviceProperties properties{};
+        VkPhysicalDeviceMemoryProperties memoryProperties{};
+        size_t maxAllocationSize;
         
     public:
         PhysicalDevice();
@@ -48,7 +50,8 @@ namespace Candy::Graphics
         [[nodiscard]] uint32_t GetMaxPushConstantSize()const;
         [[nodiscard]] uint32_t GetMaxDynamicUniformBufferCount()const;
         [[nodiscard]] uint32_t GetMaxUniformBufferSize()const;
-        
+        [[nodiscard]] size_t GetMaxAllocationSize()const;
+        [[nodiscard]] VkPhysicalDeviceProperties GetProperties()const;
         [[nodiscard]] size_t PadUniformBufferSize(size_t originalSize)const;
         
         

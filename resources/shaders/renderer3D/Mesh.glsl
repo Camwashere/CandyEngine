@@ -1,32 +1,48 @@
-#type vertex
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec2 aTexCoord;
+#stage vertex
+#version 460 core
+layout (location = 0) in vec3 inPosition;
+layout (location = 1) in vec3 inNormal;
+layout (location = 2) in vec2 inTexCoord;
 
-out vec2 TexCoord;
+layout(location = 0) out vec3 fragNormal;
+layout(location = 1) out vec2 fragTexCoord;
 
-uniform mat4 model;
-uniform mat4 viewProjection;
+layout(set=0, binding=0) uniform CameraBuffer
+{
+    mat4 view;
+    mat4 proj;
+
+} cameraData;
+
+layout(push_constant) uniform PushConstants {
+    int objectIndex;
+} pc;
+
+layout(std140, set=1, binding=0) readonly buffer ObjectBuffer
+{
+    mat4 transforms[];
+} objectBuffer;
 
 void main()
 {
-    gl_Position = viewProjection * model * vec4(aPos, 1.0f);
-    TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+
+    mat4 modelMatrix = objectBuffer.transforms[pc.objectIndex];
+    mat4 transformMatrix = (cameraData.proj * cameraData.view * modelMatrix);
+    gl_Position = transformMatrix * vec4(inPosition, 1.0f);
+    fragNormal = inNormal;
+    fragTexCoord = inTexCoord;
 }
 
-#type fragment
-#version 330 core
-out vec4 FragColor;
+#stage fragment
+#version 460 core
 
-in vec2 TexCoord;
+layout(location = 0) in vec3 fragNormal;
+layout(location = 1) in vec2 fragTexCoord;
 
-// texture samplers
-uniform sampler2D texture1;
-uniform sampler2D texture2;
+layout(set=2, binding = 0) uniform sampler2D texSampler;
 
+layout(location = 0) out vec4 outColor;
 void main()
 {
-    // linearly interpolate between both textures (80% container, 20% awesomeface)
-    FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
+    outColor = texture(texSampler, fragTexCoord);
 }

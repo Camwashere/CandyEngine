@@ -114,7 +114,6 @@ namespace Candy::Graphics
           }, vectorList[b]);
         }
       }
-      CANDY_CORE_INFO("FLATTENED");
       return result;
     }
     

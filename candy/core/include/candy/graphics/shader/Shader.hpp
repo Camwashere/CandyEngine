@@ -34,6 +34,7 @@ namespace Candy::Graphics
       
     public:
       // Push constant functions
+      uint32_t PushInt(const std::string& name, int value);
       uint32_t PushFloat(const std::string& name, float value);
       uint32_t PushVector2(const std::string& name, const Math::Vector2& vector);
       uint32_t PushVector3(const std::string& name, const Math::Vector3& vector);

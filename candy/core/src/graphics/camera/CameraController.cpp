@@ -72,10 +72,10 @@ namespace Candy::Graphics
   
   Math::Vector2 CameraController::PanSpeed()
   {
-    float x = std::min(camera->screenSize.x / 1000.0f, 2.4f); // max = 2.4f
+    float x = Math::Min(camera->screenSize.x / 1000.0f, 2.4f); // max = 2.4f
     float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
     
-    float y = std::min(camera->screenSize.y / 1000.0f, 2.4f); // max = 2.4f
+    float y = Math::Min(camera->screenSize.y / 1000.0f, 2.4f); // max = 2.4f
     float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
     return {xFactor, yFactor};
   }
