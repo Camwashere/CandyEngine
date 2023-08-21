@@ -10,7 +10,8 @@ namespace Candy::Graphics
     {
     private:
         VkCommandPool commandPool;
-        std::array<VkCommandBuffer, 2> commandBuffers;
+        std::array<VkCommandBuffer, 3> commandBuffers;
+        std::array<bool, 3> activeBuffers;
         uint8_t currentBuffer=0;
         //VkCommandBuffer mainCommandBuffer;
         
@@ -22,8 +23,7 @@ namespace Candy::Graphics
         void Init(VkSurfaceKHR surface);
         
     public:
-      static constexpr uint8_t MAIN_BUFFER_INDEX=0;
-      static constexpr uint8_t VIEWPORT_BUFFER_INDEX=1;
+    
     public:
         explicit CommandBuffer(uint32_t currentFrame=0);
         ~CommandBuffer()=default;
@@ -37,7 +37,11 @@ namespace Candy::Graphics
         VkCommandBuffer BeginSingleTimeCommands();
         void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
       void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+     
+      
         void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void CopyImageToBuffer(VkImage image, VkBuffer buffer, uint32_t width, uint32_t height);
+        void CopyImageToBuffer(VkImage image, VkBuffer buffer, int x, int y, uint32_t width, uint32_t height);
         
     public:
         
@@ -48,8 +52,10 @@ namespace Candy::Graphics
     public:
       VkCommandBuffer& GetCurrentBuffer();
       VkCommandBuffer& GetViewportBuffer();
+      VkCommandBuffer& GetSelectionBuffer();
       VkCommandBuffer& GetUIBuffer();
-      const std::array<VkCommandBuffer, 2>&  GetBuffers()const;
+      std::vector<VkCommandBuffer> GetActiveBuffers();
+      const std::array<VkCommandBuffer, 3>& GetBuffers();
       size_t GetBufferCount()const;
       
         void BindGraphicsPipeline(VkPipeline pipeline);

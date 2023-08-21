@@ -16,18 +16,33 @@
 #include "UniformBuffer.hpp"
 #include "StorageBuffer.hpp"
 #include <candy/event/Events.hpp>
-
+#include <candy/graphics/PixelBuffer.hpp>
 
 struct GLFWwindow;
 namespace Candy::Graphics
 {
     static constexpr unsigned int FRAME_OVERLAP = 2;
-    static constexpr unsigned int MAX_OBJECTS = 10000;
+    static constexpr unsigned int MAX_OBJECTS = 100;
     static constexpr int GLOBAL_SET=0;
     static constexpr int OBJECT_SET=1;
     static constexpr int MATERIAL_SET=2;
   
-    
+    struct ViewportFrameData
+    {
+      VkDescriptorSet viewportDescriptor=VK_NULL_HANDLE;
+      VkDescriptorSet viewportDepthDescriptor=VK_NULL_HANDLE;
+      //VkDescriptorSet viewportSelectionDescriptor=VK_NULL_HANDLE;
+      Image viewportImage;
+      Image selectionImage;
+      Image depthImage;
+      ImageView viewportImageView;
+      ImageView selectionImageView;
+      ImageView depthImageView;
+      FrameBuffer viewportFrameBuffer;
+      FrameBuffer selectionFrameBuffer;
+      PixelBuffer* selectionPixelBuffer;
+      
+    };
     struct FrameData
     {
       VkSemaphore renderSemaphore=VK_NULL_HANDLE;
@@ -35,15 +50,12 @@ namespace Candy::Graphics
       VkFence renderFence=VK_NULL_HANDLE;
       CommandBuffer commandBuffer;
       std::array<VkDescriptorSet, 3> descriptorSets;
-      VkDescriptorSet gumDescriptor=VK_NULL_HANDLE;
-      Image viewportImage;
-      Image depthImage;
-      ImageView viewportImageView;
-      ImageView depthImageView;
-      FrameBuffer viewportFrameBuffer;
+      
+      ViewportFrameData viewportData;
       SharedPtr<UniformBuffer> uniformBuffer;
       SharedPtr<StorageBuffer> storageBuffer;
       SharedPtr<UniformBuffer> materialBuffer;
+      
       
       
       
@@ -69,15 +81,9 @@ namespace Candy::Graphics
         uint32_t previousFrameIndex=0;
         FrameData frames[FRAME_OVERLAP];
         
-        //Image targetImage;
-        //Image depthImage;
-        //ImageView depthImageView;
-      //ImageView targetView;
-      //FrameBuffer targetFrameBuffer;
+        
         bool frameBufferResized=false;
-        //VkDescriptorSet gumDescriptor=VK_NULL_HANDLE;
-    
-
+        
         
     private:
         void InitSyncStructures();
@@ -119,6 +125,7 @@ namespace Candy::Graphics
         
     public:
       static UniquePtr<GraphicsContext> Create(GLFWwindow* windowHandle);
+      static bool IsDepthOnlyFormat(VkFormat format);
       static bool HasStencilComponent(VkFormat format);
       static VkFormat FindDepthFormat();
       static VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

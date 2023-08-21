@@ -192,7 +192,7 @@ namespace Candy::Graphics
       mesh.uvs.push_back(voxelUvs[2]);
       mesh.uvs.push_back(voxelUvs[3]);
     }
-    CANDY_CORE_INFO("Indices size: {}", mesh.triangles.size());
+    //CANDY_CORE_INFO("Indices size: {}", mesh.triangles.size());
     
     return mesh;
   }

@@ -71,6 +71,11 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/src/graphics/model/MeshData.cpp
         candy/editor/include/editor/panels/SceneHierarchyPanel.hpp
         candy/editor/src/panels/SceneHierarchyPanel.cpp
+        candy/editor/include/editor/panels/DebugPanel.hpp
+        candy/editor/src/panels/DebugPanel.cpp
+        candy/core/include/candy/math/ray/Ray3.hpp
+        candy/core/include/candy/graphics/PixelBuffer.hpp
+        candy/core/src/graphics/PixelBuffer.cpp
 )
 
 

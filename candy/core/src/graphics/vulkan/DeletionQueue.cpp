@@ -142,6 +142,12 @@ namespace Candy::Graphics
     buffers.erase(vulkanObject);
   }
   template<>
+  void DeletionQueue::Delete<PixelBuffer*>(PixelBuffer* vulkanObject)
+  {
+    VulkanBuffer::DestroyBuffer(vulkanObject);
+    buffers.erase(vulkanObject);
+  }
+  template<>
   void DeletionQueue::Delete<Image*>(Image* vulkanObject)
   {
     vmaDestroyImage(Vulkan::Allocator(), *vulkanObject, vulkanObject->GetAllocation());
@@ -221,6 +227,11 @@ namespace Candy::Graphics
   }
   template<>
   void DeletionQueue::Push<IndexBuffer*>(IndexBuffer* vulkanObject)
+  {
+    buffers.insert(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Push<PixelBuffer*>(PixelBuffer* vulkanObject)
   {
     buffers.insert(vulkanObject);
   }

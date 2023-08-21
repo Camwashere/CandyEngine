@@ -51,6 +51,8 @@ namespace Candy::Graphics
     static void PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t dataSize, const void* data);
     static void PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data);
     static void SetUniform(uint32_t offset, uint32_t size, const void* data);
+    static void CopyImageToBuffer(VkImage image, VkBuffer buffer, uint32_t width, uint32_t height);
+    static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
     
     static void Reset();
     static void Submit();

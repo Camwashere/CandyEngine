@@ -35,7 +35,8 @@ namespace Candy::Graphics
   
   uint32_t UniformBuffer::MaxSize()
   {
-    return Vulkan::PhysicalDevice().GetMaxUniformBufferSize();
+    
+    return Vulkan::PhysicalDevice().GetMaxUniformBufferSize()/3;
   }
   SharedPtr<UniformBuffer> UniformBuffer::Create()
   {

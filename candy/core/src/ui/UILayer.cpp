@@ -18,7 +18,7 @@ namespace Candy
   
   void UILayer::OnAttach()
   {
-    
+    CANDY_CORE_INFO("IMGui Version: {}", ImGui::GetVersion());
     //1: create descriptor pool for IMGUI
     // the size of the pool is very oversize, but its copied from imgui demo itself.
     VkDescriptorPoolSize pool_sizes[] =
@@ -79,6 +79,9 @@ namespace Candy
     init_info.ImageCount = 10;
     init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
     
+   
+    
+    
     
     
     
@@ -95,7 +98,9 @@ namespace Candy
     
     for (int i=0; i<FRAME_OVERLAP; i++)
     {
-      Renderer::GetFrame(i).gumDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportImageView.GetSampler(), Renderer::GetFrame(i).viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      Renderer::GetFrame(i).viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.viewportImageView.GetSampler(), Renderer::GetFrame(i).viewportData.viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      //Renderer::GetFrame(i).viewportData.viewportSelectionDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.selectionImageView.GetSampler(), Renderer::GetFrame(i).viewportData.selectionImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      Renderer::GetFrame(i).viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.depthImageView.GetSampler(), Renderer::GetFrame(i).viewportData.depthImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
     
   }
@@ -148,10 +153,10 @@ namespace Candy
     
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
-      //GLFWwindow* backup_current_context = glfwGetCurrentContext();
+      GLFWwindow* backup_current_context = glfwGetCurrentContext();
       ImGui::UpdatePlatformWindows();
       ImGui::RenderPlatformWindowsDefault();
-      //glfwMakeContextCurrent(backup_current_context);
+      glfwMakeContextCurrent(backup_current_context);
     }
   
   }

@@ -20,6 +20,9 @@ namespace Candy
     ECS::Entity hoveredEntity;
     Math::Vector2 size;
     
+  public:
+    bool selectionView=false;
+    
   private:
     void OnOverlayRender();
   public:

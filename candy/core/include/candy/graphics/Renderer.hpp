@@ -26,7 +26,7 @@ namespace Candy::Graphics
   private:
 
     GraphicsContext* target;
-    std::array<UniquePtr<RenderPass>, 2> renderPasses{};
+    std::array<UniquePtr<RenderPass>, 3> renderPasses{};
     uint8_t currentPassIndex=0;
     
   private:
@@ -40,7 +40,9 @@ namespace Candy::Graphics
     
   public:
     static constexpr uint8_t viewportPassIndex=0;
-    static constexpr uint8_t uiPassIndex=1;
+    static constexpr uint8_t selectionPassIndex=1;
+    static constexpr uint8_t uiPassIndex=2;
+    //static constexpr uint8_t selectionPassIndex=2;
     static void BeginScene(const Camera& camera);
     static void EndScene();
     static void Start();
@@ -49,14 +51,16 @@ namespace Candy::Graphics
     static void Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
     static void SetTarget(GraphicsContext* target);
     static void BeginViewportPass();
+    static void BeginSelectionPass();
     static void BeginUIPass();
     static void EndViewportPass();
     static void EndPass();
     static FrameData& GetCurrentFrame();
     static FrameData& GetFrame(uint32_t index);
     static RenderPass& GetCurrentPass();
-    static RenderPass& GetUIPass();
     static RenderPass& GetViewportPass();
+    static RenderPass& GetSelectionPass();
+    static RenderPass& GetUIPass();
     
     
   private:

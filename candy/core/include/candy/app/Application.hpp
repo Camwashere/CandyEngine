@@ -63,6 +63,7 @@ namespace Candy
     static Application &Instance() {return *instance;}
     static float DeltaTime();
     static float CurrentTime();
+    static float FPS();
     static void Shutdown();
   
   private:

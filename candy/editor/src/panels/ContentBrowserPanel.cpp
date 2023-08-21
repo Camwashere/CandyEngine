@@ -99,7 +99,7 @@ namespace Candy
   
   void ContentBrowserPanel::ShowFileMenu(const std::filesystem::path& path)
   {
-    CANDY_CORE_INFO("SHOW FILE MENU FOR PATH: {}", path.string());
+    //CANDY_CORE_INFO("SHOW FILE MENU FOR PATH: {}", path.string());
     CANDY_CORE_ASSERT(std::filesystem::exists(path));
     popupPath = path;
     showFileMenuPopup=true;

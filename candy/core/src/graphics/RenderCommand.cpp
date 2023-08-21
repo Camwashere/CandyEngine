@@ -197,8 +197,14 @@ namespace Candy::Graphics
     
   }
   
-  
-  
+  void RenderCommand::CopyImageToBuffer(VkImage image, VkBuffer buffer, uint32_t width, uint32_t height)
+  {
+    GetFrame().commandBuffer.CopyImageToBuffer(image, buffer, width, height);
+  }
+  void RenderCommand::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+  {
+    GetFrame().commandBuffer.TransitionImageLayout(image, format, oldLayout, newLayout);
+  }
   void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t dataSize, const void* data)
   {
     GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, dataSize, data);
@@ -213,15 +219,19 @@ namespace Candy::Graphics
     GetFrame().commandBuffer.Reset();
     GetFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
   }
+  
   void RenderCommand::Submit()
   {
     GetCommandBuffer().EndAll();
     //GetCommandBuffer().EndRecording();
-    
+    std::vector<VkCommandBuffer> activeBuffers = GetCommandBuffer().GetActiveBuffers();
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.commandBufferCount=GetCommandBuffer().GetBufferCount();
-    submitInfo.pCommandBuffers = GetCommandBuffer().GetBuffers().data();
+    submitInfo.commandBufferCount=activeBuffers.size();
+    submitInfo.pCommandBuffers = activeBuffers.data();
+    
+    
+    
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     
     submitInfo.pWaitDstStageMask = &waitStage;
@@ -234,5 +244,6 @@ namespace Candy::Graphics
     
     
     CANDY_CORE_ASSERT(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, GetFrame().renderFence)==VK_SUCCESS);
+    //GetFrame().viewportData.selectionPixelBuffer->CopyImage(GetFrame().viewportData.selectionImage);
   }
 }

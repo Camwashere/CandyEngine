@@ -7,7 +7,7 @@ namespace Candy::Graphics
     
     BufferElement::BufferElement(std::string elementName, ShaderData::Type dataType, uint32_t loc) : type(dataType), name(std::move(elementName)), location(loc)
     {
-        CANDY_CORE_INFO("BufferElement: {0} {1} {2}", name, ShaderData::TypeToString(type), location);
+        //CANDY_CORE_INFO("BufferElement: {0} {1} {2}", name, ShaderData::TypeToString(type), location);
     }
     
     uint64_t BufferElement::Size()const

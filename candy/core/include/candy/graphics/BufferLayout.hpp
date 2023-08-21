@@ -126,7 +126,7 @@ namespace Candy::Graphics
       {
         size += element.Size();
       }
-      CANDY_CORE_INFO("SIZE: {}", size*countPerElement);
+      //CANDY_CORE_INFO("SIZE: {}", size*countPerElement);
       return size*countPerElement;
     }
     

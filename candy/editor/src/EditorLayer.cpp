@@ -41,14 +41,7 @@ namespace Candy
   
   void EditorLayer::OnAttach()
   {
-    if (testEntity.HasComponent<MeshComponent>())
-    {
-      CANDY_CORE_INFO("HAS MESH COMPONENT");
-    }
-    else
-    {
-      CANDY_CORE_INFO("HAS NO MESH COMPONENT");
-    }
+  
   
   }
   
@@ -123,12 +116,74 @@ namespace Candy
     
     style.WindowMinSize.x = minWinSizeX;
     
+    MenuBar();
+    debugPanel.OnRenderUI();
     scenePanel->OnRenderUI();
     contentBrowserPanel->OnRenderUI();
     viewport->OnRenderUI();
+    
 
     
     ImGui::End();
+  }
+  
+  void EditorLayer::MenuBar()
+  {
+    if (ImGui::BeginMenuBar())
+    {
+      if (ImGui::BeginMenu("File"))
+      {
+        if (ImGui::MenuItem("Open Project"))
+        {
+          OpenProject();
+        }
+        if (ImGui::MenuItem("Save"))
+        {
+          SaveProject();
+        }
+        
+        
+        ImGui::Separator();
+        
+        if (ImGui::MenuItem("Exit"))
+        {
+          Application::Shutdown();
+        }
+        
+        ImGui::EndMenu();
+      }
+      if (ImGui::BeginMenu("Edit"))
+      {
+        if (ImGui::MenuItem("Undo"))
+        {
+        
+        }
+        if (ImGui::MenuItem("Redo"))
+        {
+        
+        }
+        ImGui::EndMenu();
+      }
+      if (ImGui::BeginMenu("View"))
+      {
+        if (viewport->selectionView)
+        {
+          if (ImGui::MenuItem("Regular View"))
+          {
+            viewport->selectionView=false;
+          }
+        }
+        else
+        {
+          if (ImGui::MenuItem("Selection View"))
+          {
+            viewport->selectionView=true;
+          }
+        }
+        ImGui::EndMenu();
+      }
+      ImGui::EndMenuBar();
+    }
   }
 
   
@@ -165,5 +220,14 @@ namespace Candy
     
     
     return false;
+  }
+  
+  bool EditorLayer::OpenProject()
+  {
+    return false;
+  }
+  void EditorLayer::SaveProject()
+  {
+  
   }
 }

@@ -24,5 +24,7 @@ namespace Candy
     spdlog::register_logger(clientLogger);
     clientLogger->set_level(spdlog::level::trace);
     clientLogger->flush_on(spdlog::level::trace);
+    
+    
   }
 }

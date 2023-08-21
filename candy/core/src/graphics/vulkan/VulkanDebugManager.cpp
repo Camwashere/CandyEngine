@@ -40,6 +40,23 @@ namespace Candy::Graphics
             default:
                 break;
         }
+        /*switch(messageType)
+        {
+          case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:
+            CANDY_CORE_TRACE("VALIDATION LAYER GENERAL: {0}", pCallbackData->pMessage);
+            break;
+          case VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:
+            CANDY_CORE_TRACE("VALIDATION LAYER VALIDATION: {0}", pCallbackData->pMessage);
+            break;
+          case VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT:
+            CANDY_CORE_TRACE("VALIDATION LAYER PERFORMANCE: {0}", pCallbackData->pMessage);
+            break;
+          case VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT:
+            CANDY_CORE_TRACE("VALIDATION LAYER DEVICE ADDRESS BINDING: {0}", pCallbackData->pMessage);
+            break;
+          default:
+            break;
+        }*/
         return VK_FALSE;
     }
     
@@ -63,7 +80,7 @@ namespace Candy::Graphics
         createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
         createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT;
         createInfo.pfnUserCallback = DebugCallback;
     }
     

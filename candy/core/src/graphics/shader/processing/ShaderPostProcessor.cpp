@@ -34,7 +34,7 @@ namespace Candy::Graphics
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
     spirv_cross::SmallVector<float> t;
-    options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
+    options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
     if (generateDebugInfo)
     {
       options.SetGenerateDebugInfo();
@@ -75,7 +75,7 @@ namespace Candy::Graphics
       }
       else
       {
-        CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
+        //CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
         shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
         if (mod.GetCompilationStatus() != shaderc_compilation_status_success)
         {
@@ -235,6 +235,7 @@ namespace Candy::Graphics
       pcrSize += range.range;
     }
     block.size = pcrSize;
+    
     if (block.size > 0)
     {
       shaderLayout.AddPushBlock(block);

@@ -5,7 +5,8 @@
 #include <candy/app/Application.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
-
+#include <candy/graphics/PixelBuffer.hpp>
+#include <candy/graphics/Renderer3D.hpp>
 namespace Candy
 {
   using namespace Graphics;
@@ -34,12 +35,35 @@ namespace Candy
     mousePos.y -= bounds.min.y;
     Math::Vector2 viewSize = bounds.max - bounds.min;
     mousePos.y = viewSize.y - mousePos.y;
-    int mouseX = (int)mousePos.x;
-    int mouseY = (int)mousePos.y;
-    if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewSize.x && mouseY < (int)viewSize.y)
+    
+    float scaleX = 3000.f / viewSize.x;      // original image width / displayed width
+    float scaleY = 1500.f / viewSize.y;      // original image height / displayed height
+    
+    int mouseX = static_cast<int>(mousePos.x * scaleX);
+    int mouseY = static_cast<int>((viewSize.y - mousePos.y) * scaleY);
+    //int mouseX = (int)mousePos.x;
+    //int mouseY = (int)mousePos.y;
+    
+    int w = (int)viewSize.width;
+    int h = (int)viewSize.height;
+    if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)3000 && mouseY < (int)1500)
     {
       //int pixelData = frameBuffer->ReadPixel(1, mouseX, mouseY);
-      int pixelData = 0;
+      //Renderer::GetCurrentFrame().viewportData.selectionImage;
+      
+     
+      //CANDY_CORE_INFO("MousePos: {0}, {1}", mouseX, mouseY);
+      //CANDY_CORE_INFO("SIZE: {}", size);
+      //CANDY_CORE_INFO("BOUNDS: MAX: {0}, MIN: {1}", bounds.max, bounds.min);
+      //Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->CopyImage(Renderer::GetCurrentFrame().viewportData.selectionImage, 0, 0, 3000, 1500);
+      int pixelData = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->ReadPixel(mouseX, mouseY);
+      //int pixelData = 0;
+      /*if (pixelData != -1)
+      {
+        CANDY_CORE_INFO("PixelData: {}", pixelData);
+      }*/
+      
+      
       hoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, activeScene);
     }
     OnOverlayRender();
@@ -47,6 +71,18 @@ namespace Candy
   
   void Viewport::OnEvent(Events::Event& event)
   {
+    if (isHovered)
+    {
+      if (event.GetType() == Events::EventType::MOUSE_RELEASED)
+      {
+        Events::MouseReleasedEvent& e = (Events::MouseReleasedEvent&)event;
+        if (e.GetButton() == Mouse::ButtonLeft)
+        {
+          Renderer3D::SetNeedsSelection();
+        }
+      }
+    }
+    
     cameraController.OnEvent(event);
   }
   void Viewport::OnRenderUI()
@@ -68,10 +104,11 @@ namespace Candy
     
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     size = { viewportPanelSize.x, viewportPanelSize.y };
-   
     
-   
-    ImGui::Image(Renderer::GetCurrentFrame().gumDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
+    ImGui::Image(Renderer::GetCurrentFrame().viewportData.viewportDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
+    
+    //ImGui::Image(Renderer::GetCurrentFrame().viewportData.viewportSelectionDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
+    //ImGui::Image(Renderer::GetCurrentFrame().viewportDepthDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
     
     if (ImGui::BeginDragDropTarget())
     {

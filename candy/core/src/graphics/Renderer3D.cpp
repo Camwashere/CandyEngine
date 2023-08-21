@@ -15,12 +15,12 @@ namespace Candy::Graphics
   {
     gridShader = Shader::Create("assets/shaders/renderer3D/Grid.glsl");
     shader = Shader::Create("assets/shaders/renderer3D/Mesh.glsl");
+    selectionShader = Shader::Create("assets/shaders/renderer3D/SelectionMesh.glsl", Renderer::GetSelectionPass());
     material.SetShader(shader.get());
     material.SetTexture("texSampler", "assets/textures/statue.jpg");
     gridMaterial.SetShader(gridShader.get());
+    selectionMaterial.SetShader(selectionShader.get());
     
-    //SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(shader->GetBufferLayout());
-    //SharedPtr<IndexBuffer> indexBuffer = IndexBuffer::Create(nullptr, 6);
   }
   
   void Renderer3D::RenderGrid()
@@ -47,12 +47,22 @@ namespace Candy::Graphics
   }
   void Renderer3D::BeginScene(const Camera& camera)
   {
-    
+    instance->transforms.clear();
+    instance->meshes.clear();
+    instance->entities.clear();
     sceneData.viewMatrix = camera.GetViewMatrix();
     sceneData.projectionMatrix = camera.GetProjectionMatrix();
     RenderGrid();
     
     
+  }
+  void Renderer3D::SetNeedsSelection()
+  {
+    instance->needsSelection=true;
+  }
+  bool Renderer3D::NeedsSelection()
+  {
+    return instance->needsSelection;
   }
   void Renderer3D::EndScene()
   {
@@ -79,39 +89,49 @@ namespace Candy::Graphics
       instance->shader->PushInt("objectIndex", i);
       RenderCommand::DrawIndexed(instance->meshes[i].vertexArray);
     }
-    /*instance->mesh.vertexArray->Bind();
-    //instance->vertexArray->Bind();
+    RenderSelectionBuffer();
     
-    for (int i=0; i<instance->transforms.size(); i++)
-    {
-      instance->shader->PushInt("objectIndex", i);
-      
-      RenderCommand::DrawIndexed(instance->mesh.vertexArray);
-      //RenderCommand::DrawIndexed(instance->vertexArray);
     
-    }*/
-    instance->transforms.clear();
-    instance->meshes.clear();
-    //instance->mesh.clear();
   }
-  void Renderer3D::SubmitMesh(const Mesh& data, const Math::Matrix4& transform)
+  void Renderer3D::RenderSelectionBuffer()
   {
+    CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
+    Renderer::BeginSelectionPass();
+    instance->selectionShader->Bind();
+    instance->selectionMaterial.Bind(2);
+    
+    /*Renderer::GetCurrentFrame().storageBuffer->SetData(instance->transforms.data(), sizeof(Matrix4) * instance->transforms.size());
+    
+    DescriptorBuilder builder = DescriptorBuilder::Begin();
+    VkDescriptorBufferInfo objectInfo;
+    objectInfo.buffer = *Renderer::GetCurrentFrame().storageBuffer;
+    objectInfo.offset=0;
+    objectInfo.range=sizeof(Matrix4) * instance->transforms.size();
+    builder.AddBufferWrite(0, &objectInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC);
+    builder.Write(Renderer::GetCurrentFrame().ObjectDescriptor());*/
+    
+    
+    instance->selectionShader->Commit();
+    instance->selectionShader->PushInt("entityID", -1);
+    for (int i=0; i<instance->meshes.size(); i++)
+    {
+      instance->meshes[i].vertexArray->Bind();
+      instance->selectionShader->PushInt("objectIndex", i);
+      instance->selectionShader->PushInt("entityID", static_cast<int>(instance->entities[i]));
+      RenderCommand::DrawIndexed(instance->meshes[i].vertexArray);
+    }
+    //instance->needsSelection=false;
    
-    //instance->transforms.push_back(transform);
+  }
+  void Renderer3D::SubmitMesh(uint32_t entity, const Mesh& data, const Math::Matrix4& transform)
+  {
     if (data.IsValid())
     {
+      //CANDY_CORE_INFO("ENTITY SUBMITTED: {}", entity);
+      //CANDY_CORE_INFO("INT ENTITY: {}", static_cast<int>(entity));
       instance->meshes.push_back(data);
       instance->transforms.push_back(transform);
-      //instance->mesh = data;
+      instance->entities.push_back(entity);
     }
-    /*if (instance->mesh.data.Empty())
-    {
-      instance->meshData.push_back(data);
-      instance->mesh.data = data;
-      instance->mesh.layout = instance->shader->GetBufferLayout();
-      instance->mesh.Apply();
-    }*/
-    //instance->meshData.push_back(data);
-
   }
 }

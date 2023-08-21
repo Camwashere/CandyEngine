@@ -87,13 +87,13 @@ namespace Candy::Graphics
       }
       else
       {
-        CANDY_CORE_ERROR("Could not read from file '" + path.string() + "'");
+        CANDY_CORE_ERROR("Could not read from file: '{}'", path.string());
        
       }
     }
     else
     {
-      CANDY_CORE_ERROR("Could not open file '" + path.string() + "'");
+      CANDY_CORE_ERROR("Could not open file '{}'", path.string());
     }
     
     return result;

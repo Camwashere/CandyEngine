@@ -85,6 +85,8 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Push<IndexBuffer*>(IndexBuffer* vulkanObject);
   template<>
+  void DeletionQueue::Push<PixelBuffer*>(PixelBuffer* vulkanObject);
+  template<>
   void DeletionQueue::Push<FrameBuffer*>(FrameBuffer* vulkanObject);
   template<>
   void DeletionQueue::Push<VkFence>(VkFence vulkanObject);
@@ -105,6 +107,8 @@ namespace Candy::Graphics
   void DeletionQueue::Delete<FrameBuffer*>(FrameBuffer* vulkanObject);
   template<>
   void DeletionQueue::Delete<StorageBuffer*>(StorageBuffer* vulkanObject);
+  template<>
+  void DeletionQueue::Delete<PixelBuffer*>(PixelBuffer* vulkanObject);
   
   
 }

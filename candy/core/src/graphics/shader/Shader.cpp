@@ -43,9 +43,9 @@ namespace Candy::Graphics
         CANDY_PROFILE_FUNCTION();
       
       preProcessor = ShaderPreProcessor::Create(filepath);
-      CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
+      //CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
       postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
-      CANDY_CORE_INFO("FINISHED POST PROCESSOR");
+      //CANDY_CORE_INFO("FINISHED POST PROCESSOR");
       //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
       
         
@@ -56,6 +56,22 @@ namespace Candy::Graphics
       //BakePipeline(Renderer::GetRenderPass());
         
     }
+  Shader::Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass) : filepath(std::move(shaderFilePath))
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    preProcessor = ShaderPreProcessor::Create(filepath);
+    //CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
+    postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
+    //CANDY_CORE_INFO("FINISHED POST PROCESSOR");
+    //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
+    
+    
+    // Extract name from filepath
+    shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
+    
+    GetLayout().BakePipeline(renderPass, CreateShaderStageCreateInfos());
+  }
   
   void Shader::Bind()
   {
@@ -298,6 +314,10 @@ namespace Candy::Graphics
     {
         return CreateSharedPtr<Shader>(shaderFilePath);
     }
+  SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass)
+  {
+    return CreateSharedPtr<Shader>(shaderFilePath, renderPass);
+  }
     
     
     

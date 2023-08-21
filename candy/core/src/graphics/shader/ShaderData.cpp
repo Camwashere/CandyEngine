@@ -213,7 +213,7 @@ namespace Candy::Graphics
         break;
     }
     
-    CANDY_CORE_INFO("Vec Size: {}, Columns: {}", spirvType.vecsize, spirvType.columns);
+    //CANDY_CORE_INFO("Vec Size: {}, Columns: {}", spirvType.vecsize, spirvType.columns);
     return Type::Unknown;
     
   }

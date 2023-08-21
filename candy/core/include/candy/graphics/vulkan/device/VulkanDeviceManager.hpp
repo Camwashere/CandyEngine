@@ -18,6 +18,7 @@ namespace Candy::Graphics
         explicit VulkanDeviceManager(VkSurfaceKHR surface);
         
     public:
+      void ClearDeviceMemory();
       void Destroy();
         
     private:

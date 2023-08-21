@@ -129,7 +129,7 @@ namespace Candy::Graphics
     textureParameters.clear();
     for (const auto& set : shader->GetLayout().sets)
     {
-      CANDY_CORE_INFO("SET NUMBER: {}", set.GetSet());
+      //CANDY_CORE_INFO("SET NUMBER: {}", set.GetSet());
       /*if (set.GetSet()!=MATERIAL_SET)
       {
         continue;

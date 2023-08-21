@@ -14,6 +14,7 @@ namespace Candy::Graphics
     STORAGE,
     STORAGE_DYNAMIC,
     STAGING,
+    PIXEL,
     DUMMY,
   };
     class VulkanBuffer

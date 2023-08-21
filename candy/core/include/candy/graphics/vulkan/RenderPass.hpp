@@ -19,6 +19,7 @@ namespace Candy::Graphics
     public:
       explicit RenderPass(const VkAttachmentDescription& depthAttachment, const std::vector<VkAttachmentDescription>& colorAttachments,const std::vector<VkAttachmentDescription>& inputAttachments);
         explicit RenderPass(VkFormat colorAttachmentFormat, VkImageLayout finalLayout);
+        explicit RenderPass(VkFormat colorAttachmentFormat, VkFormat selectionAttachmentFormat, VkImageLayout finalLayout);
         ~RenderPass();
         
     public:

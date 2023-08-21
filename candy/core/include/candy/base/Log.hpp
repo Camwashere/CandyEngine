@@ -18,8 +18,11 @@ namespace Candy
   };
 }
 
+
+
 // Core log macros
 #define CANDY_CORE_TRACE(...)    ::Candy::Log::GetCoreLogger()->trace(__VA_ARGS__)
+//#define CANDY_CORE_INFO(...)     ::Candy::Log::GetCoreLogger()->info(__VA_ARGS__); ::Candy::Log::GetCoreLogger()->info("Line: {0}, File: {1}", __LINE__, __FILE__)
 #define CANDY_CORE_INFO(...)     ::Candy::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define CANDY_CORE_WARN(...)     ::Candy::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define CANDY_CORE_ERROR(...)    ::Candy::Log::GetCoreLogger()->error(__VA_ARGS__)

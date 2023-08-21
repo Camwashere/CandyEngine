@@ -38,6 +38,7 @@ namespace Candy::Graphics
     createInfo.layers = layers;
     createInfo.attachmentCount = attachments.size();
     createInfo.pAttachments = attachments.data();
+    
     createInfo.renderPass = pass;
     
     vkCreateFramebuffer(Vulkan::LogicalDevice(), &createInfo, nullptr, &buffer);

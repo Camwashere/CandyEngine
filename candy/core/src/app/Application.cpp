@@ -89,6 +89,10 @@ namespace Candy
   {
       return instance->frameTime.GetCurrentTime();
   }
+  float Application::FPS()
+  {
+      return instance->frameTime.GetFPS();
+  }
     void Application::Shutdown()
     {
         instance->Close();

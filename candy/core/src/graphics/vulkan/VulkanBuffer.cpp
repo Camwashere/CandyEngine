@@ -4,6 +4,33 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
+  const char* String_VkResult(VkResult errorCode) {
+    switch (errorCode)
+    {
+#define STR(r) case VK_ ## r: return #r
+      STR(SUCCESS);
+      STR(NOT_READY);
+      STR(TIMEOUT);
+      STR(EVENT_SET);
+      STR(EVENT_RESET);
+      STR(INCOMPLETE);
+      STR(ERROR_OUT_OF_HOST_MEMORY);
+      STR(ERROR_OUT_OF_DEVICE_MEMORY);
+      STR(ERROR_INITIALIZATION_FAILED);
+      STR(ERROR_DEVICE_LOST);
+      STR(ERROR_MEMORY_MAP_FAILED);
+      STR(ERROR_LAYER_NOT_PRESENT);
+      STR(ERROR_EXTENSION_NOT_PRESENT);
+      STR(ERROR_FEATURE_NOT_PRESENT);
+      STR(ERROR_INCOMPATIBLE_DRIVER);
+      STR(ERROR_TOO_MANY_OBJECTS);
+      STR(ERROR_FORMAT_NOT_SUPPORTED);
+      STR(ERROR_FRAGMENTED_POOL);
+      STR(ERROR_UNKNOWN);
+#undef STR
+      default: return "UNKNOWN_ERROR";
+    }
+  }
   uint64_t VulkanBuffer::Size()const{return size;}
   
   VmaAllocation VulkanBuffer::GetAllocation(){return allocation;}
@@ -94,9 +121,10 @@ namespace Candy::Graphics
         allocCreateInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
         allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
         allocCreateInfo.requiredFlags = properties;
-        
-        
-        CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocCreateInfo, &buffer, allocation, allocInfo)==VK_SUCCESS, "Failed to create allocated buffer!");
+      
+      VkResult result = vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocCreateInfo, &buffer, allocation, allocInfo);
+      //CANDY_CORE_INFO("CREATED BUFFER SIZE: {0}", size);
+        CANDY_CORE_ASSERT(result==VK_SUCCESS, String_VkResult(result));
     }
     
     void VulkanBuffer::DestroyBuffer(VkBuffer buffer, VmaAllocation allocation)

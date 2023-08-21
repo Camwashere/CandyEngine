@@ -27,6 +27,7 @@ namespace Candy::Graphics
     
     public:
       explicit Shader(std::filesystem::path  shaderFilePath);
+      Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass);
       
     public:
       void Bind();
@@ -78,6 +79,7 @@ namespace Candy::Graphics
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);
       static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath);
+      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass);
         
     private:
         friend class GraphicsContext;

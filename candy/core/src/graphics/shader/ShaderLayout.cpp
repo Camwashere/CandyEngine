@@ -189,7 +189,8 @@ namespace Candy::Graphics
   }
   void ShaderLayout::PushConstant(uint32_t id, const void* data)
   {
-    CANDY_CORE_ASSERT(id < pushBlocks.size());
+    //CANDY_CORE_INFO("Push blocks size: {0}. ID: {1}", pushBlocks.size(), id);
+    CANDY_CORE_ASSERT(id < pushProperties.size());
     
     auto& prop = pushProperties[id];
     RenderCommand::PushConstants(pipeline.GetLayout(), ShaderData::Stage::All, prop->offset, prop->size, data);
