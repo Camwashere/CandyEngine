@@ -15,6 +15,7 @@ namespace Candy::Graphics
     
   public:
     int ReadPixel(int x, int y);
+    [[nodiscard]] Math::Vector2u GetImageSize()const;
     void CopyImage(VkImage image, int x, int y);
     int GetPixel(int x, int y);
   

@@ -35,9 +35,9 @@ namespace Candy
     mousePos.y -= bounds.min.y;
     Math::Vector2 viewSize = bounds.max - bounds.min;
     mousePos.y = viewSize.y - mousePos.y;
-    
-    float scaleX = 3000.f / viewSize.x;      // original image width / displayed width
-    float scaleY = 1500.f / viewSize.y;      // original image height / displayed height
+    Math::Vector2u imageSize = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->GetImageSize();
+    float scaleX = (float)imageSize.width / viewSize.x;      // original image width / displayed width
+    float scaleY = (float)imageSize.height / viewSize.y;      // original image height / displayed height
     
     int mouseX = static_cast<int>(mousePos.x * scaleX);
     int mouseY = static_cast<int>((viewSize.y - mousePos.y) * scaleY);
@@ -46,7 +46,7 @@ namespace Candy
     
     int w = (int)viewSize.width;
     int h = (int)viewSize.height;
-    if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)3000 && mouseY < (int)1500)
+    if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)imageSize.width && mouseY < (int)imageSize.height)
     {
       //int pixelData = frameBuffer->ReadPixel(1, mouseX, mouseY);
       //Renderer::GetCurrentFrame().viewportData.selectionImage;

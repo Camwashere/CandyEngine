@@ -24,6 +24,10 @@ namespace Candy::Graphics
     vmaUnmapMemory(Vulkan::Allocator(), allocation); // Unmap memory after reading pixel value from it
     return pixel;
   }
+  Math::Vector2u PixelBuffer::GetImageSize()const
+  {
+    return imageSize;
+  }
   int PixelBuffer::GetPixel(int x, int y)
   {
     int pixelIndex = y * (int)imageSize.x + x;
