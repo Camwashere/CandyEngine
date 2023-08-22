@@ -25,6 +25,7 @@ namespace Candy::Math
     static QuaternionBase<T> SlerpUnclamped(const QuaternionBase<T>& a, const QuaternionBase<T>& b, T t);
     static QuaternionBase<T> ToRadians(const QuaternionBase<T>& quat);
     static QuaternionBase<T> ToDegrees(const QuaternionBase<T>& quat);
+    static VectorBase<T, 3> Rotate(const QuaternionBase<T>& rotation, const VectorBase<T, 3>& point);
     static AbstractMatrixBase<T, 4, 4> ToMatrix(const QuaternionBase<T>& quaternion);
     
     using VectorBase<T, 4>::x;
@@ -57,7 +58,7 @@ namespace Candy::Math
     void SetFromToRotation(const VectorBase<T, 3>& fromDirection, const VectorBase<T, 3>& toDirection);
     void SetLookRotation(const VectorBase<T, 3>& view, const VectorBase<T, 3>& up = VectorBase<T, 3>::up);
     void ToAngleAxis(T& angle, VectorBase<T, 3>& axis);
-    
+    QuaternionBase<T> Conjugate() const;
     
     [[nodiscard]] QuaternionBase<T> Normalized() const; //NOLINT
     

@@ -4,6 +4,7 @@
 #include <candy/math/Matrix.hpp>
 #include "model/Mesh.hpp"
 #include <candy/graphics/camera/Camera.hpp>
+#include <candy/graphics/camera/EditorCamera.hpp>
 #include "material/Material.hpp"
 
 namespace Candy::Graphics
@@ -38,6 +39,7 @@ namespace Candy::Graphics
     static bool NeedsSelection();
     
     static void BeginScene(const Camera& camera);
+    static void BeginScene(const EditorCamera& camera);
     static void EndScene();
     static void Init();
     static void SubmitMesh(uint32_t entity, const Mesh& data, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);

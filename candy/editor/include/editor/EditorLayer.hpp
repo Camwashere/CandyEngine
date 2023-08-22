@@ -25,7 +25,7 @@ namespace Candy
     DebugPanel debugPanel;
     ECS::Entity testEntity;
     ECS::Entity secondEntity;
-    //bool selectionView=false;
+    ECS::Entity planeEntity;
     
   private:
     bool OnMouseButtonPressed(Events::MousePressedEvent& event);
@@ -43,5 +43,8 @@ namespace Candy
     void OnUpdate() override;
     void OnRenderUI() override;
     void OnEvent(Events::Event& event) override;
+    
+  private:
+    friend class Viewport;
   };
 }

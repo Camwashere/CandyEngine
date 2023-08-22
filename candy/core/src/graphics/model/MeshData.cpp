@@ -3,6 +3,23 @@
 namespace Candy::Graphics
 {
   using namespace Math;
+  
+  static const Vector3 planeVerts[4] = {
+  Vector3(-0.5f, 0.0f, -0.5f), // 0
+  Vector3(0.5f, 0.0f, -0.5f), // 1
+  Vector3(0.5f, 0.0f, 0.5f), // 2
+  Vector3(-0.5f, 0.0f, 0.5f) // 3
+  };
+  
+  static const Vector2 planeUVs[4] = {
+  Vector2(0.0f, 0.0f),
+  Vector2(1.0f, 0.0f),
+  Vector2(1.0f, 1.0f),
+  Vector2(0.0f, 1.0f)
+  };
+  
+  
+  
   static const Vector3 voxelVerts[8] = {
   Vector3(-0.5f, -0.5f, -0.5f), // 0
   Vector3(0.5f, -0.5f, -0.5f), // 1
@@ -167,7 +184,24 @@ namespace Candy::Graphics
   {
     return vertices.empty() && triangles.empty() && normals.empty() && uvs.empty();
   }
-  
+  MeshData MeshData::CreatePlaneMeshData()
+  {
+    MeshData mesh{};
+    mesh.vertices.resize(4);
+    mesh.normals.resize(4);
+    mesh.uvs.resize(4);
+    mesh.triangles = { 0, 2, 1, 0, 3, 2};
+    
+    for (int i=0; i<4; i++)
+    {
+      mesh.vertices[i] = planeVerts[i];
+      mesh.uvs[i] = planeUVs[i];
+      mesh.normals[i] = Vector3::up;
+    }
+    
+    return mesh;
+    
+  }
   MeshData MeshData::CreateCubeMeshData()
   {
     unsigned int vertexIndex=0;

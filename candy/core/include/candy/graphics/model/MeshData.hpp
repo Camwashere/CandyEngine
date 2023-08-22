@@ -11,6 +11,7 @@ namespace Candy::Graphics
     
     [[nodiscard]] bool IsValid()const;
     [[nodiscard]] bool Empty()const;
+    static MeshData CreatePlaneMeshData();
     static MeshData CreateCubeMeshData();
     static MeshData CreateTriangularPrismMeshData();
   };

@@ -24,10 +24,15 @@ namespace Candy::Graphics
     float zoom;
     Math::Vector2 screenSize;
     float nearClip=0.1f, farClip=100.0f;
+    
+    Math::Matrix4 viewMatrix;
+    Math::Matrix4 projectionMatrix;
   
   private:
     void UpdateCameraVectors();
     void SetScreenSizeToApplicationWindow();
+    void UpdateViewMatrix();
+    void UpdateProjectionMatrix();
   
   
   public:

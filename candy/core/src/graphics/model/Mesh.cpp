@@ -33,6 +33,15 @@ namespace Candy::Graphics
     
   }
   
+  Mesh Mesh::CreatePlaneMesh()
+  {
+    Mesh mesh{};
+    mesh.layout = Renderer3D::GetBufferLayout();
+    mesh.data = MeshData::CreatePlaneMeshData();
+    mesh.Apply();
+    return mesh;
+  }
+  
   Mesh Mesh::CreateCubeMesh()
   {
 

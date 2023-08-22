@@ -7,15 +7,19 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/PixelBuffer.hpp>
 #include <candy/graphics/Renderer3D.hpp>
+#include <imguizmo/ImGuizmo.h>
+#include <editor/EditorLayer.hpp>
+
 namespace Candy
 {
   using namespace Graphics;
   using namespace Math;
   using namespace ECS;
   
-  Viewport::Viewport(Scene* scene) : activeScene(scene), cameraController(new Camera(Vector3(0.0f, 1.0f, 3.27f)))
+  Viewport::Viewport(EditorLayer* parentLayer) : parent(parentLayer), cameraController(new Camera(Vector3(0.0f, 1.0f, 3.27f))), editorCamera(Vector3(0.0f, 1.0f, 3.27f))
   {
-    CANDY_CORE_ASSERT(activeScene != nullptr);
+    CANDY_CORE_ASSERT(parent != nullptr);
+    gizmoType = ImGuizmo::OPERATION::TRANSLATE;
   }
   void Viewport::OnAttach()
   {
@@ -23,11 +27,14 @@ namespace Candy
   }
   void Viewport::OnUpdate()
   {
-    activeScene->OnViewportResize((uint32_t)size.x, (uint32_t)size.y);
-    //const FrameBuffer& frameBuffer = Renderer::GetCurrentFrame().viewportFrameBuffer;
-    cameraController.OnResize(Application::GetMainWindowReference().GetWidth(), Application::GetMainWindowReference().GetHeight());
-    cameraController.OnUpdate();
-    activeScene->OnUpdateEditor(cameraController.GetCamera());
+    parent->activeScene->OnViewportResize((uint32_t)size.x, (uint32_t)size.y);
+    
+    
+    editorCamera.SetViewportSize(size.x, size.y);
+    editorCamera.OnUpdate();
+    parent->activeScene->OnUpdateEditor(editorCamera);
+    
+    
     
     
     ImVec2 mousePos = ImGui::GetMousePos();
@@ -41,30 +48,13 @@ namespace Candy
     
     int mouseX = static_cast<int>(mousePos.x * scaleX);
     int mouseY = static_cast<int>((viewSize.y - mousePos.y) * scaleY);
-    //int mouseX = (int)mousePos.x;
-    //int mouseY = (int)mousePos.y;
     
-    int w = (int)viewSize.width;
-    int h = (int)viewSize.height;
     if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)imageSize.width && mouseY < (int)imageSize.height)
     {
-      //int pixelData = frameBuffer->ReadPixel(1, mouseX, mouseY);
-      //Renderer::GetCurrentFrame().viewportData.selectionImage;
-      
-     
-      //CANDY_CORE_INFO("MousePos: {0}, {1}", mouseX, mouseY);
-      //CANDY_CORE_INFO("SIZE: {}", size);
-      //CANDY_CORE_INFO("BOUNDS: MAX: {0}, MIN: {1}", bounds.max, bounds.min);
-      //Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->CopyImage(Renderer::GetCurrentFrame().viewportData.selectionImage, 0, 0, 3000, 1500);
+
       int pixelData = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->ReadPixel(mouseX, mouseY);
-      //int pixelData = 0;
-      /*if (pixelData != -1)
-      {
-        CANDY_CORE_INFO("PixelData: {}", pixelData);
-      }*/
       
-      
-      hoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, activeScene);
+      hoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, parent->activeScene.get());
     }
     OnOverlayRender();
   }
@@ -82,8 +72,8 @@ namespace Candy
         }
       }
     }
+    editorCamera.OnEvent(event);
     
-    cameraController.OnEvent(event);
   }
   void Viewport::OnRenderUI()
   {
@@ -107,9 +97,6 @@ namespace Candy
     
     ImGui::Image(Renderer::GetCurrentFrame().viewportData.viewportDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
     
-    //ImGui::Image(Renderer::GetCurrentFrame().viewportData.viewportSelectionDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
-    //ImGui::Image(Renderer::GetCurrentFrame().viewportDepthDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
-    
     if (ImGui::BeginDragDropTarget())
     {
       if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -119,73 +106,58 @@ namespace Candy
       }
       ImGui::EndDragDropTarget();
     }
-
+    
+    // Gizmos
+    Entity selectedEntity = parent->scenePanel->GetSelectedEntity();
+    if (selectedEntity && gizmoType != -1)
+    {
+      ImGuizmo::SetOrthographic(false);
+      ImGuizmo::SetDrawlist();
+      
+      ImGuizmo::SetRect(bounds.min.x, bounds.min.y, bounds.max.x-bounds.min.x, bounds.max.y-bounds.min.y);
+      
+      // Editor camera
+      Matrix4 cameraProjection = editorCamera.GetProjectionMatrix();
+      Matrix4 cameraView = editorCamera.GetViewMatrix();
+      
+      // Entity transform
+      auto& tc = selectedEntity.GetComponent<TransformComponent>();
+      Matrix4 transform = tc.GetMatrix();
+      
+      // Snapping
+      bool snap = Input::IsKeyPressed(Key::LeftControl);
+      float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+      // Snap to 45 degrees for rotation
+      if (gizmoType == ImGuizmo::OPERATION::ROTATE)
+        snapValue = 45.0f;
+      
+      float snapValues[3] = { snapValue, snapValue, snapValue };
+      cameraProjection[1, 1] *= -1;
+      cameraProjection[2, 2] *= 0.5f;
+      cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
+      
+      ImGuizmo::Manipulate(&cameraView[0], &cameraProjection[0],
+                           (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, &transform[0],
+                           nullptr, snap ? snapValues : nullptr);
+      
+      if (ImGuizmo::IsUsing())
+      {
+        Vector3 translation, rotation, scale;
+        Matrix4::DecomposeTransform(transform, translation, rotation, scale);
+        
+        Vector3 deltaRotation = rotation - tc.rotation;
+        tc.position = translation;
+        tc.rotation += deltaRotation;
+        tc.scale = scale;
+      }
+    }
     ImGui::End();
     ImGui::PopStyleVar();
   }
   
   void Viewport::OnOverlayRender()
   {
-    /*if (m_SceneState == SceneState::Play)
-    {
-      Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
-      if (!camera)
-        return;
-      
-      Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
-    }
-    else
-    {
-      Renderer2D::BeginScene(m_EditorCamera);
-    }
-    
-    if (m_ShowPhysicsColliders)
-    {
-      // Box Colliders
-      {
-        auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-        for (auto entity : view)
-        {
-          auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
-          
-          glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
-          glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
-          
-          glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-                                * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-                                * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
-                                * glm::scale(glm::mat4(1.0f), scale);
-          
-          Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
-        }
-      }
-      
-      // Circle Colliders
-      {
-        auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
-        for (auto entity : view)
-        {
-          auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
-          
-          glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
-          glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
-          
-          glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-                                * glm::scale(glm::mat4(1.0f), scale);
-          
-          Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
-        }
-      }
-    }
-    
-    // Draw selected entity outline
-    if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
-    {
-      const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-      Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-    }
-    
-    Renderer2D::EndScene();*/
+    // Show colliders/debug rays etc
   }
   
   bool Viewport::IsHovered()const

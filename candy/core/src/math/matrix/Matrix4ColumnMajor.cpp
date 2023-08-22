@@ -363,6 +363,51 @@ namespace Candy::Math
     
     return result;
   }
+  void AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::DecomposeTransform(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &m, Vector3& translation, Vector3& rotation, Vector3& scale)
+  {
+    AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> matrix = m;
+    // Decompose translation
+    // Assuming the translation values are located in the fourth column of the matrix.
+    translation.x = matrix[0,3];
+    translation.y = matrix[1,3];
+    translation.z = matrix[2,3];
+    
+    // Decompose scale
+    scale.x = Vector3(matrix[0,0], matrix[0,1], matrix[0,2]).Magnitude();
+    scale.y = Vector3(matrix[1,0], matrix[1,1], matrix[1,2]).Magnitude();
+    scale.z = Vector3(matrix[2,0], matrix[2,1], matrix[2,2]).Magnitude();
+    
+    // Normalize scale from the matrix
+    // Avoid divide by zero error
+    if (scale.x != 0) {
+      matrix[0,0] /= scale.x;
+      matrix[0,1] /= scale.x;
+      matrix[0,2] /= scale.x;
+    }
+    
+    if (scale.y != 0) {
+      matrix[1,0] /= scale.y;
+      matrix[1,1] /= scale.y;
+      matrix[1,2] /= scale.y;
+    }
+    
+    if (scale.z != 0) {
+      matrix[2,0] /= scale.z;
+      matrix[2,1] /= scale.z;
+      matrix[2,2] /= scale.z;
+    }
+    
+    rotation.y = Math::Asin(-matrix[0,2]);
+    
+    if (cos(rotation.y) != 0) {
+      rotation.x = Math::Atan2(matrix[1,2], matrix[2,2]);
+      rotation.z = Math::Atan2(matrix[0,1], matrix[0,0]);
+    } else {
+      rotation.x = Math::Atan2(-matrix[2,0], matrix[1,1]);
+      rotation.z = 0;
+    }
+  }
+  
   
   float AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::Determinant(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &matrix)
   {
@@ -508,6 +553,15 @@ namespace Candy::Math
     float angle_y = Math::Atan2(-m[2,0],Math::Sqrt(m[2,1]*m[2,1]+m[2,2]*m[2,2]));
     float angle_z = Math::Atan2(m[1,0],m[0,0]);
     return {angle_x, angle_y, angle_z};
+  }
+  
+  const float* AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::ValuePtr()const
+  {
+    return data.data();
+  }
+  float* AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::ValuePtr()
+  {
+    return data.data();
   }
 }
 

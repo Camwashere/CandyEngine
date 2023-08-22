@@ -24,44 +24,7 @@ namespace Candy::Graphics
     size_t count=0;
     for (const auto& param : parameters)
     {
-      VkDescriptorBufferInfo bufferInfo{};
-      bufferInfo.buffer = *Vulkan::GetCurrentContext().GetCurrentFrame().uniformBuffer;
-      bufferInfo.offset=0;
-      bufferInfo.range = bufferSize;
-      
-      builder.AddBufferWrite(param.GetBinding(), &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, param.GetSet());
-    }
-    
-    for (const auto& param : textureParameters)
-    {
-      VkDescriptorImageInfo imageInfo{};
-      imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      imageInfo.imageView = param.GetImageView();
-      imageInfo.sampler = param.GetSampler();
-      
-      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());
-    }
-    
-
-    writes = builder.GetWrites();
-
-    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
-
-  }
-  void Material::Bind(uint32_t set)
-  {
-    CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot bind!");
-    //shader->Bind();
-    
-    
-    
-    writes.clear();
-    
-    DescriptorBuilder builder = DescriptorBuilder::Begin();
-    size_t count=0;
-    for (const auto& param : parameters)
-    {
-      if (param.GetSet() != set)
+      if (param.GetSet() != 2)
       {
         continue;
       }
@@ -71,12 +34,11 @@ namespace Candy::Graphics
       bufferInfo.range = bufferSize;
       
       builder.AddBufferWrite(param.GetBinding(), &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, param.GetSet());
-      
     }
     
     for (const auto& param : textureParameters)
     {
-      if (param.GetSet()!=set)
+      if (param.GetSet() != 2)
       {
         continue;
       }
@@ -88,13 +50,16 @@ namespace Candy::Graphics
       builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());
     }
     
-    
+
     writes = builder.GetWrites();
+    
     if (!writes.empty())
     {
       vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
     }
+
   }
+  
   
   void Material::SetParameter(const std::string& name, const ShaderData::Value& value)
   {
@@ -121,6 +86,10 @@ namespace Candy::Graphics
     }
     
   }
+  size_t Material::GetBufferSize()const
+  {
+    return bufferSize;
+  }
   void Material::CalculateParameterLayout()
   {
     nameToParameterMap.clear();
@@ -129,11 +98,7 @@ namespace Candy::Graphics
     textureParameters.clear();
     for (const auto& set : shader->GetLayout().sets)
     {
-      //CANDY_CORE_INFO("SET NUMBER: {}", set.GetSet());
-      /*if (set.GetSet()!=MATERIAL_SET)
-      {
-        continue;
-      }*/
+      
       for (const auto& block : set.blocks)
       {
         for (const auto &p: block.properties)
@@ -157,7 +122,6 @@ namespace Candy::Graphics
   }
   void Material::CalculateBufferSize()
   {
-    //size_t bufferSize = Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Math::Matrix4)*3 + sizeof(Math::Vector4));
     size_t size=0;
     for (const auto& p : parameters)
     {

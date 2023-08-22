@@ -8,6 +8,7 @@
 #include <candy/app/Application.hpp>
 #include <candy/event/Events.hpp>
 #include <imgui/imgui.h>
+#include <imguizmo/ImGuizmo.h>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
 using namespace Candy::ECS;
@@ -24,16 +25,20 @@ namespace Candy
     
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>(activeScene);
-    viewport = CreateSharedPtr<Viewport>(activeScene.get());
+    viewport = CreateSharedPtr<Viewport>(this);
     testEntity = activeScene->CreateEntity("Test Entity");
     secondEntity = activeScene->CreateEntity("Second Entity");
+    planeEntity = activeScene->CreateEntity("Plane Entity");
     
     testEntity.AddComponent<MeshComponent>(Mesh::CreateCubeMesh());
     secondEntity.AddComponent<MeshComponent>(Mesh::CreateTriangularPrismMesh());
+    planeEntity.AddComponent<MeshComponent>(Mesh::CreatePlaneMesh());
     
     testEntity.GetTransform().position = {0.0f, 2.0f, 0.0f};
     
     secondEntity.GetTransform().position = {4.0f, 2.0f, 0.0f};
+    
+    planeEntity.GetTransform().position = {-4.0f, 2.0f, 0.0f};
     
   }
   
@@ -53,11 +58,7 @@ namespace Candy
   
   void EditorLayer::OnUpdate()
   {
-    /*Vector3 axis = {0.0f, 0.2f, 1.0f};
-    Vector3 axis2 = {0.6f, 0.8f, 0.0f};
-    float time = Application::CurrentTime();
-    testEntity.GetTransform().rotation = axis * time * Math::ToRadians(90.0f);
-    secondEntity.GetTransform().rotation = axis2 * time * Math::ToRadians(90.0f);*/
+    
     viewport->OnUpdate();
   }
   
@@ -164,24 +165,7 @@ namespace Candy
         }
         ImGui::EndMenu();
       }
-      if (ImGui::BeginMenu("View"))
-      {
-        if (viewport->selectionView)
-        {
-          if (ImGui::MenuItem("Regular View"))
-          {
-            viewport->selectionView=false;
-          }
-        }
-        else
-        {
-          if (ImGui::MenuItem("Selection View"))
-          {
-            viewport->selectionView=true;
-          }
-        }
-        ImGui::EndMenu();
-      }
+      
       ImGui::EndMenuBar();
     }
   }
@@ -200,7 +184,7 @@ namespace Candy
   {
     if (event.GetButton() == Mouse::ButtonLeft)
     {
-      if (viewport->IsHovered() && !Input::IsKeyPressed(Key::LeftAlt))
+      if (viewport->IsHovered() && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
       {
         scenePanel->SetSelectedEntity(viewport->GetHoveredEntity());
       }

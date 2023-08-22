@@ -167,6 +167,20 @@ namespace Candy::ECS
     
     Renderer3D::EndScene();
   }
+  void Scene::OnUpdateEditor(Graphics::EditorCamera& camera)
+  {
+    systemScheduler.Update((void*)&camera);
+    Renderer3D::BeginScene(camera);
+    auto view = registry.view<TransformComponent, MeshComponent>();
+    for (auto entity : view)
+    {
+      
+      auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
+      Renderer3D::SubmitMesh((uint32_t)entity, mesh.mesh, transform.GetMatrix());
+    }
+    
+    Renderer3D::EndScene();
+  }
   SharedPtr<Scene> Scene::Create(const std::string& name)
   {
     return CreateSharedPtr<Scene>(name);

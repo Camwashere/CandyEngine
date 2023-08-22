@@ -6,7 +6,7 @@
 #include "imgui/backends/imgui_impl_vulkan.h"
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
-
+#include <imguizmo/ImGuizmo.h>
 
 namespace Candy
 {
@@ -134,6 +134,7 @@ namespace Candy
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
     Renderer::BeginUIPass();
     //Renderer::BeginGumPass();
     

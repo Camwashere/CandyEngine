@@ -5,6 +5,7 @@
 #include "SystemScheduler.hpp"
 #include <candy/base/UUID.hpp>
 #include <candy/graphics/camera/Camera.hpp>
+#include <candy/graphics/camera/EditorCamera.hpp>
 
 namespace Candy
 {
@@ -56,6 +57,7 @@ namespace Candy::ECS
     void OnStopSimulation();
     
     void OnUpdateEditor(Graphics::Camera& camera);
+    void OnUpdateEditor(Graphics::EditorCamera& camera);
     
     void OnViewportResize(std::uint32_t width, std::uint32_t height);
     

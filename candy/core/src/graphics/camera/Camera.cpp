@@ -9,7 +9,7 @@ namespace Candy::Graphics
     SetScreenSizeToApplicationWindow();
     UpdateCameraVectors();
   }
-  void Camera::SetScreenSize(float width, float height){screenSize.Set(width, height);}
+  void Camera::SetScreenSize(float width, float height){screenSize.Set(width, height); UpdateProjectionMatrix();}
   void Camera::SetNearClip(float value){nearClip = value;}
   void Camera::SetFarClip(float value){farClip = value;}
   void Camera::SetClipRange(float near, float far){nearClip = near; farClip = far;}
@@ -22,7 +22,15 @@ namespace Candy::Graphics
   {
     SetScreenSize((float)Application::GetMainWindowReference().GetWidth(), (float)Application::GetMainWindowReference().GetHeight());
   }
-  
+  void Camera::UpdateViewMatrix()
+  {
+    viewMatrix = Matrix4::LookAt(position, position+localFront, localUp);
+  }
+  void Camera::UpdateProjectionMatrix()
+  {
+    projectionMatrix = Matrix4::Perspective(Math::ToRadians(zoom), screenSize.x/screenSize.y, nearClip, farClip);
+    projectionMatrix[1,1] *= -1;
+  }
   void Camera::UpdateCameraVectors()
   {
     // calculate the new front vector
@@ -34,18 +42,21 @@ namespace Candy::Graphics
     // also re-calculate the right and up vector
     localRight = Math::Vector3::Normalize(Math::Vector3::Cross(localFront, Math::Vector3::up));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     localUp    = Math::Vector3::Normalize(Math::Vector3::Cross(localRight, localFront));
+    UpdateViewMatrix();
   }
   
   Math::Matrix4 Camera::GetViewMatrix()const
   {
-    return Matrix4::LookAt(position, position+localFront, localUp);
+    return viewMatrix;
+    //return Matrix4::LookAt(position, position+localFront, localUp);
   }
   
   Math::Matrix4 Camera::GetProjectionMatrix()const
   {
-    Matrix4 proj =  Matrix4::Perspective(Math::ToRadians(zoom), screenSize.x/screenSize.y, nearClip, farClip);
+    return projectionMatrix;
+    /*Matrix4 proj =  Matrix4::Perspective(Math::ToRadians(zoom), screenSize.x/screenSize.y, nearClip, farClip);
     proj[1,1] *= -1;
-    return proj;
+    return proj;*/
   }
   
   Math::Matrix4 Camera::GetViewProjectionMatrix()const

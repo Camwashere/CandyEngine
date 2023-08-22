@@ -178,6 +178,18 @@ namespace Candy::Math
     return {Math::ToDegrees(quat.x), Math::ToDegrees(quat.y), Math::ToDegrees(quat.z), Math::ToDegrees(quat.w)};
   }
   template<typename T>
+  VectorBase<T, 3> QuaternionBase<T>::Rotate(const QuaternionBase<T>& rotation, const VectorBase<T, 3>& point)
+  {
+    // Convert the vector into a pure quaternion
+    QuaternionBase<T> vecQuat(0, point.x, point.y, point.z);
+   
+    // Calculate qvq^(-1)
+    QuaternionBase<T> resultQuat = rotation * vecQuat * rotation.Conjugate();
+    
+    // Return the x, y, z components as a Vector3
+    return Vector3(resultQuat.x, resultQuat.y, resultQuat.z);
+  }
+  template<typename T>
   AbstractMatrixBase<T, 4, 4> QuaternionBase<T>::ToMatrix(const QuaternionBase<T>& quaternion)
   {
     Matrix4 result(0.0f);
@@ -324,6 +336,11 @@ namespace Candy::Math
     }else{
       axis.x=x/s;axis.y=y/s;axis.z=z/s;
     }
+  }
+  template<typename T>
+  QuaternionBase<T> QuaternionBase<T>::Conjugate() const
+  {
+    return QuaternionBase<T>(w, -x, -y, -z);
   }
   
   template<typename T>

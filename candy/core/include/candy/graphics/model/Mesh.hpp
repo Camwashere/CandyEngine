@@ -16,7 +16,7 @@ namespace Candy::Graphics
     Mesh();
    
    
-   
+   static Mesh CreatePlaneMesh();
    static Mesh CreateCubeMesh();
    static Mesh CreateTriangularPrismMesh();
     

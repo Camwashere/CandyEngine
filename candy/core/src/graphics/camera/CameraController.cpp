@@ -65,8 +65,6 @@ namespace Candy::Graphics
     
     
     camera->UpdateCameraVectors();
-    //cameraMovementSpeed = zoomLevel;
-    
     
   }
   

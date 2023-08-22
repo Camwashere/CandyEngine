@@ -26,7 +26,20 @@ namespace Candy::Graphics
   void Renderer3D::RenderGrid()
   {
     instance->gridShader->Bind();
-    instance->gridMaterial.Bind(0);
+    
+    
+    DescriptorBuilder builder = DescriptorBuilder::Begin();
+    VkDescriptorBufferInfo bufferInfo{};
+    bufferInfo.buffer = *Renderer::GetCurrentFrame().uniformBuffer;
+    bufferInfo.offset=0;
+    bufferInfo.range = instance->gridMaterial.GetBufferSize();
+    
+    builder.AddBufferWrite(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 0);
+    
+    
+    builder.Write(Renderer::GetCurrentFrame().GlobalDescriptor());
+    
+    //instance->gridMaterial.Bind(0);
     instance->gridShader->SetMatrix("proj", sceneData.projectionMatrix);
     instance->gridShader->SetMatrix("view", sceneData.viewMatrix);
     
@@ -56,6 +69,17 @@ namespace Candy::Graphics
     
     
   }
+  void Renderer3D::BeginScene(const EditorCamera& camera)
+  {
+    instance->transforms.clear();
+    instance->meshes.clear();
+    instance->entities.clear();
+    sceneData.viewMatrix = camera.GetViewMatrix();
+    sceneData.projectionMatrix = camera.GetProjectionMatrix();
+    RenderGrid();
+    
+    
+  }
   void Renderer3D::SetNeedsSelection()
   {
     instance->needsSelection=true;
@@ -68,7 +92,7 @@ namespace Candy::Graphics
   {
     CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
     instance->shader->Bind();
-    instance->material.Bind(2);
+    instance->material.Bind();
     
     Renderer::GetCurrentFrame().storageBuffer->SetData(instance->transforms.data(), sizeof(Matrix4) * instance->transforms.size());
     
@@ -98,7 +122,7 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
     Renderer::BeginSelectionPass();
     instance->selectionShader->Bind();
-    instance->selectionMaterial.Bind(2);
+    instance->selectionMaterial.Bind();
     
     /*Renderer::GetCurrentFrame().storageBuffer->SetData(instance->transforms.data(), sizeof(Matrix4) * instance->transforms.size());
     
