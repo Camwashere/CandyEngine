@@ -32,6 +32,7 @@ namespace Candy
     
     editorCamera.SetViewportSize(size.x, size.y);
     editorCamera.OnUpdate();
+    Renderer::UpdateCameraData(editorCamera);
     parent->activeScene->OnUpdateEditor(editorCamera);
     
     
@@ -61,17 +62,7 @@ namespace Candy
   
   void Viewport::OnEvent(Events::Event& event)
   {
-    if (isHovered)
-    {
-      if (event.GetType() == Events::EventType::MOUSE_RELEASED)
-      {
-        Events::MouseReleasedEvent& e = (Events::MouseReleasedEvent&)event;
-        if (e.GetButton() == Mouse::ButtonLeft)
-        {
-          Renderer3D::SetNeedsSelection();
-        }
-      }
-    }
+
     editorCamera.OnEvent(event);
     
   }

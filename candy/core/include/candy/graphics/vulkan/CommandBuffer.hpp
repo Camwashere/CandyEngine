@@ -10,8 +10,8 @@ namespace Candy::Graphics
     {
     private:
         VkCommandPool commandPool;
-        std::array<VkCommandBuffer, 3> commandBuffers;
-        std::array<bool, 3> activeBuffers;
+        std::array<VkCommandBuffer, 4> commandBuffers;
+        std::array<bool, 4> activeBuffers;
         uint8_t currentBuffer=0;
         //VkCommandBuffer mainCommandBuffer;
         
@@ -55,7 +55,7 @@ namespace Candy::Graphics
       VkCommandBuffer& GetSelectionBuffer();
       VkCommandBuffer& GetUIBuffer();
       std::vector<VkCommandBuffer> GetActiveBuffers();
-      const std::array<VkCommandBuffer, 3>& GetBuffers();
+      const std::array<VkCommandBuffer, 4>& GetBuffers();
       size_t GetBufferCount()const;
       
         void BindGraphicsPipeline(VkPipeline pipeline);

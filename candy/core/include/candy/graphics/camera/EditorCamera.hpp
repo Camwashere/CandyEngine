@@ -33,6 +33,8 @@ namespace Candy::Graphics
     
     Math::Matrix4 viewMatrix;
     Math::Matrix4 projectionMatrix;
+    Math::Matrix4 viewMatrix2D;
+    Math::Matrix4 orthographicProjectionMatrix;
     
     float movementSpeed;
     float rollSpeed;
@@ -82,8 +84,11 @@ namespace Candy::Graphics
     void SetViewportSize(float width, float height);
     void SetViewportSize(const Math::Vector2& value);
     [[nodiscard]] const Math::Matrix4& GetViewMatrix() const;
+    [[nodiscard]] const Math::Matrix4& GetViewMatrix2D() const;
     [[nodiscard]] const Math::Matrix4& GetProjectionMatrix()const;
+    [[nodiscard]] const Math::Matrix4& GetOrthographicProjectionMatrix()const;
     [[nodiscard]] Math::Matrix4 GetViewProjectionMatrix() const;
+    [[nodiscard]] Math::Matrix4 GetViewProjectionMatrix2D()const;
     
     [[nodiscard]] Math::Vector3 GetLocalUp() const;
     [[nodiscard]] Math::Vector3 GetLocalRight() const;

@@ -28,7 +28,7 @@ namespace Candy::Graphics
   
   VertexBuffer::VertexBuffer(const BufferLayout &bufferLayout, uint64_t countPerElement) : VulkanBuffer(bufferLayout.CalculateSize(countPerElement), BufferType::VERTEX), layout(bufferLayout)
   {
-    
+    count = countPerElement;
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
@@ -54,7 +54,7 @@ namespace Candy::Graphics
     
     CreateStagingBuffer(stagingBuffer, &stagingBufferAllocation);
     
-    
+    count = bufferSize/sizeof(float);
     void *data;
     vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
     memcpy(data, vertices, (size_t) bufferSize);
@@ -102,7 +102,11 @@ namespace Candy::Graphics
     vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
   }
   
-  
+  void VertexBuffer::SetData(const void* data, uint32_t dataSize)
+  {
+    size = dataSize;
+    SetDataInternal(data);
+  }
   void VertexBuffer::SetLayout(const BufferLayout &bufferLayout)
   {
     layout = bufferLayout;
@@ -128,7 +132,10 @@ namespace Candy::Graphics
     
     return bindingDescription;
   }
-  
+  uint32_t VertexBuffer::GetCount()const
+  {
+    return count;
+  }
   SharedPtr<VertexBuffer> VertexBuffer::Create(const BufferLayout &layout, uint64_t countPerElement)
   {
     return CreateSharedPtr<VertexBuffer>(layout, countPerElement);

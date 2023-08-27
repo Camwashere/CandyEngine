@@ -29,16 +29,20 @@ namespace Candy
     testEntity = activeScene->CreateEntity("Test Entity");
     secondEntity = activeScene->CreateEntity("Second Entity");
     planeEntity = activeScene->CreateEntity("Plane Entity");
+    quadEntity = activeScene->CreateEntity("Quad Entity");
     
     testEntity.AddComponent<MeshComponent>(Mesh::CreateCubeMesh());
     secondEntity.AddComponent<MeshComponent>(Mesh::CreateTriangularPrismMesh());
     planeEntity.AddComponent<MeshComponent>(Mesh::CreatePlaneMesh());
     
+    quadEntity.AddComponent<SpriteRendererComponent>(Color::red);
+    
     testEntity.GetTransform().position = {0.0f, 2.0f, 0.0f};
-    
     secondEntity.GetTransform().position = {4.0f, 2.0f, 0.0f};
-    
     planeEntity.GetTransform().position = {-4.0f, 2.0f, 0.0f};
+    quadEntity.GetTransform().position = {0.0f, 0.0f, 0.0f};
+    
+    
     
   }
   

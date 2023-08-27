@@ -2,25 +2,45 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/utils/IDManager.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/math/Matrix.hpp>
 namespace Candy::Graphics
 {
-
+  using namespace Math;
   ShaderLayout::ShaderLayout()
   {
+    materialBufferSize=0;
+    globalBufferSize=0;
     sets.emplace_back();
     pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
   }
   void ShaderLayout::BindAll()
   {
     //CANDY_CORE_INFO("SETS SIZE: {}", sets.size());
-    for (size_t i=0; i<sets.size(); i++)
+    std::vector<uint32_t> dynamicOffsets{0, 0};
+    RenderCommand::BindDescriptorSets(pipeline, 0, {Renderer::GetCurrentFrame().GlobalDescriptor()}, dynamicOffsets);
+    for (size_t i=1; i<sets.size(); i++)
     {
       Bind(i);
+      //CANDY_CORE_INFO("SET SIZE: {0}", sets[i].size);
+      /*if (sets[i].size > 0)
+      {
+        Bind(i);
+      }*/
+      
     }
   }
   void ShaderLayout::Bind(uint32_t set)
   {
-    RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);
+    VkDescriptorSet descriptorSet = Renderer::GetCurrentFrame().GetDescriptorSet(set);
+    if (descriptorSet != VK_NULL_HANDLE)
+    {
+      RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);
+    }
+    else
+    {
+      CANDY_CORE_INFO("Descriptor set is null!");
+    }
+   
   }
   void ShaderLayout::BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {
@@ -57,8 +77,16 @@ namespace Candy::Graphics
     //int LAYOUT_NUM = 2;
     size_t LAYOUT_NUM = sets.size();
     layouts.resize(LAYOUT_NUM);
+    DescriptorBuilder globalBuilder = DescriptorBuilder::Begin();
+    globalBuilder.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(ShaderData::Stage::All));
+    globalBuilder.AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(ShaderData::Stage::All));
+    layouts[0] = globalBuilder.BuildLayout();
+    for (int f=0; f<FRAME_OVERLAP; f++)
+    {
+      CANDY_CORE_ASSERT(globalBuilder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GlobalDescriptor(), layouts[0]), "Failed to allocate descriptor set!");
+    }
     
-    for (size_t i=0; i<LAYOUT_NUM; i++)
+    for (size_t i=1; i<LAYOUT_NUM; i++)
     {
       DescriptorBuilder builder = DescriptorBuilder::Begin();
       for (const auto& block : sets[i].blocks)
@@ -136,6 +164,14 @@ namespace Candy::Graphics
     if (b.set >= sets.size())
     {
       sets.resize(b.set+1);
+    }
+    if (b.set == MATERIAL_SET)
+    {
+      materialBufferSize += b.size;
+    }
+    else if (b.set == GLOBAL_SET)
+    {
+      globalBufferSize += b.size;
     }
     return sets[b.set].AddBlock(b);
     

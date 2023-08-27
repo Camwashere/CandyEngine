@@ -64,6 +64,7 @@ namespace Candy
     static float DeltaTime();
     static float CurrentTime();
     static float FPS();
+    static float AverageFPS();
     static void Shutdown();
   
   private:

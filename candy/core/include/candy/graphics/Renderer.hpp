@@ -12,11 +12,21 @@
 #include "candy/graphics/material/Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
 #include <candy/graphics/camera/Camera.hpp>
+#include <candy/graphics/camera/EditorCamera.hpp>
 #include "model/Mesh.hpp"
 #include <candy/math/Matrix.hpp>
 namespace Candy::Graphics
 {
-  
+  struct CameraData
+  {
+    Math::Matrix4 viewMatrix{};
+    Math::Matrix4 projectionMatrix{};
+    Math::Matrix4 viewProjectionMatrix{};
+    
+    Math::Matrix4 viewMatrix2D{};
+    Math::Matrix4 projectionMatrix2D{};
+    Math::Matrix4 viewProjectionMatrix2D{};
+  };
   
   class Renderer
   {
@@ -26,7 +36,8 @@ namespace Candy::Graphics
   private:
 
     GraphicsContext* target;
-    std::array<UniquePtr<RenderPass>, 3> renderPasses{};
+    CameraData cameraData;
+    std::array<UniquePtr<RenderPass>, 4> renderPasses{};
     uint8_t currentPassIndex=0;
     
   private:
@@ -40,8 +51,9 @@ namespace Candy::Graphics
     
   public:
     static constexpr uint8_t viewportPassIndex=0;
-    static constexpr uint8_t selectionPassIndex=1;
-    static constexpr uint8_t uiPassIndex=2;
+    static constexpr uint8_t overlayPassIndex=1;
+    static constexpr uint8_t selectionPassIndex=2;
+    static constexpr uint8_t uiPassIndex=3;
     //static constexpr uint8_t selectionPassIndex=2;
     static void BeginScene(const Camera& camera);
     static void EndScene();
@@ -52,15 +64,20 @@ namespace Candy::Graphics
     static void SetTarget(GraphicsContext* target);
     static void BeginViewportPass();
     static void BeginSelectionPass();
+    static void BeginOverlayPass();
     static void BeginUIPass();
     static void EndViewportPass();
     static void EndPass();
+    static void UpdateCameraData(const EditorCamera& camera);
     static FrameData& GetCurrentFrame();
     static FrameData& GetFrame(uint32_t index);
     static RenderPass& GetCurrentPass();
     static RenderPass& GetViewportPass();
+    static RenderPass& GetOverlayPass();
     static RenderPass& GetSelectionPass();
     static RenderPass& GetUIPass();
+    static const CameraData& GetCameraData();
+   
     
     
   private:

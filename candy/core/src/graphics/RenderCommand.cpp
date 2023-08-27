@@ -1,5 +1,6 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/Renderer2D.hpp>
 #include <candy/graphics/Renderer3D.hpp>
 namespace Candy::Graphics
 {
@@ -71,6 +72,7 @@ namespace Candy::Graphics
   {
     InitSyncStructures();
     InitCommands();
+    Renderer2D::Init();
     Renderer3D::Init();
     dummyBuffer = new VulkanBuffer(BufferType::DUMMY);
     
@@ -244,6 +246,5 @@ namespace Candy::Graphics
     
     
     CANDY_CORE_ASSERT(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, GetFrame().renderFence)==VK_SUCCESS);
-    //GetFrame().viewportData.selectionPixelBuffer->CopyImage(GetFrame().viewportData.selectionImage);
   }
 }

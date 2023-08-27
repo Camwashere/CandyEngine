@@ -12,6 +12,7 @@ namespace Candy::Graphics
     BufferLayout layout;
    SharedPtr<VertexArray> vertexArray;
    
+   
   public:
     Mesh();
    

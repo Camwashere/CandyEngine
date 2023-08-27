@@ -19,6 +19,11 @@ namespace Candy::Graphics
   {
     CreateCommandPool(surface);
     CreateCommandBuffers();
+    for (int i = 0; i<activeBuffers.size(); i++)
+    {
+      activeBuffers[i] = false;
+    }
+    //activeBuffers[2] = false;
   }
   
   void CommandBuffer::CreateCommandPool(VkSurfaceKHR surface)
@@ -355,7 +360,7 @@ namespace Candy::Graphics
     return commandBuffers[2];
   }
   
-  const std::array<VkCommandBuffer, 3>& CommandBuffer::GetBuffers()
+  const std::array<VkCommandBuffer, 4>& CommandBuffer::GetBuffers()
   {
     return commandBuffers;
   }

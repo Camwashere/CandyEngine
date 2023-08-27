@@ -16,6 +16,11 @@ namespace Candy
     std::chrono::high_resolution_clock::time_point currentTimePoint;
     std::chrono::high_resolution_clock::time_point previousTimePoint;
     
+    float fpsSum;
+    float fpsAverage;
+    uint32_t fpsCounter;
+    uint32_t fpsCounterMax=20;
+    
   
   public:
     FrameTime();
@@ -30,6 +35,7 @@ namespace Candy
     
     [[nodiscard]] float GetPreviousTime()const;
     [[nodiscard]] float GetFPS()const;
+    [[nodiscard]] float GetAverageFPS()const;
     
     
   };

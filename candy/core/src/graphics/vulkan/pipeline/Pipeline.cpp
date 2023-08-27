@@ -10,6 +10,7 @@ namespace Candy::Graphics
     InitRasterizer();
     InitMultisampling();
     InitColorBlending();
+    SetDepthTesting(true);
     //Vulkan::PushDeleter([=, this](){vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr);});
   }
   
@@ -86,7 +87,39 @@ namespace Candy::Graphics
     multisampling.alphaToOneEnable = enabledAlphaToOne;
     multisampling.flags = flags;
   }
-  
+  void Pipeline::SetDepthTesting(bool enabled)
+  {
+    depthStencil = {};
+    if (enabled)
+    {
+      // Depth and stencil state
+      depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+      depthStencil.depthTestEnable = VK_TRUE;
+      depthStencil.depthWriteEnable = VK_TRUE;
+      depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+      depthStencil.depthBoundsTestEnable = VK_FALSE;
+      depthStencil.minDepthBounds = 0.0f; // Optional
+      depthStencil.maxDepthBounds = 1.0f; // Optional
+      depthStencil.stencilTestEnable = VK_FALSE;
+      depthStencil.front = {}; // Optional
+      depthStencil.back = {}; // Optional
+    }
+    else
+    {
+      CANDY_CORE_INFO("Depth testing disabled!");
+      // Depth and stencil state
+      depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+      depthStencil.depthTestEnable = VK_TRUE;
+      depthStencil.depthWriteEnable = VK_FALSE;
+      depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+      depthStencil.depthBoundsTestEnable = VK_FALSE;
+      depthStencil.minDepthBounds = 0.0f; // Optional
+      depthStencil.maxDepthBounds = 1.0f; // Optional
+      depthStencil.stencilTestEnable = VK_FALSE;
+      depthStencil.front = {}; // Optional
+      depthStencil.back = {}; // Optional
+    }
+  }
   void Pipeline::AddDynamicState(VkDynamicState state)
   {
     dynamicStates.push_back(state);
@@ -129,18 +162,8 @@ namespace Candy::Graphics
     vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
     
-    // Depth and stencil state
-    VkPipelineDepthStencilStateCreateInfo depthStencil{};
-    depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-    depthStencil.depthTestEnable = VK_TRUE;
-    depthStencil.depthWriteEnable = VK_TRUE;
-    depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-    depthStencil.depthBoundsTestEnable = VK_FALSE;
-    depthStencil.minDepthBounds = 0.0f; // Optional
-    depthStencil.maxDepthBounds = 1.0f; // Optional
-    depthStencil.stencilTestEnable = VK_FALSE;
-    depthStencil.front = {}; // Optional
-    depthStencil.back = {}; // Optional
+    
+    
     
     VkPipelineDynamicStateCreateInfo dynamicState{};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;

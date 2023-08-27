@@ -9,12 +9,7 @@
 namespace Candy::Graphics
 {
   using namespace Math;
-  struct CameraData
-  {
-    Matrix4 model;
-    Matrix4 view;
-    Matrix4 proj;
-  };
+ 
     GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
     {
       handle = windowHandle;
@@ -24,7 +19,7 @@ namespace Candy::Graphics
       Vulkan::RegisterContext(this);
       swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetUIPass());
       CreateViewport();
-      
+      CANDY_CORE_INFO("INITIALIZED GRAPHICS CONTEXT");
       
     }
   void GraphicsContext::RecreateViewport()
@@ -107,6 +102,7 @@ namespace Candy::Graphics
       Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
       Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
     }
+    
   }
   
 

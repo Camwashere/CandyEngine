@@ -9,21 +9,27 @@
 
 namespace Candy::Graphics
 {
+  struct Renderer3DStats
+  {
+    uint32_t drawCalls=0;
+    uint32_t objects=0;
+    uint32_t vertices=0;
+    uint32_t indices=0;
+    uint32_t triangles=0;
+    
+  };
   class Renderer3D
   {
   private:
+    static Renderer3DStats stats;
   
   private:
     SharedPtr<Shader> shader;
     SharedPtr<Shader> gridShader;
     SharedPtr<Shader> selectionShader;
-    //SharedPtr<VertexArray> vertexArray;
     Material material;
-    Material gridMaterial;
-    Material selectionMaterial;
-    //std::vector<MeshData> meshData;
     std::vector<Mesh> meshes;
-    bool needsSelection=true;
+    
     std::vector<uint32_t> entities;
     std::vector<Math::Matrix4> transforms;
     static constexpr uint32_t MAX_OBJECTS=100;
@@ -31,18 +37,20 @@ namespace Candy::Graphics
     
   private:
     void Initialize();
+    static void ResetStats();
     static void RenderGrid();
-    static void RenderSelectionBuffer();
+    
   public:
     static BufferLayout GetBufferLayout();
-    static void SetNeedsSelection();
-    static bool NeedsSelection();
+    
     
     static void BeginScene(const Camera& camera);
     static void BeginScene(const EditorCamera& camera);
     static void EndScene();
     static void Init();
     static void SubmitMesh(uint32_t entity, const Mesh& data, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
+    static Renderer3DStats GetStats();
+    static void RenderSelectionBuffer();
   
   };
 }

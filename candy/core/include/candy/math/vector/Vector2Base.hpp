@@ -71,7 +71,7 @@ namespace Candy::Math
     public: // Constructors
         VectorBase();
         explicit VectorBase(T value);
-        VectorBase(T xValue, T yValue);
+        constexpr VectorBase(T xValue, T yValue);
         
         template<typename U>
         requires(std::is_convertible_v<U, T>)

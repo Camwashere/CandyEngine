@@ -15,6 +15,28 @@ namespace Candy::Graphics
         vertexBufferOffsets.clear();
         indexBuffer = nullptr;
     }
+  uint32_t VertexArray::GetVertexCount()const
+  {
+    uint32_t count=0;
+    if(vertexBuffers.empty())
+      return count;
+    
+    
+    for (const auto& vertexBuffer : vertexBuffers)
+    {
+      count += vertexBuffer->GetCount();
+    }
+    return count;
+  }
+  
+  uint32_t VertexArray::GetIndexCount()const
+  {
+      if (indexBuffer)
+      {
+        return indexBuffer->GetCount();
+      }
+      return 0;
+  }
     void VertexArray::Bind() const
     {
       RenderCommand::BindVertexArray(this);

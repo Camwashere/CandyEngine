@@ -28,6 +28,10 @@ namespace Candy::ECS
   private:
     template<typename T>
     void OnComponentAdded(Entity entity, T& component);
+    
+    void RenderScene(const Graphics::EditorCamera& camera);
+    void RenderScene3D(const Graphics::EditorCamera& camera);
+    void RenderScene2D(const Graphics::EditorCamera& camera);
   
   public:
     Scene();
@@ -57,7 +61,7 @@ namespace Candy::ECS
     void OnStopSimulation();
     
     void OnUpdateEditor(Graphics::Camera& camera);
-    void OnUpdateEditor(Graphics::EditorCamera& camera);
+    void OnUpdateEditor(const Graphics::EditorCamera& camera);
     
     void OnViewportResize(std::uint32_t width, std::uint32_t height);
     

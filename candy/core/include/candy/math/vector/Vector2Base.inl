@@ -118,7 +118,7 @@ namespace Candy::Math
     {}
     
     template<typename T>
-    VectorBase<T, 2>::VectorBase(T xValue, T yValue) : x(xValue), y(yValue)
+    constexpr VectorBase<T, 2>::VectorBase(T xValue, T yValue) : x(xValue), y(yValue)
     {}
     
     template<typename T>

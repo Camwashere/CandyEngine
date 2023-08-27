@@ -27,6 +27,7 @@ namespace Candy::Graphics
     VkPipelineMultisampleStateCreateInfo multisampling;
     VkPipelineColorBlendAttachmentState colorBlendAttachment;
     VkPipelineColorBlendStateCreateInfo colorBlending;
+    VkPipelineDepthStencilStateCreateInfo depthStencil;
     
   private:
     void InitInputAssembly();
@@ -34,6 +35,7 @@ namespace Candy::Graphics
     void InitRasterizer();
     void InitMultisampling();
     void InitColorBlending();
+   
     
   
   public:
@@ -49,6 +51,7 @@ namespace Candy::Graphics
     void SetLineWidth(float width);
     void SetMultiSampling(VkSampleCountFlagBits sampleCount, VkBool32 enableSampleShading=VK_FALSE, VkBool32 enabledAlphaToCoverage=VK_FALSE, VkBool32 enabledAlphaToOne=VK_FALSE, VkPipelineMultisampleStateCreateFlags flags=0);
     void AddDynamicState(VkDynamicState state);
+    void SetDepthTesting(bool enabled);
     void AddDynamicStates(std::initializer_list<VkDynamicState> states);
     void ClearDynamicStates();
   

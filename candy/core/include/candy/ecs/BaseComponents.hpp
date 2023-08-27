@@ -41,7 +41,7 @@ namespace Candy::ECS
     //Graphics::Material material;
   };
   
-  /*struct SpriteRendererComponent
+  struct SpriteRendererComponent
   {
     Color color = Color::white;
     SharedPtr<Graphics::Texture> texture;
@@ -52,15 +52,7 @@ namespace Candy::ECS
     explicit SpriteRendererComponent(const Color& colorValue) : color(colorValue){}
   };
   
-  struct MeshFilterComponent
-  {
-    Graphics::Mesh mesh;
-  };
   
-  struct MeshRendererComponent
-  {
-    Graphics::Material material;
-  };*/
   
   
   template<typename... Component>
@@ -69,5 +61,5 @@ namespace Candy::ECS
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent, MeshComponent>;
+  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, MeshComponent>;
 }

@@ -16,6 +16,7 @@ namespace Candy::Graphics
   {
   private:
     BufferLayout layout;
+    uint32_t count;
   
   private:
     void SetDataInternal(const void* vertices);
@@ -31,7 +32,7 @@ namespace Candy::Graphics
   
   public:
 
-    
+    void SetData(const void* data, uint32_t size);
     template<typename T, typename...VECTOR_LIST>
     requires(IsVectorContainer<VECTOR_LIST> && ...)
     void SetData(const VECTOR_LIST&... vector)
@@ -43,6 +44,7 @@ namespace Candy::Graphics
     void SetLayout(const BufferLayout &bufferLayout);
     [[nodiscard]] const BufferLayout &GetLayout() const;
     [[nodiscard]] VkVertexInputBindingDescription GetVertexBindingDescription() const;
+    uint32_t GetCount()const;
   
   public:
     

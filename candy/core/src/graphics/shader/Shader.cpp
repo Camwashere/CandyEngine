@@ -56,7 +56,7 @@ namespace Candy::Graphics
       //BakePipeline(Renderer::GetRenderPass());
         
     }
-  Shader::Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass) : filepath(std::move(shaderFilePath))
+  Shader::Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting) : filepath(std::move(shaderFilePath))
   {
     CANDY_PROFILE_FUNCTION();
     
@@ -69,7 +69,7 @@ namespace Candy::Graphics
     
     // Extract name from filepath
     shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
-    
+    GetLayout().pipeline.SetDepthTesting(enableDepthTesting);
     GetLayout().BakePipeline(renderPass, CreateShaderStageCreateInfos());
   }
   
@@ -314,9 +314,9 @@ namespace Candy::Graphics
     {
         return CreateSharedPtr<Shader>(shaderFilePath);
     }
-  SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass)
+  SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting)
   {
-    return CreateSharedPtr<Shader>(shaderFilePath, renderPass);
+    return CreateSharedPtr<Shader>(shaderFilePath, renderPass, enableDepthTesting);
   }
     
     

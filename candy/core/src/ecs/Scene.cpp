@@ -4,6 +4,7 @@
 //#include <Candy/Graphics.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Renderer3D.hpp>
+#include <candy/graphics/Renderer2D.hpp>
 namespace Candy::ECS
 {
   using namespace Graphics;
@@ -167,9 +168,20 @@ namespace Candy::ECS
     
     Renderer3D::EndScene();
   }
-  void Scene::OnUpdateEditor(Graphics::EditorCamera& camera)
+  void Scene::OnUpdateEditor(const Graphics::EditorCamera& camera)
   {
     systemScheduler.Update((void*)&camera);
+    RenderScene(camera);
+    
+  }
+  void Scene::RenderScene(const Graphics::EditorCamera& camera)
+  {
+    RenderScene3D(camera);
+    RenderScene2D(camera);
+    Renderer3D::RenderSelectionBuffer();
+  }
+  void Scene::RenderScene3D(const Graphics::EditorCamera& camera)
+  {
     Renderer3D::BeginScene(camera);
     auto view = registry.view<TransformComponent, MeshComponent>();
     for (auto entity : view)
@@ -180,6 +192,19 @@ namespace Candy::ECS
     }
     
     Renderer3D::EndScene();
+  }
+  void Scene::RenderScene2D(const Graphics::EditorCamera& camera)
+  {
+    Renderer2D::BeginScene(camera);
+    auto view = registry.view<TransformComponent, SpriteRendererComponent>();
+    
+    for (auto entity : view)
+    {
+      auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+      Renderer2D::DrawQuad(transform.GetMatrix(), sprite.color, (int)entity);
+    }
+    Renderer2D::EndScene();
+  
   }
   SharedPtr<Scene> Scene::Create(const std::string& name)
   {

@@ -26,6 +26,7 @@ namespace Candy
     ECS::Entity testEntity;
     ECS::Entity secondEntity;
     ECS::Entity planeEntity;
+    ECS::Entity quadEntity;
     
   private:
     bool OnMouseButtonPressed(Events::MousePressedEvent& event);

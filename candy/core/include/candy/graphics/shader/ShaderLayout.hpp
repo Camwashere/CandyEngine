@@ -19,7 +19,8 @@ namespace Candy::Graphics
     std::vector<ShaderPushProperty*> pushProperties;
     std::vector<ShaderPushBlock> pushBlocks;
     BufferLayout vertexLayout;
-    
+    size_t materialBufferSize;
+    size_t globalBufferSize;
     std::unordered_map<std::string, uint32_t> pushBlockMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
 
@@ -53,6 +54,8 @@ namespace Candy::Graphics
   public:
     [[nodiscard]] VkPipeline GetPipeline()const;
     [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
+    [[nodiscard]] size_t GetMaterialBufferSize()const{return materialBufferSize;}
+    [[nodiscard]] size_t GetGlobalBufferSize()const{return globalBufferSize;}
     
   private:
     friend class Shader;

@@ -17,11 +17,14 @@ namespace Candy::Graphics
   void EditorCamera::UpdateViewMatrix()
   {
     viewMatrix = Matrix4::LookAt(position, position+localFront, localUp);
+    viewMatrix2D = Matrix4::Translate(Matrix4::IDENTITY, Vector3(position.x, position.y, 0.0f));
   }
   void EditorCamera::UpdateProjectionMatrix()
   {
     projectionMatrix = Matrix4::Perspective(Math::ToRadians(fov), GetAspectRatio(), nearClip, farClip);
     projectionMatrix[1,1] *= -1;
+    orthographicProjectionMatrix = Matrix4::Orthographic(0.0f, viewportSize.x, 0.0f, viewportSize.y, 0.0f, 1.0f);
+    orthographicProjectionMatrix[1,1]*=-1;
   }
   void EditorCamera::UpdateCameraVectors()
   {
@@ -56,7 +59,7 @@ namespace Candy::Graphics
     localRight  = Math::Vector3::Normalize(Math::Vector3::Cross(localFront, localUp));
     localUp     = Math::Vector3::Normalize(Math::Vector3::Cross(localRight, localFront));*/
     
-    UpdateViewMatrix();
+    //UpdateViewMatrix();
   }
   float EditorCamera::GetFov()const{return fov;}
   float EditorCamera::GetAspectRatio()const{return viewportSize.x/viewportSize.y;}
@@ -64,15 +67,28 @@ namespace Candy::Graphics
   {
     return viewMatrix;
   }
-  
+  const Math::Matrix4& EditorCamera::GetViewMatrix2D() const
+  {
+    //return viewMatrix;
+    return viewMatrix2D;
+  }
   const Math::Matrix4& EditorCamera::GetProjectionMatrix()const
   {
     return projectionMatrix;
+  }
+  const Math::Matrix4& EditorCamera::GetOrthographicProjectionMatrix()const
+  {
+    //return projectionMatrix;
+    return orthographicProjectionMatrix;
   }
   
   Math::Matrix4 EditorCamera::GetViewProjectionMatrix()const
   {
     return projectionMatrix*viewMatrix;
+  }
+  Math::Matrix4 EditorCamera::GetViewProjectionMatrix2D()const
+  {
+    return orthographicProjectionMatrix*viewMatrix2D;
   }
   Math::Vector2 EditorCamera::CalculatePanSpeed() const
   {

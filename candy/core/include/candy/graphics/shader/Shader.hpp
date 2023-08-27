@@ -27,7 +27,7 @@ namespace Candy::Graphics
     
     public:
       explicit Shader(std::filesystem::path  shaderFilePath);
-      Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass);
+      Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting=true);
       
     public:
       void Bind();
@@ -75,11 +75,13 @@ namespace Candy::Graphics
       ShaderLayout& GetLayout(){return postProcessor.shaderLayout;}
       const ShaderLayout& GetLayout()const{return postProcessor.shaderLayout;}
       BufferLayout GetBufferLayout()const{return postProcessor.shaderLayout.vertexLayout;}
+      size_t GetMaterialBufferSize()const{return postProcessor.shaderLayout.materialBufferSize;}
+      size_t GetGlobalBufferSize()const{return postProcessor.shaderLayout.globalBufferSize;}
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);
       static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath);
-      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass);
+      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting=true);
         
     private:
         friend class GraphicsContext;

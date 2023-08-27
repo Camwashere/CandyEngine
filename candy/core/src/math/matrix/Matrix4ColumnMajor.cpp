@@ -213,15 +213,23 @@ namespace Candy::Math
   
   AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::Orthographic(float left, float right, float bottom, float top, float near, float far)
   {
+    AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> ortho = AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::IDENTITY;
     
+    ortho[0,0] = 2.0f / (right - left);
+    ortho[1,1] = 2.0f / (top - bottom);
+    ortho[2,2] = 1.0f / (far - near);
+    ortho[3,0] = -(right + left) / (right - left);
+    ortho[3,1] = -(top + bottom) / (top - bottom);
+    ortho[3,2] = -near / (far - near);
+    return ortho;
     
-    float tx = - (right + left) / (right - left);
+    /*float tx = - (right + left) / (right - left);
     float ty = - (top + bottom) / (top - bottom);
     float tz = - (far + near) / (far - near);
     return {2.0f / (right - left), 0.0f, 0.0f, 0.0f,
                    0.0f, 2.0f / (top - bottom), 0.0f, 0.0f,
                    0.0f, 0.0f, -2.0f / (far - near), 0.0f,
-                   tx, ty, tz, 1.0f};
+                   tx, ty, tz, 1.0f};*/
   }
   
   

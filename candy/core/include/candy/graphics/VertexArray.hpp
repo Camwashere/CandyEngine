@@ -23,6 +23,8 @@ namespace Candy::Graphics
         void SetIndexBuffer(const SharedPtr<IndexBuffer>& indexBuffer);
         void Clear();
         void Bind() const;
+        [[nodiscard]] uint32_t GetVertexCount()const;
+        [[nodiscard]] uint32_t GetIndexCount()const;
         
         
     public:

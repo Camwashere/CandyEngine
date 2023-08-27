@@ -8,15 +8,21 @@ namespace Candy::Graphics
 {
   
   
-  
+  enum class RenderPassType
+  {
+    None=0,
+    Overlay2D=1,
+  };
     class RenderPass
     {
     private:
         VkRenderPass renderPass=VK_NULL_HANDLE;
         std::array<VkClearValue, 2> clearValues;
         Color clearColor;
+        RenderPassType type=RenderPassType::None;
    
     public:
+      RenderPass(VkFormat colorAttachmentFormat, RenderPassType passType);
       explicit RenderPass(const VkAttachmentDescription& depthAttachment, const std::vector<VkAttachmentDescription>& colorAttachments,const std::vector<VkAttachmentDescription>& inputAttachments);
         explicit RenderPass(VkFormat colorAttachmentFormat, VkImageLayout finalLayout);
         explicit RenderPass(VkFormat colorAttachmentFormat, VkFormat selectionAttachmentFormat, VkImageLayout finalLayout);

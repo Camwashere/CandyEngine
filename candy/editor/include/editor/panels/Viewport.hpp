@@ -32,7 +32,7 @@ namespace Candy
   private:
     void OnOverlayRender();
   public:
-    Viewport(EditorLayer* parentLayer);
+    explicit Viewport(EditorLayer* parentLayer);
     
   public:
     void OnAttach();
@@ -40,8 +40,8 @@ namespace Candy
     void OnEvent(Events::Event& event);
     void OnRenderUI();
     
-    bool IsHovered()const;
-    ECS::Entity GetHoveredEntity()const;
+    [[nodiscard]] bool IsHovered()const;
+    [[nodiscard]] ECS::Entity GetHoveredEntity()const;
     
   private:
     friend class EditorLayer;
