@@ -45,7 +45,7 @@ namespace Candy::Graphics
     
     
   public:
-    ShaderPostProcessor()=default;
+    explicit ShaderPostProcessor(uint8_t renderPassIndex);
     
   public:
     ShaderLayout& GetLayout();

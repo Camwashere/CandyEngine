@@ -10,11 +10,13 @@ namespace Candy
   private:
     std::filesystem::path rootDirectory;
     std::filesystem::path currentDirectory;
-    Graphics::Texture* directoryImage;
-    Graphics::Texture* fileImage;
+    //Graphics::Texture* directoryImage;
+    //Graphics::Texture* fileImage;
     
-    SharedPtr<Graphics::ImageView> directoryIcon;
-    SharedPtr<Graphics::ImageView> fileIcon;
+    //SharedPtr<Graphics::ImageView> directoryIcon;
+    //SharedPtr<Graphics::ImageView> fileIcon;
+    SharedPtr<Graphics::Texture> directoryIcon;
+    SharedPtr<Graphics::Texture> fileIcon;
     std::vector<VkDescriptorSet> descriptorSets;
     
     std::filesystem::path popupPath;

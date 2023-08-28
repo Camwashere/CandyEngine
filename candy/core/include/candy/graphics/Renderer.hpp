@@ -68,12 +68,20 @@ namespace Candy::Graphics
     static void BeginUIPass();
     static void EndViewportPass();
     static void EndPass();
-    static void UpdateCameraData(const EditorCamera& camera);
+    
+    static void UpdateCameraData(const CameraBase& camera3D, const CameraBase& camera2D);
     static FrameData& GetCurrentFrame();
     static FrameData& GetFrame(uint32_t index);
     static RenderPass& GetCurrentPass();
+    static uint8_t GetCurrentPassIndex();
+    static uint8_t GetViewportPassIndex();
+    static uint8_t GetOverlayPassIndex();
+    static uint8_t GetSelectionPassIndex();
+    static uint8_t GetUIPassIndex();
+    static RenderPass& GetRenderPass(uint8_t index);
     static RenderPass& GetViewportPass();
     static RenderPass& GetOverlayPass();
+    
     static RenderPass& GetSelectionPass();
     static RenderPass& GetUIPass();
     static const CameraData& GetCameraData();

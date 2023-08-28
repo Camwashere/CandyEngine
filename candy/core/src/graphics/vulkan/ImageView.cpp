@@ -1,5 +1,6 @@
 #include <candy/graphics/vulkan/ImageView.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/Texture.hpp>
 namespace Candy::Graphics
 {
   ImageView::ImageView() : imageView(VK_NULL_HANDLE)
@@ -13,7 +14,26 @@ namespace Candy::Graphics
     //Vulkan::DeletionQueue().Push(this);
     //Vulkan::PushDeleter([=, this](){Destroy();});
   }
-  ImageView::ImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
+  ImageView::ImageView(const Image& image, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
+  {
+    VkImageViewCreateInfo viewInfo{};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.format = image.GetFormatHandle();
+    viewInfo.subresourceRange.aspectMask = aspectFlags;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+    
+    
+    CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    Vulkan::DeletionQueue().Push(this);
+    //Vulkan::Push(imageView);
+    //Vulkan::PushDeleter([=, this](){Destroy();});
+  }
+  /*ImageView::ImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -31,14 +51,16 @@ namespace Candy::Graphics
     Vulkan::DeletionQueue().Push(this);
     //Vulkan::Push(imageView);
     //Vulkan::PushDeleter([=, this](){Destroy();});
-  }
+  }*/
   
   void ImageView::CreateSampler()
   {
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    
     samplerInfo.magFilter = VK_FILTER_LINEAR;
     samplerInfo.minFilter = VK_FILTER_LINEAR;
+    
     samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
@@ -63,9 +85,50 @@ namespace Candy::Graphics
   }
   void ImageView::Set(Texture& texture, VkImageAspectFlags aspectFlags)
   {
-    Set(texture.GetImage(), texture.GetVulkanFormat(), aspectFlags);
+    Set(texture.GetImage(), aspectFlags);
+    //Set(texture.GetImage(), texture.GetVulkanFormat(), aspectFlags);
   }
-  void ImageView::Set(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+  void ImageView::Set(const Image& image, VkImageAspectFlags aspectFlags)
+  {
+    VkImageViewCreateInfo viewInfo{};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    
+    viewInfo.format = image.GetFormatHandle();
+    viewInfo.subresourceRange.aspectMask = aspectFlags;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+    
+    CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    //Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
+    //Vulkan::Push(imageView);
+    CreateSampler();
+    Vulkan::DeletionQueue().Push(this);
+    
+  }
+  void ImageView::SetSwapChainImage(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+  {
+    VkImageViewCreateInfo viewInfo{};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.format = format;
+    viewInfo.subresourceRange.aspectMask = aspectFlags;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+    
+    CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    //Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
+    //Vulkan::Push(imageView);
+    CreateSampler();
+    Vulkan::DeletionQueue().Push(this);
+  }
+  /*void ImageView::Set(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
   {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -84,7 +147,7 @@ namespace Candy::Graphics
     CreateSampler();
     Vulkan::DeletionQueue().Push(this);
     
-  }
+  }*/
   bool ImageView::IsValid()const
   {
     return imageView != VK_NULL_HANDLE;

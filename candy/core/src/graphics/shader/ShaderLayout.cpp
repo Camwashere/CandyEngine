@@ -6,7 +6,7 @@
 namespace Candy::Graphics
 {
   using namespace Math;
-  ShaderLayout::ShaderLayout()
+  ShaderLayout::ShaderLayout(uint8_t passIndex) : renderPassIndex(passIndex)
   {
     materialBufferSize=0;
     globalBufferSize=0;
@@ -31,21 +31,18 @@ namespace Candy::Graphics
   }
   void ShaderLayout::Bind(uint32_t set)
   {
-    VkDescriptorSet descriptorSet = Renderer::GetCurrentFrame().GetDescriptorSet(set);
-    if (descriptorSet != VK_NULL_HANDLE)
+    if (sets[set].IsEmpty())
     {
-      RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set)}, sets[set].offsets);
+      
+      return;
     }
-    else
-    {
-      CANDY_CORE_INFO("Descriptor set is null!");
-    }
+    RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set, renderPassIndex)}, sets[set].offsets);
    
   }
-  void ShaderLayout::BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
+  void ShaderLayout::BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {
     VkPipelineLayout pipelineLayout = BakePipelineLayout();
-    pipeline.Bake(renderPass, GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
+    pipeline.Bake(Renderer::GetRenderPass(renderPassIndex), GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
     
   }
   
@@ -95,12 +92,13 @@ namespace Candy::Graphics
       }
       for (const auto& tex : sets[i].textures)
       {
-        builder.AddBinding(tex.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(tex.stage));
+        builder.AddBinding(tex.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(tex.stage), tex.arraySize);
+        
       }
       layouts[i] = builder.BuildLayout();
       for (int f=0; f<FRAME_OVERLAP; f++)
       {
-        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GetDescriptorSet(i), layouts[i]), "Failed to allocate descriptor set!");
+        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GetDescriptorSet(i, renderPassIndex), layouts[i]), "Failed to allocate descriptor set!");
       }
     }
     return layouts;
@@ -154,6 +152,13 @@ namespace Candy::Graphics
     for (const auto& e : vertexLayout)
     {
       //CANDY_CORE_INFO("NAME: {0}, LOCATION: {1}, TYPE: {2}, OFFSET: {3}", e.name, e.location, ShaderData::TypeToString(e.type), e.offset);
+      if (e.type == ShaderData::Type::Int)
+      {
+        CANDY_CORE_INFO("INT ATTRIBUTE DESCRIPTION FOUND");
+        VkFormat format = ShaderData::TypeToVulkan(e.type);
+        CANDY_CORE_INFO("FORMAT VALUE: {}", (uint32_t)format);
+        // SINT = 14. UINT = 13
+      }
       descriptions.push_back({e.location, 0, ShaderData::TypeToVulkan(e.type), e.offset});
     }
     return descriptions;

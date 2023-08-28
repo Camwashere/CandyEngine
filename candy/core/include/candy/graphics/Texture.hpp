@@ -6,21 +6,19 @@
 #include <filesystem>
 #include "vulkan/CommandBuffer.hpp"
 #include "vulkan/Image.hpp"
+#include "vulkan/ImageView.hpp"
+#include "ImageFormat.hpp"
 namespace Candy::Graphics
 {
   
-  struct TextureFormat
-  {
-    ColorLayout layout=ColorLayout::NONE;
-    ColorDataType dataType=ColorDataType::NONE;
-  };
+  
   struct TextureSpecification
   {
-    Math::Vector2u size{};
-    uint8_t channels=0;
-    TextureFormat format;
+    Math::Vector2u size{1, 1};
+    ImageFormat format = ImageFormat::RGBA8;
+    bool generateMipmaps = true;
     
-    [[nodiscard]] uint64_t ImageSize()const;
+    [[nodiscard]] uint64_t SizeInBytes()const;
     
   };
   
@@ -28,14 +26,14 @@ namespace Candy::Graphics
   {
   private:
     //VkImage image;
+    ImageView imageView;
     Image image;
     TextureSpecification specification;
     std::filesystem::path path;
-    //VkSampler sampler;
-    VmaAllocation allocation;
+    bool isLoaded = false;
+    //VmaAllocation allocation;
     
-  public:
-    //void CreateSampler();
+  
     
   public:
     Texture();
@@ -45,11 +43,30 @@ namespace Candy::Graphics
     
     
   public:
-    VkImage GetImage(){return image;}
-    //VkSampler GetSampler(){return sampler;}
+    void SetData(void* data, uint32_t size);
+    void Bind(uint32_t slot = 0)const;
+    void Bind(uint32_t slot, uint32_t arrayIndex);
+    [[nodiscard]] uint32_t GetWidth()const;
+    [[nodiscard]] uint32_t GetHeight()const;
+    [[nodiscard]] Math::Vector2u GetSize()const;
+    [[nodiscard]] const TextureSpecification& GetSpecification()const;
+    [[nodiscard]] const std::filesystem::path& GetPath()const;
+    [[nodiscard]] bool IsLoaded()const;
+    Image& GetImage(){return image;}
+    [[nodiscard]] const Image& GetImage()const{return image;}
+    ImageView& GetImageView(){return imageView;}
+    [[nodiscard]] const ImageView& GetImageView()const{return imageView;}
+    [[nodiscard]] VkSampler GetSampler()const{return imageView.GetSampler();}
+    VkDescriptorImageInfo GetDescriptorImageInfo()const;
+    
     bool Load(const std::filesystem::path& path);
     [[nodiscard]] VkFormat GetVulkanFormat()const;
-    //void Destroy();
+    
+    
+  public:
+   
+    static SharedPtr<Texture> Create(const std::filesystem::path& path);
+    static SharedPtr<Texture> Create(const TextureSpecification& spec);
   
   };
 }

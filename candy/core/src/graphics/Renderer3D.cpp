@@ -13,7 +13,7 @@ namespace Candy::Graphics
   {
     gridShader = Shader::Create("assets/shaders/renderer3D/Grid.glsl");
     shader = Shader::Create("assets/shaders/renderer3D/Mesh.glsl");
-    selectionShader = Shader::Create("assets/shaders/renderer3D/SelectionMesh.glsl", Renderer::GetSelectionPass());
+    selectionShader = Shader::Create("assets/shaders/renderer3D/SelectionMesh.glsl", Renderer::GetSelectionPassIndex());
     material.SetShader(shader.get());
     material.SetTexture("texSampler", "assets/textures/statue.jpg");
     
@@ -70,17 +70,8 @@ namespace Candy::Graphics
   {
     return instance->shader->GetBufferLayout();
   }
-  void Renderer3D::BeginScene(const Camera& camera)
-  {
-    instance->transforms.clear();
-    instance->meshes.clear();
-    instance->entities.clear();
-    
-    RenderGrid();
-    
-    
-  }
-  void Renderer3D::BeginScene(const EditorCamera& camera)
+  
+  void Renderer3D::BeginScene()
   {
     instance->transforms.clear();
     instance->meshes.clear();

@@ -18,7 +18,11 @@ set(IM_GUI_SOURCES lib/imgui/imgui.h lib/imgui/imconfig.h lib/imgui/imgui.cpp li
 
 set(IM_GUIZMO_SOURCES lib/imguizmo/ImGuizmo.h lib/imguizmo/ImGuizmo.cpp lib/imguizmo/GraphEditor.h lib/imguizmo/GraphEditor.cpp lib/imguizmo/ImSequencer.h lib/imguizmo/ImSequencer.cpp
         lib/imguizmo/ImGradient.cpp lib/imguizmo/ImGradient.h lib/imguizmo/ImCurveEdit.cpp lib/imguizmo/ImCurveEdit.h lib/imguizmo/ImZoomSlider.h
-        candy/core/include/candy/graphics/camera/EditorCamera.hpp)
+        candy/core/include/candy/graphics/camera/EditorCamera.hpp
+        candy/core/include/candy/graphics/camera/CameraBase.hpp
+        candy/core/src/graphics/camera/CameraBase.cpp
+        candy/core/include/candy/graphics/camera/OrthographicCameraController.hpp
+        candy/core/src/graphics/camera/OrthographicCameraController.cpp)
 
 add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/include/candy/base/Assert.hpp candy/core/include/candy/base/Base.hpp candy/core/include/candy/base/CandyConcepts.hpp candy/core/include/candy/base/PlatformDetection.hpp candy/core/include/candy/base/Log.hpp candy/core/include/candy/base/Instrumentor.hpp candy/core/include/candy/base/MouseCodes.hpp candy/core/include/candy/base/KeyCodes.hpp candy/core/include/candy/base/RawBuffer.hpp candy/core/include/candy/base/UUID.hpp candy/core/include/candy/base/PrimitiveTypes.hpp candy/core/src/base/Log.cpp candy/core/src/base/UUID.cpp candy/core/include/CandyPch.cpp
         candy/core/include/candy/collections/Array2D.hpp candy/core/include/candy/collections/Array3D.hpp
@@ -84,6 +88,8 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         ${IM_GUI_SOURCES}
         ${IM_GUIZMO_SOURCES}
         candy/core/src/graphics/camera/EditorCamera.cpp
+        candy/core/include/candy/graphics/ImageFormat.hpp
+        candy/core/src/graphics/ImageFormat.cpp
 )
 
 

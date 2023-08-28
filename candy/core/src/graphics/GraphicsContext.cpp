@@ -9,7 +9,29 @@
 namespace Candy::Graphics
 {
   using namespace Math;
- 
+  
+  VkDescriptorSet& FrameData::GetDescriptorSet(uint32_t index)
+  {
+    return GetDescriptorSet(index, Renderer::GetCurrentPassIndex());
+  }
+  
+  VkDescriptorSet& FrameData::GetDescriptorSet(uint32_t index, uint8_t renderPassIndex)
+  {
+    if (index == MATERIAL_SET)
+    {
+      if (renderPassIndex == Renderer::overlayPassIndex)
+      {
+        return overlayDescriptorSet;
+      }
+    }
+    return descriptorSets[index];
+  }
+  VkDescriptorSet& FrameData::GlobalDescriptor(){return descriptorSets[GLOBAL_SET];}
+  VkDescriptorSet& FrameData::ObjectDescriptor(){return descriptorSets[OBJECT_SET];}
+  VkDescriptorSet& FrameData::MaterialDescriptor()
+  {
+    return GetDescriptorSet(MATERIAL_SET);
+  }
     GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
     {
       handle = windowHandle;
@@ -45,6 +67,16 @@ namespace Candy::Graphics
       {
         CreateDepthResources(i, size);
         frames[i].viewportData.viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+        frames[i].viewportData.viewportImageView.Set(frames[i].viewportData.viewportImage);
+        
+        frames[i].viewportData.selectionImage.Create(size, VK_FORMAT_R32_SINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+        frames[i].viewportData.selectionImageView.Set(frames[i].viewportData.selectionImage);
+        
+        frames[i].viewportData.viewportFrameBuffer.Set(Renderer::GetViewportPass(), size, {frames[i].viewportData.viewportImageView, frames[i].viewportData.depthImageView});
+        frames[i].viewportData.selectionFrameBuffer.Set(Renderer::GetSelectionPass(), size, {frames[i].viewportData.selectionImageView, frames[i].viewportData.depthImageView});
+        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        /*frames[i].viewportData.viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
         frames[i].viewportData.viewportImageView.Set(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB);
         
         frames[i].viewportData.selectionImage.Create(size, VK_FORMAT_R32_SINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
@@ -53,7 +85,7 @@ namespace Candy::Graphics
         frames[i].viewportData.viewportFrameBuffer.Set(Renderer::GetViewportPass(), size, {frames[i].viewportData.viewportImageView, frames[i].viewportData.depthImageView});
         frames[i].viewportData.selectionFrameBuffer.Set(Renderer::GetSelectionPass(), size, {frames[i].viewportData.selectionImageView, frames[i].viewportData.depthImageView});
         frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
         
         frames[i].viewportData.selectionPixelBuffer = new PixelBuffer(size);
         
@@ -257,7 +289,8 @@ namespace Candy::Graphics
   {
     VkFormat depthFormat = GraphicsContext::FindDepthFormat();
     GetFrame(frameIndex).viewportData.depthImage.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-    GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    //GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
     GetFrame(frameIndex).commandBuffer.TransitionImageLayout(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
   }
   void GraphicsContext::UpdateFrameIndex()

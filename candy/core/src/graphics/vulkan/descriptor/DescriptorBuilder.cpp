@@ -62,15 +62,20 @@ namespace Candy::Graphics
     return *this;
   }
   
-  DescriptorBuilder& DescriptorBuilder::AddBinding(uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlags)
+  DescriptorBuilder& DescriptorBuilder::AddBinding(uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlags, uint32_t arrayCount)
   {
     VkDescriptorSetLayoutBinding newBinding{};
-    
-    newBinding.descriptorCount = 1;
+    if (arrayCount > 1)
+    {
+      CANDY_CORE_INFO("Binding {} with array count {}", binding, arrayCount);
+    }
+    CANDY_CORE_ASSERT(arrayCount > 0, "Array count must be greater than 0!");
+    newBinding.descriptorCount = arrayCount;
     newBinding.descriptorType = type;
     newBinding.pImmutableSamplers = nullptr;
     newBinding.stageFlags = stageFlags;
     newBinding.binding = binding;
+    
     
     bindings.push_back(newBinding);
     return *this;
@@ -115,6 +120,26 @@ namespace Candy::Graphics
     newWrite.pImageInfo = imageInfo;
     newWrite.dstBinding = binding;
     newWrite.dstSet = Renderer::GetCurrentFrame().GetDescriptorSet(set);
+    newWrite.dstArrayElement = 0;
+    
+    
+    writes.push_back(newWrite);
+    return *this;
+  }
+  DescriptorBuilder& DescriptorBuilder::AddImageArrayWrite(uint32_t binding, const std::vector<VkDescriptorImageInfo>& imageInfos, VkDescriptorType type, uint32_t set, uint32_t destinationStart)
+  {
+    VkWriteDescriptorSet newWrite{};
+    newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    newWrite.pNext = nullptr;
+    
+    newWrite.descriptorCount = imageInfos.size();
+    newWrite.descriptorType = type;
+    newWrite.pImageInfo = imageInfos.data();
+    newWrite.dstBinding = binding;
+    newWrite.dstSet = Renderer::GetCurrentFrame().GetDescriptorSet(set);
+    newWrite.dstArrayElement = 0;
+    
+    
     writes.push_back(newWrite);
     return *this;
   }
@@ -190,7 +215,10 @@ namespace Candy::Graphics
     }*/
     vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
   }
-  
+  void DescriptorBuilder::Write()
+  {
+    vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
+  }
   void DescriptorBuilder::BindWrites(VkDescriptorSet set)
   {
     for (VkWriteDescriptorSet& w : writes) {

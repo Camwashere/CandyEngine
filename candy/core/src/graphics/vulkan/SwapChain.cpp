@@ -106,7 +106,8 @@ namespace Candy::Graphics
   {
     VkFormat depthFormat = GraphicsContext::FindDepthFormat();
     depthImage.Create(Math::Vector2u(extent.width, extent.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-    depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    //depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    depthImageView.Set(depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
     
     context->GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     
@@ -118,7 +119,8 @@ namespace Candy::Graphics
     buffers.resize(images.size());
     for (size_t i = 0; i<images.size(); i++)
     {
-      buffers[i].view.Set(images[i], imageFormat);
+      //buffers[i].view.Set(images[i], imageFormat);
+      buffers[i].view.SetSwapChainImage(images[i], imageFormat);
       std::vector<VkImageView> attachments = {buffers[i].view, depthImageView};
       buffers[i].frameBuffer.Set(renderPass, {extent.width, extent.height}, attachments);
     }

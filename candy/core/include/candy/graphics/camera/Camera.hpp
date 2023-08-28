@@ -1,9 +1,10 @@
 #pragma once
 #include <candy/math/Vector.hpp>
 #include <candy/math/Matrix.hpp>
+#include "CameraBase.hpp"
 namespace Candy::Graphics
 {
-  class Camera
+  class Camera : public CameraBase
   {
   private:
     static constexpr float YAW=-90.0f;
@@ -11,7 +12,7 @@ namespace Candy::Graphics
     static constexpr float ROLL        =  0.0f;
     static constexpr float ZOOM        =  45.0f;
   private:
-    Math::Vector3 position;
+   
     Math::Vector3 localFront;
     Math::Vector3 localUp;
     Math::Vector3 localRight;
@@ -25,8 +26,7 @@ namespace Candy::Graphics
     Math::Vector2 screenSize;
     float nearClip=0.1f, farClip=100.0f;
     
-    Math::Matrix4 viewMatrix;
-    Math::Matrix4 projectionMatrix;
+    
   
   private:
     void UpdateCameraVectors();
@@ -45,14 +45,10 @@ namespace Candy::Graphics
     void SetClipRange(float near, float far);
     void SetZoom(float value);
     
-    [[nodiscard]] const Math::Vector3& GetPosition()const;
     [[nodiscard]] float GetZoom()const;
     [[nodiscard]] float GetAspectRatio()const;
   
-  public:
-    [[nodiscard]] Math::Matrix4 GetViewMatrix()const;
-    [[nodiscard]] Math::Matrix4 GetProjectionMatrix()const;
-    [[nodiscard]] Math::Matrix4 GetViewProjectionMatrix()const;
+
   
   private:
     friend class CameraController;

@@ -44,8 +44,8 @@ namespace Candy::Graphics
     static BufferLayout GetBufferLayout();
     
     
-    static void BeginScene(const Camera& camera);
-    static void BeginScene(const EditorCamera& camera);
+    
+    static void BeginScene();
     static void EndScene();
     static void Init();
     static void SubmitMesh(uint32_t entity, const Mesh& data, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);

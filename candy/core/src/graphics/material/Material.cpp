@@ -42,12 +42,13 @@ namespace Candy::Graphics
       {
         continue;
       }
-      VkDescriptorImageInfo imageInfo{};
+      param.GetTexture().Bind();
+      /*VkDescriptorImageInfo imageInfo{};
       imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      imageInfo.imageView = param.GetImageView();
+      imageInfo.imageView = param.GetTexture().;
       imageInfo.sampler = param.GetSampler();
       
-      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());
+      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());*/
     }
     
 

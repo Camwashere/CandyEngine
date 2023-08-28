@@ -27,7 +27,7 @@ namespace Candy::Graphics
     
     public:
       explicit Shader(std::filesystem::path  shaderFilePath);
-      Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting=true);
+      Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
       
     public:
       void Bind();
@@ -81,7 +81,7 @@ namespace Candy::Graphics
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);
       static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath);
-      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting=true);
+      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
         
     private:
         friend class GraphicsContext;

@@ -134,23 +134,23 @@ namespace Candy::Graphics
     {
       
       case spirv_cross::SPIRType::Unknown:
-        break;
+        return Type::Unknown;
       case spirv_cross::SPIRType::Void:
-        break;
+        return Type::Void;
       case spirv_cross::SPIRType::Boolean:
-        break;
+        return Type::Bool;
       case spirv_cross::SPIRType::SByte:
-        break;
+        return Type::Byte;
       case spirv_cross::SPIRType::UByte:
-        break;
+        return Type::UByte;
       case spirv_cross::SPIRType::Short:
         break;
       case spirv_cross::SPIRType::UShort:
         break;
       case spirv_cross::SPIRType::Int:
-        break;
+        return Type::Int;
       case spirv_cross::SPIRType::UInt:
-        break;
+        return Type::UInt;
       case spirv_cross::SPIRType::Int64:
         break;
       case spirv_cross::SPIRType::UInt64:
@@ -192,13 +192,22 @@ namespace Candy::Graphics
         
         break;
       case spirv_cross::SPIRType::Double:
-        break;
+        return Type::Double;
       case spirv_cross::SPIRType::Struct:
         break;
       case spirv_cross::SPIRType::Image:
         break;
       case spirv_cross::SPIRType::SampledImage:
-        return Type::Sampler2D;
+        if (spirvType.array.empty())
+        {
+          return Type::Sampler2D;
+        }
+        
+        else
+        {
+          return Type::Sampler2DArray;
+        }
+        
       case spirv_cross::SPIRType::Sampler:
         break;
       case spirv_cross::SPIRType::AccelerationStructure:
@@ -210,7 +219,7 @@ namespace Candy::Graphics
       case spirv_cross::SPIRType::Interpolant:
         break;
       case spirv_cross::SPIRType::Char:
-        break;
+        return Type::Byte;
     }
     
     //CANDY_CORE_INFO("Vec Size: {}, Columns: {}", spirvType.vecsize, spirvType.columns);

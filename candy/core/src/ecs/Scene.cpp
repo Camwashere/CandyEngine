@@ -154,35 +154,23 @@ namespace Candy::ECS
     viewportHeight = height;
   }
   
-  void Scene::OnUpdateEditor(Graphics::Camera& camera)
+  
+  void Scene::OnUpdateEditor()
   {
-    systemScheduler.Update((void*)&camera);
-    Renderer3D::BeginScene(camera);
-    auto view = registry.view<TransformComponent, MeshComponent>();
-    for (auto entity : view)
-    {
-      
-      auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
-      Renderer3D::SubmitMesh((uint32_t)entity, mesh.mesh, transform.GetMatrix());
-    }
-    
-    Renderer3D::EndScene();
-  }
-  void Scene::OnUpdateEditor(const Graphics::EditorCamera& camera)
-  {
-    systemScheduler.Update((void*)&camera);
-    RenderScene(camera);
+    //systemScheduler.Update((void*)&camera);
+    RenderScene();
     
   }
-  void Scene::RenderScene(const Graphics::EditorCamera& camera)
+  void Scene::RenderScene()
   {
-    RenderScene3D(camera);
-    RenderScene2D(camera);
+    RenderScene3D();
+    RenderScene2D();
     Renderer3D::RenderSelectionBuffer();
+    Renderer2D::RenderSelectionBuffer();
   }
-  void Scene::RenderScene3D(const Graphics::EditorCamera& camera)
+  void Scene::RenderScene3D()
   {
-    Renderer3D::BeginScene(camera);
+    Renderer3D::BeginScene();
     auto view = registry.view<TransformComponent, MeshComponent>();
     for (auto entity : view)
     {
@@ -193,9 +181,9 @@ namespace Candy::ECS
     
     Renderer3D::EndScene();
   }
-  void Scene::RenderScene2D(const Graphics::EditorCamera& camera)
+  void Scene::RenderScene2D()
   {
-    Renderer2D::BeginScene(camera);
+    Renderer2D::BeginScene();
     auto view = registry.view<TransformComponent, SpriteRendererComponent>();
     
     for (auto entity : view)

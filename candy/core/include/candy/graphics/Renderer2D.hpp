@@ -21,7 +21,8 @@ namespace Candy::Graphics
     };
     static void Init();
     static void Flush();
-    static void BeginScene(const EditorCamera& camera);
+    static void RenderSelectionBuffer();
+    static void BeginScene();
     static void EndScene();
     
     static void DrawQuad(const Math::Vector2& position, const Math::Vector2& size, const Math::Vector4& color);

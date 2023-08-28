@@ -10,17 +10,19 @@ namespace Candy
   ContentBrowserPanel::ContentBrowserPanel(std::filesystem::path  contentRoot) : rootDirectory(std::move(contentRoot)), currentDirectory(rootDirectory)
   {
     
-    directoryImage = new Texture("assets/icons/DirectoryIcon.png");
-    fileImage = new Texture("assets/icons/FileIcon.png");
+    //directoryImage = new Texture("assets/icons/DirectoryIcon.png");
+    //fileImage = new Texture("assets/icons/FileIcon.png");
+    directoryIcon = Texture::Create("assets/icons/DirectoryIcon.png");
+    fileIcon = Texture::Create("assets/icons/FileIcon.png");
     descriptorSets.resize(2);
     
-    directoryIcon = CreateSharedPtr<ImageView>();
-    fileIcon = CreateSharedPtr<ImageView>();
+    //directoryIcon = CreateSharedPtr<ImageView>();
+    //fileIcon = CreateSharedPtr<ImageView>();
     
-    directoryIcon->Set(*directoryImage);
-    fileIcon->Set(*fileImage);
-    descriptorSets[0] = ImGui_ImplVulkan_AddTexture(directoryIcon->GetSampler(), *directoryIcon, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    descriptorSets[1] = ImGui_ImplVulkan_AddTexture(fileIcon->GetSampler(), *fileIcon, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    //directoryIcon->Set(*directoryImage);
+    //fileIcon->Set(*fileImage);
+    descriptorSets[0] = ImGui_ImplVulkan_AddTexture(directoryIcon->GetSampler(), directoryIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    descriptorSets[1] = ImGui_ImplVulkan_AddTexture(fileIcon->GetSampler(), fileIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     
     
     

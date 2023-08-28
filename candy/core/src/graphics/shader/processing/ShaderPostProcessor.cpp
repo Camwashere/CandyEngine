@@ -28,7 +28,10 @@ namespace Candy::Graphics
     }
   }
   
+  ShaderPostProcessor::ShaderPostProcessor(uint8_t renderPassIndex) : shaderLayout(renderPassIndex)
+  {
   
+  }
   void ShaderPostProcessor::CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath)
   {
     shaderc::Compiler compiler;
@@ -188,6 +191,16 @@ namespace Candy::Graphics
       texture.name = compiler.get_name(resource.id);
       texture.stage = stage;
       texture.type = ShaderData::SpirvToType(compiler.get_type(resource.type_id));
+      if (texture.type == ShaderData::Type::Sampler2DArray)
+      {
+        
+        texture.arraySize = compiler.get_type(resource.type_id).array[0];
+        CANDY_CORE_INFO("Sampler2DArray with size: {}", texture.arraySize);
+      }
+      else
+      {
+        texture.arraySize=1;
+      }
       texture.binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
       texture.set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
       shaderLayout.AddTexture(texture);

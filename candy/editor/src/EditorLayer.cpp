@@ -35,7 +35,7 @@ namespace Candy
     secondEntity.AddComponent<MeshComponent>(Mesh::CreateTriangularPrismMesh());
     planeEntity.AddComponent<MeshComponent>(Mesh::CreatePlaneMesh());
     
-    quadEntity.AddComponent<SpriteRendererComponent>(Color::red);
+    quadEntity.AddComponent<SpriteRendererComponent>(Color::purple);
     
     testEntity.GetTransform().position = {0.0f, 2.0f, 0.0f};
     secondEntity.GetTransform().position = {4.0f, 2.0f, 0.0f};

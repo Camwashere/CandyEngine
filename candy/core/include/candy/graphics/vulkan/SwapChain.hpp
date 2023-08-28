@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "device/VulkanDeviceManager.hpp"
+#include "Image.hpp"
 #include "ImageView.hpp"
 #include "../FrameBuffer.hpp"
 

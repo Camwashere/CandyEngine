@@ -44,7 +44,7 @@ namespace Candy::Graphics
   void MaterialTextureParameter::SetTexture(const std::filesystem::path& path)
   {
     texture.Load(path);
-    textureImageView.Set(texture);
+    //textureImageView.Set(texture);
   }
   std::string MaterialTextureParameter::GetName()const
   {
@@ -52,12 +52,13 @@ namespace Candy::Graphics
   }
   VkSampler MaterialTextureParameter::GetSampler()const
   {
-    return textureImageView.GetSampler();
+    return texture.GetSampler();
+    //return textureImageView.GetSampler();
   }
-  VkImageView MaterialTextureParameter::GetImageView()const
+  /*VkImageView MaterialTextureParameter::GetImageView()const
   {
     return textureImageView;
-  }
+  }*/
   uint32_t MaterialTextureParameter::GetBinding()const
   {
     return binding;

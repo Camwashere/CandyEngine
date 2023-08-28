@@ -2,9 +2,10 @@
 #include <candy/math/Matrix.hpp>
 #include <candy/event/Events.hpp>
 #include <candy/math/Quaternion.hpp>
+#include "CameraBase.hpp"
 namespace Candy::Graphics
 {
-  class EditorCamera
+  class EditorCamera : public CameraBase
   {
   private:
     static constexpr float YAW=-90.0f;
@@ -17,7 +18,6 @@ namespace Candy::Graphics
     static constexpr float SCROLL_SENSITIVITY = 4.5f;
     
   private:
-    Math::Vector3 position;
     Math::Vector3 localFront;
     Math::Vector3 localUp;
     Math::Vector3 localRight;
@@ -31,10 +31,9 @@ namespace Candy::Graphics
     Math::Vector2 viewportSize;
     float nearClip=0.1f, farClip=100.0f;
     
-    Math::Matrix4 viewMatrix;
-    Math::Matrix4 projectionMatrix;
-    Math::Matrix4 viewMatrix2D;
-    Math::Matrix4 orthographicProjectionMatrix;
+
+    //Math::Matrix4 viewMatrix2D;
+    //Math::Matrix4 orthographicProjectionMatrix;
     
     float movementSpeed;
     float rollSpeed;
@@ -83,17 +82,17 @@ namespace Candy::Graphics
     void SetDistance(float value);
     void SetViewportSize(float width, float height);
     void SetViewportSize(const Math::Vector2& value);
-    [[nodiscard]] const Math::Matrix4& GetViewMatrix() const;
-    [[nodiscard]] const Math::Matrix4& GetViewMatrix2D() const;
-    [[nodiscard]] const Math::Matrix4& GetProjectionMatrix()const;
-    [[nodiscard]] const Math::Matrix4& GetOrthographicProjectionMatrix()const;
-    [[nodiscard]] Math::Matrix4 GetViewProjectionMatrix() const;
-    [[nodiscard]] Math::Matrix4 GetViewProjectionMatrix2D()const;
+
+    //[[nodiscard]] const Math::Matrix4& GetViewMatrix2D() const;
+
+    //[[nodiscard]] const Math::Matrix4& GetOrthographicProjectionMatrix()const;
+
+    //[[nodiscard]] Math::Matrix4 GetViewProjectionMatrix2D()const;
     
     [[nodiscard]] Math::Vector3 GetLocalUp() const;
     [[nodiscard]] Math::Vector3 GetLocalRight() const;
     [[nodiscard]] Math::Vector3 GetLocalForward() const;
-    [[nodiscard]] const Math::Vector3& GetPosition() const;
+
     
     [[nodiscard]] float GetPitch() const;
     [[nodiscard]] float GetYaw() const;

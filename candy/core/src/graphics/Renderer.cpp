@@ -66,8 +66,10 @@ namespace Candy::Graphics
   void Renderer::BeginViewportPass()
   {
     CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
+    instance->currentPassIndex = viewportPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(viewportPassIndex);
     RenderCommand::Reset();
+    
     
     std::array<VkClearValue, 2> clearValues{};
     
@@ -88,6 +90,7 @@ namespace Candy::Graphics
   void Renderer::BeginOverlayPass()
   {
     //CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
+    instance->currentPassIndex = overlayPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(overlayPassIndex);
     RenderCommand::Reset();
     std::array<VkClearValue, 2> clearValues{};
@@ -109,8 +112,10 @@ namespace Candy::Graphics
     Math::Vector2u position = {0, 0};
     RenderCommand::SetViewport(position, size);
   }
+  
   void Renderer::BeginSelectionPass()
   {
+    instance->currentPassIndex = selectionPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(selectionPassIndex);
     RenderCommand::Reset();
     
@@ -133,6 +138,7 @@ namespace Candy::Graphics
   }
   void Renderer::BeginUIPass()
   {
+    instance->currentPassIndex = uiPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(uiPassIndex);
     RenderCommand::Reset();
     
@@ -162,13 +168,13 @@ namespace Candy::Graphics
   {
   
   }
-  void Renderer::UpdateCameraData(const EditorCamera& camera)
+  void Renderer::UpdateCameraData(const CameraBase& camera3D, const CameraBase& camera2D)
   {
-    instance->cameraData.viewMatrix = camera.GetViewMatrix();
-    instance->cameraData.projectionMatrix = camera.GetProjectionMatrix();
+    instance->cameraData.viewMatrix = camera3D.GetViewMatrix();
+    instance->cameraData.projectionMatrix = camera3D.GetProjectionMatrix();
     instance->cameraData.viewProjectionMatrix = instance->cameraData.projectionMatrix * instance->cameraData.viewMatrix;
-    instance->cameraData.viewMatrix2D = camera.GetViewMatrix2D();
-    instance->cameraData.projectionMatrix2D = camera.GetOrthographicProjectionMatrix();
+    instance->cameraData.viewMatrix2D = camera2D.GetViewMatrix();
+    instance->cameraData.projectionMatrix2D = camera2D.GetProjectionMatrix();
     instance->cameraData.viewProjectionMatrix2D = instance->cameraData.projectionMatrix2D * instance->cameraData.viewMatrix2D;
     RenderCommand::SetUniform(0, sizeof(CameraData), &instance->cameraData);
     
@@ -197,6 +203,7 @@ namespace Candy::Graphics
     
    
   }
+  
   void Renderer::SetClearColor(Color color)
   {
     GetViewportPass().SetClearColor(color);
@@ -213,6 +220,26 @@ namespace Candy::Graphics
   {
     return *instance->renderPasses[instance->currentPassIndex];
   }
+  uint8_t Renderer::GetCurrentPassIndex()
+  {
+    return instance->currentPassIndex;
+  }
+  uint8_t Renderer::GetViewportPassIndex()
+  {
+    return viewportPassIndex;
+  }
+  uint8_t Renderer::GetOverlayPassIndex()
+  {
+    return overlayPassIndex;
+  }
+  uint8_t Renderer::GetSelectionPassIndex()
+  {
+    return selectionPassIndex;
+  }
+  uint8_t Renderer::GetUIPassIndex()
+  {
+    return uiPassIndex;
+  }
   RenderPass& Renderer::GetUIPass()
   {
     return *instance->renderPasses[uiPassIndex];
@@ -220,6 +247,11 @@ namespace Candy::Graphics
   const CameraData& Renderer::GetCameraData()
   {
     return instance->cameraData;
+  }
+  RenderPass& Renderer::GetRenderPass(uint8_t index)
+  {
+    CANDY_CORE_ASSERT(index < instance->renderPasses.size());
+    return *instance->renderPasses[index];
   }
   RenderPass& Renderer::GetViewportPass()
   {

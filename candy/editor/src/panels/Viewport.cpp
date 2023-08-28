@@ -16,7 +16,7 @@ namespace Candy
   using namespace Math;
   using namespace ECS;
   
-  Viewport::Viewport(EditorLayer* parentLayer) : parent(parentLayer), cameraController(new Camera(Vector3(0.0f, 1.0f, 3.27f))), editorCamera(Vector3(0.0f, 1.0f, 3.27f))
+  Viewport::Viewport(EditorLayer* parentLayer) : parent(parentLayer), orthographicCameraController(3000.0f/1500.0f), editorCamera(Vector3(0.0f, 1.0f, 3.27f))
   {
     CANDY_CORE_ASSERT(parent != nullptr);
     gizmoType = ImGuizmo::OPERATION::TRANSLATE;
@@ -32,8 +32,9 @@ namespace Candy
     
     editorCamera.SetViewportSize(size.x, size.y);
     editorCamera.OnUpdate();
-    Renderer::UpdateCameraData(editorCamera);
-    parent->activeScene->OnUpdateEditor(editorCamera);
+    orthographicCameraController.OnUpdate();
+    Renderer::UpdateCameraData(editorCamera, orthographicCameraController.GetCamera());
+    parent->activeScene->OnUpdateEditor();
     
     
     
@@ -62,9 +63,8 @@ namespace Candy
   
   void Viewport::OnEvent(Events::Event& event)
   {
-
     editorCamera.OnEvent(event);
-    
+    orthographicCameraController.OnEvent(event);
   }
   void Viewport::OnRenderUI()
   {

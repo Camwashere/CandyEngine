@@ -4,7 +4,7 @@ namespace Candy::Graphics
 {
   using namespace Math;
   Camera::Camera(const Vector3& pos, const Vector3& upValue, float yawValue, float pitchValue)
-  : localFront(Math::Vector3(0.0f, 0.0f, 1.0f)), position(pos), localUp(upValue), pitch(pitchValue), yaw(yawValue), roll(ROLL), zoom(ZOOM)
+  : CameraBase(pos), localFront(Math::Vector3(0.0f, 0.0f, 1.0f)), localUp(upValue), pitch(pitchValue), yaw(yawValue), roll(ROLL), zoom(ZOOM)
   {
     SetScreenSizeToApplicationWindow();
     UpdateCameraVectors();
@@ -15,9 +15,9 @@ namespace Candy::Graphics
   void Camera::SetClipRange(float near, float far){nearClip = near; farClip = far;}
   void Camera::SetZoom(float value){zoom = value;}
   
-  [[nodiscard]] const Math::Vector3& Camera::GetPosition()const{return position;}
-  [[nodiscard]] float Camera::GetZoom()const{return zoom;}
-  [[nodiscard]] float Camera::GetAspectRatio()const{return screenSize.x/screenSize.y;}
+  
+  float Camera::GetZoom()const{return zoom;}
+  float Camera::GetAspectRatio()const{return screenSize.x/screenSize.y;}
   void Camera::SetScreenSizeToApplicationWindow()
   {
     SetScreenSize((float)Application::GetMainWindowReference().GetWidth(), (float)Application::GetMainWindowReference().GetHeight());
@@ -45,22 +45,4 @@ namespace Candy::Graphics
     UpdateViewMatrix();
   }
   
-  Math::Matrix4 Camera::GetViewMatrix()const
-  {
-    return viewMatrix;
-    //return Matrix4::LookAt(position, position+localFront, localUp);
-  }
-  
-  Math::Matrix4 Camera::GetProjectionMatrix()const
-  {
-    return projectionMatrix;
-    /*Matrix4 proj =  Matrix4::Perspective(Math::ToRadians(zoom), screenSize.x/screenSize.y, nearClip, farClip);
-    proj[1,1] *= -1;
-    return proj;*/
-  }
-  
-  Math::Matrix4 Camera::GetViewProjectionMatrix()const
-  {
-    return GetProjectionMatrix() * GetViewMatrix();
-  }
 }

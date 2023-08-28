@@ -106,6 +106,10 @@ namespace Candy::Graphics
   {
     return blocks[id];
   }
+  bool ShaderSet::IsEmpty()const
+  {
+    return properties.empty() && blocks.empty() && textures.empty();
+  }
   const std::vector<ShaderBlock>& ShaderSet::GetBlocks()const
   {
     return blocks;

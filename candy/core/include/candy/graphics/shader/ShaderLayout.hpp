@@ -23,16 +23,17 @@ namespace Candy::Graphics
     size_t globalBufferSize;
     std::unordered_map<std::string, uint32_t> pushBlockMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
+    const uint8_t renderPassIndex;
 
     
   private:
     VkPipelineLayout BakePipelineLayout();
     std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
     VkDescriptorType GetDescriptorType(size_t setIndex);
-    void BakePipeline(VkRenderPass renderPass, const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
+    void BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
   public:
-    ShaderLayout();
+    ShaderLayout(uint8_t renderPassIndex);
     void BindAll();
     void Bind(uint32_t set);
     uint32_t PushConstant(const std::string& name, const void* data);

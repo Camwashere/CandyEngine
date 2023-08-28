@@ -5,6 +5,7 @@
 #include <candy/event/Events.hpp>
 #include <candy/graphics/camera/CameraController.hpp>
 #include <candy/graphics/camera/EditorCamera.hpp>
+#include <candy/graphics/camera/OrthographicCameraController.hpp>
 #include <candy/ecs/Scene.hpp>
 #include <candy/ecs/Entity.hpp>
 namespace Candy
@@ -21,7 +22,7 @@ namespace Candy
     bool isHovered=false;
     EditorLayer* parent;
     //ECS::Scene* activeScene;
-    Graphics::CameraController cameraController;
+    Graphics::OrthographicCameraController orthographicCameraController;
     Graphics::EditorCamera editorCamera;
     Math::Rectangle bounds;
     ECS::Entity hoveredEntity;

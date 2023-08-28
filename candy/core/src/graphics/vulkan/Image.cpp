@@ -53,9 +53,6 @@ namespace Candy::Graphics
     //Vulkan::PushDeleter([=, this](){vmaDestroyImage(Vulkan::Allocator(), image, allocation);});
   }
   
-  /*void Image::Destroy()
-  {
-    vmaDestroyImage(Vulkan::Allocator(), image, allocation);
-  }*/
+  
   
 }

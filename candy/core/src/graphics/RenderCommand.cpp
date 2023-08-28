@@ -198,7 +198,10 @@ namespace Candy::Graphics
     //BindDescriptorSet(pipeline, GetGlobalDescriptorSet(), offset);
     
   }
-  
+  void RenderCommand::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
+  {
+    GetFrame().commandBuffer.CopyBufferToImage(buffer, image, width, height);
+  }
   void RenderCommand::CopyImageToBuffer(VkImage image, VkBuffer buffer, uint32_t width, uint32_t height)
   {
     GetFrame().commandBuffer.CopyImageToBuffer(image, buffer, width, height);

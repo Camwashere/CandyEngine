@@ -11,6 +11,7 @@ layout(set=0, binding=0) uniform CameraBuffer
 {
     mat4 view;
     mat4 proj;
+    mat4 viewProjection;
 
 } cameraData;
 
@@ -27,7 +28,7 @@ void main()
 {
 
     mat4 modelMatrix = objectBuffer.transforms[pc.objectIndex];
-    mat4 transformMatrix = (cameraData.proj * cameraData.view * modelMatrix);
+    mat4 transformMatrix = (cameraData.viewProjection * modelMatrix);
     gl_Position = transformMatrix * vec4(inPosition, 1.0f);
     fragNormal = inNormal;
     fragTexCoord = inTexCoord;

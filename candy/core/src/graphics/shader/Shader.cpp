@@ -38,7 +38,7 @@ namespace Candy::Graphics
   }
     
     
-    Shader::Shader(std::filesystem::path  shaderFilePath) : filepath(std::move(shaderFilePath))
+    Shader::Shader(std::filesystem::path  shaderFilePath) : filepath(std::move(shaderFilePath)), postProcessor(Renderer::GetViewportPassIndex())
     {
         CANDY_PROFILE_FUNCTION();
       
@@ -52,11 +52,11 @@ namespace Candy::Graphics
       // Extract name from filepath
       shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
       
-      GetLayout().BakePipeline(Renderer::GetViewportPass(), CreateShaderStageCreateInfos());
+      GetLayout().BakePipeline(CreateShaderStageCreateInfos());
       //BakePipeline(Renderer::GetRenderPass());
         
     }
-  Shader::Shader(std::filesystem::path  shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting) : filepath(std::move(shaderFilePath))
+  Shader::Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting) : filepath(std::move(shaderFilePath)), postProcessor(renderPassIndex)
   {
     CANDY_PROFILE_FUNCTION();
     
@@ -70,7 +70,7 @@ namespace Candy::Graphics
     // Extract name from filepath
     shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
     GetLayout().pipeline.SetDepthTesting(enableDepthTesting);
-    GetLayout().BakePipeline(renderPass, CreateShaderStageCreateInfos());
+    GetLayout().BakePipeline(CreateShaderStageCreateInfos());
   }
   
   void Shader::Bind()
@@ -314,9 +314,9 @@ namespace Candy::Graphics
     {
         return CreateSharedPtr<Shader>(shaderFilePath);
     }
-  SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath, VkRenderPass renderPass, bool enableDepthTesting)
+  SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting)
   {
-    return CreateSharedPtr<Shader>(shaderFilePath, renderPass, enableDepthTesting);
+    return CreateSharedPtr<Shader>(shaderFilePath, renderPassIndex, enableDepthTesting);
   }
     
     

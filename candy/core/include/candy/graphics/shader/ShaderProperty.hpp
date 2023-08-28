@@ -71,6 +71,9 @@ namespace Candy::Graphics
     ShaderData::Stage stage;
     uint32_t set;
     uint32_t binding;
+    uint32_t arraySize=1;
+    
+    [[nodiscard]] bool IsArray()const{return arraySize>1;}
   };
   
   struct ShaderSet
@@ -99,6 +102,7 @@ namespace Candy::Graphics
     ShaderProperty GetProperty(uint32_t id)const;
     ShaderBlock GetBlock(const std::string& name)const;
     ShaderBlock GetBlock(uint32_t id)const;
+    bool IsEmpty()const;
     [[nodiscard]] const std::vector<ShaderBlock>& GetBlocks()const;
     [[nodiscard]] uint32_t GetSet()const;
 

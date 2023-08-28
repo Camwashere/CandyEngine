@@ -38,7 +38,7 @@ namespace Candy::Graphics
     uint32_t binding;
     uint32_t set;
     Texture texture;
-    ImageView textureImageView;
+    //ImageView textureImageView;
   
   public:
     MaterialTextureParameter(std::string name, uint32_t binding, uint32_t set);
@@ -46,7 +46,8 @@ namespace Candy::Graphics
     void SetTexture(const std::filesystem::path& path);
     [[nodiscard]] std::string GetName()const;
     [[nodiscard]] VkSampler GetSampler()const;
-    [[nodiscard]] VkImageView GetImageView()const;
+    //[[nodiscard]] VkImageView GetImageView()const;
+    [[nodiscard]] const Texture& GetTexture()const{return texture;}
     [[nodiscard]] uint32_t GetBinding()const;
     [[nodiscard]] uint32_t GetSet()const;
 
