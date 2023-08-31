@@ -9,14 +9,32 @@ namespace Candy::Graphics
   Renderer3D* Renderer3D::instance = nullptr;
   
   
+  struct RenderData3D
+  {
+    static const uint32_t maxTextureSlots = 32; // TODO: RenderCaps
+    
+    SharedPtr<Texture> whiteTexture;
+    std::array<SharedPtr<Texture>, maxTextureSlots> textureSlots;
+    uint32_t textureSlotIndex = 1; // 0 = white texture, 1 = statue texture
+    
+  };
+  
+  static RenderData3D data;
+  
   void Renderer3D::Initialize()
   {
     gridShader = Shader::Create("assets/shaders/renderer3D/Grid.glsl");
     shader = Shader::Create("assets/shaders/renderer3D/Mesh.glsl");
     selectionShader = Shader::Create("assets/shaders/renderer3D/SelectionMesh.glsl", Renderer::GetSelectionPassIndex());
-    material.SetShader(shader.get());
-    material.SetTexture("texSampler", "assets/textures/statue.jpg");
     
+    
+    data.whiteTexture = Texture::Create(TextureSpecification());
+    uint32_t whiteTextureData = 0xffffffff;
+    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+    
+    data.textureSlots[0] = data.whiteTexture;
+    //data.textureSlots[1] = texture;
+    data.textureSlotIndex = 2;
     
   }
   
@@ -24,33 +42,9 @@ namespace Candy::Graphics
   {
     instance->gridShader->Bind();
     
-    
-    /*DescriptorBuilder builder = DescriptorBuilder::Begin();
-    VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = *Renderer::GetCurrentFrame().uniformBuffer;
-    bufferInfo.offset=0;
-    bufferInfo.range = instance->gridShader->GetGlobalBufferSize();
-    
-    builder.AddBufferWrite(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 0);
-    
-    VkDescriptorBufferInfo bufferInfo2D{};
-    bufferInfo.buffer = *Renderer::GetCurrentFrame().uniformBuffer;
-    bufferInfo.offset=instance->gridShader->GetGlobalBufferSize();
-    bufferInfo.range = instance->gridShader->GetGlobalBufferSize();
-    builder.AddBufferWrite(1, &bufferInfo2D, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 0);
-    
-    builder.Write(Renderer::GetCurrentFrame().GlobalDescriptor());*/
-    
-    //instance->gridShader->SetMatrix("proj", sceneData.projectionMatrix);
-    //instance->gridShader->SetMatrix("view", sceneData.viewMatrix);
-    //instance->gridShader->SetMatrix("viewProjection", sceneData.viewProjectionMatrix);
-    
-    
-    
     instance->gridShader->Commit();
     
     RenderCommand::DrawEmpty(6);
-    
   }
   
   void Renderer3D::Init()
@@ -76,6 +70,8 @@ namespace Candy::Graphics
     instance->transforms.clear();
     instance->meshes.clear();
     instance->entities.clear();
+    instance->textureIndices.clear();
+    data.textureSlotIndex = 1;
     ResetStats();
     RenderGrid();
   }
@@ -84,7 +80,6 @@ namespace Candy::Graphics
   {
     CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
     instance->shader->Bind();
-    instance->material.Bind();
     
     Renderer::GetCurrentFrame().storageBuffer->SetData(instance->transforms.data(), sizeof(Matrix4) * instance->transforms.size());
     
@@ -96,6 +91,24 @@ namespace Candy::Graphics
     builder.AddBufferWrite(0, &objectInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC);
     builder.Write(Renderer::GetCurrentFrame().ObjectDescriptor());
     
+    // Bind textures
+    std::vector<VkDescriptorImageInfo> imageInfos{};
+    for (uint32_t i=0; i<data.textureSlotIndex; i++)
+    {
+      CANDY_CORE_ASSERT(data.textureSlots[i] != nullptr);
+      
+      VkDescriptorImageInfo imageInfo = data.textureSlots[i]->GetDescriptorImageInfo();
+      imageInfos.push_back(imageInfo);
+    }
+    for (uint32_t i=data.textureSlotIndex; i<RenderData3D::maxTextureSlots; i++)
+    {
+      VkDescriptorImageInfo imageInfo = data.whiteTexture->GetDescriptorImageInfo();
+      imageInfos.push_back(imageInfo);
+    }
+    DescriptorBuilder textureBuilder = DescriptorBuilder::Begin();
+    textureBuilder.AddImageArrayWrite(0, imageInfos, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MATERIAL_SET);
+    textureBuilder.Write();
+    
     
     instance->shader->Commit();
     
@@ -103,18 +116,15 @@ namespace Candy::Graphics
     {
       instance->meshes[i].vertexArray->Bind();
       instance->shader->PushInt("objectIndex", i);
+      instance->shader->PushInt("textureIndex", (int)instance->textureIndices[i]);
       RenderCommand::DrawIndexed(instance->meshes[i].vertexArray);
     }
-    //RenderSelectionBuffer();
-    
-    
   }
   void Renderer3D::RenderSelectionBuffer()
   {
     CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
     Renderer::BeginSelectionPass();
     instance->selectionShader->Bind();
-    //instance->selectionMaterial.Bind();
     
     
     instance->selectionShader->Commit();
@@ -126,20 +136,36 @@ namespace Candy::Graphics
       instance->selectionShader->PushInt("entityID", static_cast<int>(instance->entities[i]));
       RenderCommand::DrawIndexed(instance->meshes[i].vertexArray);
     }
-    //instance->needsSelection=false;
    
   }
-  void Renderer3D::SubmitMesh(uint32_t entity, const Mesh& data, const Math::Matrix4& transform)
+  void Renderer3D::SubmitMesh(uint32_t entity, const Mesh& mesh, const SharedPtr<Texture>& texture, const Math::Matrix4& transform)
   {
-    if (data.IsValid())
+    if (mesh.IsValid())
     {
       stats.objects++;
-      stats.vertices += data.vertexArray->GetVertexCount();
-      stats.indices += data.vertexArray->GetIndexCount();
+      stats.vertices += mesh.vertexArray->GetVertexCount();
+      stats.indices += mesh.vertexArray->GetIndexCount();
       stats.drawCalls++;
-      stats.triangles += data.vertexArray->GetIndexCount() / 3;
-      instance->meshes.push_back(data);
+      stats.triangles += mesh.vertexArray->GetIndexCount() / 3;
+      instance->meshes.push_back(mesh);
       instance->transforms.push_back(transform);
+      bool found = false;
+      for (int i=0; i<data.textureSlotIndex; i++)
+      {
+        if (*data.textureSlots[i] == *texture)
+        {
+          found = true;
+          instance->textureIndices.push_back(i);
+          break;
+        }
+      }
+      if (! found)
+      {
+        CANDY_CORE_ASSERT(data.textureSlotIndex < data.maxTextureSlots, "Texture slots are full");
+        data.textureSlots[data.textureSlotIndex] = texture;
+        instance->textureIndices.push_back(data.textureSlotIndex);
+        data.textureSlotIndex++;
+      }
       instance->entities.push_back(entity);
     }
   }

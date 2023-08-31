@@ -11,7 +11,7 @@
 #include "vulkan/ImageView.hpp"
 #include "candy/graphics/material/Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
-#include <candy/graphics/camera/Camera.hpp>
+#include "candy/graphics/camera/PerspectiveCamera.hpp"
 #include <candy/graphics/camera/EditorCamera.hpp>
 #include "model/Mesh.hpp"
 #include <candy/math/Matrix.hpp>
@@ -55,7 +55,7 @@ namespace Candy::Graphics
     static constexpr uint8_t selectionPassIndex=2;
     static constexpr uint8_t uiPassIndex=3;
     //static constexpr uint8_t selectionPassIndex=2;
-    static void BeginScene(const Camera& camera);
+    static void BeginScene(const PerspectiveCamera& camera);
     static void EndScene();
     static void Start();
     static void Init();

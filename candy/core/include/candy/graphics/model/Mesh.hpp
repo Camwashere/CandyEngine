@@ -15,6 +15,7 @@ namespace Candy::Graphics
    
   public:
     Mesh();
+    
    
    
    static Mesh CreatePlaneMesh();

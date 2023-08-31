@@ -104,7 +104,7 @@ namespace Candy::Math
     
     bool operator==(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>& other)const;
     bool operator!=(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>& other)const;
-    
+    VectorBase<float, 3> operator*(const VectorBase<float, 3>& vec)const;
     VectorBase<float, 4> operator*(const VectorBase<float, 4>& vec)const;
     AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> operator*(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>& other)const;
     

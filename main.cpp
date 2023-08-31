@@ -9,9 +9,9 @@ int main(int argc, char** argv)
   ApplicationCommandLineArgs commandLineArgs{argc, argv};
   appData.commandLineArgs = commandLineArgs;
   Application app(appData);
-  ProjectConfig config{"Candy Project", "assets", "assets", appData.version};
-  Project project(config);
-  EditorLayer editorLayer(&project);
+  SharedPtr<Project> proj = Project::Load("projects/TestProject/testProject.candy");
+  
+  EditorLayer editorLayer;
   app.PushLayer(&editorLayer);
   
  

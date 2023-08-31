@@ -14,6 +14,7 @@ namespace Candy
     uint32_t patch;
     
   public:
+    Version();
     Version(uint32_t major, uint32_t minor=0, uint32_t patch=0);
     
     void SetMajor(uint32_t value);

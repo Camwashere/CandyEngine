@@ -43,6 +43,9 @@ namespace Candy::Graphics
     ImageFormat()=default;
     ImageFormat(int channels, int bytesPerChannel, ImageFormatPrimitiveType type);
     explicit ImageFormat(VkFormat vulkanFormat);
+    
+  public:
+    bool operator==(const ImageFormat& other)const;
   
   public:
     void SetChannels(int value);

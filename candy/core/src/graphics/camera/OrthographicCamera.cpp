@@ -3,7 +3,12 @@
 namespace Candy::Graphics
 {
   using namespace Math;
-  void OrthographicCamera::RecalculateViewMatrix()
+  void OrthographicCamera::UpdateMatrices()
+  {
+    UpdateViewMatrix();
+    UpdateProjectionMatrix();
+  }
+  void OrthographicCamera::UpdateViewMatrix()
   {
     CANDY_PROFILE_FUNCTION();
     
@@ -12,12 +17,27 @@ namespace Candy::Graphics
     
   }
   
-  OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) : CameraBase(Vector3::zero, Matrix4::Orthographic(left, right, bottom, top, 0.0f, 1.0f)), rotation(0.0f)
+  void OrthographicCamera::UpdateProjectionMatrix()
+  {
+    float aspectRatio = GetAspectRatio();
+    SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
+    
+  }
+  OrthographicCamera::OrthographicCamera(const Math::Vector2& viewSize, float zoom, float rot) : CameraBase(Math::Vector3::zero), viewportSize(viewSize), zoomLevel(zoom), rotation(rot)
   {
     CANDY_PROFILE_FUNCTION();
-    projectionMatrix[1,1] *= -1;
+    UpdateMatrices();
   }
   
+  void OrthographicCamera::SetViewportSize(float width, float height)
+  {
+    viewportSize.Set(width, height);
+    UpdateProjectionMatrix();
+  }
+  void OrthographicCamera::SetViewportSize(const Math::Vector2& value)
+  {
+    SetViewportSize(value.x, value.y);
+  }
   void OrthographicCamera::SetProjection(float left, float right, float bottom, float top)
   {
     CANDY_PROFILE_FUNCTION();
@@ -25,20 +45,30 @@ namespace Candy::Graphics
     projectionMatrix[1,1] *= -1;
   }
   
+  void OrthographicCamera::SetZoomLevel(float value)
+  {
+    zoomLevel = value;
+    UpdateProjectionMatrix();
+  }
+  
   void OrthographicCamera::SetPosition(const Math::Vector3& pos)
   {
     position = pos;
-    RecalculateViewMatrix();
+    UpdateViewMatrix();
   }
   void OrthographicCamera::SetRotation(float rot)
   {
     rotation = rot;
-    RecalculateViewMatrix();
+    UpdateViewMatrix();
   }
   
   float OrthographicCamera::GetRotation()const
   {
     return rotation;
+  }
+  float OrthographicCamera::GetAspectRatio()const
+  {
+    return viewportSize.x / viewportSize.y;
   }
   
   

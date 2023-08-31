@@ -93,6 +93,8 @@ namespace Candy::Math
     VectorBase<T, 4>::VectorBase()=default;
     template<typename T>
     VectorBase<T, 4>::VectorBase(T value) : data{value, value, value, value}{}
+  template<typename T>
+  VectorBase<T, 4>::VectorBase(T xValue, T yValue, T zValue) : data{xValue, yValue, zValue, 0.0f}{}
     template<typename T>
     VectorBase<T, 4>::VectorBase(T xValue, T yValue, T zValue, T wValue) : data{xValue, yValue, zValue, wValue}{}
   

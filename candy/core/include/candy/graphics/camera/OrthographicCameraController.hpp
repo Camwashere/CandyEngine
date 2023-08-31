@@ -7,10 +7,9 @@ namespace Candy::Graphics
   {
   
   private:
-    float aspectRatio;
-    float zoomLevel = 1.0f;
     OrthographicCamera camera;
     
+    bool canMove;
     bool canRotate;
     bool canZoom;
     
@@ -24,7 +23,7 @@ namespace Candy::Graphics
     bool OnFrameBufferResize(Events::FrameBufferResizeEvent& e);
     
   public:
-    explicit OrthographicCameraController(float aspectRatio, bool canZoom=false, bool canRotate = false);
+    explicit OrthographicCameraController(const Math::Vector2& viewportSize, bool canMove=true, bool canZoom=false, bool canRotate = false);
     
   public:
     void OnUpdate();
@@ -39,8 +38,7 @@ namespace Candy::Graphics
     OrthographicCamera& GetCamera();
     [[nodiscard]] const OrthographicCamera& GetCamera() const;
     
-    [[nodiscard]] float GetZoomLevel() const;
-    void SetZoomLevel(float level);
+    
   
   };
   

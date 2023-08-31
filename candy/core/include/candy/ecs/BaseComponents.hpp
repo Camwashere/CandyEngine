@@ -34,11 +34,19 @@ namespace Candy::ECS
     
   };
   
-  struct MeshComponent
+  
+  
+  struct MeshFilterComponent
   {
-    //Graphics::MeshData meshData;
     Graphics::Mesh mesh;
-    //Graphics::Material material;
+    
+    
+    //MeshFilterComponent(const Graphics::Mesh& meshValue) : mesh(meshValue){}
+  };
+  
+  struct MeshRendererComponent
+  {
+    SharedPtr<Graphics::Texture> texture;
   };
   
   struct SpriteRendererComponent
@@ -50,6 +58,8 @@ namespace Candy::ECS
     SpriteRendererComponent()=default;
     SpriteRendererComponent(const SpriteRendererComponent&)=default;
     explicit SpriteRendererComponent(const Color& colorValue) : color(colorValue){}
+    explicit SpriteRendererComponent(const SharedPtr<Graphics::Texture>& textureValue) : texture(textureValue){}
+    SpriteRendererComponent(const SharedPtr<Graphics::Texture>& textureValue, const Color& colorValue) : color(colorValue), texture(textureValue){}
   };
   
   
@@ -61,5 +71,5 @@ namespace Candy::ECS
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, MeshComponent>;
+  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, MeshFilterComponent, MeshRendererComponent>;
 }

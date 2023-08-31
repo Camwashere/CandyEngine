@@ -59,6 +59,8 @@ namespace Candy
   void SceneHierarchyPanel::SetSelectedEntity(ECS::Entity entity)
   {
     selectionContext = entity;
+    isSelection2D = selectionContext.Is2D();
+    
   }
   
   void SceneHierarchyPanel::DrawEntityNode(Entity entity)
@@ -139,7 +141,94 @@ namespace Candy
         entity.RemoveComponent<T>();
     }
   }
-  
+  static void DrawFloatControl(const std::string& label, float& value, float resetValue = 0.0f, float columnWidth = 100.0f)
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    auto boldFont = io.Fonts->Fonts[0];
+    
+    ImGui::PushID(label.c_str());
+    
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Text("%s", label.c_str());
+    ImGui::NextColumn();
+    
+    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+    
+    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushFont(boldFont);
+    
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##X", &value, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    
+    ImGui::PopStyleVar();
+    
+    ImGui::Columns(1);
+    
+    ImGui::PopID();
+  }
+  static void DrawVector2Control(const std::string& label, Math::Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    auto boldFont = io.Fonts->Fonts[0];
+    
+    ImGui::PushID(label.c_str());
+    
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Text("%s", label.c_str());
+    ImGui::NextColumn();
+    
+    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+    
+    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushFont(boldFont);
+    if (ImGui::Button("X", buttonSize))
+      values.x = resetValue;
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+    ImGui::PushFont(boldFont);
+    if (ImGui::Button("Y", buttonSize))
+      values.y = resetValue;
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    
+    
+    ImGui::PopStyleVar();
+    
+    ImGui::Columns(1);
+    
+    ImGui::PopID();
+  }
   static void DrawVector3Control(const std::string& label, Math::Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
   {
     ImGuiIO& io = ImGui::GetIO();
@@ -206,90 +295,6 @@ namespace Candy
     ImGui::PopID();
   }
   
-  static void DrawQuaternionControl(const std::string& label, Quaternion& values, float resetValue = 0.0f, float columnWidth = 100.0f)
-  {
-    ImGuiIO& io = ImGui::GetIO();
-    auto boldFont = io.Fonts->Fonts[0];
-    
-    ImGui::PushID(label.c_str());
-    
-    ImGui::Columns(2);
-    ImGui::SetColumnWidth(0, columnWidth);
-    ImGui::Text("%s", label.c_str());
-    ImGui::NextColumn();
-    
-    ImGui::PushMultiItemsWidths(4, ImGui::CalcItemWidth());
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
-    
-    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-    ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-    
-    // X Value
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("X", buttonSize))
-      values.x = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    
-    ImGui::SameLine();
-    ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    ImGui::SameLine();
-    
-    
-    // Y Value
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("Y", buttonSize))
-      values.y = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    
-    ImGui::SameLine();
-    ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    ImGui::SameLine();
-    
-    // Z Value
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("Z", buttonSize))
-      values.z = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    
-    ImGui::SameLine();
-    ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    ImGui::SameLine();
-    
-    // W Value
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("W", buttonSize))
-      values.w = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    
-    ImGui::SameLine();
-    ImGui::DragFloat("##W", &values.w, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    
-    ImGui::PopStyleVar();
-    
-    ImGui::Columns(1);
-    
-    ImGui::PopID();
-  }
   
   void SceneHierarchyPanel::DrawComponents(Entity entity)
   {
@@ -314,20 +319,33 @@ namespace Candy
     
     if (ImGui::BeginPopup("AddComponent"))
     {
-      //DisplayAddComponentEntry<MeshFilterComponent>("Mesh Filter");
-      //DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+      DisplayAddComponentEntry<MeshFilterComponent>("Mesh Filter");
+      DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
       
       ImGui::EndPopup();
     }
     
     ImGui::PopItemWidth();
     
-    DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+    if (entity.Is2D())
     {
-    DrawVector3Control("Position", component.position);
-    DrawVector3Control("Rotation", component.rotation);
-    DrawVector3Control("Scale", component.scale, 1.0f);
-    });
+      DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+      {
+      DrawVector2Control("Position", (Vector2&)component.position);
+      DrawFloatControl("Rotation", component.rotation.z);
+      DrawVector2Control("Scale", (Vector2&)component.scale, 1.0f);
+      });
+    }
+    else
+    {
+      DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+      {
+      DrawVector3Control("Position", component.position);
+      DrawVector3Control("Rotation", component.rotation);
+      DrawVector3Control("Scale", component.scale, 1.0f);
+      });
+    }
+    
     
     
     

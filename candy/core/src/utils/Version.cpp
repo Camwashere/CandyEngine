@@ -2,6 +2,10 @@
 
 namespace Candy
 {
+  Version::Version() : major(0), minor(0), patch(0)
+  {
+  
+  }
   Version::Version(uint32_t majorV, uint32_t minorV, uint32_t patchV) : major(majorV), minor(minorV), patch(patchV)
   {
     

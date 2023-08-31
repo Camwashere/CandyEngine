@@ -1,7 +1,6 @@
 #include <candy/ecs/Scene.hpp>
 #include <candy/ecs/BaseComponents.hpp>
 #include <candy/ecs/Entity.hpp>
-//#include <Candy/Graphics.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Renderer3D.hpp>
 #include <candy/graphics/Renderer2D.hpp>
@@ -92,7 +91,7 @@ namespace Candy::ECS
     
     return entity;
   }
-  
+ 
   void Scene::DestroyEntity(Entity entity)
   {
     entityMap.erase(entity.GetUUID());
@@ -171,12 +170,13 @@ namespace Candy::ECS
   void Scene::RenderScene3D()
   {
     Renderer3D::BeginScene();
-    auto view = registry.view<TransformComponent, MeshComponent>();
+    
+    auto view = registry.view<TransformComponent, MeshFilterComponent, MeshRendererComponent>();
     for (auto entity : view)
     {
       
-      auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
-      Renderer3D::SubmitMesh((uint32_t)entity, mesh.mesh, transform.GetMatrix());
+      auto [transform, mesh, meshRenderer] = view.get<TransformComponent, MeshFilterComponent, MeshRendererComponent>(entity);
+      Renderer3D::SubmitMesh((uint32_t)entity, mesh.mesh, meshRenderer.texture, transform.GetMatrix());
     }
     
     Renderer3D::EndScene();
@@ -189,7 +189,9 @@ namespace Candy::ECS
     for (auto entity : view)
     {
       auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-      Renderer2D::DrawQuad(transform.GetMatrix(), sprite.color, (int)entity);
+      //Renderer2D::DrawQuad(transform.position, transform.scale, sprite.color, (int)entity);
+      Renderer2D::DrawSprite(transform.GetMatrix(), sprite, (int)entity);
+      //Renderer2D::DrawQuad(transform.GetMatrix(), sprite.color, (int)entity);
     }
     Renderer2D::EndScene();
   

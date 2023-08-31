@@ -22,7 +22,10 @@ namespace Candy::Graphics
   const ImageFormat ImageFormat::RGBA8(4, 8, ImageFormatPrimitiveType::RGB);
   const ImageFormat ImageFormat::RGBA32F(4, 32, ImageFormatPrimitiveType::Float);
   
-  
+  bool ImageFormat::operator==(const ImageFormat& other)const
+  {
+    return channels == other.channels && bytesPerChannel == other.bytesPerChannel && primitiveType == other.primitiveType && vulkanFormat == other.vulkanFormat;
+  }
   void ImageFormat::SetChannels(int value)
   {
     channels = value;

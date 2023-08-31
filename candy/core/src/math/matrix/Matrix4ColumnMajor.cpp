@@ -462,13 +462,23 @@ namespace Candy::Math
   
   bool AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::operator!=(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>& other)const{return !((*this)==other);}
   
-  
+  VectorBase<float, 3> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::operator*(const VectorBase<float, 3>& vec)const
+  {
+    Math::Vector3 result{};
+    for (int i=0; i<3; i++)
+    {
+      result[i] = data[i] * vec.x + data[i+4] * vec.y + data[i+8] * vec.z + data[i+12];
+    }
+    return result;
+  }
   VectorBase<float, 4> AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::operator*(const VectorBase<float, 4>& vec)const
   {
-    return {data[0] * vec.x + data[1] * vec.y + data[2] * vec.z + data[3] * vec.w,
-            data[4] * vec.x + data[5] * vec.y + data[6] * vec.z + data[7] * vec.w,
-            data[8] * vec.x + data[9] * vec.y + data[10] * vec.z + data[11] * vec.w,
-            data[12] * vec.x + data[13] * vec.y + data[14] * vec.z + data[15] * vec.w};
+    Math::Vector4 result{};
+    for (int i=0; i<4; i++)
+    {
+      result[i] = data[i] * vec.x + data[i+4] * vec.y + data[i+8] * vec.z + data[i+12];
+    }
+    return result;
   }
   
   

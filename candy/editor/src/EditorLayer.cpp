@@ -9,6 +9,10 @@
 #include <candy/event/Events.hpp>
 #include <imgui/imgui.h>
 #include <imguizmo/ImGuizmo.h>
+#include <candy/app/ProjectSerializer.hpp>
+#include <candy/ecs/SceneSerializer.hpp>
+#include <candy/utils/FileUtils.hpp>
+#include <utility>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
 using namespace Candy::ECS;
@@ -17,30 +21,43 @@ using namespace Candy::Events;
 namespace Candy
 {
   
-  EditorLayer::EditorLayer(Project* proj) : project(proj)
+  EditorLayer::EditorLayer()
   {
-    CANDY_ASSERT(project != nullptr);
+    scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
+    OpenScene(Project::GetActive()->GetConfiguration().startScene);
+    //activeScene = Scene::Create("Test Scene");
+    //texture = Texture::Create("assets/textures/wall.jpg");
+    //statueTexture = Texture::Create("assets/textures/statue.jpg");
     
-    activeScene = Scene::Create("Test Scene");
     
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
-    scenePanel = CreateSharedPtr<SceneHierarchyPanel>(activeScene);
+    
     viewport = CreateSharedPtr<Viewport>(this);
-    testEntity = activeScene->CreateEntity("Test Entity");
-    secondEntity = activeScene->CreateEntity("Second Entity");
-    planeEntity = activeScene->CreateEntity("Plane Entity");
-    quadEntity = activeScene->CreateEntity("Quad Entity");
+    //testEntity = activeScene->CreateEntity("Test Entity");
+    //secondEntity = activeScene->CreateEntity("Second Entity");
+    //planeEntity = activeScene->CreateEntity("Plane Entity");
+    //quadEntity = activeScene->CreateEntity("Quad Entity");
+    //textureEntity = activeScene->CreateEntity("Texture Entity");
     
-    testEntity.AddComponent<MeshComponent>(Mesh::CreateCubeMesh());
-    secondEntity.AddComponent<MeshComponent>(Mesh::CreateTriangularPrismMesh());
-    planeEntity.AddComponent<MeshComponent>(Mesh::CreatePlaneMesh());
+    /*testEntity.AddComponent<MeshFilterComponent>(Mesh::CreateCubeMesh());
+    testEntity.AddComponent<MeshRendererComponent>(statueTexture);
+    secondEntity.AddComponent<MeshFilterComponent>(Mesh::CreateTriangularPrismMesh());
+    secondEntity.AddComponent<MeshRendererComponent>(texture);
+    planeEntity.AddComponent<MeshFilterComponent>(Mesh::CreatePlaneMesh());
+    planeEntity.AddComponent<MeshRendererComponent>(statueTexture);
     
-    quadEntity.AddComponent<SpriteRendererComponent>(Color::purple);
+    
+    //quadEntity.AddComponent<SpriteRendererComponent>(Color::purple);
+    textureEntity.AddComponent<SpriteRendererComponent>(texture);
     
     testEntity.GetTransform().position = {0.0f, 2.0f, 0.0f};
     secondEntity.GetTransform().position = {4.0f, 2.0f, 0.0f};
     planeEntity.GetTransform().position = {-4.0f, 2.0f, 0.0f};
-    quadEntity.GetTransform().position = {0.0f, 0.0f, 0.0f};
+    
+    textureEntity.GetTransform().position = {-1.0f, 0.0f, 0.0f};
+    textureEntity.GetTransform().scale*=0.3f;*/
+    //quadEntity.GetTransform().position = {0.0f, -1.0f, 0.0f};
+    
     
     
     
@@ -122,6 +139,7 @@ namespace Candy
     style.WindowMinSize.x = minWinSizeX;
     
     MenuBar();
+    
     debugPanel.OnRenderUI();
     scenePanel->OnRenderUI();
     contentBrowserPanel->OnRenderUI();
@@ -145,6 +163,10 @@ namespace Candy
         if (ImGui::MenuItem("Save"))
         {
           SaveProject();
+        }
+        if (ImGui::MenuItem("Save As"))
+        {
+          SaveSceneAs();
         }
         
         
@@ -216,6 +238,64 @@ namespace Candy
   }
   void EditorLayer::SaveProject()
   {
+    Project::SaveActive();
+    SaveScene();
+  }
   
+  void EditorLayer::NewScene()
+  {
+    activeScene = Scene::Create();
+    scenePanel->SetContext(activeScene);
+  }
+  void EditorLayer::OpenScene()
+  {
+    std::string filepath = Utils::FileDialogs::OpenFile("Candy Scene (*.scene)\0*.scene\0");
+    if (!filepath.empty())
+    {
+      OpenScene(filepath);
+    }
+  }
+  void EditorLayer::OpenScene(const std::filesystem::path& path)
+  {
+    if (path.extension().string() != ".scene")
+    {
+      CANDY_WARN("Could not load {0} - not a scene file", path.filename().string());
+      return;
+    }
+    
+    SharedPtr<Scene> newScene = Scene::Create();
+    SceneSerializer serializer(newScene);
+    if (serializer.Deserialize(path.string()))
+    {
+      activeScene = newScene;
+      scenePanel->SetContext(activeScene);
+      
+    }
+  }
+  void EditorLayer::SaveScene()
+  {
+    if (!activeScenePath.empty())
+      SerializeScene(activeScene, activeScenePath);
+    else
+      SaveSceneAs();
+  }
+  void EditorLayer::SaveSceneAs()
+  {
+    std::string filepath = Utils::FileDialogs::SaveFile("Candy Scene (*.scene)\0*.scene\0");
+    if (!filepath.empty())
+    {
+      SerializeScene(activeScene, filepath);
+      activeScenePath = filepath;
+    }
+  }
+  void EditorLayer::SerializeScene(SharedPtr<ECS::Scene> scene, const std::filesystem::path& path)
+  {
+    SceneSerializer serializer(std::move(scene));
+    serializer.Serialize(path.string());
+  }
+  
+  bool EditorLayer::IsSelectedEntity2D()const
+  {
+    return scenePanel->IsSelectedEntity2D();
   }
 }

@@ -4,8 +4,8 @@
 namespace Candy::Graphics
 {
   using namespace Events;
-  OrthographicCameraController::OrthographicCameraController(float ar, bool zoom, bool rot)
-  : aspectRatio(ar), camera(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel), canZoom(zoom), canRotate(rot)
+  OrthographicCameraController::OrthographicCameraController(const Math::Vector2& viewSize, bool move, bool zoom, bool rot)
+  : camera(viewSize), canMove(move), canZoom(zoom), canRotate(rot)
   {
     
   }
@@ -14,27 +14,31 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     float ts = Application::DeltaTime();
-    if (Input::IsKeyPressed(Key::A))
+    if (canMove)
     {
-      cameraPosition.x -= Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-      cameraPosition.y -= Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-    }
-    else if (Input::IsKeyPressed(Key::D))
-    {
-      cameraPosition.x += Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-      cameraPosition.y += Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+      if (Input::IsKeyPressed(Key::A))
+      {
+        cameraPosition.x -= Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+        cameraPosition.y -= Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+      }
+      else if (Input::IsKeyPressed(Key::D))
+      {
+        cameraPosition.x += Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+        cameraPosition.y += Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+      }
+      
+      if (Input::IsKeyPressed(Key::W))
+      {
+        cameraPosition.x += -Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+        cameraPosition.y += Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+      }
+      else if (Input::IsKeyPressed(Key::S))
+      {
+        cameraPosition.x -= -Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+        cameraPosition.y -= Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
+      }
     }
     
-    if (Input::IsKeyPressed(Key::W))
-    {
-      cameraPosition.x += -Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-      cameraPosition.y += Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-    }
-    else if (Input::IsKeyPressed(Key::S))
-    {
-      cameraPosition.x -= -Math::Sin(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-      cameraPosition.y -= Math::Cos(Math::ToRadians(cameraRotation)) * cameraTranslationSpeed * ts;
-    }
     
     if (canRotate)
     {
@@ -53,7 +57,7 @@ namespace Candy::Graphics
     
     camera.SetPosition(cameraPosition);
     
-    cameraTranslationSpeed = zoomLevel;
+    cameraTranslationSpeed = camera.zoomLevel;
   }
   
   void OrthographicCameraController::OnEvent(Event& e)
@@ -68,8 +72,9 @@ namespace Candy::Graphics
   
   void OrthographicCameraController::OnResize(float width, float height)
   {
-    aspectRatio = width / height;
-    camera.SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
+    //aspectRatio = width / height;
+    //camera.SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
+    camera.SetViewportSize(width, height);
   }
   
   bool OrthographicCameraController::OnMouseScroll(MouseScrollEvent& e)
@@ -77,9 +82,10 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     if (canZoom)
     {
-      zoomLevel -= e.GetOffsetY() * 0.25f;
-      zoomLevel = Math::Max(zoomLevel, 0.25f);
-      camera.SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
+      camera.zoomLevel -= e.GetOffsetY() * 0.25f;
+      camera.zoomLevel = Math::Max(camera.zoomLevel, 0.25f);
+      camera.SetZoomLevel(camera.zoomLevel);
+      //camera.SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
     }
     
     return false;
@@ -117,6 +123,4 @@ namespace Candy::Graphics
   OrthographicCamera& OrthographicCameraController::GetCamera() { return camera; }
   const OrthographicCamera& OrthographicCameraController::GetCamera() const { return camera; }
   
-  float OrthographicCameraController::GetZoomLevel() const { return zoomLevel; }
-  void OrthographicCameraController::SetZoomLevel(float level) { zoomLevel = level; }
 }

@@ -16,10 +16,11 @@ namespace Candy
   using namespace Math;
   using namespace ECS;
   
-  Viewport::Viewport(EditorLayer* parentLayer) : parent(parentLayer), orthographicCameraController(3000.0f/1500.0f), editorCamera(Vector3(0.0f, 1.0f, 3.27f))
+  Viewport::Viewport(EditorLayer* parentLayer) : parent(parentLayer), editorCamera(Vector3(0.0f, 1.0f, 3.27f), {3000.0f,1500.0f})
   {
     CANDY_CORE_ASSERT(parent != nullptr);
     gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+    
   }
   void Viewport::OnAttach()
   {
@@ -32,8 +33,8 @@ namespace Candy
     
     editorCamera.SetViewportSize(size.x, size.y);
     editorCamera.OnUpdate();
-    orthographicCameraController.OnUpdate();
-    Renderer::UpdateCameraData(editorCamera, orthographicCameraController.GetCamera());
+    //orthographicCameraController.OnUpdate();
+    Renderer::UpdateCameraData(editorCamera.GetCamera3D(), editorCamera.GetCamera2D());
     parent->activeScene->OnUpdateEditor();
     
     
@@ -64,7 +65,7 @@ namespace Candy
   void Viewport::OnEvent(Events::Event& event)
   {
     editorCamera.OnEvent(event);
-    orthographicCameraController.OnEvent(event);
+    //orthographicCameraController.OnEvent(event);
   }
   void Viewport::OnRenderUI()
   {
@@ -102,14 +103,15 @@ namespace Candy
     Entity selectedEntity = parent->scenePanel->GetSelectedEntity();
     if (selectedEntity && gizmoType != -1)
     {
-      ImGuizmo::SetOrthographic(false);
+      bool is2D = parent->IsSelectedEntity2D();
+      ImGuizmo::SetOrthographic(is2D);
       ImGuizmo::SetDrawlist();
       
       ImGuizmo::SetRect(bounds.min.x, bounds.min.y, bounds.max.x-bounds.min.x, bounds.max.y-bounds.min.y);
       
       // Editor camera
-      Matrix4 cameraProjection = editorCamera.GetProjectionMatrix();
-      Matrix4 cameraView = editorCamera.GetViewMatrix();
+      Matrix4 cameraProjection = is2D? editorCamera.GetProjectionMatrix2D() : editorCamera.GetProjectionMatrix3D();
+      Matrix4 cameraView = is2D? editorCamera.GetViewMatrix2D() : editorCamera.GetViewMatrix3D();
       
       // Entity transform
       auto& tc = selectedEntity.GetComponent<TransformComponent>();

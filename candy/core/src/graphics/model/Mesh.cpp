@@ -10,10 +10,11 @@ namespace Candy::Graphics
     //indexBuffer = nullptr;
     vertexArray = nullptr;
   }
-  
+ 
   void Mesh::Apply()
   {
     CANDY_CORE_ASSERT(data.IsValid(), "Mesh is not valid!");
+    layout = Renderer3D::GetBufferLayout();
     vertexArray = VertexArray::Create();
     
     SharedPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(layout, data.vertices.size());

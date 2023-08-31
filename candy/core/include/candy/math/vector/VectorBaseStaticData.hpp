@@ -127,8 +127,8 @@ namespace Candy::Math
         static inline const VectorBase<T, 4> downRightForward = {1, -1, 1};
         static inline const VectorBase<T, 4> downRightBack = {1, -1, -1};
         static inline const VectorBase<T, 4> zero = {0, 0, 0};
-        static inline const VectorBase<T, 4> one = {1, 1, 1};
-        static inline const VectorBase<T, 4> negativeOne = {-1, -1, -1};
+        static inline const VectorBase<T, 4> one = {1, 1, 1, 1};
+        static inline const VectorBase<T, 4> negativeOne = {-1, -1, -1, -1};
         static inline const VectorBase<T, 4> positiveInfinity = {Limit<T>::Max(), Limit<T>::Max(), Limit<T>::Max()};
         static inline const VectorBase<T, 4> negativeInfinity = {Limit<T>::Min(), Limit<T>::Min(), Limit<T>::Min()};
     };

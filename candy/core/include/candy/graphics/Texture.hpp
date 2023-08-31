@@ -20,6 +20,8 @@ namespace Candy::Graphics
     
     [[nodiscard]] uint64_t SizeInBytes()const;
     
+    
+    
   };
   
   class Texture
@@ -39,6 +41,9 @@ namespace Candy::Graphics
     Texture();
     explicit Texture(std::filesystem::path  path);
     explicit Texture(const TextureSpecification& textureSpecification);
+    
+  public:
+    bool operator==(const Texture& other)const;
     
     
     

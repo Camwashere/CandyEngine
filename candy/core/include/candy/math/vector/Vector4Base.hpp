@@ -60,6 +60,7 @@ namespace Candy::Math
         
         VectorBase();
         explicit VectorBase(T value);
+        VectorBase(T xValue, T yValue, T zValue);
         VectorBase(T xValue, T yValue, T zValue, T wValue);
         
         VectorBase(const VectorBase<T, 3>& vec3, T wValue);

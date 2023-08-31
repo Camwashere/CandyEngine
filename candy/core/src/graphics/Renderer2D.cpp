@@ -6,6 +6,7 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/ecs/BaseComponents.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -45,7 +46,7 @@ namespace Candy::Graphics
     std::array<SharedPtr<Texture>, maxTextureSlots> textureSlots;
     uint32_t textureSlotIndex = 1; // 0 = white texture
     
-    Vector4 quadVertexPositions[4];
+    Vector3 quadVertexPositions[4];
   };
   
   static RenderData2D data;
@@ -88,10 +89,10 @@ namespace Candy::Graphics
     
     data.textureSlots[0] = data.whiteTexture;
     
-    data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-    data.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-    data.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
-    data.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+    data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f};
+    data.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f};
+    data.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f};
+    data.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f};
     
     
     
@@ -182,13 +183,15 @@ namespace Candy::Graphics
   {
     DrawQuad({ position.x, position.y, 0.0f }, size, color);
   }
-  void Renderer2D::DrawQuad(const Math::Vector3& position, const Math::Vector2& size, const Math::Vector4& color)
+  void Renderer2D::DrawQuad(const Math::Vector3& position, const Math::Vector2& size, const Math::Vector4& color, int entityID)
   {
     Matrix4 transform = Matrix4::Translate(Matrix4::IDENTITY, position)
                           * Matrix4::Scale(Matrix4::IDENTITY, { size.x, size.y, 1.0f });
     
-    DrawQuad(transform, color);
+    DrawQuad(transform, color, entityID);
   }
+  
+  
   void Renderer2D::DrawQuad(const Math::Matrix4& transform, const Math::Vector4& color, int entityID)
   {
     constexpr size_t quadVertexCount = 4;
@@ -215,6 +218,60 @@ namespace Candy::Graphics
     data.quadIndexCount += 6;
     
     data.stats.quadCount++;
+  }
+  
+  void Renderer2D::DrawQuad(const Math::Matrix4& transform, const SharedPtr<Texture>& texture, float tilingFactor, const Math::Vector4& tintColor, int entityID)
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    constexpr size_t quadVertexCount = 4;
+    constexpr Math::Vector2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+    
+    if (data.quadIndexCount >= RenderData2D::maxIndices)
+      NextBatch();
+    
+    float textureIndex = 0.0f;
+    for (uint32_t i = 1; i < data.textureSlotIndex; i++)
+    {
+      if (*data.textureSlots[i] == *texture)
+      {
+        textureIndex = (float)i;
+        break;
+      }
+    }
+    
+    if (textureIndex == 0.0f)
+    {
+      if (data.textureSlotIndex >= RenderData2D::maxTextureSlots)
+        NextBatch();
+      
+      textureIndex = (float)data.textureSlotIndex;
+      data.textureSlots[data.textureSlotIndex] = texture;
+      data.textureSlotIndex++;
+    }
+    
+    for (size_t i = 0; i < quadVertexCount; i++)
+    {
+      data.quadVertexBufferPtr->position = transform * data.quadVertexPositions[i];
+      data.quadVertexBufferPtr->color = tintColor;
+      data.quadVertexBufferPtr->uv = textureCoords[i];
+      data.quadVertexBufferPtr->textureIndex = textureIndex;
+      data.quadVertexBufferPtr->tilingFactor = tilingFactor;
+      data.quadVertexBufferPtr->entityID = entityID;
+      data.quadVertexBufferPtr++;
+    }
+    
+    data.quadIndexCount += 6;
+    
+    data.stats.quadCount++;
+  }
+  
+  void Renderer2D::DrawSprite(const Math::Matrix4& transform, ECS::SpriteRendererComponent& src, int entityID)
+  {
+    if (src.texture)
+      DrawQuad(transform, src.texture, src.tilingFactor, src.color, entityID);
+    else
+      DrawQuad(transform, src.color, entityID);
   }
   
   Renderer2D::Stats Renderer2D::GetStats()

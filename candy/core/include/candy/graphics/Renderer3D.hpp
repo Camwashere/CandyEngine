@@ -3,7 +3,7 @@
 #include <candy/graphics/VertexArray.hpp>
 #include <candy/math/Matrix.hpp>
 #include "model/Mesh.hpp"
-#include <candy/graphics/camera/Camera.hpp>
+#include "candy/graphics/camera/PerspectiveCamera.hpp"
 #include <candy/graphics/camera/EditorCamera.hpp>
 #include "material/Material.hpp"
 
@@ -27,11 +27,14 @@ namespace Candy::Graphics
     SharedPtr<Shader> shader;
     SharedPtr<Shader> gridShader;
     SharedPtr<Shader> selectionShader;
-    Material material;
+    //Material material;
+    //SharedPtr<Texture> texture;
+    
     std::vector<Mesh> meshes;
     
     std::vector<uint32_t> entities;
     std::vector<Math::Matrix4> transforms;
+    std::vector<uint32_t> textureIndices;
     static constexpr uint32_t MAX_OBJECTS=100;
     static Renderer3D* instance;
     
@@ -48,7 +51,7 @@ namespace Candy::Graphics
     static void BeginScene();
     static void EndScene();
     static void Init();
-    static void SubmitMesh(uint32_t entity, const Mesh& data, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
+    static void SubmitMesh(uint32_t entity, const Mesh& data, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
     static Renderer3DStats GetStats();
     static void RenderSelectionBuffer();
   

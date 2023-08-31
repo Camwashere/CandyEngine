@@ -9,6 +9,7 @@ namespace Candy
   private:
     SharedPtr<ECS::Scene> context;
     ECS::Entity selectionContext;
+    bool isSelection2D=false;
   private:
     template<typename T>
     void DisplayAddComponentEntry(const std::string& entryName);
@@ -25,6 +26,7 @@ namespace Candy
     
     [[nodiscard]] ECS::Entity GetSelectedEntity() const { return selectionContext; }
     void SetSelectedEntity(ECS::Entity entity);
+    [[nodiscard]] bool IsSelectedEntity2D()const { return isSelection2D; }
     
     
   };

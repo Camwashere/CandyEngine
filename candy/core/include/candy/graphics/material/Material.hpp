@@ -32,5 +32,8 @@ namespace Candy::Graphics
     
     
     Shader* GetShader();
+    
+  public:
+    static SharedPtr<Material> Create(Shader* shader);
   };
 }

@@ -159,7 +159,7 @@ namespace Candy::Graphics
   }
 
   
-  void Renderer::BeginScene(const Camera& camera)
+  void Renderer::BeginScene(const PerspectiveCamera& camera)
   {
     sceneData.viewMatrix = camera.GetViewMatrix();
     sceneData.projectionMatrix = camera.GetProjectionMatrix();
@@ -173,6 +173,7 @@ namespace Candy::Graphics
     instance->cameraData.viewMatrix = camera3D.GetViewMatrix();
     instance->cameraData.projectionMatrix = camera3D.GetProjectionMatrix();
     instance->cameraData.viewProjectionMatrix = instance->cameraData.projectionMatrix * instance->cameraData.viewMatrix;
+    
     instance->cameraData.viewMatrix2D = camera2D.GetViewMatrix();
     instance->cameraData.projectionMatrix2D = camera2D.GetProjectionMatrix();
     instance->cameraData.viewProjectionMatrix2D = instance->cameraData.projectionMatrix2D * instance->cameraData.viewMatrix2D;

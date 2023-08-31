@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera.hpp"
+#include "PerspectiveCamera.hpp"
 #include <candy/event/Events.hpp>
 namespace Candy::Graphics
 {
@@ -10,7 +10,7 @@ namespace Candy::Graphics
     static constexpr float MOUSE_SENSITIVITY = 0.5f;
     static constexpr float SCROLL_SENSITIVITY = 4.5f;
   private:
-    Camera* camera;
+    PerspectiveCamera* camera;
     
     Math::Vector2 prevMousePos;
     
@@ -30,7 +30,7 @@ namespace Candy::Graphics
   
   public:
     CameraController();
-    explicit CameraController(Camera* camera);
+    explicit CameraController(PerspectiveCamera* camera);
     ~CameraController();
   
   public:
@@ -41,9 +41,9 @@ namespace Candy::Graphics
     void UnlockRotation();
     [[nodiscard]] bool CanRotate()const;
     void SetRotationEnabled(bool value);
-    void SetCamera(Camera* cameraObject);
-    Camera& GetCamera();
-    [[nodiscard]] const Camera& GetCamera()const;
+    void SetCamera(PerspectiveCamera* cameraObject);
+    PerspectiveCamera& GetCamera();
+    [[nodiscard]] const PerspectiveCamera& GetCamera()const;
     
     [[nodiscard]] bool HasCamera()const;
     [[nodiscard]] bool NeedsCamera()const;

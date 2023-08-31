@@ -9,9 +9,9 @@ namespace Candy::Graphics
     
     
   }
-  CameraController::CameraController(Camera* cameraValue) : camera(cameraValue), movementSpeed(MOVEMENT_SPEED), mouseSensitivity(MOUSE_SENSITIVITY), scrollSensitivity(SCROLL_SENSITIVITY)
+  CameraController::CameraController(PerspectiveCamera* cameraValue) : camera(cameraValue), movementSpeed(MOVEMENT_SPEED), mouseSensitivity(MOUSE_SENSITIVITY), scrollSensitivity(SCROLL_SENSITIVITY)
   {
-    prevMousePos = camera->screenSize/2.0f;
+    prevMousePos = camera->viewportSize/2.0f;
     
   }
   CameraController::~CameraController()=default;
@@ -70,10 +70,10 @@ namespace Candy::Graphics
   
   Math::Vector2 CameraController::PanSpeed()
   {
-    float x = Math::Min(camera->screenSize.x / 1000.0f, 2.4f); // max = 2.4f
+    float x = Math::Min(camera->viewportSize.x / 1000.0f, 2.4f); // max = 2.4f
     float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
     
-    float y = Math::Min(camera->screenSize.y / 1000.0f, 2.4f); // max = 2.4f
+    float y = Math::Min(camera->viewportSize.y / 1000.0f, 2.4f); // max = 2.4f
     float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
     return {xFactor, yFactor};
   }
@@ -117,7 +117,7 @@ namespace Candy::Graphics
   }
   void CameraController::OnResize(float width, float height)
   {
-    camera->SetScreenSize(width, height);
+    camera->SetViewportSize(width, height);
     camera->UpdateCameraVectors();
   }
   bool CameraController::OnMouseScroll(Events::MouseScrollEvent& event)
@@ -132,7 +132,7 @@ namespace Candy::Graphics
   }
   bool CameraController::OnWindowResized(Events::WindowResizeEvent& event)
   {
-    camera->SetScreenSize((float)event.GetWidth(), (float)event.GetHeight());
+    camera->SetViewportSize((float)event.GetWidth(), (float)event.GetHeight());
     camera->UpdateCameraVectors();
     return false;
   }
@@ -141,9 +141,9 @@ namespace Candy::Graphics
   void CameraController::UnlockRotation(){canRotate=true;}
   [[nodiscard]] bool CameraController::CanRotate()const{return canRotate;}
   void CameraController::SetRotationEnabled(bool value){canRotate=value;}
-  void CameraController::SetCamera(Camera* cameraObject){camera=cameraObject;}
-  Camera& CameraController::GetCamera(){return *camera;}
-  [[nodiscard]] const Camera& CameraController::GetCamera()const{return *camera;}
+  void CameraController::SetCamera(PerspectiveCamera* cameraObject){camera=cameraObject;}
+  PerspectiveCamera& CameraController::GetCamera(){return *camera;}
+  [[nodiscard]] const PerspectiveCamera& CameraController::GetCamera()const{return *camera;}
   
   [[nodiscard]] bool CameraController::HasCamera()const{return camera!=nullptr;}
   [[nodiscard]] bool CameraController::NeedsCamera()const{return camera==nullptr;}

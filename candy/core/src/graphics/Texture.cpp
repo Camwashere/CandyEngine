@@ -27,6 +27,11 @@ namespace Candy::Graphics
     
   }
   
+  bool Texture::operator==(const Texture& other)const
+  {
+    return path == other.path && specification.size == other.specification.size && specification.format == other.specification.format && specification.generateMipmaps == other.specification.generateMipmaps;
+  }
+  
   void Texture::SetData(void* data, uint32_t size)
   {
     uint32_t bpp = specification.format.GetChannels();

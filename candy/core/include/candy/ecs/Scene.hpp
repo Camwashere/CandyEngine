@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include "SystemScheduler.hpp"
 #include <candy/base/UUID.hpp>
-#include <candy/graphics/camera/Camera.hpp>
+#include "candy/graphics/camera/PerspectiveCamera.hpp"
 #include <candy/graphics/camera/EditorCamera.hpp>
 
 namespace Candy
@@ -75,6 +75,7 @@ namespace Candy::ECS
   private:
     friend class Entity;
     friend class SceneManager;
+    friend class SceneSerializer;
     friend class ::Candy::SceneHierarchyPanel;
     
   };

@@ -2,6 +2,12 @@
 #include "candy/graphics/Vulkan.hpp"
 namespace Candy::Graphics
 {
+  SharedPtr<Material> Material::Create(Shader* shader)
+  {
+    SharedPtr<Material> material = CreateSharedPtr<Material>();
+    material->SetShader(shader);
+    return material;
+  }
   void Material::SetShader(Shader* shaderValue)
   {
     shader = shaderValue;

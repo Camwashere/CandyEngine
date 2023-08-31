@@ -21,8 +21,7 @@ namespace Candy
     bool isFocused=false;
     bool isHovered=false;
     EditorLayer* parent;
-    //ECS::Scene* activeScene;
-    Graphics::OrthographicCameraController orthographicCameraController;
+    
     Graphics::EditorCamera editorCamera;
     Math::Rectangle bounds;
     ECS::Entity hoveredEntity;
