@@ -34,7 +34,7 @@ namespace Candy::Graphics
     void InitViewportState();
     void InitRasterizer();
     void InitMultisampling();
-    void InitColorBlending();
+    
    
     
   
@@ -52,6 +52,7 @@ namespace Candy::Graphics
     void SetMultiSampling(VkSampleCountFlagBits sampleCount, VkBool32 enableSampleShading=VK_FALSE, VkBool32 enabledAlphaToCoverage=VK_FALSE, VkBool32 enabledAlphaToOne=VK_FALSE, VkPipelineMultisampleStateCreateFlags flags=0);
     void AddDynamicState(VkDynamicState state);
     void SetDepthTesting(bool enabled);
+    void SetAlphaColorBlending(bool enabled);
     void AddDynamicStates(std::initializer_list<VkDynamicState> states);
     void ClearDynamicStates();
   

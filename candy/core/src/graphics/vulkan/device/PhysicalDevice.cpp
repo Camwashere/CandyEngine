@@ -189,6 +189,7 @@ namespace Candy::Graphics
   }
   VkPhysicalDeviceProperties PhysicalDevice::GetProperties()const
   {
+    
     return properties;
   }
   

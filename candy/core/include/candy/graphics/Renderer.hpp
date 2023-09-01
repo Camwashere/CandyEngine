@@ -39,10 +39,9 @@ namespace Candy::Graphics
     CameraData cameraData;
     std::array<UniquePtr<RenderPass>, 4> renderPasses{};
     uint8_t currentPassIndex=0;
+    Color clearColor = Color::black;
     
-  private:
-    static void SetClearColor(Color color);
-    
+  
   private:
     Renderer();
     
@@ -85,6 +84,9 @@ namespace Candy::Graphics
     static RenderPass& GetSelectionPass();
     static RenderPass& GetUIPass();
     static const CameraData& GetCameraData();
+    
+    static void SetClearColor(const Color& value);
+    static Color GetClearColor();
    
     
     

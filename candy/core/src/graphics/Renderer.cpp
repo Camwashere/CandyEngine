@@ -74,7 +74,7 @@ namespace Candy::Graphics
     std::array<VkClearValue, 2> clearValues{};
     
     
-    clearValues[0].color = {0.2f, 0.2f, 0.2f, 1.0f};
+    clearValues[0].color = {instance->clearColor.r, instance->clearColor.g, instance->clearColor.b, instance->clearColor.a};
     clearValues[1].depthStencil = {1.0f, 0};
     Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
     VkRenderPassBeginInfo rpInfo = GetViewportPass().BeginPass(GetCurrentFrame().viewportData.viewportFrameBuffer, size);
@@ -96,7 +96,7 @@ namespace Candy::Graphics
     std::array<VkClearValue, 2> clearValues{};
     
     
-    clearValues[0].color = {0.2f, 0.2f, 0.2f, 1.0f};
+    clearValues[0].color = {instance->clearColor.r, instance->clearColor.g, instance->clearColor.b, instance->clearColor.a};
     clearValues[1].depthStencil = {1.0f, 0};
     
     //clearValues[0].color = {0.2f, 0.2f, 0.2f, 1.0f};
@@ -144,7 +144,7 @@ namespace Candy::Graphics
     
     std::array<VkClearValue, 2> clearValues{};
     
-    clearValues[0].color = {0.2f, 0.2f, 0.2f, 1.0f};
+    clearValues[0].color = {instance->clearColor.r, instance->clearColor.g, instance->clearColor.b, instance->clearColor.a};
     clearValues[1].depthStencil = {1.0f, 0};
     Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
     VkRenderPassBeginInfo rpInfo = GetUIPass().BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), size);
@@ -205,10 +205,7 @@ namespace Candy::Graphics
    
   }
   
-  void Renderer::SetClearColor(Color color)
-  {
-    GetViewportPass().SetClearColor(color);
-  }
+  
   void Renderer::EndViewportPass()
   {
   
@@ -266,7 +263,14 @@ namespace Candy::Graphics
   {
     return *instance->renderPasses[selectionPassIndex];
   }
-  
+  void Renderer::SetClearColor(const Color& value)
+  {
+    instance->clearColor = value;
+  }
+  Color Renderer::GetClearColor()
+  {
+    return instance->clearColor;
+  }
   FrameData& Renderer::GetCurrentFrame(){return instance->target->GetCurrentFrame();}
   FrameData& Renderer::GetFrame(uint32_t index){return instance->target->GetFrame(index);}
   

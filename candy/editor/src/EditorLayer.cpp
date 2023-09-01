@@ -33,6 +33,9 @@ namespace Candy
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
     
     viewport = CreateSharedPtr<Viewport>(this);
+    Entity circle = activeScene->CreateEntity("Circle");
+    auto& comp = circle.AddComponent<CircleRendererComponent>();
+    comp.color = Color::purple;
     //testEntity = activeScene->CreateEntity("Test Entity");
     //secondEntity = activeScene->CreateEntity("Second Entity");
     //planeEntity = activeScene->CreateEntity("Plane Entity");

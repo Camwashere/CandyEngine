@@ -72,7 +72,7 @@ namespace Candy
     bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
     if (ImGui::IsItemClicked())
     {
-      selectionContext = entity;
+      SetSelectedEntity(entity);
     }
     
     bool entityDeleted = false;
@@ -141,7 +141,7 @@ namespace Candy
         entity.RemoveComponent<T>();
     }
   }
-  static void DrawFloatControl(const std::string& label, float& value, float resetValue = 0.0f, float columnWidth = 100.0f)
+  static void DrawFloatControl(const std::string& label, float& value, float min=0.0f, float max=0.0f, float columnWidth=100.0f)
   {
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
@@ -153,7 +153,7 @@ namespace Candy
     ImGui::Text("%s", label.c_str());
     ImGui::NextColumn();
     
-    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
     
     float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
@@ -168,7 +168,7 @@ namespace Candy
     ImGui::PopStyleColor(3);
     
     ImGui::SameLine();
-    ImGui::DragFloat("##X", &value, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::DragFloat("##X", &value, 0.01f, min, max, "%.2f");
     ImGui::PopItemWidth();
     
     ImGui::PopStyleVar();
@@ -189,7 +189,7 @@ namespace Candy
     ImGui::Text("%s", label.c_str());
     ImGui::NextColumn();
     
-    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
     
     float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
@@ -295,6 +295,44 @@ namespace Candy
     ImGui::PopID();
   }
   
+  static void DrawColorPickerControl(const std::string& label, Color& value, float columnWidth=100.0f)
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    auto boldFont = io.Fonts->Fonts[0];
+    
+    ImGui::PushID(label.c_str());
+    
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Text("%s", label.c_str());
+    ImGui::NextColumn();
+    
+    ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+    
+    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushFont(boldFont);
+    
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::ColorEdit4("RGB", &value.r);
+    ImGui::PopItemWidth();
+    
+    ImGui::PopStyleVar();
+    
+    ImGui::Columns(1);
+    
+    ImGui::PopID();
+    
+  }
+  
   
   void SceneHierarchyPanel::DrawComponents(Entity entity)
   {
@@ -335,6 +373,16 @@ namespace Candy
       DrawFloatControl("Rotation", component.rotation.z);
       DrawVector2Control("Scale", (Vector2&)component.scale, 1.0f);
       });
+      
+      if (entity.HasComponent<CircleRendererComponent>())
+      {
+        DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+        {
+          DrawColorPickerControl("Color", component.color);
+          DrawFloatControl("Thickness", component.thickness, 0.0f, 1.0f);
+          DrawFloatControl("Fade", component.fade, 0.0f, 1.0f);
+        });
+      }
     }
     else
     {

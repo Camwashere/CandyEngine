@@ -63,6 +63,15 @@ namespace Candy::ECS
   };
   
   
+  struct CircleRendererComponent
+  {
+    Color color = Color::white;
+    float thickness = 1.0f;
+    float fade = 0.005f;
+    
+    CircleRendererComponent()=default;
+    CircleRendererComponent(const CircleRendererComponent&)=default;
+  };
   
   
   template<typename... Component>
@@ -71,5 +80,5 @@ namespace Candy::ECS
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, MeshFilterComponent, MeshRendererComponent>;
+  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, MeshFilterComponent, MeshRendererComponent>;
 }

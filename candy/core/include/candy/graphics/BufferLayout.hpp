@@ -63,7 +63,7 @@ namespace Candy::Graphics
     
     [[nodiscard]] uint32_t GetStride() const;
     
-    [[nodiscard]]
+    
     
     [[nodiscard]] size_t GetElementCount() const;
     

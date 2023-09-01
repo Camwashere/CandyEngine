@@ -141,8 +141,12 @@ namespace Candy::Graphics
   std::vector<VkVertexInputBindingDescription> ShaderLayout::GetVertexBindingDescriptions()const
   {
     std::vector<VkVertexInputBindingDescription> descriptions{};
+    VkVertexInputBindingDescription d{};
+    d.binding = vertexLayout.GetBinding();
+    d.stride = vertexLayout.GetStride();
+    d.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     
-    descriptions.push_back({vertexLayout.GetBinding(), vertexLayout.GetStride(), VK_VERTEX_INPUT_RATE_VERTEX});
+    descriptions.push_back(d);
     return descriptions;
   }
   std::vector<VkVertexInputAttributeDescription> ShaderLayout::GetVertexAttributeDescriptions()const
@@ -152,13 +156,13 @@ namespace Candy::Graphics
     for (const auto& e : vertexLayout)
     {
       //CANDY_CORE_INFO("NAME: {0}, LOCATION: {1}, TYPE: {2}, OFFSET: {3}", e.name, e.location, ShaderData::TypeToString(e.type), e.offset);
-      if (e.type == ShaderData::Type::Int)
-      {
-        CANDY_CORE_INFO("INT ATTRIBUTE DESCRIPTION FOUND");
-        VkFormat format = ShaderData::TypeToVulkan(e.type);
-        CANDY_CORE_INFO("FORMAT VALUE: {}", (uint32_t)format);
-        // SINT = 14. UINT = 13
-      }
+      VkVertexInputAttributeDescription desc{};
+      
+      desc.binding = vertexLayout.GetBinding();
+      desc.format = ShaderData::TypeToVulkan(e.type);
+      desc.location = e.location;
+      desc.offset = e.offset;
+      
       descriptions.push_back({e.location, 0, ShaderData::TypeToVulkan(e.type), e.offset});
     }
     return descriptions;

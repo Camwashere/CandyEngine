@@ -45,8 +45,10 @@ namespace Candy::ECS
       //return scene->registry.GetComponent<T>(handle);
     }
     template<typename T>
-    bool HasComponent()const
+    [[nodiscard]] bool HasComponent()const
     {
+      if (scene==nullptr)
+        return false;
       return scene->registry.all_of<T>(handle);
     }
     template<typename T, typename... Args>
@@ -66,7 +68,7 @@ namespace Candy::ECS
   public:
     UUID GetUUID(){return GetComponent<IDComponent>().id;}
     std::string GetTag(){return GetComponent<TagComponent>().tag;}
-    bool Is2D()const{return HasComponent<SpriteRendererComponent>();}
+    [[nodiscard]] bool Is2D()const{return HasComponent<SpriteRendererComponent>() || HasComponent<CircleRendererComponent>();}
     TransformComponent& GetTransform(){return GetComponent<TransformComponent>();}
     void SetName(const std::string& tag){GetComponent<TagComponent>().tag=tag;}
     

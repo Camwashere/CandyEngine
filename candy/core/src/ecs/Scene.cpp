@@ -184,15 +184,30 @@ namespace Candy::ECS
   void Scene::RenderScene2D()
   {
     Renderer2D::BeginScene();
-    auto view = registry.view<TransformComponent, SpriteRendererComponent>();
     
-    for (auto entity : view)
+    // Draw Sprites
     {
-      auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-      //Renderer2D::DrawQuad(transform.position, transform.scale, sprite.color, (int)entity);
-      Renderer2D::DrawSprite(transform.GetMatrix(), sprite, (int)entity);
-      //Renderer2D::DrawQuad(transform.GetMatrix(), sprite.color, (int)entity);
+      auto view = registry.view<TransformComponent, SpriteRendererComponent>();
+      
+      for (auto entity : view)
+      {
+        auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+        Renderer2D::DrawSprite(transform.GetMatrix(), sprite, (int)entity);
+      }
     }
+    
+    
+    // Draw Circles
+    {
+      auto view = registry.view<TransformComponent, CircleRendererComponent>();
+      
+      for (auto entity : view)
+      {
+        auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+        Renderer2D::DrawCircle(transform.GetMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
+      }
+    }
+    
     Renderer2D::EndScene();
   
   }
