@@ -11,6 +11,8 @@ layout(location = 3) out vec3 farPoint;
 layout(location = 4) out mat4 fragView;
 layout(location = 8) out mat4 fragProj;
 
+
+
 layout(set=0, binding=0) uniform CameraBuffer
 {
     mat4 view;
@@ -26,6 +28,8 @@ vec3(1, 1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
 vec3(-1, -1, 0), vec3(1, 1, 0), vec3(1, -1, 0)
 );
 
+
+
 vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
     mat4 viewInv = inverse(view);
     mat4 projInv = inverse(projection);
@@ -34,7 +38,6 @@ vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
 }
 void main()
 {
-
     vec3 p = gridPlane[gl_VertexIndex].xyz;
     nearPoint = UnprojectPoint(p.x, p.y, 0.0, cameraData.view, cameraData.proj).xyz; // unprojecting on the near plane
     farPoint = UnprojectPoint(p.x, p.y, 1.0, cameraData.view, cameraData.proj).xyz; // unprojecting on the far plane
@@ -43,8 +46,6 @@ void main()
     far = 100;
     fragView = cameraData.view;
     fragProj = cameraData.proj;
-
-
 }
 
 
@@ -85,6 +86,9 @@ float computeLinearDepth(vec3 pos) {
     return linearDepth / far; // normalize
 }
 void main() {
+
+
+
     float t = -nearPoint.y / (farPoint.y - nearPoint.y);
     vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
 
@@ -93,6 +97,15 @@ void main() {
     float linearDepth = computeLinearDepth(fragPos3D);
     float fading = max(0, (0.5 - linearDepth));
 
-    outColor = (grid(fragPos3D, 10, true) + grid(fragPos3D, 1, true))* float(t > 0); // adding multiple resolution for the grid
-    outColor.a *= fading;
+    vec4 color = (grid(fragPos3D, 10, true) + grid(fragPos3D, 1, true))* float(t > 0); // adding multiple resolution for the grid
+    color.a *= fading;
+
+    if (color.a == 0)
+    {
+        discard;
+    }
+
+
+
+    outColor = color;
 }

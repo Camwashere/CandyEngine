@@ -51,7 +51,7 @@ layout (location = 4) in flat int inEntityID;
 layout (location = 5) in vec4 inWorldPos;
 layout (location = 6) in vec4 inLocalPos;
 
-layout(location = 0) out vec4 outColor;
+layout(location = 0) out int outValue;
 
 
 
@@ -65,8 +65,7 @@ void main()
     {
         discard;
     }
-    outColor = inColor;
-    outColor.a *= circle;
+    outValue = inEntityID;
 
 
 }

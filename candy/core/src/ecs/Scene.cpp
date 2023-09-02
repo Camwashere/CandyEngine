@@ -208,6 +208,20 @@ namespace Candy::ECS
       }
     }
     
+    // Draw Lines
+    {
+      auto view = registry.view<TransformComponent, LineRendererComponent>();
+      
+      for (auto entity : view)
+      {
+        auto [transform, line] = view.get<TransformComponent, LineRendererComponent>(entity);
+        Vector3 start = transform.GetMatrix()*line.start;
+        Vector3 end = transform.GetMatrix()*line.end;
+        //Renderer2D::DrawLine(start, end, line.color, line.thickness, (int)entity);
+        Renderer2D::DrawLine(transform.GetMatrix(), line.start, line.end, line.color, line.thickness, (int)entity);
+      }
+    }
+    
     Renderer2D::EndScene();
   
   }

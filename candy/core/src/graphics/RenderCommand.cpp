@@ -129,14 +129,19 @@ namespace Candy::Graphics
     GetCommandBuffer().DrawIndexed(vertexArray, instanceCount, instanceIndex);
   
   }
+  
+  void RenderCommand::DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t count)
+  {
+    GetCommandBuffer().DrawLines(vertexArray, count);
+  }
   void RenderCommand::BindPipeline(const Pipeline& pipeline)
   {
     switch(pipeline.GetType())
     {
-      case PipelineType::Graphics:
+      case ShaderSettings::PipelineType::Graphics:
         GetCommandBuffer().BindGraphicsPipeline(pipeline);
         break;
-      case PipelineType::Compute:
+      case ShaderSettings::PipelineType::Compute:
         GetCommandBuffer().BindComputePipeline(pipeline);
         break;
       default:
@@ -157,7 +162,10 @@ namespace Candy::Graphics
   {
     SetClearColor({r, g, b});
   }
-  
+  void RenderCommand::SetLineWidth(float value)
+  {
+    GetCommandBuffer().SetLineWidth(value);
+  }
   
   void RenderCommand::BindDescriptorSets(const Pipeline& pipeline, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets)
   {

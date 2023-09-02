@@ -152,4 +152,6 @@ namespace Candy::Graphics
   template<> constexpr ShaderData::Type ShaderData::TypeFrom<Math::Vector3d>() { return ShaderData::Type::Vector3Double; }
   
   
+  
+  
 }

@@ -14,6 +14,7 @@ namespace Candy
     ImGui::Text("Quads: %d", stats.quadCount);
     ImGui::Text("Vertices: %d", stats.vertexCount);
     ImGui::Text("Indices: %d", stats.indexCount);
+    ImGui::Text("Lines: %d", stats.lineCount);
   }
   void DebugPanel::OnRenderUI()
   {

@@ -38,25 +38,25 @@ namespace Candy::Graphics
   }
     
     
-    Shader::Shader(std::filesystem::path  shaderFilePath) : filepath(std::move(shaderFilePath)), postProcessor(Renderer::GetViewportPassIndex())
+    Shader::Shader(const ShaderSettings&  settings) : postProcessor(settings)
     {
         CANDY_PROFILE_FUNCTION();
       
-      preProcessor = ShaderPreProcessor::Create(filepath);
+      preProcessor = ShaderPreProcessor::Create(settings.filepath);
       //CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
-      postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
+      postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), settings.filepath);
       //CANDY_CORE_INFO("FINISHED POST PROCESSOR");
       //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
       
         
       // Extract name from filepath
-      shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
+      shaderName = Utils::FileUtils::ExtractNameFromFilePath(settings.filepath);
       
       GetLayout().BakePipeline(CreateShaderStageCreateInfos());
       //BakePipeline(Renderer::GetRenderPass());
         
     }
-  Shader::Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting) : filepath(std::move(shaderFilePath)), postProcessor(renderPassIndex)
+  /*Shader::Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting) : filepath(std::move(shaderFilePath)), postProcessor(renderPassIndex)
   {
     CANDY_PROFILE_FUNCTION();
     
@@ -71,7 +71,7 @@ namespace Candy::Graphics
     shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
     GetLayout().pipeline.SetDepthTesting(enableDepthTesting);
     GetLayout().BakePipeline(CreateShaderStageCreateInfos());
-  }
+  }*/
   
   void Shader::Bind()
   {
@@ -170,6 +170,16 @@ namespace Candy::Graphics
         }
         return ShaderStageCreateInfos;
     }
+  
+  const std::string& Shader::GetName()const
+  {
+      return shaderName;
+  }
+  const std::filesystem::path& Shader::GetFilepath()const
+  {
+      return GetLayout().GetSettings().filepath;
+  }
+  const ShaderSettings& Shader::GetSettings()const{return GetLayout().GetSettings();}
   VkPipeline Shader::GetPipeline()const{return GetLayout().GetPipeline();}
   VkPipelineLayout Shader::GetPipelineLayout()const{return GetLayout().GetPipelineLayout();}
   
@@ -310,14 +320,11 @@ namespace Candy::Graphics
   }
   
     
-    SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath)
+    SharedPtr<Shader> Shader::Create(const ShaderSettings& settings)
     {
-        return CreateSharedPtr<Shader>(shaderFilePath);
+        return CreateSharedPtr<Shader>(settings);
     }
-  SharedPtr<Shader> Shader::Create(const std::filesystem::path& shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting)
-  {
-    return CreateSharedPtr<Shader>(shaderFilePath, renderPassIndex, enableDepthTesting);
-  }
+  
     
     
     

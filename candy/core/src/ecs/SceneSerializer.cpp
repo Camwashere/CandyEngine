@@ -158,6 +158,25 @@ namespace Candy::ECS
       spriteRendererNode["Color"] << spriteRenderer.color;
       spriteRendererNode["TilingFactor"] << spriteRenderer.tilingFactor;
     }
+    if (entity.HasComponent<CircleRendererComponent>())
+    {
+      auto circleRendererNode = child["CircleRendererComponent"];
+      circleRendererNode |= c4::yml::MAP;
+      auto& circleRenderer = entity.GetComponent<CircleRendererComponent>();
+      circleRendererNode["Color"] << circleRenderer.color;
+      circleRendererNode["Thickness"] << circleRenderer.thickness;
+      circleRendererNode["Fade"] << circleRenderer.fade;
+    }
+    if (entity.HasComponent<LineRendererComponent>())
+    {
+      auto lineRendererNode = child["LineRendererComponent"];
+      lineRendererNode |= c4::yml::MAP;
+      auto& lineRenderer = entity.GetComponent<LineRendererComponent>();
+      lineRendererNode["Color"] << lineRenderer.color;
+      lineRendererNode["Thickness"] << lineRenderer.thickness;
+      lineRendererNode["Start"] << lineRenderer.start;
+      lineRendererNode["End"] << lineRenderer.end;
+    }
     
     
     
@@ -298,6 +317,25 @@ namespace Candy::ECS
         }
         spriteRendererComponent["Color"] >> spriteRendererComp.color;
         spriteRendererComponent["TilingFactor"] >> spriteRendererComp.tilingFactor;
+      }
+      
+      auto circleRendererComponent = entity["CircleRendererComponent"];
+      if (circleRendererComponent.has_key())
+      {
+        auto& circleRendererComp = deserializedEntity.AddComponent<CircleRendererComponent>();
+        circleRendererComponent["Color"] >> circleRendererComp.color;
+        circleRendererComponent["Thickness"] >> circleRendererComp.thickness;
+        circleRendererComponent["Fade"] >> circleRendererComp.fade;
+      }
+      
+      auto lineRendererComponent = entity["LineRendererComponent"];
+      if (lineRendererComponent.has_key())
+      {
+        auto& lineRendererComp = deserializedEntity.AddComponent<LineRendererComponent>();
+        lineRendererComponent["Color"] >> lineRendererComp.color;
+        lineRendererComponent["Thickness"] >> lineRendererComp.thickness;
+        lineRendererComponent["Start"] >> lineRendererComp.start;
+        lineRendererComponent["End"] >> lineRendererComp.end;
       }
       
       

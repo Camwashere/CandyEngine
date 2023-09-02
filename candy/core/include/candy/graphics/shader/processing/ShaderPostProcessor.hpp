@@ -7,6 +7,7 @@
 #include "../../vulkan/descriptor/DescriptorBuilder.hpp"
 #include "../ShaderLayout.hpp"
 #include "../../vulkan/descriptor/DescriptorSetLayout.hpp"
+#include "../ShaderSettings.hpp"
 
 namespace spirv_cross
 {
@@ -45,7 +46,7 @@ namespace Candy::Graphics
     
     
   public:
-    explicit ShaderPostProcessor(uint8_t renderPassIndex);
+    explicit ShaderPostProcessor(const ShaderSettings& settings);
     
   public:
     ShaderLayout& GetLayout();

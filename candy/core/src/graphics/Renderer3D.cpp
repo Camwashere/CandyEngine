@@ -23,9 +23,24 @@ namespace Candy::Graphics
   
   void Renderer3D::Initialize()
   {
-    gridShader = Shader::Create("assets/shaders/renderer3D/Grid.glsl");
-    shader = Shader::Create("assets/shaders/renderer3D/Mesh.glsl");
-    selectionShader = Shader::Create("assets/shaders/renderer3D/SelectionMesh.glsl", Renderer::GetSelectionPassIndex());
+    ShaderSettings gridSettings{};
+    gridSettings.filepath = "assets/shaders/renderer3D/Grid.glsl";
+    gridSettings.renderPassIndex = Renderer::GetViewportPassIndex();
+    gridSettings.depthTesting = true;
+    gridSettings.alphaColorBlending = true;
+    gridShader = Shader::Create(gridSettings);
+    
+    ShaderSettings shaderSettings{};
+    shaderSettings.filepath = "assets/shaders/renderer3D/Mesh.glsl";
+    shaderSettings.renderPassIndex = Renderer::GetViewportPassIndex();
+    shaderSettings.depthTesting = true;
+    shaderSettings.alphaColorBlending = true;
+    meshShader = Shader::Create(shaderSettings);
+    
+    ShaderSettings selectionSettings{};
+    selectionSettings.filepath = "assets/shaders/renderer3D/SelectionMesh.glsl";
+    selectionSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionShader = Shader::Create(selectionSettings);
     
     
     data.whiteTexture = Texture::Create(TextureSpecification());
@@ -62,7 +77,7 @@ namespace Candy::Graphics
   }
   BufferLayout Renderer3D::GetBufferLayout()
   {
-    return instance->shader->GetBufferLayout();
+    return instance->meshShader->GetBufferLayout();
   }
   
   void Renderer3D::BeginScene()
@@ -79,7 +94,7 @@ namespace Candy::Graphics
   void Renderer3D::EndScene()
   {
     CANDY_CORE_ASSERT(instance->transforms.size() == instance->meshes.size(), "Transforms and meshes are not the same size");
-    instance->shader->Bind();
+    instance->meshShader->Bind();
     
     Renderer::GetCurrentFrame().storageBuffer->SetData(instance->transforms.data(), sizeof(Matrix4) * instance->transforms.size());
     
@@ -110,13 +125,13 @@ namespace Candy::Graphics
     textureBuilder.Write();
     
     
-    instance->shader->Commit();
+    instance->meshShader->Commit();
     
     for (int i=0; i<instance->meshes.size(); i++)
     {
       instance->meshes[i].vertexArray->Bind();
-      instance->shader->PushInt("objectIndex", i);
-      instance->shader->PushInt("textureIndex", (int)instance->textureIndices[i]);
+      instance->meshShader->PushInt("objectIndex", i);
+      instance->meshShader->PushInt("textureIndex", (int)instance->textureIndices[i]);
       RenderCommand::DrawIndexed(instance->meshes[i].vertexArray);
     }
   }

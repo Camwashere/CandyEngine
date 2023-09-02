@@ -323,6 +323,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::StartRecording(VkCommandBufferUsageFlags flags)
   {
+    
     Reset();
     VkCommandBufferBeginInfo cmdBeginInfo{};
     cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -425,6 +426,11 @@ namespace Candy::Graphics
     vkCmdSetScissor(GetCurrentBuffer(), 0, 1, &scissor);
   }
   
+  void CommandBuffer::SetLineWidth(float value)
+  {
+    vkCmdSetLineWidth(GetCurrentBuffer(), value);
+  }
+  
   
   void CommandBuffer::BindVertexBuffers(const std::vector<VkBuffer> &vertexBuffers)
   {
@@ -469,7 +475,11 @@ namespace Candy::Graphics
       data[i] = *vertexArray->vertexBuffers[i];
     }
     vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, vertexArray->vertexBuffers.size(), data, vertexArray->vertexBufferOffsets.data());
-    vkCmdBindIndexBuffer(GetCurrentBuffer(), *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+    if (vertexArray->indexBuffer)
+    {
+      vkCmdBindIndexBuffer(GetCurrentBuffer(), *vertexArray->indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+    }
+    
   }
   
   void CommandBuffer::DrawEmpty(uint32_t count, VkBuffer dummyBuffer)
@@ -484,7 +494,11 @@ namespace Candy::Graphics
   {
     vkCmdDrawIndexed(GetCurrentBuffer(), static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), instanceCount, 0, 0, instanceIndex);
   }
-  
+  void CommandBuffer::DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t count)
+  {
+    vertexArray->Bind();
+    vkCmdDraw(GetCurrentBuffer(), count, 1, 0, 0);
+  }
   void CommandBuffer::EndRenderPass(uint8_t index)
   {
     CANDY_CORE_ASSERT(index<commandBuffers.size());

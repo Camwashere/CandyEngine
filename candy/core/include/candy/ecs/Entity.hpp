@@ -68,7 +68,7 @@ namespace Candy::ECS
   public:
     UUID GetUUID(){return GetComponent<IDComponent>().id;}
     std::string GetTag(){return GetComponent<TagComponent>().tag;}
-    [[nodiscard]] bool Is2D()const{return HasComponent<SpriteRendererComponent>() || HasComponent<CircleRendererComponent>();}
+    [[nodiscard]] bool Is2D()const{return HasComponent<SpriteRendererComponent>() || HasComponent<CircleRendererComponent>() || HasComponent<LineRendererComponent>();}
     TransformComponent& GetTransform(){return GetComponent<TransformComponent>();}
     void SetName(const std::string& tag){GetComponent<TagComponent>().tag=tag;}
     

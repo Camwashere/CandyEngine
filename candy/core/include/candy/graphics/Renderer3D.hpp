@@ -24,7 +24,7 @@ namespace Candy::Graphics
     static Renderer3DStats stats;
   
   private:
-    SharedPtr<Shader> shader;
+    SharedPtr<Shader> meshShader;
     SharedPtr<Shader> gridShader;
     SharedPtr<Shader> selectionShader;
     //Material material;

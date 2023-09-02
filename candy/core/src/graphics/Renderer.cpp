@@ -28,6 +28,7 @@ namespace Candy::Graphics
   void Renderer::Init()
   {
     Renderer::instance = new Renderer();
+    SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
     
   }
   void Renderer::SubmitMesh(const Mesh& mesh, const Math::Matrix4& transform)

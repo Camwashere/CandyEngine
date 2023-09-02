@@ -5,12 +5,14 @@
 #include "../vulkan/pipeline/Pipeline.hpp"
 #include <candy/graphics/BufferLayout.hpp>
 #include "ShaderProperty.hpp"
+#include "ShaderSettings.hpp"
 namespace Candy::Graphics
 {
 
   class ShaderLayout
   {
   private:
+    const ShaderSettings settings;
     Pipeline pipeline;
     
     
@@ -23,7 +25,8 @@ namespace Candy::Graphics
     size_t globalBufferSize;
     std::unordered_map<std::string, uint32_t> pushBlockMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
-    const uint8_t renderPassIndex;
+    //const ShaderSettings settings;
+    //const uint8_t renderPassIndex;
 
     
   private:
@@ -33,7 +36,7 @@ namespace Candy::Graphics
     void BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
   public:
-    ShaderLayout(uint8_t renderPassIndex);
+    explicit ShaderLayout(ShaderSettings  settings);
     void BindAll();
     void Bind(uint32_t set);
     uint32_t PushConstant(const std::string& name, const void* data);
@@ -53,6 +56,7 @@ namespace Candy::Graphics
     void AddTexture(const ShaderTexture& texture);
 
   public:
+    [[nodiscard]] const ShaderSettings& GetSettings()const{return settings;}
     [[nodiscard]] VkPipeline GetPipeline()const;
     [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
     [[nodiscard]] size_t GetMaterialBufferSize()const{return materialBufferSize;}

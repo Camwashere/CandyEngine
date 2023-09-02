@@ -383,6 +383,7 @@ namespace Candy
           DrawFloatControl("Fade", component.fade, 0.0f, 1.0f);
         });
       }
+      
     }
     else
     {
@@ -391,6 +392,17 @@ namespace Candy
       DrawVector3Control("Position", component.position);
       DrawVector3Control("Rotation", component.rotation);
       DrawVector3Control("Scale", component.scale, 1.0f);
+      });
+    }
+    
+    if (entity.HasComponent<LineRendererComponent>())
+    {
+      DrawComponent<LineRendererComponent>("Line Renderer", entity, [](auto& component)
+      {
+      DrawColorPickerControl("Color", component.color);
+      DrawVector3Control("Start", component.start, 0.0f);
+      DrawVector3Control("End", component.end, 0.0f);
+      DrawFloatControl("Thickness", component.thickness);
       });
     }
     

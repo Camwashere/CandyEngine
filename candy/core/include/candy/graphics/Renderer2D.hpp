@@ -16,6 +16,7 @@ namespace Candy::Graphics
     static void InitQuads();
     static void InitCircles();
     static void InitLines();
+    static void InitSelection();
     static void InitTextures();
     
   private:
@@ -29,6 +30,7 @@ namespace Candy::Graphics
       uint32_t quadCount = 0;
       uint32_t vertexCount = 0;
       uint32_t indexCount = 0;
+      uint32_t lineCount=0;
     };
     static void Init();
     static void Flush();
@@ -48,10 +50,10 @@ namespace Candy::Graphics
     
     static void DrawCircle(const Math::Matrix4& transform, const Math::Vector4& color, float thickness = 1.0f, float fade = 0.005f, int entityID = -1);
     
-    static void DrawLine(const Math::Vector3& p0, Math::Vector3& p1, const Math::Vector4& color, int entityID = -1);
+    static void DrawLine(const Math::Vector3& start, Math::Vector3& end, const Math::Vector4& color, float thickness=1.0f, int entityID = -1);
+    static void DrawLine(const Math::Matrix4& transform, const Math::Vector3& start, Math::Vector3& end, const Math::Vector4& color, float thickness=1.0f, int entityID = -1);
     
-    static void DrawRect(const Math::Vector3& position, const Math::Vector2& size, const Math::Vector4& color, int entityID = -1);
-    static void DrawRect(const Math::Matrix4& transform, const Math::Vector4& color, int entityID = -1);
+   
     
     static void DrawSprite(const Math::Matrix4& transform, ECS::SpriteRendererComponent& src, int entityID);
     

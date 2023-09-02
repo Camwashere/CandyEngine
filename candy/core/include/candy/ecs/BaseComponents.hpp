@@ -73,6 +73,15 @@ namespace Candy::ECS
     CircleRendererComponent(const CircleRendererComponent&)=default;
   };
   
+  struct LineRendererComponent
+  {
+    Color color = Color::white;
+    float thickness = 1.0f;
+    Math::Vector3 start = Math::Vector3::zero;
+    Math::Vector3 end = Math::Vector3::zero;
+    
+  };
+  
   
   template<typename... Component>
   struct ComponentGroup
@@ -80,5 +89,5 @@ namespace Candy::ECS
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, MeshFilterComponent, MeshRendererComponent>;
+  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, LineRendererComponent, MeshFilterComponent, MeshRendererComponent>;
 }

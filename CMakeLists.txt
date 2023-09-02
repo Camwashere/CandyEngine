@@ -11,26 +11,19 @@ add_subdirectory(lib/entt)
 add_subdirectory(lib/antlr)
 add_subdirectory(lib/rapidyaml)
 
-
+add_custom_target(
+        CopyResources ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources/shaders
+        ${CMAKE_BINARY_DIR}/assets/shaders
+        COMMENT "Copying resource files...")
 
 set(IM_GUI_SOURCES lib/imgui/imgui.h lib/imgui/imconfig.h lib/imgui/imgui.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_draw.cpp lib/imgui/imgui_internal.h
         lib/imgui/imgui_tables.cpp lib/imgui/imgui_widgets.cpp lib/imgui/imstb_rectpack.h lib/imgui/imstb_textedit.h lib/imgui/imstb_truetype.h lib/imgui/backends/imgui_impl_vulkan.h
         lib/imgui/backends/imgui_impl_vulkan.cpp lib/imgui/backends/imgui_impl_glfw.h lib/imgui/backends/imgui_impl_glfw.cpp)
 
 set(IM_GUIZMO_SOURCES lib/imguizmo/ImGuizmo.h lib/imguizmo/ImGuizmo.cpp lib/imguizmo/GraphEditor.h lib/imguizmo/GraphEditor.cpp lib/imguizmo/ImSequencer.h lib/imguizmo/ImSequencer.cpp
-        lib/imguizmo/ImGradient.cpp lib/imguizmo/ImGradient.h lib/imguizmo/ImCurveEdit.cpp lib/imguizmo/ImCurveEdit.h lib/imguizmo/ImZoomSlider.h
-        candy/core/include/candy/graphics/camera/EditorCamera.hpp
-        candy/core/include/candy/graphics/camera/CameraBase.hpp
-        candy/core/src/graphics/camera/CameraBase.cpp
-        candy/core/include/candy/graphics/camera/OrthographicCameraController.hpp
-        candy/core/src/graphics/camera/OrthographicCameraController.cpp
-        candy/core/include/candy/graphics/camera/PerspectiveCameraController.hpp
-        candy/core/src/graphics/camera/PerspectiveCameraController.cpp
-        candy/core/include/candy/app/ProjectSerializer.hpp
-        candy/core/src/app/ProjectSerializer.cpp
-        candy/core/include/candy/ecs/SceneSerializer.hpp
-        candy/core/src/ecs/SceneSerializer.cpp
-)
+        lib/imguizmo/ImGradient.cpp lib/imguizmo/ImGradient.h lib/imguizmo/ImCurveEdit.cpp lib/imguizmo/ImCurveEdit.h lib/imguizmo/ImZoomSlider.h)
 
 add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/include/candy/base/Assert.hpp candy/core/include/candy/base/Base.hpp candy/core/include/candy/base/CandyConcepts.hpp candy/core/include/candy/base/PlatformDetection.hpp candy/core/include/candy/base/Log.hpp candy/core/include/candy/base/Instrumentor.hpp candy/core/include/candy/base/MouseCodes.hpp candy/core/include/candy/base/KeyCodes.hpp candy/core/include/candy/base/RawBuffer.hpp candy/core/include/candy/base/UUID.hpp candy/core/include/candy/base/PrimitiveTypes.hpp candy/core/src/base/Log.cpp candy/core/src/base/UUID.cpp candy/core/include/CandyPch.cpp
         candy/core/include/candy/collections/Array2D.hpp candy/core/include/candy/collections/Array3D.hpp
@@ -98,6 +91,19 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/src/graphics/camera/EditorCamera.cpp
         candy/core/include/candy/graphics/ImageFormat.hpp
         candy/core/src/graphics/ImageFormat.cpp
+        candy/core/include/candy/graphics/camera/EditorCamera.hpp
+        candy/core/include/candy/graphics/camera/CameraBase.hpp
+        candy/core/src/graphics/camera/CameraBase.cpp
+        candy/core/include/candy/graphics/camera/OrthographicCameraController.hpp
+        candy/core/src/graphics/camera/OrthographicCameraController.cpp
+        candy/core/include/candy/graphics/camera/PerspectiveCameraController.hpp
+        candy/core/src/graphics/camera/PerspectiveCameraController.cpp
+        candy/core/include/candy/app/ProjectSerializer.hpp
+        candy/core/src/app/ProjectSerializer.cpp
+        candy/core/include/candy/ecs/SceneSerializer.hpp
+        candy/core/src/ecs/SceneSerializer.cpp
+        candy/core/include/candy/graphics/shader/ShaderSettings.hpp
+        candy/core/src/graphics/shader/ShaderSettings.cpp
 )
 
 
@@ -116,5 +122,6 @@ target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan shad
 
 
 add_executable(CandyEngineTest main.cpp)
+add_dependencies(CandyEngineTest CopyResources)
 
 target_link_libraries(CandyEngineTest PRIVATE CandyEngine)

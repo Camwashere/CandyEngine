@@ -28,7 +28,7 @@ namespace Candy::Graphics
     }
   }
   
-  ShaderPostProcessor::ShaderPostProcessor(uint8_t renderPassIndex) : shaderLayout(renderPassIndex)
+  ShaderPostProcessor::ShaderPostProcessor(const ShaderSettings& settings) : shaderLayout(settings)
   {
   
   }

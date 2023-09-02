@@ -62,6 +62,7 @@ namespace Candy::Graphics
         void BindComputePipeline(VkPipeline pipeline);
         void SetViewport(VkExtent2D extent);
         void SetViewport(VkViewport viewport);
+        void SetLineWidth(float value);
         
         void BindVertexBuffers(const std::vector<VkBuffer>& vertexBuffers);
         void BindIndexBuffer(const IndexBuffer& indexBuffer);
@@ -71,6 +72,7 @@ namespace Candy::Graphics
         void BindVertexArray(const VertexArray* vertexArray);
         void DrawEmpty(uint32_t count, VkBuffer dummyBuffer);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount=1, int32_t instanceIndex=0);
+        void DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t count);
         void EndRenderPass(uint8_t index);
         void EndRenderPasses();
         void EndRecording(uint8_t index);

@@ -58,13 +58,14 @@ namespace Candy::Graphics
     SharedPtr<Shader> circleShader;
     SharedPtr<VertexArray> circleVertexArray;
     SharedPtr<VertexBuffer> circleVertexBuffer;
-    //SharedPtr<IndexBuffer> circleIB;
     
+    
+    SharedPtr<Shader> lineShader;
     SharedPtr<VertexArray> lineVertexArray;
     SharedPtr<VertexBuffer> lineVertexBuffer;
-    SharedPtr<Shader> lineShader;
     
-    SharedPtr<Shader> selectionShader;
+    SharedPtr<Shader> selectionQuadShader;
+    SharedPtr<Shader> selectionCircleShader;
     
     
     uint32_t quadIndexCount = 0;
@@ -75,11 +76,11 @@ namespace Candy::Graphics
     CircleVertex* circleVertexBufferBase = nullptr;
     CircleVertex* circleVertexBufferPtr = nullptr;
     
-    uint32_t lineVertexCount = 0;
+    uint32_t lineIndexCount = 0;
     LineVertex* lineVertexBufferBase = nullptr;
     LineVertex* lineVertexBufferPtr = nullptr;
     
-    float lineWidth = 2.0f;
+    float lineWidth = 1.0f;
     
     std::array<SharedPtr<Texture>, maxTextureSlots> textureSlots;
     uint32_t textureSlotIndex = 1; // 0 = white texture
@@ -94,6 +95,7 @@ namespace Candy::Graphics
     InitQuads();
     InitCircles();
     InitLines();
+    InitSelection();
     InitTextures();
     
     
@@ -109,8 +111,17 @@ namespace Candy::Graphics
   
   void Renderer2D::InitQuads()
   {
-    data.quadShader=Shader::Create("assets/shaders/renderer2D/Quad.glsl", Renderer::GetOverlayPassIndex(), false);
-    data.selectionShader = Shader::Create("assets/shaders/renderer2D/SelectionOverlay.glsl", Renderer::GetSelectionPassIndex(), false);
+    ShaderSettings quadShaderSettings{};
+    quadShaderSettings.filepath = "assets/shaders/renderer2D/Quad.glsl";
+    quadShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    quadShaderSettings.depthTesting = false;
+    quadShaderSettings.alphaColorBlending = true;
+    
+    data.quadShader=Shader::Create(quadShaderSettings);
+    
+    
+    
+    
     data.quadVertexArray=VertexArray::Create();
     data.quadVertexBuffer=VertexBuffer::Create(data.quadShader->GetBufferLayout(), RenderData2D::maxVertices);
     
@@ -146,36 +157,26 @@ namespace Candy::Graphics
   void Renderer2D::InitCircles()
   {
     // Circles
-    data.circleShader = Shader::Create("assets/shaders/renderer2D/Circle.glsl", Renderer::GetOverlayPassIndex(), false);
+    ShaderSettings circleShaderSettings{};
+    circleShaderSettings.filepath = "assets/shaders/renderer2D/Circle.glsl";
+    circleShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    circleShaderSettings.depthTesting = false;
+    circleShaderSettings.alphaColorBlending = true;
+    
+    data.circleShader = Shader::Create(circleShaderSettings);
     data.circleVertexArray = VertexArray::Create();
     data.circleVertexBuffer=VertexBuffer::Create(data.circleShader->GetBufferLayout(), RenderData2D::maxVertices);
     data.circleVertexArray->AddVertexBuffer(data.circleVertexBuffer);
     
     data.circleVertexBufferBase = new CircleVertex[RenderData2D::maxVertices];
-    /*uint32_t* quadIndices = new uint32_t[RenderData2D::maxIndices];
     
-    uint32_t offset = 0;
-    for (uint32_t i = 0; i<RenderData2D::maxIndices; i += 6)
-    {
-      quadIndices[i + 0] = offset + 0;
-      quadIndices[i + 1] = offset + 1;
-      quadIndices[i + 2] = offset + 2;
-      
-      quadIndices[i + 3] = offset + 2;
-      quadIndices[i + 4] = offset + 3;
-      quadIndices[i + 5] = offset + 0;
-      
-      offset += 4;
-    }*/
-    
-    //data.circleIB = IndexBuffer::Create(quadIndices, RenderData2D::maxIndices);
     data.circleVertexArray->SetIndexBuffer(data.quadIB);
     
     data.circleTexCoords[0] = {  0.0f,  0.0f};
     data.circleTexCoords[1] = {  1.0f,  0.0f};
     data.circleTexCoords[2] = {  1.0f,  1.0f};
     data.circleTexCoords[3] = {  0.0f,  1.0f};
-    //delete[] quadIndices;
+    
     
     
     
@@ -183,18 +184,36 @@ namespace Candy::Graphics
   void Renderer2D::InitLines()
   {
     // Lines
-    /*s_Data.LineVertexArray = VertexArray::Create();
+    ShaderSettings lineShaderSettings{};
+    lineShaderSettings.filepath = "assets/shaders/renderer2D/Line.glsl";
+    lineShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    lineShaderSettings.depthTesting = false;
     
-    s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
-    s_Data.LineVertexBuffer->SetLayout({
-                                       { ShaderDataType::Float3, "a_Position" },
-                                       { ShaderDataType::Float4, "a_Color"    },
-                                       { ShaderDataType::Int,    "a_EntityID" }
-                                       });
-    s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
-    s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];*/
+    
+    data.lineShader = Shader::Create(lineShaderSettings);
+    
+    data.lineVertexArray = VertexArray::Create();
+    
+    data.lineVertexBuffer = VertexBuffer::Create(data.lineShader->GetBufferLayout(), RenderData2D::maxVertices);
+    
+    data.lineVertexArray->AddVertexBuffer(data.lineVertexBuffer);
+    data.lineVertexArray->SetIndexBuffer(data.quadIB);
+    data.lineVertexBufferBase = new LineVertex[RenderData2D::maxVertices];
   }
-  
+  void Renderer2D::InitSelection()
+  {
+    ShaderSettings selectionQuadSettings{};
+    selectionQuadSettings.filepath = "assets/shaders/renderer2D/SelectionQuad.glsl";
+    selectionQuadSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionQuadSettings.depthTesting = false;
+    data.selectionQuadShader = Shader::Create(selectionQuadSettings);
+    
+    ShaderSettings selectionCircleSettings{};
+    selectionCircleSettings.filepath = "assets/shaders/renderer2D/SelectionCircle.glsl";
+    selectionCircleSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionCircleSettings.depthTesting = false;
+    data.selectionCircleShader = Shader::Create(selectionCircleSettings);
+  }
   void Renderer2D::InitTextures()
   {
     data.whiteTexture = Texture::Create(TextureSpecification());
@@ -211,7 +230,7 @@ namespace Candy::Graphics
     data.circleIndexCount = 0;
     data.circleVertexBufferPtr = data.circleVertexBufferBase;
     
-    data.lineVertexCount = 0;
+    data.lineIndexCount = 0;
     data.lineVertexBufferPtr = data.lineVertexBufferBase;
     
     
@@ -227,6 +246,7 @@ namespace Candy::Graphics
     data.stats.quadCount = 0;
     data.stats.vertexCount = 0;
     data.stats.indexCount = 0;
+    data.stats.lineCount=0;
   }
   void Renderer2D::NextBatch()
   {
@@ -281,25 +301,31 @@ namespace Candy::Graphics
       data.stats.drawCalls++;
     }
     
-    if (data.lineVertexCount)
+    if (data.lineIndexCount)
     {
-      /*uint32_t dataSize = (uint32_t)((uint8_t*)data.LineVertexBufferPtr - (uint8_t*)data.LineVertexBufferBase);
-      data.LineVertexBuffer->SetData(data.LineVertexBufferBase, dataSize);
+      data.lineShader->Bind();
+      uint32_t dataSize = (uint32_t)((uint8_t*)data.lineVertexBufferPtr - (uint8_t*)data.lineVertexBufferBase);
+      data.lineVertexBuffer->SetData(data.lineVertexBufferBase, dataSize);
       
-      data.LineShader->Bind();
-      RenderCommand::SetLineWidth(data.LineWidth);
-      RenderCommand::DrawLines(data.LineVertexArray, data.LineVertexCount);
-      data.Stats.DrawCalls++;*/
+      
+      data.lineVertexArray->Bind();
+      RenderCommand::DrawIndexed(data.lineVertexArray);
+      data.stats.drawCalls++;
     }
     
   }
   void Renderer2D::RenderSelectionBuffer()
   {
-    data.selectionShader->Bind();
-    data.selectionShader->Commit();
+    data.selectionQuadShader->Bind();
+    data.selectionQuadShader->Commit();
     
     data.quadVertexArray->Bind();
     RenderCommand::DrawIndexed(data.quadVertexArray);
+    
+    data.selectionCircleShader->Bind();
+    data.selectionCircleShader->Commit();
+    data.circleVertexArray->Bind();
+    RenderCommand::DrawIndexed(data.circleVertexArray);
     
   
   }
@@ -444,11 +470,7 @@ namespace Candy::Graphics
     float total = (thickness+fade);
     thick /= total;
     fad /= total;
-    /*if (total >= 1.0f)
-    {
-      thick /= total;
-      fad /= total;
-    }*/
+    
     thick *= 0.5f;
     fad *= 0.5f;
     for (size_t i = 0; i < 4; i++)
@@ -467,45 +489,62 @@ namespace Candy::Graphics
     data.stats.quadCount++;
   }
   
-  void Renderer2D::DrawLine(const Vector3& p0, Vector3& p1, const Vector4& color, int entityID)
+  void Renderer2D::DrawLine(const Vector3& start, Vector3& end, const Vector4& color, float thickness, int entityID)
   {
-    data.lineVertexBufferPtr->position = p0;
+    Math::Quaternion rot = Math::Quaternion::Euler(Vector3::zero);
+    Math::Matrix4 matrix = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, Vector3::zero) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rot) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, Vector3::zero);
+    DrawLine(matrix, start, end, color, thickness, entityID);
+  }
+  
+  void Renderer2D::DrawLine(const Math::Matrix4& transform, const Math::Vector3& start, Math::Vector3& end, const Math::Vector4& color, float thickness, int entityID)
+  {
+    // Calculate normalized direction vector
+    Vector3 dir = Vector3::Normalize(end - start);
+    
+    // Calculate perpendicular vector
+    Vector3 perp = Vector3::Normalize({-dir.y, dir.x, dir.z});
+    
+    // Calculate four points of the rectangle
+    Vector3 offset = perp * (thickness / 2.0f);
+    
+    
+    Vector3 v1 = start - offset; // bottom-left
+    Vector3 v2 = end - offset;   // top-left
+    Vector3 v3 = end + offset;   // top-right
+    Vector3 v4 = start + offset; // bottom-right
+    
+    v1 = transform * v1;
+    v2 = transform * v2;
+    v3 = transform * v3;
+    v4 = transform * v4;
+    
+    data.lineVertexBufferPtr->position = v1;
     data.lineVertexBufferPtr->color = color;
     data.lineVertexBufferPtr->entityID = entityID;
     data.lineVertexBufferPtr++;
     
-    data.lineVertexBufferPtr->position = p1;
+    data.lineVertexBufferPtr->position = v2;
     data.lineVertexBufferPtr->color = color;
     data.lineVertexBufferPtr->entityID = entityID;
     data.lineVertexBufferPtr++;
     
-    data.lineVertexCount += 2;
+    data.lineVertexBufferPtr->position = v3;
+    data.lineVertexBufferPtr->color = color;
+    data.lineVertexBufferPtr->entityID = entityID;
+    data.lineVertexBufferPtr++;
+    
+    data.lineVertexBufferPtr->position = v4;
+    data.lineVertexBufferPtr->color = color;
+    data.lineVertexBufferPtr->entityID = entityID;
+    data.lineVertexBufferPtr++;
+    
+    data.lineIndexCount+=6;
+    
+    
+    data.stats.lineCount++;
   }
   
-  void Renderer2D::DrawRect(const Vector3& position, const Vector2& size, const Vector4& color, int entityID)
-  {
-    Vector3 p0 = Vector3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
-    Vector3 p1 = Vector3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
-    Vector3 p2 = Vector3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
-    Vector3 p3 = Vector3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
-    
-    DrawLine(p0, p1, color, entityID);
-    DrawLine(p1, p2, color, entityID);
-    DrawLine(p2, p3, color, entityID);
-    DrawLine(p3, p0, color, entityID);
-  }
   
-  void Renderer2D::DrawRect(const Matrix4& transform, const Vector4& color, int entityID)
-  {
-    Vector3 lineVertices[4];
-    for (size_t i = 0; i < 4; i++)
-      lineVertices[i] = transform * data.quadVertexPositions[i];
-    
-    DrawLine(lineVertices[0], lineVertices[1], color, entityID);
-    DrawLine(lineVertices[1], lineVertices[2], color, entityID);
-    DrawLine(lineVertices[2], lineVertices[3], color, entityID);
-    DrawLine(lineVertices[3], lineVertices[0], color, entityID);
-  }
   
   
   void Renderer2D::DrawSprite(const Math::Matrix4& transform, ECS::SpriteRendererComponent& src, int entityID)

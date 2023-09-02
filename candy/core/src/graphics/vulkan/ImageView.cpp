@@ -103,8 +103,7 @@ namespace Candy::Graphics
     viewInfo.subresourceRange.layerCount = 1;
     
     CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
-    //Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
-    //Vulkan::Push(imageView);
+    
     CreateSampler();
     Vulkan::DeletionQueue().Push(this);
     

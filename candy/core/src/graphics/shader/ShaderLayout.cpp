@@ -3,15 +3,17 @@
 #include <candy/utils/IDManager.hpp>
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/math/Matrix.hpp>
+#include <utility>
 namespace Candy::Graphics
 {
   using namespace Math;
-  ShaderLayout::ShaderLayout(uint8_t passIndex) : renderPassIndex(passIndex)
+  ShaderLayout::ShaderLayout(ShaderSettings  shaderSettings) : settings(std::move(shaderSettings)), pipeline(settings)
   {
     materialBufferSize=0;
     globalBufferSize=0;
     sets.emplace_back();
-    pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
+    //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
+    VK_DYNAMIC_STATE_LINE_WIDTH;
   }
   void ShaderLayout::BindAll()
   {
@@ -36,13 +38,13 @@ namespace Candy::Graphics
       
       return;
     }
-    RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set, renderPassIndex)}, sets[set].offsets);
+    RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set, settings.renderPassIndex)}, sets[set].offsets);
    
   }
   void ShaderLayout::BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {
     VkPipelineLayout pipelineLayout = BakePipelineLayout();
-    pipeline.Bake(Renderer::GetRenderPass(renderPassIndex), GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
+    pipeline.Bake(Renderer::GetRenderPass(settings.renderPassIndex), GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
     
   }
   
@@ -98,7 +100,7 @@ namespace Candy::Graphics
       layouts[i] = builder.BuildLayout();
       for (int f=0; f<FRAME_OVERLAP; f++)
       {
-        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GetDescriptorSet(i, renderPassIndex), layouts[i]), "Failed to allocate descriptor set!");
+        CANDY_CORE_ASSERT(builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GetDescriptorSet(i, settings.renderPassIndex), layouts[i]), "Failed to allocate descriptor set!");
       }
     }
     return layouts;

@@ -5,6 +5,7 @@
 #include "candy/graphics/Color.hpp"
 #include "ShaderData.hpp"
 #include "vulkan/vulkan.h"
+#include "ShaderSettings.hpp"
 #include "processing/ShaderPreProcessor.hpp"
 #include "processing/ShaderPostProcessor.hpp"
 #include "../vulkan/pipeline/Pipeline.hpp"
@@ -15,7 +16,7 @@ namespace Candy::Graphics
     {
     private:
       std::string shaderName;
-      std::filesystem::path filepath;
+      //ShaderSettings settings;
         
       UniquePtr<ShaderPreProcessor> preProcessor;
       ShaderPostProcessor postProcessor;
@@ -26,8 +27,8 @@ namespace Candy::Graphics
       std::vector<VkPushConstantRange> GetPushConstantRanges();
     
     public:
-      explicit Shader(std::filesystem::path  shaderFilePath);
-      Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
+      explicit Shader(const ShaderSettings&  settings);
+      //Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
       
     public:
       void Bind();
@@ -65,8 +66,9 @@ namespace Candy::Graphics
       
       
     public:
-      const std::string& GetName()const{return shaderName;}
-      const std::filesystem::path& GetFilepath()const{return filepath;}
+      const std::string& GetName()const;
+      const std::filesystem::path& GetFilepath()const;
+      const ShaderSettings& GetSettings()const;
       VkPipeline GetPipeline()const;
       VkPipelineLayout GetPipelineLayout()const;
         
@@ -80,8 +82,8 @@ namespace Candy::Graphics
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);
-      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath);
-      static SharedPtr<Shader> Create(const std::filesystem::path& shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
+      static SharedPtr<Shader> Create(const ShaderSettings& settings);
+      
         
     private:
         friend class GraphicsContext;

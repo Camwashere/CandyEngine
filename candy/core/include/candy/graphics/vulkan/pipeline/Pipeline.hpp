@@ -1,23 +1,24 @@
 #pragma once
 #include "vulkan/vulkan.h"
 #include <vector>
-
+#include <candy/graphics/shader/ShaderSettings.hpp>
 namespace Candy::Graphics
 {
   
-  enum class PipelineType
+  /*enum class PipelineType
   {
     Graphics=0,
     Compute,
     RayTracing,
     None,
-  };
+  };*/
   
   class Pipeline
   {
   private:
     uint32_t id;
-    PipelineType type;
+    
+    ShaderSettings settings;
     VkPipeline pipeline=VK_NULL_HANDLE;
     VkPipelineLayout layout = VK_NULL_HANDLE;
     std::vector<VkDynamicState> dynamicStates;
@@ -34,12 +35,15 @@ namespace Candy::Graphics
     void InitViewportState();
     void InitRasterizer();
     void InitMultisampling();
+    void InitColorBlending();
+    void InitDepthTesting();
+    void InitDynamicStates();
     
    
     
   
   public:
-    explicit Pipeline(PipelineType type=PipelineType::Graphics);
+    explicit Pipeline(const ShaderSettings& settings);
     
   public:
     operator VkPipeline()const{return pipeline;}
@@ -51,6 +55,7 @@ namespace Candy::Graphics
     void SetLineWidth(float width);
     void SetMultiSampling(VkSampleCountFlagBits sampleCount, VkBool32 enableSampleShading=VK_FALSE, VkBool32 enabledAlphaToCoverage=VK_FALSE, VkBool32 enabledAlphaToOne=VK_FALSE, VkPipelineMultisampleStateCreateFlags flags=0);
     void AddDynamicState(VkDynamicState state);
+    void SetInputAssembly(ShaderSettings::TopologyType topologyType);
     void SetDepthTesting(bool enabled);
     void SetAlphaColorBlending(bool enabled);
     void AddDynamicStates(std::initializer_list<VkDynamicState> states);
@@ -62,11 +67,10 @@ namespace Candy::Graphics
               const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineLayout pipelineLayout);
     
     [[nodiscard]] uint32_t GetID()const;
-    [[nodiscard]] PipelineType GetType()const;
+    [[nodiscard]] ShaderSettings::PipelineType GetType()const;
     [[nodiscard]] VkPipelineLayout GetLayout()const;
     
-  public:
-    static VkPipelineBindPoint TypeToVulkan(PipelineType type);
+ 
     
  
   };
