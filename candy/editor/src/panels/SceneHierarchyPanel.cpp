@@ -79,7 +79,7 @@ namespace Candy
     ImGuiTreeNodeFlags flags = ((selectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
     flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
     bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
-    if (ImGui::IsItemClicked())
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
     {
       SetSelectedEntity(entity);
     }
