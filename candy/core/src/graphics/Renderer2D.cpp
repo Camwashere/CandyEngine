@@ -66,6 +66,7 @@ namespace Candy::Graphics
     
     SharedPtr<Shader> selectionQuadShader;
     SharedPtr<Shader> selectionCircleShader;
+    SharedPtr<Shader> selectionLineShader;
     
     
     uint32_t quadIndexCount = 0;
@@ -213,6 +214,12 @@ namespace Candy::Graphics
     selectionCircleSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionCircleSettings.depthTesting = false;
     data.selectionCircleShader = Shader::Create(selectionCircleSettings);
+    
+    ShaderSettings selectionLineSettings{};
+    selectionLineSettings.filepath = "assets/shaders/renderer2D/SelectionLine.glsl";
+    selectionLineSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionLineSettings.depthTesting = false;
+    data.selectionLineShader = Shader::Create(selectionLineSettings);
   }
   void Renderer2D::InitTextures()
   {
@@ -324,8 +331,15 @@ namespace Candy::Graphics
     
     data.selectionCircleShader->Bind();
     data.selectionCircleShader->Commit();
+    
     data.circleVertexArray->Bind();
     RenderCommand::DrawIndexed(data.circleVertexArray);
+    
+    data.selectionLineShader->Bind();
+    data.selectionLineShader->Commit();
+    
+    data.lineVertexArray->Bind();
+    RenderCommand::DrawIndexed(data.lineVertexArray);
     
   
   }

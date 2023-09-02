@@ -36,6 +36,15 @@ namespace Candy
       }
       if (ImGui::BeginPopupContextWindow())
       {
+        if (selectionContext)
+        {
+          if (ImGui::MenuItem("Delete Entity"))
+          {
+            context->DestroyEntity(selectionContext);
+            selectionContext={};
+          }
+          
+        }
         if (ImGui::MenuItem("Create Empty Entity"))
         {
           context->CreateEntity("Empty Entity");
