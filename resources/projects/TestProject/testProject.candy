@@ -1,0 +1,6 @@
+Project:
+  Name: TestProject
+  StartScene: projects\TestProject\assets\scenes\StartScene.scene
+  AssetDirectory: projects\TestProject\assets
+  EngineVersion: '[1,0,0]'
+  ProjectVersion: '[1,0,0]'

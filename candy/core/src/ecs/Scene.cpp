@@ -222,6 +222,17 @@ namespace Candy::ECS
       }
     }
     
+    // Draw Text
+    {
+      auto view = registry.view<TransformComponent, TextRendererComponent>();
+      
+      for (auto entity : view)
+      {
+        auto [transform, txt] = view.get<TransformComponent, TextRendererComponent>(entity);
+        Renderer2D::DrawString(txt.text, transform.GetMatrix(), txt, (int)entity);
+      }
+    }
+    
     Renderer2D::EndScene();
   
   }

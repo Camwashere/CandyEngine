@@ -2,14 +2,10 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/MSDF-atlas-gen" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/MSDF-atlas-gen/artery-font-format" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/MSDF-atlas-gen/msdfgen" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/SPIRV-Cross" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/entt" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/freetype2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/imgui" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/libpng" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/msdf-atlas-gen" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/rapidyaml" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/rapidyaml/ext/c4core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/rapidyaml/ext/c4core/cmake" vcs="Git" />
@@ -23,7 +19,5 @@
     <mapping directory="$PROJECT_DIR$/lib/shaderc/third_party/SPIRV-Tools/external/googletest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/shaderc/third_party/SPIRV-Tools/external/re2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/shaderc/third_party/glslang" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/skia" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/tinyxml2" vcs="Git" />
   </component>
 </project>

@@ -33,6 +33,11 @@ namespace Candy
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
     
     viewport = CreateSharedPtr<Viewport>(this);
+    Entity text = activeScene->CreateEntity("Text");
+    auto& textComp = text.AddComponent<TextRendererComponent>();
+    textComp.text = "Bitch";
+    textComp.color = Color::green;
+    textComp.font = Font::Default();
     //Entity circle = activeScene->CreateEntity("Circle");
     //Entity line = activeScene->CreateEntity("Line");
     //auto& lineComp = line.AddComponent<LineRendererComponent>();

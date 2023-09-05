@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.26)
 project(CandyEngine)
 set(CMAKE_CXX_STANDARD 23)
+
+
 find_package(Vulkan REQUIRED)
+find_package(Freetype REQUIRED)
 
 
 add_subdirectory(lib/spdlog)
@@ -13,11 +16,17 @@ add_subdirectory(lib/antlr)
 add_subdirectory(lib/rapidyaml)
 
 
+
+
+
+
+
+
 add_custom_target(
         CopyResources ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources/shaders
-        ${CMAKE_BINARY_DIR}/assets/shaders
+        ${CMAKE_SOURCE_DIR}/resources/assets
+        ${CMAKE_BINARY_DIR}/assets
         COMMENT "Copying resource files...")
 
 set(IM_GUI_SOURCES lib/imgui/imgui.h lib/imgui/imconfig.h lib/imgui/imgui.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_draw.cpp lib/imgui/imgui_internal.h
@@ -106,9 +115,16 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/src/ecs/SceneSerializer.cpp
         candy/core/include/candy/graphics/shader/ShaderSettings.hpp
         candy/core/src/graphics/shader/ShaderSettings.cpp
-        candy/core/include/candy/graphics/Font.hpp
-        candy/core/src/graphics/Font.cpp
-        candy/core/include/candy/graphics/MSDFData.hpp
+        candy/core/include/candy/graphics/font/Font.hpp
+        candy/core/src/graphics/font/Font.cpp
+        candy/core/include/candy/graphics/font/FontAtlas.hpp
+        candy/core/src/graphics/font/FontAtlas.cpp
+        lib/stb/include/stb/stb_image.h
+        lib/stb/include/stb/stb_image_write.h
+        candy/core/include/candy/graphics/font/Charset.hpp
+        candy/core/src/graphics/font/Charset.cpp
+        candy/core/include/candy/graphics/font/Glyph.hpp
+        candy/core/src/graphics/font/Glyph.cpp
 )
 
 
@@ -122,12 +138,12 @@ target_include_directories(CandyEngine PUBLIC lib)
 target_include_directories(CandyEngine PUBLIC lib/stb/include)
 target_include_directories(CandyEngine PUBLIC lib/antlr/runtime/src)
 target_include_directories(CandyEngine PRIVATE tools)
-
+#msdf-atlas-gen::msdf-atlas-gen
 #target_include_directories(CandyEngine PUBLIC lib/imgui)
-target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan shaderc_shared spirv-cross-c EnTT antlr4_static ryml::ryml)
-
-include_directories("${CMAKE_SOURCE_DIR}/lib/msdf-atlas-gen")
-include_directories("${CMAKE_SOURCE_DIR}/lib/msdf-atlas-gen/msdfgen")
+target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan shaderc_shared spirv-cross-c EnTT antlr4_static ryml::ryml Freetype::Freetype)
+#msdf-atlas-gen::msdf-atlas-gen
+#include_directories("${CMAKE_SOURCE_DIR}/lib/msdf-atlas-gen")
+#include_directories("${CMAKE_SOURCE_DIR}/lib/msdf-atlas-gen/msdfgen")
 add_executable(CandyEngineTest main.cpp)
 add_dependencies(CandyEngineTest CopyResources)
 

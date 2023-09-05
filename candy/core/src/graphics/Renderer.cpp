@@ -4,6 +4,7 @@
 #include <candy/app/Application.hpp>
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Renderer3D.hpp>
+#include "candy/graphics/font/Font.hpp"
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -28,6 +29,7 @@ namespace Candy::Graphics
   void Renderer::Init()
   {
     Renderer::instance = new Renderer();
+    Font::Init();
     SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
     
   }

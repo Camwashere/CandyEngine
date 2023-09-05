@@ -3,9 +3,11 @@
 #include <candy/math/Matrix.hpp>
 #include <candy/math/Vector.hpp>
 #include <candy/graphics/Texture.hpp>
+#include <candy/graphics/font/Font.hpp>
 namespace Candy::ECS
 {
   struct SpriteRendererComponent;
+  struct TextRendererComponent;
 }
 namespace Candy::Graphics
 {
@@ -16,6 +18,7 @@ namespace Candy::Graphics
     static void InitQuads();
     static void InitCircles();
     static void InitLines();
+    static void InitText();
     static void InitSelection();
     static void InitTextures();
     
@@ -23,6 +26,8 @@ namespace Candy::Graphics
     static void StartBatch();
     static void NextBatch();
     static void ResetStats();
+    
+    static void DrawCharacter(const Math::Matrix4& transform, const Color& color, const Math::Vector2& quadMin, const Math::Vector2& quadMax, const Math::Vector2& texCoordMin, const Math::Vector2& texCoordMax, int entityID);
   public:
     struct Stats
     {
@@ -31,6 +36,7 @@ namespace Candy::Graphics
       uint32_t vertexCount = 0;
       uint32_t indexCount = 0;
       uint32_t lineCount=0;
+      uint32_t textCount=0;
     };
     static void Init();
     static void Flush();
@@ -56,6 +62,15 @@ namespace Candy::Graphics
    
     
     static void DrawSprite(const Math::Matrix4& transform, ECS::SpriteRendererComponent& src, int entityID);
+    
+    struct TextParams
+    {
+      Color color=Color::red;
+      float kerning = 0.0f;
+      float lineSpacing = 0.0f;
+    };
+    static void DrawString(const std::string& string, const SharedPtr<Font>& font, const Math::Matrix4& transform, const TextParams& textParams, int entityID = -1);
+    static void DrawString(const std::string& string, const Math::Matrix4& transform, const ECS::TextRendererComponent& component, int entityID = -1);
     
     static float GetLineWidth();
     static void SetLineWidth(float width);

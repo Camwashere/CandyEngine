@@ -5,6 +5,7 @@
 #include <entt/entt.hpp>
 #include <candy/graphics/model/Mesh.hpp>
 #include <candy/graphics/material/Material.hpp>
+#include <candy/graphics/font/Font.hpp>
 namespace Candy::ECS
 {
   struct IDComponent{
@@ -83,11 +84,20 @@ namespace Candy::ECS
   };
   
   
+  struct TextRendererComponent
+  {
+    std::string text;
+    SharedPtr<Graphics::Font> font=nullptr;
+    Color color = Color::red;
+    float kerning = 0.0f;
+    float lineSpacing = 0.0f;
+  };
+  
   template<typename... Component>
   struct ComponentGroup
   {
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, LineRendererComponent, MeshFilterComponent, MeshRendererComponent>;
+  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, LineRendererComponent, TextRendererComponent, MeshFilterComponent, MeshRendererComponent>;
 }

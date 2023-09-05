@@ -7,6 +7,7 @@
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/ecs/BaseComponents.hpp>
+#include <candy/graphics/font/Font.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -40,7 +41,17 @@ namespace Candy::Graphics
     int entityID;
   };
   
-  
+  struct TextVertex
+  {
+    Math::Vector3 position;
+    Math::Vector4 color;
+    Math::Vector2 uv;
+    
+    // TODO: bg color for outline/bg
+    
+    // Editor-only
+    int entityID;
+  };
   struct RenderData2D
   {
     static const uint32_t maxQuads = 20000;
@@ -64,6 +75,11 @@ namespace Candy::Graphics
     SharedPtr<VertexArray> lineVertexArray;
     SharedPtr<VertexBuffer> lineVertexBuffer;
     
+    SharedPtr<Shader> textShader;
+    SharedPtr<VertexArray> textVertexArray;
+    SharedPtr<VertexBuffer> textVertexBuffer;
+    
+    
     SharedPtr<Shader> selectionQuadShader;
     SharedPtr<Shader> selectionCircleShader;
     SharedPtr<Shader> selectionLineShader;
@@ -81,9 +97,14 @@ namespace Candy::Graphics
     LineVertex* lineVertexBufferBase = nullptr;
     LineVertex* lineVertexBufferPtr = nullptr;
     
+    uint32_t textIndexCount = 0;
+    TextVertex* textVertexBufferBase = nullptr;
+    TextVertex* textVertexBufferPtr = nullptr;
+    
     float lineWidth = 1.0f;
     
     std::array<SharedPtr<Texture>, maxTextureSlots> textureSlots;
+    //SharedPtr<Texture> fontAtlasTexture;
     uint32_t textureSlotIndex = 1; // 0 = white texture
     
     Vector3 quadVertexPositions[4];
@@ -96,6 +117,7 @@ namespace Candy::Graphics
     InitQuads();
     InitCircles();
     InitLines();
+    InitText();
     InitSelection();
     InitTextures();
     
@@ -173,10 +195,12 @@ namespace Candy::Graphics
     
     data.circleVertexArray->SetIndexBuffer(data.quadIB);
     
-    data.circleTexCoords[0] = {  0.0f,  0.0f};
-    data.circleTexCoords[1] = {  1.0f,  0.0f};
-    data.circleTexCoords[2] = {  1.0f,  1.0f};
-    data.circleTexCoords[3] = {  0.0f,  1.0f};
+    data.circleTexCoords[0] = {  0.0f, 1.0f  };
+    data.circleTexCoords[1] = {  1.0f, 1.0f  };
+    data.circleTexCoords[2] = {  1.0f, 0.0f  };
+    data.circleTexCoords[3] = {  0.0f, 0.0f  };
+    
+   
     
     
     
@@ -200,6 +224,24 @@ namespace Candy::Graphics
     data.lineVertexArray->AddVertexBuffer(data.lineVertexBuffer);
     data.lineVertexArray->SetIndexBuffer(data.quadIB);
     data.lineVertexBufferBase = new LineVertex[RenderData2D::maxVertices];
+  }
+  void Renderer2D::InitText()
+  {
+    ShaderSettings textShaderSettings{};
+    textShaderSettings.filepath = "assets/shaders/renderer2D/Text.glsl";
+    textShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    textShaderSettings.depthTesting = false;
+    textShaderSettings.alphaColorBlending = true;
+    
+    data.textShader = Shader::Create(textShaderSettings);
+    
+    data.textVertexArray = VertexArray::Create();
+    
+    data.textVertexBuffer = VertexBuffer::Create(data.textShader->GetBufferLayout(), RenderData2D::maxVertices);
+    
+    data.textVertexArray->AddVertexBuffer(data.textVertexBuffer);
+    data.textVertexArray->SetIndexBuffer(data.quadIB);
+    data.textVertexBufferBase = new TextVertex[RenderData2D::maxVertices];
   }
   void Renderer2D::InitSelection()
   {
@@ -240,6 +282,8 @@ namespace Candy::Graphics
     data.lineIndexCount = 0;
     data.lineVertexBufferPtr = data.lineVertexBufferBase;
     
+    data.textIndexCount = 0;
+    data.textVertexBufferPtr = data.textVertexBufferBase;
     
     ResetStats();
     data.textureSlotIndex = 1;
@@ -254,6 +298,7 @@ namespace Candy::Graphics
     data.stats.vertexCount = 0;
     data.stats.indexCount = 0;
     data.stats.lineCount=0;
+    data.stats.textCount=0;
   }
   void Renderer2D::NextBatch()
   {
@@ -320,6 +365,21 @@ namespace Candy::Graphics
       data.stats.drawCalls++;
     }
     
+    if (data.textIndexCount)
+    {
+      data.textShader->Bind();
+      uint32_t dataSize = (uint32_t)((uint8_t*)data.textVertexBufferPtr - (uint8_t*)data.textVertexBufferBase);
+      data.textVertexBuffer->SetData(data.textVertexBufferBase, dataSize);
+      
+      
+      
+      //data.fontAtlasTexture->Bind(0);
+      
+      data.textVertexArray->Bind();
+      RenderCommand::DrawIndexed(data.textVertexArray);
+      data.stats.drawCalls++;
+    }
+    
   }
   void Renderer2D::RenderSelectionBuffer()
   {
@@ -374,7 +434,8 @@ namespace Candy::Graphics
   {
     constexpr size_t quadVertexCount = 4;
     const float textureIndex = 0.0f; // White Texture
-    constexpr Vector2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+    //constexpr Math::Vector2 textureCoords[] = { { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
+    
     const float tilingFactor = 1.0f;
     
     if (data.quadIndexCount >= RenderData2D::maxIndices)
@@ -386,7 +447,7 @@ namespace Candy::Graphics
       data.quadVertexBufferPtr->color = color;
       
       data.quadVertexBufferPtr->entityID = entityID;
-      data.quadVertexBufferPtr->uv = textureCoords[i];
+      data.quadVertexBufferPtr->uv = data.circleTexCoords[i];
       data.quadVertexBufferPtr->textureIndex = textureIndex;
       data.quadVertexBufferPtr->tilingFactor = tilingFactor;
       data.quadVertexBufferPtr->entityID = entityID;
@@ -403,7 +464,11 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     
     constexpr size_t quadVertexCount = 4;
-    constexpr Math::Vector2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+    
+    
+    
+    
+    
     
     if (data.quadIndexCount >= RenderData2D::maxIndices)
       NextBatch();
@@ -432,7 +497,7 @@ namespace Candy::Graphics
     {
       data.quadVertexBufferPtr->position = transform * data.quadVertexPositions[i];
       data.quadVertexBufferPtr->color = tintColor;
-      data.quadVertexBufferPtr->uv = textureCoords[i];
+      data.quadVertexBufferPtr->uv = data.circleTexCoords[i];
       data.quadVertexBufferPtr->textureIndex = textureIndex;
       data.quadVertexBufferPtr->tilingFactor = tilingFactor;
       data.quadVertexBufferPtr->entityID = entityID;
@@ -569,6 +634,103 @@ namespace Candy::Graphics
       DrawQuad(transform, src.color, entityID);
   }
   
+  void Renderer2D::DrawString(const std::string& string, const SharedPtr<Font>& font, const Math::Matrix4& transform, const TextParams& textParams, int entityID)
+  {
+    
+    SharedPtr<Texture> fontAtlas = font->GetAtlasTexture();
+    const auto& fontGeometry = font->GetAtlas();
+    //const auto& fontGeometry = font->GetMSDFData()->FontGeometry;
+    //const auto& metrics = fontGeometry.getMetrics();
+    //data.fontAtlasTexture = fontAtlas;
+    
+    double x = 0.0;
+    //double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+    double fsScale = 1.0;
+    double y = 0.0;
+    
+    const float spaceGlyphAdvance = fontGeometry.GetGlyph(' ')->GetAdvance();
+    // render here
+    //DrawCharacter(transform, Color::red, Vector2::zero, Vector2::zero, Vector2::zero, Vector2::zero, entityID);
+    
+    for (size_t i = 0; i < string.size(); i++)
+    {
+      char character = string[i];
+      
+      
+      
+      auto glyph = fontGeometry.GetGlyph(character);
+      if (!glyph)
+        glyph = fontGeometry.GetGlyph('?');
+      if (!glyph)
+        return;
+      
+      double al, ab, ar, at;
+      glyph->GetQuadAtlasBounds(al, ab, ar, at);
+      Vector2 texCoordMin((float)al, (float)ab);
+      Vector2 texCoordMax((float)ar, (float)at);
+      
+      double pl, pb, pr, pt;
+      glyph->GetQuadPlaneBounds(pl, pb, pr, pt);
+      Vector2 quadMin((float)pl, (float)pb);
+      Vector2 quadMax((float)pr, (float)pt);
+      
+      quadMin *= fsScale, quadMax *= fsScale;
+      quadMin += Vector2(x, y);
+      quadMax += Vector2(x, y);
+      
+      float texelWidth = 1.0f / (float)fontAtlas->GetWidth();
+      float texelHeight = 1.0f / (float)fontAtlas->GetHeight();
+      texCoordMin *= Vector2(texelWidth, texelHeight);
+      texCoordMax *= Vector2(texelWidth, texelHeight);
+      
+      // render here
+      DrawCharacter(transform, textParams.color, quadMin, quadMax, texCoordMin, texCoordMax, entityID);
+      
+    }
+  }
+  void Renderer2D::DrawString(const std::string& string, const Math::Matrix4& transform, const ECS::TextRendererComponent& component, int entityID)
+  {
+    
+    DrawString(string, component.font, transform, {component.color, component.kerning, component.lineSpacing }, entityID);
+  }
+  
+  void Renderer2D::DrawCharacter(const Math::Matrix4& transform, const Color& color, const Math::Vector2& quadMin, const Math::Vector2& quadMax, const Math::Vector2& texCoordMin, const Math::Vector2& texCoordMax, int entityID)
+  {
+    //Math::Vector2 texCoords[4] = {texCoordMin, {texCoordMin.x, texCoordMax.y}, {texCoordMax}, {texCoordMax.x, texCoordMin.y}};
+    Math::Vector2 texCoords[4] = {data.circleTexCoords[0], data.circleTexCoords[1], data.circleTexCoords[2], data.circleTexCoords[3] };
+    //Math::Vector3 positions[4] = {Vector3(quadMin.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMax.y, 0.0f), Vector3(quadMin.x, quadMax.y, 0.0f)};
+    
+    Math::Vector3 positions[4] = {data.quadVertexPositions[0], data.quadVertexPositions[1], data.quadVertexPositions[2], data.quadVertexPositions[3]};
+    // render here
+    data.textVertexBufferPtr->position = transform * positions[0];
+    data.textVertexBufferPtr->color = color;
+    data.textVertexBufferPtr->uv = texCoords[0];
+    data.textVertexBufferPtr->entityID = entityID;
+    data.textVertexBufferPtr++;
+    
+    data.textVertexBufferPtr->position = transform * positions[1];
+    data.textVertexBufferPtr->color = color;
+    data.textVertexBufferPtr->uv = texCoords[1];
+    data.textVertexBufferPtr->entityID = entityID;
+    data.textVertexBufferPtr++;
+    
+    data.textVertexBufferPtr->position = transform * positions[2];
+    data.textVertexBufferPtr->color = color;
+    data.textVertexBufferPtr->uv = texCoords[2];
+    data.textVertexBufferPtr->entityID = entityID;
+    data.textVertexBufferPtr++;
+    
+    data.textVertexBufferPtr->position = transform * positions[3];
+    data.textVertexBufferPtr->color = color;
+    data.textVertexBufferPtr->uv = texCoords[3];
+    data.textVertexBufferPtr->entityID = entityID;
+    data.textVertexBufferPtr++;
+    
+    data.textIndexCount += 6;
+    data.stats.quadCount++;
+    data.stats.textCount++;
+    
+  }
   
   float Renderer2D::GetLineWidth()
   {

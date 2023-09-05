@@ -15,6 +15,7 @@
 #include <candy/graphics/camera/EditorCamera.hpp>
 #include "model/Mesh.hpp"
 #include <candy/math/Matrix.hpp>
+
 namespace Candy::Graphics
 {
   struct CameraData
