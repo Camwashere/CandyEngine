@@ -31,6 +31,7 @@ namespace Candy::Graphics
       //Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
       
     public:
+      void Bake();
       void Bind();
       void Commit();
       

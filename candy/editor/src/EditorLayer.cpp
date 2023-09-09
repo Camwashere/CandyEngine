@@ -25,9 +25,7 @@ namespace Candy
   {
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
     OpenScene(Project::GetActive()->GetConfiguration().startScene);
-    //activeScene = Scene::Create("Test Scene");
-    //texture = Texture::Create("assets/textures/wall.jpg");
-    //statueTexture = Texture::Create("assets/textures/statue.jpg");
+    
     
     
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
@@ -35,41 +33,10 @@ namespace Candy
     viewport = CreateSharedPtr<Viewport>(this);
     Entity text = activeScene->CreateEntity("Text");
     auto& textComp = text.AddComponent<TextRendererComponent>();
-    textComp.text = "Bitch";
-    textComp.color = Color::green;
+    textComp.text = "Bitch Please Nigga IDGAF HOE!!!!";
+    //textComp.color = Color::green;
     textComp.font = Font::Default();
-    //Entity circle = activeScene->CreateEntity("Circle");
-    //Entity line = activeScene->CreateEntity("Line");
-    //auto& lineComp = line.AddComponent<LineRendererComponent>();
-    //lineComp.color = Color::red;
-    //lineComp.thickness = 5.0f;
-    //lineComp.end = {1.0f, 1.0f, 0.0f};
-    //auto& comp = circle.AddComponent<CircleRendererComponent>();
-    //comp.color = Color::purple;
-    //testEntity = activeScene->CreateEntity("Test Entity");
-    //secondEntity = activeScene->CreateEntity("Second Entity");
-    //planeEntity = activeScene->CreateEntity("Plane Entity");
-    //quadEntity = activeScene->CreateEntity("Quad Entity");
-    //textureEntity = activeScene->CreateEntity("Texture Entity");
     
-    /*testEntity.AddComponent<MeshFilterComponent>(Mesh::CreateCubeMesh());
-    testEntity.AddComponent<MeshRendererComponent>(statueTexture);
-    secondEntity.AddComponent<MeshFilterComponent>(Mesh::CreateTriangularPrismMesh());
-    secondEntity.AddComponent<MeshRendererComponent>(texture);
-    planeEntity.AddComponent<MeshFilterComponent>(Mesh::CreatePlaneMesh());
-    planeEntity.AddComponent<MeshRendererComponent>(statueTexture);
-    
-    
-    //quadEntity.AddComponent<SpriteRendererComponent>(Color::purple);
-    textureEntity.AddComponent<SpriteRendererComponent>(texture);
-    
-    testEntity.GetTransform().position = {0.0f, 2.0f, 0.0f};
-    secondEntity.GetTransform().position = {4.0f, 2.0f, 0.0f};
-    planeEntity.GetTransform().position = {-4.0f, 2.0f, 0.0f};
-    
-    textureEntity.GetTransform().position = {-1.0f, 0.0f, 0.0f};
-    textureEntity.GetTransform().scale*=0.3f;*/
-    //quadEntity.GetTransform().position = {0.0f, -1.0f, 0.0f};
     
     
     

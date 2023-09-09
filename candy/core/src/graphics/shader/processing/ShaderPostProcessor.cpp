@@ -79,6 +79,7 @@ namespace Candy::Graphics
       else
       {
         //CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
+        
         shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
         if (mod.GetCompilationStatus() != shaderc_compilation_status_success)
         {
@@ -112,12 +113,46 @@ namespace Candy::Graphics
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
     
     auto resources = compiler.get_shader_resources();
+    auto specConstants = compiler.get_specialization_constants();
+    
+    if (!specConstants.empty())
+    {
+      CANDY_CORE_INFO("Has spec constants");
+      ReflectSpecializationConstants(compiler, stage, specConstants);
+    }
+    
+    
     ReflectStageInputs(compiler, stage, resources.stage_inputs);
     ReflectStageStorageBuffers(compiler, stage, resources.storage_buffers);
     ReflectStageUniformBuffers(compiler, stage, resources.uniform_buffers);
     ReflectStageSampledImages(compiler, stage, resources.sampled_images);
     ReflectStagePushConstants(compiler, stage);
     spirv_cross::SmallVector<spirv_cross::Resource> stageInputs;
+  }
+  void ShaderPostProcessor::ReflectSpecializationConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& specConstants)
+  {
+    for (const auto& specConst : specConstants)
+    {
+      
+      uint32_t constID = specConst.constant_id;
+      std::string name = compiler.get_name(specConst.id);
+      spirv_cross::SPIRConstant c = compiler.get_constant(specConst.id);
+      
+      
+      ShaderData::Type type = ShaderData::SpirvToType(compiler.get_type(c.constant_type));
+      ShaderSpecializationConstant v{};
+      v.id = constID;
+      v.name = name;
+      v.type = type;
+      v.stage = stage;
+      shaderLayout.AddSpecConstant(v);
+      
+      CANDY_CORE_INFO("ID: {0}, Constant ID: {1}, Name: {2}, Type: {3}", specConst.id, specConst.constant_id, name, ShaderData::TypeToString(v.type));
+      /*uint32_t specID = compiler.get_decoration(specConst.id, spv::DecorationSpecId);
+      ShaderData::Type specType = ShaderData::SpirvToType(compiler.get_type(specConst.constant_id));
+      std::string name = compiler.get_name(specConst.id);
+      CANDY_CORE_INFO("Specialization constant: {0} with ID: {1} and type: {2}", name, specID, ShaderData::TypeToString(specType));*/
+    }
   }
   void ShaderPostProcessor::ReflectStageInputs(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageInputs)
   {

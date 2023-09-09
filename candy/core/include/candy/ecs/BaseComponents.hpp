@@ -88,7 +88,7 @@ namespace Candy::ECS
   {
     std::string text;
     SharedPtr<Graphics::Font> font=nullptr;
-    Color color = Color::red;
+    Color color = Color::white;
     float kerning = 0.0f;
     float lineSpacing = 0.0f;
   };

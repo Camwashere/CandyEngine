@@ -5,7 +5,6 @@
     <mapping directory="$PROJECT_DIR$/lib/SPIRV-Cross" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/entt" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/imgui" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/msdf-atlas-gen" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/rapidyaml" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/rapidyaml/ext/c4core" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/rapidyaml/ext/c4core/cmake" vcs="Git" />

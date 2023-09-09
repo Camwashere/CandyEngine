@@ -8,6 +8,8 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/ecs/BaseComponents.hpp>
 #include <candy/graphics/font/Font.hpp>
+#include <candy/graphics/font/MSDFData.hpp>
+#include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -104,8 +106,10 @@ namespace Candy::Graphics
     float lineWidth = 1.0f;
     
     std::array<SharedPtr<Texture>, maxTextureSlots> textureSlots;
-    //SharedPtr<Texture> fontAtlasTexture;
+    SharedPtr<Texture> fontAtlasTexture;
     uint32_t textureSlotIndex = 1; // 0 = white texture
+    
+    //ShaderLibrary shaderLibrary;
     
     Vector3 quadVertexPositions[4];
     Vector2 circleTexCoords[4];
@@ -120,6 +124,8 @@ namespace Candy::Graphics
     InitText();
     InitSelection();
     InitTextures();
+    
+    //data.shaderLibrary.Reload();
     
     
     
@@ -141,6 +147,8 @@ namespace Candy::Graphics
     quadShaderSettings.alphaColorBlending = true;
     
     data.quadShader=Shader::Create(quadShaderSettings);
+    
+    //data.shaderLibrary.AddShader(data.quadShader);
     
     
     
@@ -200,6 +208,8 @@ namespace Candy::Graphics
     data.circleTexCoords[2] = {  1.0f, 0.0f  };
     data.circleTexCoords[3] = {  0.0f, 0.0f  };
     
+    //data.shaderLibrary.AddShader(data.circleShader);
+    
    
     
     
@@ -224,6 +234,7 @@ namespace Candy::Graphics
     data.lineVertexArray->AddVertexBuffer(data.lineVertexBuffer);
     data.lineVertexArray->SetIndexBuffer(data.quadIB);
     data.lineVertexBufferBase = new LineVertex[RenderData2D::maxVertices];
+    //data.shaderLibrary.AddShader(data.lineShader);
   }
   void Renderer2D::InitText()
   {
@@ -232,6 +243,7 @@ namespace Candy::Graphics
     textShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     textShaderSettings.depthTesting = false;
     textShaderSettings.alphaColorBlending = true;
+    textShaderSettings.constantInputs.emplace_back("pxRange", Font::GetAtlasGeneratorSettings().pixelRange);
     
     data.textShader = Shader::Create(textShaderSettings);
     
@@ -242,6 +254,8 @@ namespace Candy::Graphics
     data.textVertexArray->AddVertexBuffer(data.textVertexBuffer);
     data.textVertexArray->SetIndexBuffer(data.quadIB);
     data.textVertexBufferBase = new TextVertex[RenderData2D::maxVertices];
+    
+    //data.shaderLibrary.AddShader(data.textShader);
   }
   void Renderer2D::InitSelection()
   {
@@ -287,6 +301,7 @@ namespace Candy::Graphics
     
     ResetStats();
     data.textureSlotIndex = 1;
+    data.fontAtlasTexture = nullptr;
     
     
     
@@ -329,8 +344,14 @@ namespace Candy::Graphics
         VkDescriptorImageInfo imageInfo = data.whiteTexture->GetDescriptorImageInfo();
         imageInfos.push_back(imageInfo);
       }
+      
       DescriptorBuilder builder = DescriptorBuilder::Begin();
       builder.AddImageArrayWrite(0, imageInfos, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MATERIAL_SET);
+      if (data.fontAtlasTexture)
+      {
+        VkDescriptorImageInfo imageInfo = data.fontAtlasTexture->GetDescriptorImageInfo();
+        builder.AddImageWrite(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MATERIAL_SET);
+      }
       builder.Write();
       data.quadShader->Commit();
       data.quadVertexArray->Bind();
@@ -373,7 +394,7 @@ namespace Candy::Graphics
       
       
       
-      //data.fontAtlasTexture->Bind(0);
+      //data.fontAtlasTexture->Bind(1);
       
       data.textVertexArray->Bind();
       RenderCommand::DrawIndexed(data.textVertexArray);
@@ -636,56 +657,89 @@ namespace Candy::Graphics
   
   void Renderer2D::DrawString(const std::string& string, const SharedPtr<Font>& font, const Math::Matrix4& transform, const TextParams& textParams, int entityID)
   {
-    
+    const auto& fontGeometry = font->GetMSDFData()->fontGeometry;
+    const auto& metrics = fontGeometry.getMetrics();
     SharedPtr<Texture> fontAtlas = font->GetAtlasTexture();
-    const auto& fontGeometry = font->GetAtlas();
-    //const auto& fontGeometry = font->GetMSDFData()->FontGeometry;
-    //const auto& metrics = fontGeometry.getMetrics();
-    //data.fontAtlasTexture = fontAtlas;
     
-    double x = 0.0;
-    //double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
-    double fsScale = 1.0;
-    double y = 0.0;
+    data.fontAtlasTexture = fontAtlas;
     
-    const float spaceGlyphAdvance = fontGeometry.GetGlyph(' ')->GetAdvance();
-    // render here
-    //DrawCharacter(transform, Color::red, Vector2::zero, Vector2::zero, Vector2::zero, Vector2::zero, entityID);
+    float x = 0.0f;
+    float fsScale = 1.0f / (metrics.ascenderY - metrics.descenderY);
+    float y = 0.0f;
+    
+    const float spaceGlyphAdvance = fontGeometry.getGlyph(' ')->getAdvance();
     
     for (size_t i = 0; i < string.size(); i++)
     {
       char character = string[i];
+      if (character == '\r')
+        continue;
       
+      if (character == '\n')
+      {
+        x = 0;
+        y -= fsScale * metrics.lineHeight + textParams.lineSpacing;
+        continue;
+      }
       
+      if (character == ' ')
+      {
+        float advance = spaceGlyphAdvance;
+        if (i < string.size() - 1)
+        {
+          char nextCharacter = string[i + 1];
+          float dAdvance;
+          fontGeometry.getAdvance(dAdvance, character, nextCharacter);
+          advance = (float)dAdvance;
+        }
+        
+        x += fsScale * advance + textParams.kerning;
+        continue;
+      }
       
-      auto glyph = fontGeometry.GetGlyph(character);
+      if (character == '\t')
+      {
+        // NOTE(Yan): is this right?
+        x += 4.0f * (fsScale * spaceGlyphAdvance + textParams.kerning);
+        continue;
+      }
+      
+      auto glyph = fontGeometry.getGlyph(character);
       if (!glyph)
-        glyph = fontGeometry.GetGlyph('?');
+        glyph = fontGeometry.getGlyph('?');
       if (!glyph)
         return;
       
-      double al, ab, ar, at;
-      glyph->GetQuadAtlasBounds(al, ab, ar, at);
-      Vector2 texCoordMin((float)al, (float)ab);
-      Vector2 texCoordMax((float)ar, (float)at);
+      float al, ab, ar, at;
+      glyph->getQuadAtlasBounds(al, ab, ar, at);
+      Vector2 texCoordMin(al, ab);
+      Vector2 texCoordMax(ar, at);
       
-      double pl, pb, pr, pt;
-      glyph->GetQuadPlaneBounds(pl, pb, pr, pt);
-      Vector2 quadMin((float)pl, (float)pb);
-      Vector2 quadMax((float)pr, (float)pt);
+      float pl, pb, pr, pt;
+      glyph->getQuadPlaneBounds(pl, pb, pr, pt);
+      Vector2 quadMin(pl, pb);
+      Vector2 quadMax(pr, pt);
       
       quadMin *= fsScale, quadMax *= fsScale;
       quadMin += Vector2(x, y);
       quadMax += Vector2(x, y);
       
-      float texelWidth = 1.0f / (float)fontAtlas->GetWidth();
-      float texelHeight = 1.0f / (float)fontAtlas->GetHeight();
+      float texelWidth = 1.0f / fontAtlas->GetWidth();
+      float texelHeight = 1.0f / fontAtlas->GetHeight();
       texCoordMin *= Vector2(texelWidth, texelHeight);
       texCoordMax *= Vector2(texelWidth, texelHeight);
       
       // render here
       DrawCharacter(transform, textParams.color, quadMin, quadMax, texCoordMin, texCoordMax, entityID);
       
+      if (i < string.size() - 1)
+      {
+        float advance = glyph->getAdvance();
+        char nextCharacter = string[i + 1];
+        fontGeometry.getAdvance(advance, character, nextCharacter);
+        
+        x += fsScale * advance + textParams.kerning;
+      }
     }
   }
   void Renderer2D::DrawString(const std::string& string, const Math::Matrix4& transform, const ECS::TextRendererComponent& component, int entityID)
@@ -697,11 +751,21 @@ namespace Candy::Graphics
   void Renderer2D::DrawCharacter(const Math::Matrix4& transform, const Color& color, const Math::Vector2& quadMin, const Math::Vector2& quadMax, const Math::Vector2& texCoordMin, const Math::Vector2& texCoordMax, int entityID)
   {
     //Math::Vector2 texCoords[4] = {texCoordMin, {texCoordMin.x, texCoordMax.y}, {texCoordMax}, {texCoordMax.x, texCoordMin.y}};
-    Math::Vector2 texCoords[4] = {data.circleTexCoords[0], data.circleTexCoords[1], data.circleTexCoords[2], data.circleTexCoords[3] };
-    //Math::Vector3 positions[4] = {Vector3(quadMin.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMax.y, 0.0f), Vector3(quadMin.x, quadMax.y, 0.0f)};
+    //Math::Vector2 texCoords[4] = {data.circleTexCoords[0], data.circleTexCoords[1], data.circleTexCoords[2], data.circleTexCoords[3] };
+    Math::Vector3 positions[4] = {Vector3(quadMin.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMax.y, 0.0f), Vector3(quadMin.x, quadMax.y, 0.0f)};
+    //Math::Vector2 texCoords[4] = {{texCoordMin.x, texCoordMax.y}, texCoordMax, {texCoordMax.x, texCoordMin.y}, texCoordMin};
+    Math::Vector2 texCoords[4] = {
+    {texCoordMin.x, texCoordMin.y}, // Bottom-left
+    {texCoordMax.x, texCoordMin.y}, // Bottom-right
+    {texCoordMax.x, texCoordMax.y}, // Top-right
+    {texCoordMin.x, texCoordMax.y}  // Top-left
+    };
     
-    Math::Vector3 positions[4] = {data.quadVertexPositions[0], data.quadVertexPositions[1], data.quadVertexPositions[2], data.quadVertexPositions[3]};
-    // render here
+    /*data.circleTexCoords[0] = {  0.0f, 1.0f  };
+    data.circleTexCoords[1] = {  1.0f, 1.0f  };
+    data.circleTexCoords[2] = {  1.0f, 0.0f  };
+    data.circleTexCoords[3] = {  0.0f, 0.0f  };*/
+    
     data.textVertexBufferPtr->position = transform * positions[0];
     data.textVertexBufferPtr->color = color;
     data.textVertexBufferPtr->uv = texCoords[0];

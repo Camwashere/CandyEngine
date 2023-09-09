@@ -106,6 +106,28 @@ namespace Candy::Graphics
   {
     return blocks[id];
   }
+  bool ShaderSet::HasBlockBinding(uint32_t binding)const
+  {
+    for (const auto& block : blocks)
+    {
+      if (block.binding == binding)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+  bool ShaderSet::HasTextureBinding(uint32_t binding)const
+  {
+    for (const auto& texture : textures)
+    {
+      if (texture.binding == binding)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
   bool ShaderSet::IsEmpty()const
   {
     return properties.empty() && blocks.empty() && textures.empty();

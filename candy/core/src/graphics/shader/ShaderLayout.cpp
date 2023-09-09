@@ -4,6 +4,7 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/math/Matrix.hpp>
 #include <utility>
+#include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -44,6 +45,8 @@ namespace Candy::Graphics
   void ShaderLayout::BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {
     VkPipelineLayout pipelineLayout = BakePipelineLayout();
+    
+    
     pipeline.Bake(Renderer::GetRenderPass(settings.renderPassIndex), GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
     
   }
@@ -56,7 +59,8 @@ namespace Candy::Graphics
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     
     
-    auto descriptorSetLayouts = BakeDescriptorSetLayouts();
+    //auto descriptorSetLayouts = BakeDescriptorSetLayouts();
+    auto descriptorSetLayouts = ShaderLibrary::instance.BakeDescriptorSetLayouts(settings.renderPassIndex);
     
     
     pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
@@ -168,6 +172,27 @@ namespace Candy::Graphics
       descriptions.push_back({e.location, 0, ShaderData::TypeToVulkan(e.type), e.offset});
     }
     return descriptions;
+  }
+  void ShaderLayout::AddSpecConstant(const ShaderSpecializationConstant& specConstant)
+  {
+    ShaderSpecializationConstant s = specConstant;
+    specConstantMap[s.name] = specConstants.size();
+    specConstants.push_back(s);
+  }
+  bool ShaderLayout::HasSpecConstant(const std::string& name)const
+  {
+    return specConstantMap.find(name) != specConstantMap.end();
+  }
+  bool ShaderLayout::GetSpecConstant(const std::string& name, ShaderSpecializationConstant* specConstant)const
+  {
+    const auto& it = specConstantMap.find(name);
+    if (it != specConstantMap.end())
+    {
+      *specConstant = specConstants[it->second];
+      return true;
+    }
+   
+    return false;
   }
   uint32_t ShaderLayout::AddBlock(const ShaderBlock& block)
   {

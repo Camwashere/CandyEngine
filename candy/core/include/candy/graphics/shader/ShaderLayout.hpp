@@ -20,11 +20,13 @@ namespace Candy::Graphics
     std::vector<ShaderSet> sets{};
     std::vector<ShaderPushProperty*> pushProperties;
     std::vector<ShaderPushBlock> pushBlocks;
+    std::vector<ShaderSpecializationConstant> specConstants;
     BufferLayout vertexLayout;
     size_t materialBufferSize;
     size_t globalBufferSize;
     std::unordered_map<std::string, uint32_t> pushBlockMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
+    std::unordered_map<std::string, uint32_t> specConstantMap;
     //const ShaderSettings settings;
     //const uint8_t renderPassIndex;
 
@@ -49,6 +51,9 @@ namespace Candy::Graphics
     std::vector<VkVertexInputAttributeDescription> GetVertexAttributeDescriptions()const;
     
   public:
+    void AddSpecConstant(const ShaderSpecializationConstant& specConstant);
+    bool HasSpecConstant(const std::string& name)const;
+    bool GetSpecConstant(const std::string& name, ShaderSpecializationConstant* specConstant)const;
     uint32_t AddBlock(const ShaderBlock& block);
     void AddPushBlock(const ShaderPushBlock& block);
     void AddPushProperty(uint32_t pushBlockID, ShaderPushProperty* property);

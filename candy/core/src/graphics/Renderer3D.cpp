@@ -2,6 +2,7 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -66,6 +67,7 @@ namespace Candy::Graphics
   {
     instance=new Renderer3D();
     instance->Initialize();
+    ShaderLibrary::instance.Reload();
   }
   void Renderer3D::ResetStats()
   {

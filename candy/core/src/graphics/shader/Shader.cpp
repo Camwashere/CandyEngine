@@ -7,6 +7,7 @@
 #include "shaderc/libshaderc/include/shaderc/shaderc.hpp"
 #include "SPIRV-Cross/spirv_glsl.hpp"
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/shader/ShaderLibrary.hpp>
 
 using namespace Candy::Utils;
 namespace Candy::Graphics
@@ -52,8 +53,9 @@ namespace Candy::Graphics
       // Extract name from filepath
       shaderName = Utils::FileUtils::ExtractNameFromFilePath(settings.filepath);
       
-      GetLayout().BakePipeline(CreateShaderStageCreateInfos());
+      //GetLayout().BakePipeline(CreateShaderStageCreateInfos());
       //BakePipeline(Renderer::GetRenderPass());
+     
         
     }
   /*Shader::Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting) : filepath(std::move(shaderFilePath)), postProcessor(renderPassIndex)
@@ -72,7 +74,52 @@ namespace Candy::Graphics
     GetLayout().pipeline.SetDepthTesting(enableDepthTesting);
     GetLayout().BakePipeline(CreateShaderStageCreateInfos());
   }*/
-  
+  void Shader::Bake()
+  {
+    std::vector<VkPipelineShaderStageCreateInfo> createInfos = CreateShaderStageCreateInfos();
+    for (auto& createInfo : createInfos)
+    {
+      size_t currentSize=0;
+      
+      std::vector<float> buffer{};
+      std::vector<VkSpecializationMapEntry> entries{};
+      bool good = false;
+      for(const auto& specInput : GetLayout().settings.constantInputs)
+      {
+        ShaderSpecializationConstant specConstant;
+        if (GetLayout().GetSpecConstant(specInput.GetName(), &specConstant))
+        {
+          if (specConstant.stage == ShaderData::VulkanToStage(createInfo.stage))
+          {
+            VkSpecializationMapEntry entry{};
+            entry.constantID = specConstant.id;
+            entry.size = ShaderData::TypeSize(specConstant.type);
+            entry.offset = currentSize;
+            float value = std::get<float>(specInput.GetValue());
+            CANDY_CORE_INFO("SET SPEC INPUT VALUE: {}", value);
+            buffer.push_back(value);
+            currentSize += entry.size;
+            entries.push_back(entry);
+            good=true;
+          }
+        }
+        
+      }
+      
+      if (! entries.empty())
+      {
+        VkSpecializationInfo specInfo{};
+        specInfo.mapEntryCount = entries.size();
+        specInfo.pMapEntries = entries.data();
+        specInfo.dataSize = currentSize;
+        
+        specInfo.pData = buffer.data();
+        createInfo.pSpecializationInfo = &specInfo;
+      }
+    }
+    
+    GetLayout().BakePipeline(createInfos);
+  }
   void Shader::Bind()
   {
     
@@ -159,14 +206,21 @@ namespace Candy::Graphics
         for (auto&& [stage, binaryCode] : postProcessor.spirvBinaries)
         {
             VkShaderModule shaderModule = CreateShaderModule(stage);
-            VkPipelineShaderStageCreateInfo ShaderStageCreateInfo{};
-            ShaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-            ShaderStageCreateInfo.stage = ShaderData::StageToVulkan(stage);
-            ShaderStageCreateInfo.module = shaderModule;
-            ShaderStageCreateInfo.pName = "main";
+            VkPipelineShaderStageCreateInfo shaderStageCreateInfo{};
+            shaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+            shaderStageCreateInfo.stage = ShaderData::StageToVulkan(stage);
+            shaderStageCreateInfo.module = shaderModule;
+            shaderStageCreateInfo.pName = "main";
             
+            
+            
+            
+          
+          
+            
+          
             //shaderModules.push_back(shaderModule);
-            ShaderStageCreateInfos.push_back(ShaderStageCreateInfo);
+            ShaderStageCreateInfos.push_back(shaderStageCreateInfo);
         }
         return ShaderStageCreateInfos;
     }
@@ -322,7 +376,10 @@ namespace Candy::Graphics
     
     SharedPtr<Shader> Shader::Create(const ShaderSettings& settings)
     {
-        return CreateSharedPtr<Shader>(settings);
+      SharedPtr<Shader> shader = CreateSharedPtr<Shader>(settings);
+      ShaderLibrary::instance.AddShader(shader);
+      return shader;
+        //return CreateSharedPtr<Shader>(settings);
     }
   
     

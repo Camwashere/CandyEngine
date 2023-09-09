@@ -2,8 +2,29 @@
 #include <filesystem>
 #include <vulkan/vulkan.h>
 #include <vector>
+#include "ShaderProperty.hpp"
 namespace Candy::Graphics
 {
+  class SpecializationConstantInput
+  {
+  private:
+    std::string name;
+    ShaderData::Type type;
+    std::variant<int, float, bool> value;
+    
+    
+  public:
+    SpecializationConstantInput(const std::string& name, int value);
+    SpecializationConstantInput(const std::string& name, float value);
+    SpecializationConstantInput(const std::string& name, bool value);
+    
+    [[nodiscard]] const std::string& GetName()const;
+    [[nodiscard]] ShaderData::Type GetType()const;
+    [[nodiscard]] const std::variant<int, float, bool>& GetValue()const;
+    
+    
+    
+  };
   struct ShaderSettings
   {
     enum class PipelineType
@@ -44,6 +65,7 @@ namespace Candy::Graphics
     bool depthTesting=true;
     bool alphaColorBlending=false;
     std::vector<VkDynamicState> dynamicStates{};
+    std::vector<SpecializationConstantInput> constantInputs{};
     
     static VkPipelineBindPoint PipelineTypeToVulkan(PipelineType value);
     static VkPrimitiveTopology  TopologyToVulkan(TopologyType value);

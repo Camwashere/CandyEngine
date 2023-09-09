@@ -12,13 +12,7 @@ namespace Candy::Graphics
   {
   public:
     ShaderMetaData metaData{};
-    /*ShaderBlockObject pushConstantBlock{};
-    std::vector<ShaderUniformSingle> uniformSingles{};
-    std::vector<ShaderBlockObject> uniformBlocks{};
-    std::vector<ShaderIOVariable> inputVariables{};
-    std::vector<ShaderIOVariable> outputVariables{};
-    std::vector<ShaderFunction> functions{};
-    std::vector<ShaderStruct> structs{};*/
+    std::vector<ShaderInjectionConstant> injectionConstants{};
     
     std::string source{};
     

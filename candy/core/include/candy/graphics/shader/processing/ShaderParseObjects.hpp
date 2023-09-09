@@ -48,6 +48,14 @@ namespace Candy::Graphics
     }
   };
   
+  struct ShaderInjectionConstant
+  {
+    ShaderData::Stage stage;
+    ShaderData::Type type;
+    std::string name;
+    std::string value;
+  };
+  
   /*struct ShaderVariable : public ShaderParseObject
   {
     ShaderData::Type type=ShaderData::Type::None;

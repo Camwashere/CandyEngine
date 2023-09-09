@@ -48,6 +48,7 @@ layout (location = 4) in flat int inEntityID;
 
 layout (set=2, binding = 0) uniform sampler2D u_Textures[32];
 
+
 layout(location=0) out vec4 outColor;
 
 void main()

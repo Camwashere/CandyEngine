@@ -31,7 +31,14 @@ namespace Candy::Graphics
     [[nodiscard]] uint32_t GetSize()const;
   };
   
-  
+  struct ShaderSpecializationConstant
+  {
+    uint32_t id;
+    std::string name;
+    ShaderData::Type type;
+    ShaderData::Stage stage;
+  };
+ 
   struct ShaderProperty
   {
     uint32_t id;
@@ -102,6 +109,8 @@ namespace Candy::Graphics
     ShaderProperty GetProperty(uint32_t id)const;
     ShaderBlock GetBlock(const std::string& name)const;
     ShaderBlock GetBlock(uint32_t id)const;
+    bool HasBlockBinding(uint32_t binding)const;
+    bool HasTextureBinding(uint32_t binding)const;
     bool IsEmpty()const;
     [[nodiscard]] const std::vector<ShaderBlock>& GetBlocks()const;
     [[nodiscard]] uint32_t GetSet()const;

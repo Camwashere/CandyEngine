@@ -1,0 +1,16 @@
+GeneratorSettings:
+  PixelRange: 4.0
+  MinimumScale: 80
+  Scale: 80
+  MiterLimit: 1
+  Padding: 0
+  DimensionWidth: -1
+  DimensionHeight: -1
+  ExpensiveColoring: 0
+  DimensionConstraint: NONE
+  DefaultAngleThreshold: 3
+  AttributeSettings:
+    OverlapSupport: 1
+    ScanlinePass: 1
+    AtlasType: MTSDF
+    ThreadCount: 8
