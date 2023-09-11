@@ -8,10 +8,10 @@ namespace Candy::Graphics
   {
     //vertexBuffer = nullptr;
     //indexBuffer = nullptr;
-    vertexArray = nullptr;
+    //vertexArray = nullptr;
   }
  
-  void Mesh::Apply()
+  /*void Mesh::Apply()
   {
     CANDY_CORE_ASSERT(data.IsValid(), "Mesh is not valid!");
     layout = Renderer3D::GetBufferLayout();
@@ -26,20 +26,21 @@ namespace Candy::Graphics
     vertexArray->AddVertexBuffer(vertexBuffer);
     vertexArray->SetIndexBuffer(indexBuffer);
     
-  }
+  }*/
   
   bool Mesh::IsValid()const
   {
-    return data.IsValid()&&vertexArray!=nullptr;
+    return data.IsValid();
+    //return data.IsValid()&&vertexArray!=nullptr;
     
   }
   
   Mesh Mesh::CreatePlaneMesh()
   {
     Mesh mesh{};
-    mesh.layout = Renderer3D::GetBufferLayout();
+    //mesh.layout = Renderer3D::GetBufferLayout();
     mesh.data = MeshData::CreatePlaneMeshData();
-    mesh.Apply();
+    //mesh.Apply();
     return mesh;
   }
   
@@ -47,17 +48,17 @@ namespace Candy::Graphics
   {
 
     Mesh mesh{};
-    mesh.layout = Renderer3D::GetBufferLayout();
+    //mesh.layout = Renderer3D::GetBufferLayout();
     mesh.data = MeshData::CreateCubeMeshData();
-    mesh.Apply();
+    //mesh.Apply();
     return mesh;
   }
   Mesh Mesh::CreateTriangularPrismMesh()
   {
     Mesh mesh{};
-    mesh.layout = Renderer3D::GetBufferLayout();
+    //mesh.layout = Renderer3D::GetBufferLayout();
     mesh.data = MeshData::CreateTriangularPrismMeshData();
-    mesh.Apply();
+   // mesh.Apply();
     return mesh;
   }
 }

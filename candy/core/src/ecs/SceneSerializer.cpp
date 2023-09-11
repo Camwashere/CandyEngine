@@ -78,10 +78,61 @@ namespace Candy::Math
     size_t ret = c4::unformat(buf, "[{},{}]", v->x, v->y);
     return ret != c4::csubstr::npos;
   }
+  
 }
 
+namespace c4 {
+  namespace yml {
+    
+    template<>
+    void write(c4::yml::NodeRef* n, const Candy::Graphics::MeshVertex& vert)
+    {
+      *n |= c4::yml::MAP;
+      (*n)["Position"] << vert.position;
+      (*n)["Color"] << vert.color;
+      (*n)["Normal"] << vert.normal;
+      (*n)["UV"] << vert.uv;
+    }
+    
+    template<>
+    bool read(const c4::yml::ConstNodeRef& n, Candy::Graphics::MeshVertex *vec)
+    {
+      if (n.is_map())
+      {
+        n["Position"] >> vec->position;
+        n["Color"] >> vec->color;
+        n["Normal"] >> vec->normal;
+        n["UV"] >> vec->uv;
+        return true;
+      }
+      
+      return false;
+    }
 
 
+    
+    
+  }
+}
+// Serialization
+/*ryml::NodeRef operator<<(ryml::NodeRef node, const Candy::Graphics::MeshVertex& vertex)
+{
+  node |= ryml::MAP;
+  node["Position"] << vertex.position;
+  node["Color"] << vertex.color;
+  node["Normal"] << vertex.normal;
+  node["UV"] << vertex.uv;
+  return node;
+}
+// Deserialization
+ryml::NodeRef operator>>(ryml::NodeRef node, Candy::Graphics::MeshVertex& vertex)
+{
+  node["Position"] >> vertex.position;
+  node["Color"] >> vertex.color;
+  node["Normal"] >> vertex.normal;
+  node["UV"] >> vertex.uv;
+  return node;
+}*/
 namespace Candy::ECS
 {
   using namespace Math;
@@ -122,10 +173,12 @@ namespace Candy::ECS
       auto meshNode = child["MeshFilterComponent"];
       meshNode |= c4::yml::MAP;
       auto& mesh = entity.GetComponent<MeshFilterComponent>();
+      
       meshNode["Vertices"] << mesh.mesh.data.vertices;
-      meshNode["UVs"] << mesh.mesh.data.uvs;
+      meshNode["Indices"] << mesh.mesh.data.indices;
+     /* meshNode["UVs"] << mesh.mesh.data.uvs;
       meshNode["Triangles"] << mesh.mesh.data.triangles;
-      meshNode["Normals"] << mesh.mesh.data.normals;
+      meshNode["Normals"] << mesh.mesh.data.normals;*/
     }
     
     if (entity.HasComponent<MeshRendererComponent>())
@@ -176,6 +229,18 @@ namespace Candy::ECS
       lineRendererNode["Thickness"] << lineRenderer.thickness;
       lineRendererNode["Start"] << lineRenderer.start;
       lineRendererNode["End"] << lineRenderer.end;
+    }
+    
+    if (entity.HasComponent<TextRendererComponent>())
+    {
+      auto textRendererNode = child["TextRendererComponent"];
+      textRendererNode |= c4::yml::MAP;
+      auto& textRenderer = entity.GetComponent<TextRendererComponent>();
+      textRendererNode["Text"] << textRenderer.text;
+      textRendererNode["Color"] << textRenderer.color;
+      textRendererNode["Kerning"] << textRenderer.kerning;
+      textRendererNode["LineSpacing"] << textRenderer.lineSpacing;
+      
     }
     
     
@@ -284,12 +349,13 @@ namespace Candy::ECS
       {
         MeshData meshData{};
         meshFilterComponent["Vertices"] >> meshData.vertices;
-        meshFilterComponent["UVs"] >> meshData.uvs;
+        meshFilterComponent["Indices"] >> meshData.indices;
+        /*meshFilterComponent["UVs"] >> meshData.uvs;
         meshFilterComponent["Triangles"] >> meshData.triangles;
-        meshFilterComponent["Normals"] >> meshData.normals;
+        meshFilterComponent["Normals"] >> meshData.normals;*/
         auto& meshComp = deserializedEntity.AddComponent<MeshFilterComponent>();
         meshComp.mesh.data = meshData;
-        meshComp.mesh.Apply();
+        //meshComp.mesh.Apply();
       }
       
       auto meshRendererComponent = entity["MeshRendererComponent"];
@@ -336,6 +402,17 @@ namespace Candy::ECS
         lineRendererComponent["Thickness"] >> lineRendererComp.thickness;
         lineRendererComponent["Start"] >> lineRendererComp.start;
         lineRendererComponent["End"] >> lineRendererComp.end;
+      }
+      
+      auto textRendererComponent = entity["TextRendererComponent"];
+      if (textRendererComponent.has_key())
+      {
+        auto& textRendererComp = deserializedEntity.AddComponent<TextRendererComponent>();
+        textRendererComponent["Text"] >> textRendererComp.text;
+        textRendererComponent["Color"] >> textRendererComp.color;
+        textRendererComponent["Kerning"] >> textRendererComp.kerning;
+        textRendererComponent["LineSpacing"] >> textRendererComp.lineSpacing;
+        textRendererComp.font = Font::Default();
       }
       
       

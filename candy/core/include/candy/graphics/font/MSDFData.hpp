@@ -5,9 +5,14 @@
 #include "FontAtlas/Atlas/GlyphGeometry.hpp"
 namespace Candy::Graphics
 {
+  
+  
+  
   struct MSDFData
   {
-    std::vector<msdf_atlas::GlyphGeometry> glyphs;
+    std::vector<msdf_atlas::GlyphGeometry> glyphStorage;
     msdf_atlas::FontGeometry fontGeometry;
+    
+    
   };
 }

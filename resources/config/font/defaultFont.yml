@@ -1,12 +1,12 @@
 GeneratorSettings:
-  PixelRange: 4.0
-  MinimumScale: 80
-  Scale: 80
+  PixelRange: 10.0
+  MinimumScale: 120
+  Scale: 120
   MiterLimit: 1
   Padding: 0
   DimensionWidth: -1
   DimensionHeight: -1
-  ExpensiveColoring: 0
+  ExpensiveColoring: 1
   DimensionConstraint: NONE
   DefaultAngleThreshold: 3
   AttributeSettings:

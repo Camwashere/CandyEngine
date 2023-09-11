@@ -1,14 +1,14 @@
 #pragma once
-#include "Font.hpp"
+#include "FontManager.hpp"
 namespace Candy::Graphics
 {
   class FontAtlasSettingsSerializer
   {
   private:
-    Font::AtlasGeneratorSettings* settings;
+    FontAtlasGeneratorSettings* settings;
     
   public:
-    explicit FontAtlasSettingsSerializer(Font::AtlasGeneratorSettings* settings);
+    explicit FontAtlasSettingsSerializer(FontAtlasGeneratorSettings* settings);
     bool Serialize(const std::filesystem::path& filepath);
     bool Deserialize(const std::filesystem::path& filepath);
   };

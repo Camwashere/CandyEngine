@@ -68,6 +68,7 @@ namespace Candy::Graphics
       if (in.is_open() && !recompileOnLoad)
       {
         //CANDY_CORE_INFO("ALREADY HAS SHADER CACHED");
+        
         in.seekg(0, std::ios::end);
         auto size = in.tellg();
         in.seekg(0, std::ios::beg);

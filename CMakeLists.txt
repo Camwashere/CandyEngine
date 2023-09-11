@@ -123,6 +123,11 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/include/candy/graphics/font/MSDFData.hpp
         candy/core/include/candy/graphics/font/FontAtlasSettingsSerializer.hpp
         candy/core/src/graphics/font/FontAtlasSettingsSerializer.cpp
+        candy/core/include/candy/graphics/font/FontManager.hpp
+        candy/core/src/graphics/font/FontManager.cpp
+        candy/core/include/candy/collections/GenericBuffer.hpp
+        candy/core/include/candy/graphics/font/MSDFSerializer.hpp
+        candy/core/src/graphics/font/MSDFSerializer.cpp
 
 )
 

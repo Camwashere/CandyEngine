@@ -103,7 +103,7 @@ set(ATLAS_GEN_INCLUDE_FILES include/FontAtlas/Atlas/FontAtlasLoader.hpp
         include/FontAtlas/Atlas/atlas-gen-types.hpp
         include/FontAtlas/Atlas/AtlasUtfDecode.hpp)
 
-set(ATLAS_GEN_SOURCE_FILES src/atlas/FontLoader.cpp
+set(ATLAS_GEN_SOURCE_FILES src/atlas/FontAtlasLoader.cpp
         src/atlas/FontData.cpp
         src/atlas/bitmap-blit.cpp
         src/atlas/Charset.cpp

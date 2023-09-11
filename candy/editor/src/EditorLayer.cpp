@@ -26,18 +26,17 @@ namespace Candy
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
     OpenScene(Project::GetActive()->GetConfiguration().startScene);
     
-    
-    
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
     
     viewport = CreateSharedPtr<Viewport>(this);
-    Entity text = activeScene->CreateEntity("Text");
-    auto& textComp = text.AddComponent<TextRendererComponent>();
-    textComp.text = "Bitch Please Nigga IDGAF HOE!!!!";
-    //textComp.color = Color::green;
-    textComp.font = Font::Default();
     
+    /*auto test = activeScene->CreateEntity("Cube");
+    test.AddComponent<MeshFilterComponent>(Mesh::CreateCubeMesh());
+    test.AddComponent<MeshRendererComponent>(Texture::Create("assets/textures/statue.jpg"));
     
+    auto tri = activeScene->CreateEntity("Triangular Prism");
+    tri.AddComponent<MeshFilterComponent>(Mesh::CreateTriangularPrismMesh());
+    tri.AddComponent<MeshRendererComponent>(Texture::Create("assets/textures/statue.jpg"));*/
     
     
     

@@ -458,6 +458,38 @@ namespace Candy
       {
         char* str = component.text.data();
         ImGui::InputText("Text", str, 100);
+        
+        std::string comboItems;
+        const auto& fontNames = FontManager::GetFontNames();
+        size_t counter=0;
+        int currentIndex=-1;
+        for (const auto& name : fontNames)
+        {
+          comboItems += name;
+          comboItems.push_back('\0');
+          if (component.font->GetName() == name)
+          {
+            currentIndex = (int)counter;
+          }
+          counter++;
+        }
+        CANDY_CORE_ASSERT(currentIndex >= 0);
+        if (ImGui::Combo("Fonts", &currentIndex, comboItems.c_str()))
+        {
+          // Font Selection has changed. Update the font
+          if (currentIndex >= 0)
+          {
+            std::string fontName = fontNames[currentIndex];
+            SharedPtr<Font> font = FontManager::GetFont(fontName);
+            CANDY_CORE_ASSERT(font);
+            if (! font->IsLoaded())
+            {
+              CANDY_CORE_ASSERT(font->Load());
+            }
+            component.font = font;
+          }
+          
+        }
         DrawColorPickerControl("Color", component.color);
         DrawFloatControl("Kerning", component.kerning);
         DrawFloatControl("Line Spacing", component.lineSpacing);

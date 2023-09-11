@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <string>
 namespace msdf_atlas
 {
   typedef uint32_t unicode_t;
@@ -39,4 +40,6 @@ namespace msdf_atlas
   };
   
   class FontHandle;
+  
+  
 }

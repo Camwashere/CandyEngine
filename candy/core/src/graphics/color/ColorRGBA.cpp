@@ -16,7 +16,7 @@ namespace Candy {
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::green(0, 1, 0);
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::blue(0, 0, 1);
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::black(0.0f, 0.0f, 0.0f, 1.0f);
-  const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::white(1, 1, 1);
+  const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::white(1, 1, 1, 1);
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::grey(0.5f, 0.5f, 0.5f);
   const ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT>::clear(0, 0, 0, 0);
   

@@ -29,7 +29,7 @@ namespace Candy::Graphics
   void Renderer::Init()
   {
     Renderer::instance = new Renderer();
-    Font::Init();
+    Font::Init("config/font/atlasGeneratorSettings.yml", "assets/fonts");
     SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
     
   }

@@ -137,7 +137,10 @@ msdfgen::Projection GlyphGeometry::getBoxProjection() const {
 float GlyphGeometry::getBoxScale() const {
     return box.scale;
 }
-
+  float GlyphGeometry::getGeometryScale()const
+  {
+  return geometryScale;
+  }
 msdfgen::msdfVec2 GlyphGeometry::getBoxTranslate() const {
     return box.translate;
 }

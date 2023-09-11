@@ -9,50 +9,39 @@
 
 namespace Candy::Graphics
 {
-  struct Renderer3DStats
-  {
-    uint32_t drawCalls=0;
-    uint32_t objects=0;
-    uint32_t vertices=0;
-    uint32_t indices=0;
-    uint32_t triangles=0;
-    
-  };
+  
   class Renderer3D
   {
-  private:
-    static Renderer3DStats stats;
-  
-  private:
-    SharedPtr<Shader> meshShader;
-    SharedPtr<Shader> gridShader;
-    SharedPtr<Shader> selectionShader;
-    //Material material;
-    //SharedPtr<Texture> texture;
+  public:
+    struct Stats
+    {
+      uint32_t drawCalls = 0;
+      uint32_t objectCount = 0;
+      uint32_t vertexCount = 0;
+      uint32_t indexCount = 0;
+      uint32_t triangleCount=0;
+      
+    };
     
-    std::vector<Mesh> meshes;
-    
-    std::vector<uint32_t> entities;
-    std::vector<Math::Matrix4> transforms;
-    std::vector<uint32_t> textureIndices;
-    static constexpr uint32_t MAX_OBJECTS=100;
-    static Renderer3D* instance;
     
   private:
-    void Initialize();
+    static void InitGrid();
+    static void InitMesh();
+    static void InitSelection();
+    static void InitMaterial();
     static void ResetStats();
     static void RenderGrid();
     
+    static void StartBatch();
+    static void NextBatch();
+    
   public:
-    static BufferLayout GetBufferLayout();
-    
-    
-    
+    static void Flush();
     static void BeginScene();
     static void EndScene();
     static void Init();
-    static void SubmitMesh(uint32_t entity, const Mesh& data, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
-    static Renderer3DStats GetStats();
+    static void SubmitMesh(uint32_t entity, const MeshData& data, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
+    static Renderer3D::Stats GetStats();
     static void RenderSelectionBuffer();
   
   };

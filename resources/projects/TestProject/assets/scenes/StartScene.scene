@@ -258,3 +258,15 @@ Scene:
         Texture: assets/textures/wall.jpg
         Color: '[1,1,1,1]'
         TilingFactor: 1
+    - Entity: 4119723981343448543
+      TagComponent:
+        Tag: Text
+      TransformComponent:
+        Position: '[-0.9474591,-0.4737296,0]'
+        Rotation: '[0,0,0]'
+        Scale: '[0.2,0.2,0.2]'
+      TextRendererComponent:
+        Text: Bitch Please This be working
+        Color: '[0,0,0,1]'
+        Kerning: 0
+        LineSpacing: 0

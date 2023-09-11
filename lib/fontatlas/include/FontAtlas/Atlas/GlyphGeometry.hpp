@@ -49,6 +49,8 @@ public:
     msdfgen::Projection getBoxProjection() const;
     /// Returns the scale needed to generate the glyph's bitmap
     float getBoxScale() const;
+    
+    float getGeometryScale()const;
     /// Returns the translation vector needed to generate the glyph's bitmap
     msdfgen::msdfVec2 getBoxTranslate() const;
     /// Outputs the bounding box of the glyph as it should be placed on the baseline
@@ -60,7 +62,7 @@ public:
     /// Simplifies to GlyphBox
     operator GlyphBox() const;
 
-private:
+public:
     int index;
     unicode_t codepoint;
     float geometryScale;

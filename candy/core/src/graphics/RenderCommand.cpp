@@ -123,6 +123,10 @@ namespace Candy::Graphics
   {
     GetCommandBuffer().DrawEmpty(count, *dummyBuffer);
   }
+  void RenderCommand::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
+  {
+    GetCommandBuffer().DrawIndexed(indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+  }
   void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
   {
     //vertexArray->Bind();

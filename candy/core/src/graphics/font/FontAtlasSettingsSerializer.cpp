@@ -4,64 +4,64 @@
 #include <ryml.hpp>
 
 #include <c4/format.hpp>
-
+#include <CandyPch.hpp>
 
 
 namespace Candy::Graphics
 {
-  std::string AtlasTypeToString(Font::AtlasGeneratorSettings::AtlasType atlasType)
+  std::string AtlasTypeToString(FontAtlasGeneratorSettings::AtlasType atlasType)
   {
     switch (atlasType)
     {
-      case Font::AtlasGeneratorSettings::AtlasType::MSDF:
+      case FontAtlasGeneratorSettings::AtlasType::MSDF:
         return "MSDF";
-      case Font::AtlasGeneratorSettings::AtlasType::SDF:
+      case FontAtlasGeneratorSettings::AtlasType::SDF:
         return "SDF";
-      case Font::AtlasGeneratorSettings::AtlasType::PSDF:
+      case FontAtlasGeneratorSettings::AtlasType::PSDF:
         return "PSDF";
-      case Font::AtlasGeneratorSettings::AtlasType::MTSDF:
+      case FontAtlasGeneratorSettings::AtlasType::MTSDF:
         return "MTSDF";
       default:
         return "NONE";
     }
   }
-  Font::AtlasGeneratorSettings::AtlasType StringToAtlasType(const std::string& str)
+  FontAtlasGeneratorSettings::AtlasType StringToAtlasType(const std::string& str)
   {
     if (str == "MSDF")
     {
-      return Font::AtlasGeneratorSettings::AtlasType::MSDF;
+      return FontAtlasGeneratorSettings::AtlasType::MSDF;
     }
     else if (str == "SDF")
     {
-      return Font::AtlasGeneratorSettings::AtlasType::SDF;
+      return FontAtlasGeneratorSettings::AtlasType::SDF;
     }
     else if (str == "PSDF")
     {
-      return Font::AtlasGeneratorSettings::AtlasType::PSDF;
+      return FontAtlasGeneratorSettings::AtlasType::PSDF;
     }
     else if (str == "MTSDF")
     {
-      return Font::AtlasGeneratorSettings::AtlasType::MTSDF;
+      return FontAtlasGeneratorSettings::AtlasType::MTSDF;
     }
     else
     {
-      return Font::AtlasGeneratorSettings::AtlasType::NONE;
+      return FontAtlasGeneratorSettings::AtlasType::NONE;
     }
   }
   
-  std::string DimensionConstraintToString(Font::AtlasGeneratorSettings::DimensionConstraint value)
+  std::string DimensionConstraintToString(FontAtlasGeneratorSettings::DimensionConstraint value)
   {
     switch(value)
     {
-      case Font::AtlasGeneratorSettings::DimensionConstraint::SQUARE:
+      case FontAtlasGeneratorSettings::DimensionConstraint::SQUARE:
         return "SQUARE";
-      case Font::AtlasGeneratorSettings::DimensionConstraint::EVEN_SQUARE:
+      case FontAtlasGeneratorSettings::DimensionConstraint::EVEN_SQUARE:
         return "EVEN_SQUARE";
-      case Font::AtlasGeneratorSettings::DimensionConstraint::MULTIPLE_OF_4_SQUARE:
+      case FontAtlasGeneratorSettings::DimensionConstraint::MULTIPLE_OF_4_SQUARE:
         return "MULTIPLE_OF_4_SQUARE";
-      case Font::AtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_SQUARE:
+      case FontAtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_SQUARE:
         return "POWER_OF_2_SQUARE";
-      case Font::AtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_RECTANGLE:
+      case FontAtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_RECTANGLE:
         return "POWER_OF_2_RECTANGLE";
       default:
         return "NONE";
@@ -69,35 +69,35 @@ namespace Candy::Graphics
     }
   }
   
-  Font::AtlasGeneratorSettings::DimensionConstraint StringToDimensionConstraint(const std::string& str)
+  FontAtlasGeneratorSettings::DimensionConstraint StringToDimensionConstraint(const std::string& str)
   {
     if (str == "SQUARE")
     {
-      return Font::AtlasGeneratorSettings::DimensionConstraint::SQUARE;
+      return FontAtlasGeneratorSettings::DimensionConstraint::SQUARE;
     }
     else if (str == "EVEN_SQUARE")
     {
-      return Font::AtlasGeneratorSettings::DimensionConstraint::EVEN_SQUARE;
+      return FontAtlasGeneratorSettings::DimensionConstraint::EVEN_SQUARE;
     }
     else if (str == "MULTIPLE_OF_4_SQUARE")
     {
-      return Font::AtlasGeneratorSettings::DimensionConstraint::MULTIPLE_OF_4_SQUARE;
+      return FontAtlasGeneratorSettings::DimensionConstraint::MULTIPLE_OF_4_SQUARE;
     }
     else if (str == "POWER_OF_2_SQUARE")
     {
-      return Font::AtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_SQUARE;
+      return FontAtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_SQUARE;
     }
     else if (str == "POWER_OF_2_RECTANGLE")
     {
-      return Font::AtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_RECTANGLE;
+      return FontAtlasGeneratorSettings::DimensionConstraint::POWER_OF_2_RECTANGLE;
     }
     else
     {
-      return Font::AtlasGeneratorSettings::DimensionConstraint::NONE;
+      return FontAtlasGeneratorSettings::DimensionConstraint::NONE;
     }
   }
   
-  size_t to_chars(c4::substr buf, const Font::AtlasGeneratorSettings::AtlasType& v)
+  size_t to_chars(c4::substr buf, const FontAtlasGeneratorSettings::AtlasType& v)
   {
     // convert the enum Color to a string
     const std::string strColor = AtlasTypeToString(v);
@@ -105,14 +105,14 @@ namespace Candy::Graphics
     return c4::format(buf, "{}", strColor);
   }
   
-  bool from_chars(c4::csubstr buf, Font::AtlasGeneratorSettings::AtlasType* v)
+  bool from_chars(c4::csubstr buf, FontAtlasGeneratorSettings::AtlasType* v)
   {
     // equivalent to converting string color to enum Color
     *v = StringToAtlasType(std::string(buf.str, buf.len));
-    return *v != Font::AtlasGeneratorSettings::AtlasType::NONE; // or return true; depending on your use case
+    return *v != FontAtlasGeneratorSettings::AtlasType::NONE; // or return true; depending on your use case
   }
   
-  size_t to_chars(c4::substr buf, const Font::AtlasGeneratorSettings::DimensionConstraint& v)
+  size_t to_chars(c4::substr buf, const FontAtlasGeneratorSettings::DimensionConstraint& v)
   {
     // convert the enum Color to a string
     const std::string strColor = DimensionConstraintToString(v);
@@ -120,7 +120,7 @@ namespace Candy::Graphics
     return c4::format(buf, "{}", strColor);
   }
   
-  bool from_chars(c4::csubstr buf, Font::AtlasGeneratorSettings::DimensionConstraint* v)
+  bool from_chars(c4::csubstr buf, FontAtlasGeneratorSettings::DimensionConstraint* v)
   {
     // equivalent to converting string color to enum Color
     *v = StringToDimensionConstraint(std::string(buf.str, buf.len));
@@ -132,7 +132,7 @@ namespace Candy::Graphics
 
 namespace Candy::Graphics
 {
-  FontAtlasSettingsSerializer::FontAtlasSettingsSerializer(Font::AtlasGeneratorSettings* value) : settings(value)
+  FontAtlasSettingsSerializer::FontAtlasSettingsSerializer(FontAtlasGeneratorSettings* value) : settings(value)
   {
     CANDY_CORE_ASSERT(settings != nullptr);
   

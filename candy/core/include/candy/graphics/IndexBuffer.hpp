@@ -13,9 +13,16 @@ namespace Candy::Graphics
     private:
         uint64_t count;
         
+    private:
+      void SetDataInternal(const void* indices);
+        
     public:
+      explicit IndexBuffer(uint64_t count);
         IndexBuffer(uint32_t* indices, uint64_t count);
         ~IndexBuffer();
+        
+    public:
+      void SetData(uint32_t* indices, uint64_t indexCount);
     
     public:
         using VulkanBuffer::operator VkBuffer;
@@ -26,6 +33,7 @@ namespace Candy::Graphics
         
         
     public:
+      static SharedPtr<IndexBuffer> Create(uint64_t count);
         static SharedPtr<IndexBuffer> Create(uint32_t* indices, uint64_t count);
         
     private:

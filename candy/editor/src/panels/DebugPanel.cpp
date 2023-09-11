@@ -30,12 +30,12 @@ namespace Candy
       
       ImGui::SeparatorText("Renderer3D Stats");
       
-      Renderer3DStats stats = Renderer3D::GetStats();
+      const auto& stats = Renderer3D::GetStats();
       ImGui::Text("Draw Calls: %d", stats.drawCalls);
-      ImGui::Text("Objects: %d", stats.objects);
-      ImGui::Text("Vertices: %d", stats.vertices);
-      ImGui::Text("Indices: %d", stats.indices);
-      ImGui::Text("Triangles: %d", stats.triangles);
+      ImGui::Text("Objects: %d", stats.objectCount);
+      ImGui::Text("Vertices: %d", stats.vertexCount);
+      ImGui::Text("Indices: %d", stats.indexCount);
+      ImGui::Text("Triangles: %d", stats.triangleCount);
       
       ImGui::End();
     }

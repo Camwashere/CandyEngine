@@ -8,6 +8,7 @@
 #include "SPIRV-Cross/spirv_glsl.hpp"
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <candy/collections/GenericBuffer.hpp>
 
 using namespace Candy::Utils;
 namespace Candy::Graphics
@@ -58,22 +59,7 @@ namespace Candy::Graphics
      
         
     }
-  /*Shader::Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting) : filepath(std::move(shaderFilePath)), postProcessor(renderPassIndex)
-  {
-    CANDY_PROFILE_FUNCTION();
-    
-    preProcessor = ShaderPreProcessor::Create(filepath);
-    //CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
-    postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), filepath);
-    //CANDY_CORE_INFO("FINISHED POST PROCESSOR");
-    //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
-    
-    
-    // Extract name from filepath
-    shaderName = Utils::FileUtils::ExtractNameFromFilePath(filepath);
-    GetLayout().pipeline.SetDepthTesting(enableDepthTesting);
-    GetLayout().BakePipeline(CreateShaderStageCreateInfos());
-  }*/
+  
   void Shader::Bake()
   {
     std::vector<VkPipelineShaderStageCreateInfo> createInfos = CreateShaderStageCreateInfos();
@@ -81,9 +67,9 @@ namespace Candy::Graphics
     {
       size_t currentSize=0;
       
-      std::vector<float> buffer{};
+      
+      Collections::GenericBuffer buffer;
       std::vector<VkSpecializationMapEntry> entries{};
-      bool good = false;
       for(const auto& specInput : GetLayout().settings.constantInputs)
       {
         ShaderSpecializationConstant specConstant;
@@ -95,12 +81,26 @@ namespace Candy::Graphics
             entry.constantID = specConstant.id;
             entry.size = ShaderData::TypeSize(specConstant.type);
             entry.offset = currentSize;
-            float value = std::get<float>(specInput.GetValue());
-            CANDY_CORE_INFO("SET SPEC INPUT VALUE: {}", value);
-            buffer.push_back(value);
+            
+            switch(specInput.GetType())
+            {
+              case ShaderData::Type::Float:
+                buffer.Add(std::get<float>(specInput.GetValue()));
+                break;
+              case ShaderData::Type::Int:
+                buffer.Add(std::get<int>(specInput.GetValue()));
+                break;
+              case ShaderData::Type::Bool:
+                buffer.Add(std::get<bool>(specInput.GetValue()));
+                break;
+              default:
+                break;
+                
+            }
+            
             currentSize += entry.size;
             entries.push_back(entry);
-            good=true;
+            
           }
         }
         
@@ -111,9 +111,10 @@ namespace Candy::Graphics
         VkSpecializationInfo specInfo{};
         specInfo.mapEntryCount = entries.size();
         specInfo.pMapEntries = entries.data();
-        specInfo.dataSize = currentSize;
+        //specInfo.dataSize = currentSize;
         
-        specInfo.pData = buffer.data();
+        specInfo.dataSize = buffer.Size();
+        specInfo.pData = buffer.Data();
         createInfo.pSpecializationInfo = &specInfo;
       }
     }

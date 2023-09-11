@@ -93,6 +93,8 @@ namespace Candy::ECS
     float lineSpacing = 0.0f;
   };
   
+  
+  
   template<typename... Component>
   struct ComponentGroup
   {

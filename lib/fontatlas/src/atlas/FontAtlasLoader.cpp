@@ -33,7 +33,6 @@ namespace msdf_atlas
   
   bool FontAtlasLoader::Init()
   {
-    
     FT_Error result = FT_Init_FreeType(&globalData.library);
     if (result)
     {
@@ -53,6 +52,8 @@ namespace msdf_atlas
     return true;
     
   }
+  
+  
   
   ///*** PNG ***///
   class PngGuard {
@@ -543,11 +544,24 @@ namespace msdf_atlas
     friend bool FontAtlasLoader::GetKerning(float &output, FontHandle *font, unicode_t unicode1, unicode_t unicode2);
     friend bool FontAtlasLoader::SetFontVariationAxis(FontHandle *font, const char *name, float coordinate);
     friend bool FontAtlasLoader::ListFontVariationAxes(std::vector<FontVariationAxis> &axes, FontHandle *font);
+    friend std::string FontAtlasLoader::GetFontFamily(FontHandle *font);
+    friend std::string FontAtlasLoader::GetFontStyle(FontHandle* font);
     
     FT_Face face;
     bool ownership;
     
   };
+  
+  std::string FontAtlasLoader::GetFontFamily(FontHandle *font)
+  {
+    std::string str = font->face->family_name;
+    return str;
+  }
+  std::string FontAtlasLoader::GetFontStyle(FontHandle* font)
+  {
+    std::string str = font->face->style_name;
+    return str;
+  }
   
   static constexpr float F26DOT6_TO_DOUBLE(auto x) {return 1/64.*float(x);}
   static constexpr float  F16DOT16_TO_DOUBLE(auto x) {return 1/65536.*float(x);}

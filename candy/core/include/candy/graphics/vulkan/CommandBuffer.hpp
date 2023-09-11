@@ -71,6 +71,7 @@ namespace Candy::Graphics
         
         void BindVertexArray(const VertexArray* vertexArray);
         void DrawEmpty(uint32_t count, VkBuffer dummyBuffer);
+        void DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance);
         void DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount=1, int32_t instanceIndex=0);
         void DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t count);
         void EndRenderPass(uint8_t index);

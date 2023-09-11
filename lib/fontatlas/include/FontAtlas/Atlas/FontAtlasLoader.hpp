@@ -24,6 +24,9 @@ namespace msdf_atlas
     static bool Init();
     static bool Shutdown();
     
+    static std::string GetFontFamily(FontHandle *font);
+    static std::string GetFontStyle(FontHandle* font);
+    
     static bool SavePng(const msdfgen::BitmapConstRef<uint8_t, 1> &bitmap, const char *filename);
     static bool SavePng(const msdfgen::BitmapConstRef<uint8_t, 3> &bitmap, const char *filename);
     static bool SavePng(const msdfgen::BitmapConstRef<uint8_t, 4> &bitmap, const char *filename);

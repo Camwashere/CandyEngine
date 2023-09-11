@@ -157,7 +157,7 @@ namespace Candy::Graphics
   }
   
   
-  bool MeshData::IsValid()const
+  /*bool MeshData::IsValid()const
   {
     if (vertices.empty())
     {
@@ -238,6 +238,109 @@ namespace Candy::Graphics
     mesh.triangles = triangularPrismIndices;
     mesh.normals = triangularPrismNormals;
     mesh.uvs = triangularPrismUvs;
+    return mesh;
+  }*/
+  
+  bool MeshData::IsValid()const
+  {
+    if(indices.size() % 3 != 0)
+    {
+      return false;
+    }
+    
+    return !(vertices.empty() || indices.empty());
+    
+  }
+  bool MeshData::Empty()const
+  {
+    return vertices.empty() && indices.empty();
+  }
+  size_t MeshData::VertexCount()const
+  {
+    return vertices.size();
+  }
+  size_t MeshData::IndexCount()const
+  {
+    return indices.size();
+  }
+  MeshData MeshData::CreatePlaneMeshData()
+  {
+    MeshData mesh{};
+    mesh.vertices.resize(4);
+    
+    mesh.indices = { 0, 2, 1, 0, 3, 2};
+    
+    for (int i=0; i<4; i++)
+    {
+      MeshVertex vertex{};
+      vertex.position = planeVerts[i];
+      vertex.uv = planeUVs[i];
+      vertex.normal = Vector3::up;
+      mesh.vertices[i] = vertex;
+    }
+    
+    return mesh;
+  }
+  MeshData MeshData::CreateCubeMeshData()
+  {
+    unsigned int vertexIndex=0;
+    MeshData mesh{};
+    
+    for (int p=0; p<6; p++)
+    {
+      std::array<MeshVertex, 4> verts{};
+      
+      for (int i=0; i<4; i++)
+      {
+        verts[i].position = voxelVerts [voxelTris [p][i]];
+        verts[i].normal = voxelNormals[p];
+        verts[i].uv = voxelUvs[i];
+        mesh.vertices.push_back(verts[i]);
+      }
+      
+      /*verts[0].position = voxelVerts [voxelTris [p][0]];
+      verts[1].position = voxelVerts [voxelTris [p][1]];
+      verts[2].position = voxelVerts [voxelTris [p][2]];
+      verts[3].position = voxelVerts [voxelTris [p][3]];
+      
+      verts[0].normal = voxelNormals[p];
+      verts[1].normal = voxelNormals[p];
+      verts[2].normal = voxelNormals[p];
+      verts[3].normal = voxelNormals[p];
+      
+      verts[0].uv = voxelUvs[0];
+      verts[1].uv = voxelUvs[1];
+      verts[2].uv = voxelUvs[2];
+      verts[3].uv = voxelUvs[3];*/
+     
+      mesh.indices.push_back(vertexIndex);
+      mesh.indices.push_back(vertexIndex + 1);
+      mesh.indices.push_back(vertexIndex + 2);
+      mesh.indices.push_back(vertexIndex + 2);
+      mesh.indices.push_back(vertexIndex + 1);
+      mesh.indices.push_back(vertexIndex + 3);
+      vertexIndex += 4;
+      
+      
+     
+    }
+    //CANDY_CORE_INFO("Indices size: {}", mesh.triangles.size());
+    
+    return mesh;
+  }
+  MeshData MeshData::CreateTriangularPrismMeshData()
+  {
+    MeshData mesh{};
+    for (int i=0; i<triangularPrismVertices.size(); i++)
+    {
+      MeshVertex vertex{};
+      vertex.position = triangularPrismVertices[i];
+      vertex.normal = triangularPrismNormals[i];
+      vertex.uv = triangularPrismUvs[i];
+      mesh.vertices.push_back(vertex);
+    }
+    
+    mesh.indices = triangularPrismIndices;
     return mesh;
   }
 }

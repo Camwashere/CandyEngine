@@ -69,7 +69,7 @@ public:
     /// Returns the name associated with the font or null if not set
     const char * getName() const;
 
-private:
+public:
     float geometryScale;
     FontMetrics metrics;
     GlyphIdentifierType preferredIdentifierType;
@@ -80,6 +80,9 @@ private:
     std::map<std::pair<int, int>, float> kerning;
     std::vector<GlyphGeometry> ownGlyphs;
     std::string name;
+    
+
+  
 
 };
 

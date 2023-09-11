@@ -9,8 +9,8 @@ namespace Candy::Graphics
     
   public:
     MeshData data;
-    BufferLayout layout;
-   SharedPtr<VertexArray> vertexArray;
+    //BufferLayout layout;
+   //SharedPtr<VertexArray> vertexArray;
    
    
   public:
@@ -24,6 +24,6 @@ namespace Candy::Graphics
     
    [[nodiscard]] bool IsValid()const;
    
-   void Apply();
+   //void Apply();
   };
 }
