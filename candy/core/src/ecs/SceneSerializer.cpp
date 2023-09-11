@@ -114,25 +114,7 @@ namespace c4 {
     
   }
 }
-// Serialization
-/*ryml::NodeRef operator<<(ryml::NodeRef node, const Candy::Graphics::MeshVertex& vertex)
-{
-  node |= ryml::MAP;
-  node["Position"] << vertex.position;
-  node["Color"] << vertex.color;
-  node["Normal"] << vertex.normal;
-  node["UV"] << vertex.uv;
-  return node;
-}
-// Deserialization
-ryml::NodeRef operator>>(ryml::NodeRef node, Candy::Graphics::MeshVertex& vertex)
-{
-  node["Position"] >> vertex.position;
-  node["Color"] >> vertex.color;
-  node["Normal"] >> vertex.normal;
-  node["UV"] >> vertex.uv;
-  return node;
-}*/
+
 namespace Candy::ECS
 {
   using namespace Math;
@@ -174,11 +156,8 @@ namespace Candy::ECS
       meshNode |= c4::yml::MAP;
       auto& mesh = entity.GetComponent<MeshFilterComponent>();
       
-      meshNode["Vertices"] << mesh.mesh.data.vertices;
-      meshNode["Indices"] << mesh.mesh.data.indices;
-     /* meshNode["UVs"] << mesh.mesh.data.uvs;
-      meshNode["Triangles"] << mesh.mesh.data.triangles;
-      meshNode["Normals"] << mesh.mesh.data.normals;*/
+      meshNode["Vertices"] << mesh.meshData.vertices;
+      meshNode["Indices"] << mesh.meshData.indices;
     }
     
     if (entity.HasComponent<MeshRendererComponent>())
@@ -262,14 +241,14 @@ namespace Candy::ECS
     
     for (auto [entt] : scene->registry.storage<entt::entity>().each())
     {
-      //CANDY_CORE_INFO("ENTT: {}", (int)entt);
+      
       Entity entity{entt, scene.get()};
       if (entity)
       {
         SerializeEntity(entitiesNode, entity);
       }
     }
-    //CANDY_CORE_INFO("SERIALIZED ENTITIES");
+    
     FILE* out = fopen(filepath.string().c_str(), "w");
     if (!out)
     {
@@ -282,7 +261,6 @@ namespace Candy::ECS
   
   bool SceneSerializer::Deserialize(const std::filesystem::path& filepath)
   {
-    //CANDY_CORE_INFO("DESERIALIZING PATH {}", filepath);
     std::ifstream fin(filepath);
     std::stringstream buffer;
     buffer << fin.rdbuf();
@@ -303,34 +281,28 @@ namespace Candy::ECS
       CANDY_CORE_ERROR("EMPTY PROJECT NODE");
       return false;
     }
-    //CANDY_CORE_INFO("PROJECT NODE EXISTS");
     auto nameNode = root["Name"];
     if (nameNode.has_key())
     {
       nameNode >> scene->name;
     }
-   // CANDY_CORE_INFO("NAME NODE EXISTS");
+   
     auto entitiesNode = sceneNode["Entities"];
-    //CANDY_CORE_INFO("ENTITIES NODE EXISTS");
+   
     if (entitiesNode.empty())
     {
-      //CANDY_CORE_INFO("ENTITIES NODE EMPTY");
       return true;
     }
     
-    int count=0;
     for (auto entity : entitiesNode)
     {
-      //CANDY_CORE_INFO("COUNT: {}", count);
+      
       std::uint64_t uuid;
       std::string tag;
       entity["Entity"] >> uuid;
-      //CANDY_CORE_INFO("ENTITY UUID EXISTS");
+      
       auto tagComponent = entity["TagComponent"];
-      //CANDY_CORE_INFO("HAS TAG COMP");
       tagComponent["Tag"] >> tag;
-      //CANDY_CORE_INFO("TAG COMP HAS TAG VALUE");
-      //CANDY_CORE_TRACE("Deserialized entity with ID = {0}, TAG = {1}", uuid, tag);
       
       Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, tag);
       
@@ -350,12 +322,10 @@ namespace Candy::ECS
         MeshData meshData{};
         meshFilterComponent["Vertices"] >> meshData.vertices;
         meshFilterComponent["Indices"] >> meshData.indices;
-        /*meshFilterComponent["UVs"] >> meshData.uvs;
-        meshFilterComponent["Triangles"] >> meshData.triangles;
-        meshFilterComponent["Normals"] >> meshData.normals;*/
+        
         auto& meshComp = deserializedEntity.AddComponent<MeshFilterComponent>();
-        meshComp.mesh.data = meshData;
-        //meshComp.mesh.Apply();
+        meshComp.meshData = meshData;
+        
       }
       
       auto meshRendererComponent = entity["MeshRendererComponent"];

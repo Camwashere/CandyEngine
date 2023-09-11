@@ -39,10 +39,7 @@ namespace Candy::ECS
   
   struct MeshFilterComponent
   {
-    Graphics::Mesh mesh;
-    
-    
-    //MeshFilterComponent(const Graphics::Mesh& meshValue) : mesh(meshValue){}
+    Graphics::MeshData meshData;
   };
   
   struct MeshRendererComponent

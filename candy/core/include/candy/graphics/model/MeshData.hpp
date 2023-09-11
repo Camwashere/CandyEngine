@@ -12,19 +12,6 @@ namespace Candy::Graphics
   };
   
   
-  /*struct MeshData
-  {
-    std::vector<Math::Vector3> vertices{};
-    std::vector<Math::Vector3> normals{};
-    std::vector<Math::Vector2> uvs{};
-    std::vector<uint32_t> triangles{};
-    
-    [[nodiscard]] bool IsValid()const;
-    [[nodiscard]] bool Empty()const;
-    static MeshData CreatePlaneMeshData();
-    static MeshData CreateCubeMeshData();
-    static MeshData CreateTriangularPrismMeshData();
-  };*/
   
   struct MeshData
   {
@@ -36,8 +23,12 @@ namespace Candy::Graphics
     [[nodiscard]] size_t VertexCount()const;
     [[nodiscard]] size_t IndexCount()const;
     
-    static MeshData CreatePlaneMeshData();
-    static MeshData CreateCubeMeshData();
-    static MeshData CreateTriangularPrismMeshData();
+    static const MeshData plane;
+    static const MeshData cube;
+    static const MeshData triangularPrism;
+    
+    //static MeshData CreatePlaneMeshData();
+    //static MeshData CreateCubeMeshData();
+    //static MeshData CreateTriangularPrismMeshData();
   };
 }

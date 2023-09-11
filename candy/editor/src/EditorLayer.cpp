@@ -30,13 +30,7 @@ namespace Candy
     
     viewport = CreateSharedPtr<Viewport>(this);
     
-    /*auto test = activeScene->CreateEntity("Cube");
-    test.AddComponent<MeshFilterComponent>(Mesh::CreateCubeMesh());
-    test.AddComponent<MeshRendererComponent>(Texture::Create("assets/textures/statue.jpg"));
     
-    auto tri = activeScene->CreateEntity("Triangular Prism");
-    tri.AddComponent<MeshFilterComponent>(Mesh::CreateTriangularPrismMesh());
-    tri.AddComponent<MeshRendererComponent>(Texture::Create("assets/textures/statue.jpg"));*/
     
     
     
