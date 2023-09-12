@@ -3,7 +3,7 @@
 #include <candy/math/Vector.hpp>
 
 namespace Candy {
-  template<>
+  /*template<>
   struct ColorBase<ColorLayout::RGBA, ColorDataType::UNSIGNED_BYTE> : public Math::VectorBase<std::uint8_t, 4> {
   private:
     static std::uint8_t ClampValue(std::uint8_t value);
@@ -43,7 +43,7 @@ namespace Candy {
   
 
     
-  };
+  };*/
 }
 
 

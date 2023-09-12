@@ -542,7 +542,7 @@ namespace Candy::Math
     { return {x, y, (T) 0, (T) 0}; }
     
     template<typename T>   std::string VectorBase<T, 2>::ToString() const
-    { return std::string(*this); }
+    { return "(" + std::to_string(x) + "," + std::to_string(y) + ")"; }
     
     
     template<typename T>  int VectorBase<T, 2>::LexicographicCompare(const VectorBase<T, 2> &other) const

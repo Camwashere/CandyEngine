@@ -5,5 +5,8 @@
   "dependencies" : [ {
     "name" : "libpng",
     "version>=" : "1.6.39#1"
+  }, {
+    "name" : "assimp",
+    "version>=" : "5.2.5"
   } ]
 }

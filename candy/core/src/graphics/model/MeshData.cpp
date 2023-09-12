@@ -146,7 +146,102 @@ namespace Candy::Graphics
   { 1.0f, 0.0f }
   };
   
-  static constexpr MeshData CreatePlaneMeshData()
+  
+  MeshVertex::MeshVertex() : position(Vector3::zero), color(Color::white), normal(Vector3::up), uv(Vector2::zero)
+  {
+  
+  }
+  
+  MeshVertex::MeshVertex(const MeshVertex& other) : position(other.position), color(other.color), normal(other.normal), uv(other.uv)
+  {
+  
+  }
+  MeshVertex::MeshVertex(const Math::Vector3& positionValue, const Color& colorValue, const Math::Vector3& normalValue, const Math::Vector2& uvValue) : position(positionValue), color(colorValue), normal(normalValue), uv(uvValue)
+  {
+  
+  }
+  
+  MeshVertex& MeshVertex::operator=(const MeshVertex& other)
+  {
+    position = other.position;
+    color = other.color;
+    normal = other.normal;
+    uv = other.uv;
+    return *this;
+  }
+  bool MeshVertex::operator==(const MeshVertex& other)const
+  {
+    return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
+  }
+  bool MeshVertex::operator!=(const MeshVertex& other)const
+  {
+    return !(*this == other);
+  }
+  
+  std::string MeshVertex::ToString()const
+  {
+    
+    std::string str = "Position: " + position.ToString() + ", " + "Color: " + color.ToString() + ", " + "Normal: " + normal.ToString() + ", " + "UV: " + uv.ToString();
+    return str;
+    
+  }
+  
+  MeshData::MeshData() : vertices{}, indices{}
+  {
+  
+  }
+  MeshData::MeshData(const MeshData& other) : vertices(other.vertices), indices(other.indices)
+  {
+  
+  }
+  MeshData::MeshData(const std::vector<MeshVertex>& verticesValue, const std::vector<uint32_t>& indicesValue) : vertices(verticesValue), indices(indicesValue)
+  {
+  
+  }
+  
+  MeshData& MeshData::operator=(const MeshData& other)
+  {
+    vertices.resize(other.vertices.size());
+    indices.resize(other.indices.size());
+    for (int i=0; i<other.vertices.size(); i++)
+    {
+      vertices[i] = other.vertices[i];
+    }
+    for (int i=0; i<other.indices.size(); i++)
+    {
+      indices[i] = other.indices[i];
+    }
+    return *this;
+  }
+  bool MeshData::operator==(const MeshData& other)const
+  {
+    if(vertices.size() != other.vertices.size() || indices.size() != other.indices.size())
+    {
+      return false;
+    }
+    for (int i=0; i<vertices.size(); i++)
+    {
+      if(vertices[i] != other.vertices[i])
+      {
+        CANDY_CORE_ERROR("Vert not equal: {0} != {1}", vertices[i].ToString(), other.vertices[i].ToString());
+        return false;
+      }
+    }
+    for (int i=0; i<indices.size(); i++)
+    {
+      if(indices[i] != other.indices[i])
+      {
+        CANDY_CORE_ERROR("Index not equal: {0} != {1}", indices[i], other.indices[i]);
+        return false;
+      }
+    }
+    return true;
+  }
+  bool MeshData::operator!=(const MeshData& other)const
+  {
+    return !(*this == other);
+  }
+  static MeshData CreatePlaneMeshData()
   {
     MeshData mesh{};
     mesh.vertices.resize(4);
@@ -159,12 +254,13 @@ namespace Candy::Graphics
       vertex.position = planeVerts[i];
       vertex.uv = planeUVs[i];
       vertex.normal = Vector3::up;
+      vertex.color = Color::white;
       mesh.vertices[i] = vertex;
     }
     
     return mesh;
   }
-  static constexpr MeshData CreateCubeMeshData()
+  static MeshData CreateCubeMeshData()
   {
     unsigned int vertexIndex=0;
     MeshData mesh{};
@@ -178,6 +274,7 @@ namespace Candy::Graphics
         verts[i].position = voxelVerts [voxelTris [p][i]];
         verts[i].normal = voxelNormals[p];
         verts[i].uv = voxelUvs[i];
+        verts[i].color = Color::white;
         mesh.vertices.push_back(verts[i]);
       }
       
@@ -198,13 +295,14 @@ namespace Candy::Graphics
     
     return mesh;
   }
-  static constexpr MeshData CreateTriangularPrismMeshData()
+  static MeshData CreateTriangularPrismMeshData()
   {
     MeshData mesh{};
     for (int i=0; i<triangularPrismVertices.size(); i++)
     {
       MeshVertex vertex{};
       vertex.position = triangularPrismVertices[i];
+      vertex.color = Color::white;
       vertex.normal = triangularPrismNormals[i];
       vertex.uv = triangularPrismUvs[i];
       mesh.vertices.push_back(vertex);
@@ -214,9 +312,9 @@ namespace Candy::Graphics
     return mesh;
   }
   
-  const MeshData MeshData::plane = CreatePlaneMeshData();
-  const MeshData MeshData::cube = CreateCubeMeshData();
-  const MeshData MeshData::triangularPrism = CreateTriangularPrismMeshData();
+  const MeshData MeshData::plane(CreatePlaneMeshData());
+  const MeshData MeshData::cube(CreateCubeMeshData());
+  const MeshData MeshData::triangularPrism(CreateTriangularPrismMeshData());
   
   bool MeshData::IsValid()const
   {
@@ -239,6 +337,18 @@ namespace Candy::Graphics
   size_t MeshData::IndexCount()const
   {
     return indices.size();
+  }
+  
+  std::string MeshData::ToString()const
+  {
+    std::string str;
+    for (int i=0; i<vertices.size(); i++)
+    {
+      str += vertices[i].ToString() + "\n";
+    }
+    
+    return str;
+    
   }
   
 }

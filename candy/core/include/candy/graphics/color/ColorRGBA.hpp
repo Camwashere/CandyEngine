@@ -1,90 +1,81 @@
 #pragma once
 
 #include "ColorBase.hpp"
+#include "ColorBaseStaticData.hpp"
 #include "candy/math/Vector.hpp"
 #include "candy/math/Quaternion.hpp"
 namespace Candy {
-  template<>
-  struct ColorBase<ColorLayout::RGBA, ColorDataType::FLOAT> : public Math::VectorBase<float, 4>{
+  
+  template<typename T>
+  struct ColorBase<T, 4> : public Math::VectorBase<T, 4>, public ColorBaseStaticData<T, 4>{
   public:
-    static const ColorBase red;
-    static const ColorBase green;
-    static const ColorBase blue;
-    static const ColorBase black;
-    static const ColorBase white;
-    static const ColorBase grey;
-    static const ColorBase clear;
     
-    static const ColorBase teal;
-    static const ColorBase magenta;
-    static const ColorBase yellow;
-    static const ColorBase orange;
-    static const ColorBase purple;
-    static const ColorBase brown;
-    static const ColorBase coral;
+    
+    using Math::VectorBase<T, 4>::r;
+    using Math::VectorBase<T, 4>::g;
+    using Math::VectorBase<T, 4>::b;
+    using Math::VectorBase<T, 4>::a;
   
   public:
-    static ColorBase Lerp(const ColorBase& left, const ColorBase& right, float t);
-    static ColorBase LerpClamped(const ColorBase &a, const ColorBase &b, float t);
-    static ColorBase InverseLerp(const ColorBase &a, const ColorBase &b, float t);
+    static ColorBase Lerp(const ColorBase& left, const ColorBase& right, T t);
+    static ColorBase LerpClamped(const ColorBase &a, const ColorBase &b, T t);
+    static ColorBase InverseLerp(const ColorBase &a, const ColorBase &b, T t);
     static ColorBase Max(const ColorBase &a, const ColorBase &b);
     static ColorBase Min(const ColorBase &a, const ColorBase &b);
     static ColorBase Average(const ColorBase &a, const ColorBase &b);
     static ColorBase Normalize(const ColorBase &vec);
-    static ColorBase Grey(float shade);
+    static ColorBase Grey(T shade);
   
   
   
   
   public:
     ColorBase();
-    explicit ColorBase(float value);
-    ColorBase(float redValue, float greenValue, float blueValue, float alphaValue = 1.0f) : Math::VectorBase<float, 4>(redValue, greenValue, blueValue, alphaValue){}
+    explicit ColorBase(T value);
+    ColorBase(T redValue, T greenValue, T blueValue, T alphaValue = 1.0f) : Math::VectorBase<T, 4>(redValue, greenValue, blueValue, alphaValue){}
     ColorBase(const ColorBase &other);
-    //explicit ColorBase(const float* data);
-    explicit ColorBase(const std::string& hex);
-    explicit ColorBase(const Math::Vector2& vector);
-    explicit ColorBase(const Math::Vector3& vector);
-    explicit ColorBase(const Math::Vector4& vector);
-    explicit ColorBase(const Math::Quaternion& quaternion);
+    //explicit ColorBase(const T* data);
+    explicit ColorBase(const Math::VectorBase<T, 2>& vector);
+    explicit ColorBase(const Math::VectorBase<T, 3>& vector);
+    explicit ColorBase(const Math::VectorBase<T, 4>& vector);
+    explicit ColorBase(const Math::QuaternionBase<T>& quaternion);
     
     template<typename E>
-    ColorBase(const VectorExpression<float, E> &expr) : VectorBase<float, 4>(expr) {}
+    ColorBase(const Math::VectorExpression<T, E> &expr);
   
   
   public:
     
-    using VectorBase<float, 4>::operator==;
-    using VectorBase<float, 4>::operator!=;
-    using VectorBase<float, 4>::operator+=;
-    using VectorBase<float, 4>::operator-=;
-    using VectorBase<float, 4>::operator*=;
-    using VectorBase<float, 4>::operator/=;
+    using Math::VectorBase<T, 4>::operator==;
+    using Math::VectorBase<T, 4>::operator!=;
+    using Math::VectorBase<T, 4>::operator+=;
+    using Math::VectorBase<T, 4>::operator-=;
+    using Math::VectorBase<T, 4>::operator*=;
+    using Math::VectorBase<T, 4>::operator/=;
     
     
-    bool operator==(const ColorBase& other)const;
+    //bool operator==(const ColorBase<T, 4>& other)const;
+    bool operator==(const ColorBase<T, 4>& other)const;
     
-    
-    explicit operator Math::Vector2()const;
-    explicit operator Math::Vector3()const;
-    explicit operator Math::Quaternion()const;
+    explicit operator Math::VectorBase<T, 2>()const;
+    explicit operator Math::VectorBase<T, 3>()const;
+    explicit operator Math::QuaternionBase<T>()const;
   
   public:
     void Invert();
-    [[nodiscard]] float Grayscale() const;
+    [[nodiscard]] T Grayscale() const;
   
   public:
-    [[nodiscard]] float MaxComponent()const;
+    [[nodiscard]] T MaxComponent()const;
     [[nodiscard]] ColorBase Inverted()const;
     [[nodiscard]] ColorBase ReversedRGB()const;
     [[nodiscard]] ColorBase ReversedRGBA()const;
   
   public:
-    [[nodiscard]] Math::Vector2 ToVector2()const;
-    [[nodiscard]] Math::Vector3 ToVector3()const;
-    [[nodiscard]] Math::Vector4 ToVector4()const;
-    [[nodiscard]] Math::Quaternion ToQuaternion()const;
-    [[nodiscard]] std::string ToString()const;
+    [[nodiscard]] Math::VectorBase<T, 2> ToVector2()const;
+    [[nodiscard]] Math::VectorBase<T, 3> ToVector3()const;
+    [[nodiscard]] Math::VectorBase<T, 4> ToVector4()const;
+    [[nodiscard]] Math::QuaternionBase<T> ToQuaternion()const;
     [[nodiscard]] ColorBase rr() const;
     [[nodiscard]] ColorBase rg() const;
     [[nodiscard]] ColorBase rb() const;
@@ -126,3 +117,4 @@ namespace Candy {
   };
 }
 
+#include "ColorRGBA.inl"

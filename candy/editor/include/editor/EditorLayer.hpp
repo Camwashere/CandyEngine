@@ -17,20 +17,13 @@ namespace Candy
   class EditorLayer : public Layer
   {
   private:
-    //SharedPtr<Project> project;
     SharedPtr<Candy::ECS::Scene> activeScene;
     std::filesystem::path activeScenePath;
     SharedPtr<SceneHierarchyPanel> scenePanel;
     UniquePtr<ContentBrowserPanel> contentBrowserPanel;
     SharedPtr<Viewport> viewport;
     DebugPanel debugPanel;
-    //ECS::Entity testEntity;
-    //ECS::Entity secondEntity;
-    //ECS::Entity planeEntity;
-    //ECS::Entity quadEntity;
-    //ECS::Entity textureEntity;
-    //SharedPtr<Graphics::Texture> texture;
-    //SharedPtr<Graphics::Texture> statueTexture;
+    
     
   private:
     bool OnMouseButtonPressed(Events::MousePressedEvent& event);
@@ -57,7 +50,7 @@ namespace Candy
     void OnUpdate() override;
     void OnRenderUI() override;
     void OnEvent(Events::Event& event) override;
-    bool IsSelectedEntity2D()const;
+    [[nodiscard]] bool IsSelectedEntity2D()const;
     
   private:
     friend class Viewport;

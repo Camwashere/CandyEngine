@@ -2,7 +2,7 @@
 
 
 namespace Candy {
-  ColorBase<ColorLayout::RGBA, ColorDataType::UNSIGNED_BYTE>::ColorBase() : Math::VectorBase<std::uint8_t, 4>() {}
+  /*ColorBase<ColorLayout::RGBA, ColorDataType::UNSIGNED_BYTE>::ColorBase() : Math::VectorBase<std::uint8_t, 4>() {}
   
   ColorBase<ColorLayout::RGBA, ColorDataType::UNSIGNED_BYTE>::ColorBase(std::uint8_t redValue, std::uint8_t greenValue, std::uint8_t blueValue, std::uint8_t alphaValue) : Math::VectorBase<std::uint8_t, 4>(redValue, greenValue, blueValue, alphaValue) {}
   
@@ -12,7 +12,7 @@ namespace Candy {
   
   ColorBase<ColorLayout::RGBA, ColorDataType::UNSIGNED_BYTE> ColorBase<ColorLayout::RGBA, ColorDataType::UNSIGNED_BYTE>::CLAMP(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) {
     return {ClampValue(r), ClampValue(g), ClampValue(b), ClampValue(a)};
-  }
+  }*/
   
 }
 

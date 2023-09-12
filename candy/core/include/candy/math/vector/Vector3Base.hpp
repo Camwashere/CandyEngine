@@ -164,6 +164,7 @@ namespace Candy::Math
         [[nodiscard]] T MaxValue() const;
         [[nodiscard]] T MinValue() const;
         [[nodiscard]] T Average() const;
+        [[nodiscard]] std::string ToString()const;
         
     
     

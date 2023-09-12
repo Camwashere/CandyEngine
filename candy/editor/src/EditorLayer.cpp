@@ -13,6 +13,7 @@
 #include <candy/ecs/SceneSerializer.hpp>
 #include <candy/utils/FileUtils.hpp>
 #include <utility>
+#include <candy/graphics/model/ModelLoader.hpp>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
 using namespace Candy::ECS;
@@ -29,11 +30,20 @@ namespace Candy
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
     
     viewport = CreateSharedPtr<Viewport>(this);
-    
-    
-    
-    
-    
+    ModelLoader loader;
+    CANDY_CORE_INFO("Loading backpack model");
+    loader.LoadModel("assets/models/backpack/Survival_BackPack_2.fbx");
+    CANDY_CORE_INFO("Loaded backpack model");
+    CANDY_CORE_INFO("Mesh count: {}", loader.meshes.size());
+    SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
+    int count=0;
+    for (const auto& mesh : loader.meshes)
+    {
+      auto entity = activeScene->CreateEntity("Mesh " + std::to_string(count));
+      entity.AddComponent<MeshFilterComponent>(mesh);
+      entity.AddComponent<MeshRendererComponent>(texture);
+      count++;
+    }
   }
   
   

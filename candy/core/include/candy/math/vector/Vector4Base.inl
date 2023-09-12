@@ -505,6 +505,12 @@ namespace Candy::Math
     template<typename T>
     T VectorBase<T, 4>::Average() const
     { return Sum() / (T) 4; }
+  
+    template<typename T>
+  std::string VectorBase<T, 4>::ToString()const
+    {
+      return "(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," + std::to_string(w) + ")";
+    }
     
     template<typename T>  int VectorBase<T, 4>::LexicographicCompare(const VectorBase<T, 4> &other) const
     {
