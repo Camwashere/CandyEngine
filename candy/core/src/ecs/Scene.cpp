@@ -176,7 +176,7 @@ namespace Candy::ECS
     {
       
       auto [transform, mesh, meshRenderer] = view.get<TransformComponent, MeshFilterComponent, MeshRendererComponent>(entity);
-      Renderer3D::SubmitMesh((uint32_t)entity, mesh.meshData, meshRenderer.texture, transform.GetMatrix());
+      Renderer3D::SubmitMesh((uint32_t)entity, mesh.meshData, meshRenderer.texture, transform.GetWorldTransform());
     }
     
     Renderer3D::EndScene();
@@ -192,7 +192,7 @@ namespace Candy::ECS
       for (auto entity : view)
       {
         auto [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-        Renderer2D::DrawSprite(transform.GetMatrix(), sprite, (int)entity);
+        Renderer2D::DrawSprite(transform.GetWorldTransform(), sprite, (int)entity);
       }
     }
     
@@ -204,7 +204,7 @@ namespace Candy::ECS
       for (auto entity : view)
       {
         auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-        Renderer2D::DrawCircle(transform.GetMatrix(), circle.color, circle.thickness, circle.fade, (int)entity);
+        Renderer2D::DrawCircle(transform.GetWorldTransform(), circle.color, circle.thickness, circle.fade, (int)entity);
       }
     }
     
@@ -215,10 +215,10 @@ namespace Candy::ECS
       for (auto entity : view)
       {
         auto [transform, line] = view.get<TransformComponent, LineRendererComponent>(entity);
-        Vector3 start = transform.GetMatrix()*line.start;
-        Vector3 end = transform.GetMatrix()*line.end;
+        Vector3 start = transform.GetWorldTransform()*line.start;
+        Vector3 end = transform.GetWorldTransform()*line.end;
         //Renderer2D::DrawLine(start, end, line.color, line.thickness, (int)entity);
-        Renderer2D::DrawLine(transform.GetMatrix(), line.start, line.end, line.color, line.thickness, (int)entity);
+        Renderer2D::DrawLine(transform.GetWorldTransform(), line.start, line.end, line.color, line.thickness, (int)entity);
       }
     }
     
@@ -229,7 +229,7 @@ namespace Candy::ECS
       for (auto entity : view)
       {
         auto [transform, txt] = view.get<TransformComponent, TextRendererComponent>(entity);
-        Renderer2D::DrawString(txt.text, transform.GetMatrix(), txt, (int)entity);
+        Renderer2D::DrawString(txt.text, transform.GetWorldTransform(), txt, (int)entity);
       }
     }
     

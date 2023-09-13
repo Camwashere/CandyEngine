@@ -80,14 +80,26 @@ namespace Candy::Graphics
     }
     
     meshes.resize(scene->mNumMeshes);
-    unsigned int maxMeshes = 10;
+    //unsigned int maxMeshes = 10;
+    uint32_t maxMeshes = scene->mNumMeshes;
+    uint32_t currentIndexCount=0;
+    
+    aiNode* rootNode = scene->mRootNode;
+    
     
     // For each mesh
     for(unsigned int i = 0; i < maxMeshes; i++)
     {
+      
       MeshData mesh = ToMeshData(scene->mMeshes[i]);
       if (mesh.IsValid())
       {
+        currentIndexCount += mesh.IndexCount();
+        if (currentIndexCount > 300'000)
+        {
+          CANDY_CORE_ERROR("Too many indices in file from: {0}", path.string());
+          break;
+        }
         meshes.push_back(mesh);
       }
       else

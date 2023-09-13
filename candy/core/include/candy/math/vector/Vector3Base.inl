@@ -117,6 +117,11 @@ namespace Candy::Math
     {
         return vec / vec.Magnitude();
     }
+  template<typename T>
+  constexpr T VectorBase<T, 3>::Length(const VectorBase<T, 3> &vec)
+  {
+    return vec.Magnitude();
+  }
     template<typename T>
     VectorBase<T, 3>::VectorBase()=default;
     template<typename T>
@@ -512,6 +517,16 @@ namespace Candy::Math
     VectorBase<T, 3> VectorBase<T, 3>::ScaledToLength(T newLength) const
     { return newLength * Normalized(); }
     
+    template<typename T>
+    VectorBase<T, 3> VectorBase<T, 3>::ToRadians()const
+    {
+        return {Math::ToRadians(x), Math::ToRadians(y), Math::ToRadians(z)};
+    }
+  template<typename T>
+  VectorBase<T, 3> VectorBase<T, 3>::ToDegrees()const
+  {
+    return {Math::ToDegrees(x), Math::ToDegrees(y), Math::ToDegrees(z)};
+  }
     template<typename T>
     T VectorBase<T, 3>::Sum() const
     { return x + y + z; }

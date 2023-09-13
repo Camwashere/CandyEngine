@@ -1,6 +1,6 @@
 #include <candy/math/matrix/specialization/Matrix4RowMajor.hpp>
 #include <candy/math/MathOps.hpp>
-
+#include "CandyPch.hpp"
 namespace Candy::Math
 {
   AbstractMatrixBase<float, 4, 4, LayoutPolicyLeftToRight>::AbstractMatrixBase()
@@ -186,7 +186,12 @@ namespace Candy::Math
     
     // TODO: THROW ERROR IF DET==0
     if (det == 0)
+    {
+      CANDY_CORE_ERROR("Matrix4::Inverse() - Matrix is not invertible");
+      CANDY_CORE_ASSERT(false);
       return {};
+    }
+    
     
     det = 1.0f / det;
     

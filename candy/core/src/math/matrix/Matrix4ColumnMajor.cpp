@@ -1,7 +1,7 @@
 #include <candy/math/matrix/specialization/Matrix4ColumnMajor.hpp>
-#include <candy/math/quaternion/QuaternionBase.hpp>
+#include <candy/math/Quaternion.hpp>
 #include <candy/math/MathOps.hpp>
-
+#include "CandyPch.hpp"
 namespace Candy::Math
 {
   
@@ -371,10 +371,134 @@ namespace Candy::Math
     
     return result;
   }
-  void AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::DecomposeTransform(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &m, Vector3& translation, Vector3& rotation, Vector3& scale)
+  bool AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom>::DecomposeTransform(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &m, Vector3& translation, Quaternion& rotation, Vector3& scale)
   {
-    AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> matrix = m;
-    // Decompose translation
+    AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> localMatrix = m;
+    
+    // Check if the matrix is not usable
+    if(EpsilonEqual(localMatrix.columns[3][3], 0.0f, Epsilon<float>()))
+    {
+      CANDY_CORE_ERROR("Last element in matrix is 0! Cannot decompose. Column: {0}, element[3][3]: {1}", localMatrix.columns[3], localMatrix.columns[3][3]);
+      return false;
+    }
+    
+    
+    // Normalize the matrix.
+    for(int i=0;i<4;++i)
+      for(int j=0;j<4;++j)
+        localMatrix.columns[i][j] /= localMatrix.columns[3][3];
+    
+    // Extract the translation
+    translation = Vector3(localMatrix.columns[3]);
+    localMatrix.columns[3] = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+    
+    // Extract column vectors of the matrix
+    Vector3 vCols[3] = {
+    Vector3(localMatrix.columns[0]),
+    Vector3(localMatrix.columns[1]),
+    Vector3(localMatrix.columns[2])
+    };
+    
+    // Compute scaling factors
+    scale.x = Vector3::Length(vCols[0]); // length of first column vector
+    scale.y = Vector3::Length(vCols[1]); // length of second column vector
+    scale.z = Vector3::Length(vCols[2]); // length of third column vector
+    
+    // Normalise the scale
+    if(scale.x == 0 || scale.y == 0 || scale.z == 0)
+    {
+      CANDY_CORE_ERROR("One of the scale factors is 0! Cannot decompose. Scale: {0}", scale);
+      return false;
+    }
+    
+    
+    // Remove scaling from matrix
+    vCols[0] /= scale.x;
+    vCols[1] /= scale.y;
+    vCols[2] /= scale.z;
+    
+    // Extract rotation: the rotation should be represented by the unscaled column vectors
+    
+    // Recreate rotation matrix without translations
+    for(int i=0;i<3;++i){
+      localMatrix.columns[i][0] = vCols[i].x;
+      localMatrix.columns[i][1] = vCols[i].y;
+      localMatrix.columns[i][2] = vCols[i].z;
+      localMatrix.columns[i][3] = 0.0f;
+    }
+    
+    // Convert to quaternion
+    rotation = Quaternion(localMatrix);
+    
+    return true;
+  
+    
+    /*AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> localMatrix = m;
+    
+    // Normalize the matrix.
+    if (EpsilonEqual(localMatrix.columns[3][3], static_cast<float>(0), Epsilon<float>()))
+      return false;
+    
+    // First, isolate perspective.  This is the messiest.
+    if (
+    EpsilonNotEqual(localMatrix.columns[0][3], static_cast<float>(0), Epsilon<float>()) ||
+    EpsilonNotEqual(localMatrix.columns[1][3], static_cast<float>(0), Epsilon<float>()) ||
+    EpsilonNotEqual(localMatrix.columns[2][3], static_cast<float>(0), Epsilon<float>()))
+    {
+      // Clear the perspective partition
+      localMatrix.columns[0][3] = localMatrix.columns[1][3] = localMatrix.columns[2][3] = static_cast<float>(0);
+      localMatrix.columns[3][3] = static_cast<float>(1);
+    }
+    
+    // Next take care of translation (easy).
+    translation = Vector3(localMatrix.columns[3]);
+    localMatrix.columns[3] = Vector4(0, 0, 0, localMatrix.columns[3].w);
+    
+    Vector3 Row[3], Pdum3;
+    
+    // Now get scale and shear.
+    for (index_t i = 0; i < 3; ++i)
+      for (index_t j = 0; j < 3; ++j)
+        Row[i][j] = localMatrix.columns[i][j];
+    
+    // Compute X scale factor and normalize first row.
+    scale.x = Row[0].Magnitude();
+    Row[0] *= static_cast<float>(1);
+    scale.y = Row[1].Magnitude();
+    Row[1] *= static_cast<float>(1);
+    scale.z = Row[2].Magnitude();
+    Row[2] *= static_cast<float>(1);
+    
+    // At this point, the matrix (in rows[]) is orthonormal.
+    // Check for a coordinate system flip.  If the determinant
+    // is -1, then negate the matrix and the scaling factors.
+#if 0
+    Pdum3 = Vector3::Cross(Row[1], Row[2]); // v3Cross(row[1], row[2], Pdum3);
+		if (Vector3::Dot(Row[0], Pdum3) < 0)
+		{
+			for (index_t i = 0; i < 3; i++)
+			{
+				scale[i] *= static_cast<float>(-1);
+				Row[i] *= static_cast<float>(-1);
+			}
+		}
+#endif
+    
+    rotation.y = Asin(-Row[0][2]);
+    if (Cos(rotation.y) != 0) {
+      rotation.x = Atan2(Row[1][2], Row[2][2]);
+      rotation.z = Atan2(Row[0][1], Row[0][0]);
+    }
+    else {
+      rotation.x = Atan2(-Row[2][0], Row[1][1]);
+      rotation.z = 0;
+    }
+    return true;*/
+    
+    
+    
+    
+    /*// Decompose translation
     // Assuming the translation values are located in the fourth column of the matrix.
     translation.x = matrix[0,3];
     translation.y = matrix[1,3];
@@ -413,7 +537,7 @@ namespace Candy::Math
     } else {
       rotation.x = Math::Atan2(-matrix[2,0], matrix[1,1]);
       rotation.z = 0;
-    }
+    }*/
   }
   
   

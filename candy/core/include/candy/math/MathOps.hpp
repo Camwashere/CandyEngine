@@ -128,6 +128,9 @@ namespace Candy::Math
     template<typename T>
     int Sign(T value)
     { return (value > 0) - (value < 0); }
+  
+    inline float SignFloat(float x)
+    {return (x < 0) ? -1.0f : 1.0f;}
     
     template<typename T>
     inline T Sin(T angle)
@@ -170,8 +173,12 @@ namespace Candy::Math
     { return std::atan2(y, x); }
     
     template<typename T>
-    inline T Sqrt(const T &value)
+    inline T Sqrt(T value)
     { return std::sqrt(value); }
+    
+    template<>
+    inline float Sqrt<float>(float value)
+    { return sqrtf(value); }
     
     template<typename T>
     inline T Cbrt(const T &value)
@@ -317,6 +324,20 @@ namespace Candy::Math
     {
         return curveIntensity * Pow2(x - xShift);
     }
+    
+    template<typename T>
+    T Epsilon()
+    { return std::numeric_limits<T>::epsilon(); }
+    
+    template<typename T>
+    bool EpsilonEqual(T a, T b, T epsilon = std::numeric_limits<T>::epsilon())
+    {return (a == b) || (Abs(a - b) < epsilon);}
+  
+  template<typename T>
+  bool EpsilonNotEqual(T a, T b, T epsilon = std::numeric_limits<T>::epsilon())
+  {return ! EpsilonEqual(a, b, epsilon);}
+  
+  
     
     
     namespace Interpolate

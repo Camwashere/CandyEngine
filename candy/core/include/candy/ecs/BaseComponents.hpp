@@ -6,34 +6,21 @@
 #include <candy/graphics/model/Mesh.hpp>
 #include <candy/graphics/material/Material.hpp>
 #include <candy/graphics/font/Font.hpp>
+#include <candy/ecs/TransformComponent.hpp>
 namespace Candy::ECS
 {
-  struct IDComponent{
+  
+  struct IDComponent
+  {
     UUID id;
   };
   
-  struct TagComponent{
+  struct TagComponent
+  {
     std::string tag;
   };
   
-  struct TransformComponent
-  {
-    //Math::Matrix4 matrix = Math::Matrix4::IDENTITY;
-
-    Math::Vector3 position = {0.0f, 0.0f, 0.0f};
-    Math::Vector3 rotation = {0.0f, 0.0f, 0.0f};
-    Math::Vector3 scale = {1.0f, 1.0f, 1.0f};
-    
-    
-    [[nodiscard]] Math::Matrix4 GetMatrix()const
-    {
-      Math::Quaternion rot = Math::Quaternion::Euler(rotation);
-      Math::Matrix4 matrix = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, position) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rot) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, scale);
-      return matrix;
-    }
-    
-    
-  };
+  
   
   
   

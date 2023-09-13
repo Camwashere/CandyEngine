@@ -303,7 +303,85 @@ namespace Candy
     
     ImGui::PopID();
   }
-  
+  static void DrawVector4Control(const std::string& label, Math::Quaternion& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    auto boldFont = io.Fonts->Fonts[0];
+    
+    ImGui::PushID(label.c_str());
+    
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Text("%s", label.c_str());
+    ImGui::NextColumn();
+    
+    ImGui::PushMultiItemsWidths(4, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+    
+    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+    ImGui::PushFont(boldFont);
+    if (ImGui::Button("X", buttonSize))
+      values.x = resetValue;
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+    ImGui::PushFont(boldFont);
+    if (ImGui::Button("Y", buttonSize))
+      values.y = resetValue;
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+    ImGui::PushFont(boldFont);
+    if (ImGui::Button("Z", buttonSize))
+      values.z = resetValue;
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+    ImGui::PushFont(boldFont);
+    if (ImGui::Button("W", buttonSize))
+      values.z = resetValue;
+    ImGui::PopFont();
+    ImGui::PopStyleColor(3);
+    
+    ImGui::SameLine();
+    ImGui::DragFloat("##W", &values.w, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    
+    ImGui::PopStyleVar();
+    
+    ImGui::Columns(1);
+    
+    ImGui::PopID();
+  }
   static void DrawTextControl(const std::string& label, std::string& value, float columnWidth = 100.0f)
   {
     ImGuiIO& io = ImGui::GetIO();
@@ -411,33 +489,29 @@ namespace Candy
     
     ImGui::PopItemWidth();
     
-    if (entity.Is2D())
+    
+    
+    DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
     {
-      DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
-      {
-      DrawVector2Control("Position", (Vector2&)component.position);
-      DrawFloatControl("Rotation", component.rotation.z);
-      DrawVector2Control("Scale", (Vector2&)component.scale, 1.0f);
-      });
-      
-      if (entity.HasComponent<CircleRendererComponent>())
-      {
-        DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
-        {
-          DrawColorPickerControl("Color", component.color);
-          DrawFloatControl("Thickness", component.thickness, 0.0f, 1.0f);
-          DrawFloatControl("Fade", component.fade, 0.0f, 1.0f);
-        });
-      }
-      
-    }
-    else
+    Math::Vector3 position = component.GetPosition();
+    Math::Vector3 scale = component.GetScale();
+    Math::Quaternion rotation = component.GetRotation();
+    
+    DrawVector3Control("Position", position);
+    //DrawVector3Control("Rotation", rotationEuler);
+    DrawVector4Control("Rotation", rotation);
+    DrawVector3Control("Scale", scale, 1.0f);
+    
+    component.Set(position, rotation, scale);
+    });
+    
+    if (entity.HasComponent<CircleRendererComponent>())
     {
-      DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+      DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
       {
-      DrawVector3Control("Position", component.position);
-      DrawVector3Control("Rotation", component.rotation);
-      DrawVector3Control("Scale", component.scale, 1.0f);
+      DrawColorPickerControl("Color", component.color);
+      DrawFloatControl("Thickness", component.thickness, 0.0f, 1.0f);
+      DrawFloatControl("Fade", component.fade, 0.0f, 1.0f);
       });
     }
     

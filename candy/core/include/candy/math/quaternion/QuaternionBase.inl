@@ -1,5 +1,5 @@
 #pragma once
-
+#include <cmath>
 namespace Candy::Math
 {
   template<typename T>
@@ -230,6 +230,48 @@ namespace Candy::Math
   template<typename T>
   QuaternionBase<T>::QuaternionBase(const QuaternionBase<T>& other) : VectorBase<T, 4>(other){}
   
+  template<typename T>
+  QuaternionBase<T>::QuaternionBase(const AbstractMatrixBase<T, 4, 4, LayoutPolicyTopToBottom>& matrix)
+  {
+    // Compute the trace of the matrix
+    T trace = matrix[0] + matrix[5] + matrix[10];
+    
+    if(trace > 0)
+    {
+      T s = 0.5f / sqrtf(trace+ 1.0f);
+      this->w = 0.25f / s;
+      this->x = (matrix[9] - matrix[6]) * s;
+      this->y = (matrix[2] - matrix[8]) * s;
+      this->z = (matrix[4] - matrix[1]) * s;
+    }
+    else
+    {
+      if (matrix[0] > matrix[5] && matrix[0] > matrix[10])
+      {
+        T s = 2.0f * sqrtf(1.0f + matrix[0] - matrix[5] - matrix[10]);
+        this->w = (matrix[9] - matrix[6]) / s;
+        this->x = 0.25f * s;
+        this->y = (matrix[1] + matrix[4]) / s;
+        this->z = (matrix[2] + matrix[8]) / s;
+      }
+      else if (matrix[5] > matrix[10])
+      {
+        T s = 2.0f * sqrtf(1.0f + matrix[5] - matrix[0] - matrix[10]);
+        this->w = (matrix[2] - matrix[8]) / s;
+        this->x = (matrix[1] + matrix[4]) / s;
+        this->y = 0.25f * s;
+        this->z = (matrix[6] + matrix[9]) / s;
+      }
+      else
+      {
+        T s = 2.0f * sqrtf(1.0f + matrix[10] - matrix[0] - matrix[5]);
+        this->w = (matrix[4] - matrix[1]) / s;
+        this->x = (matrix[2] + matrix[8]) / s;
+        this->y = (matrix[6] + matrix[9]) / s;
+        this->z = 0.25f * s;
+      }
+    }
+  }
   template<typename T> template <typename E>
   constexpr QuaternionBase<T>::QuaternionBase(const VectorExpression<T, E>& expr) : VectorBase<T, 4>(expr){}
   
@@ -342,7 +384,30 @@ namespace Candy::Math
   {
     return QuaternionBase<T>(w, -x, -y, -z);
   }
-  
+  template<typename T>
+  VectorBase<T, 3> QuaternionBase<T>::ToEuler()const
+  {
+    Vector3 angles;
+    
+    // roll (x-axis rotation)
+    float sinr_cosp = +2.0 * (w * x + y * z);
+    float cosr_cosp = +1.0 - 2.0 * (x * x + y * y);
+    angles.z = Atan2(sinr_cosp, cosr_cosp);
+    
+    // pitch (y-axis rotation)
+    float sinp = +2.0 * (w * y - z * x);
+    if (Abs(sinp) >= 1)
+      angles.y = copysign(Math::PI / 2.f, sinp); // use 90 degrees if out of range
+    else
+      angles.y = Asin(sinp);
+    
+    // yaw (z-axis rotation)
+    float siny_cosp = +2.0 * (w * z + x * y);
+    float cosy_cosp = +1.0 - 2.0 * (y * y + z * z);
+    angles.x = Atan2(siny_cosp, cosy_cosp);
+    
+    return angles;
+  }
   template<typename T>
   QuaternionBase<T> QuaternionBase<T>::Normalized() const
   {

@@ -29,7 +29,7 @@ namespace Candy::Graphics
   
   };
   
-  enum class MaterialTextureType
+  enum class MaterialTextureType : uint8_t
   {
     NONE = 0,
     DIFFUSE = 1,

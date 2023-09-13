@@ -26,6 +26,7 @@ namespace Candy
             Vulkan::Init();
         }
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
         //VulkanInstance::Init(handle);
@@ -201,6 +202,15 @@ namespace Candy
         }
         windowData.vsync = enabled;
     }
+  
+  void Window::Show() const
+  {
+      glfwShowWindow(handle);
+  }
+  void Window::Hide() const
+  {
+      glfwHideWindow(handle);
+  }
   
   
 }

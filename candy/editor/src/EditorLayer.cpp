@@ -30,7 +30,25 @@ namespace Candy
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
     
     viewport = CreateSharedPtr<Viewport>(this);
-    ModelLoader loader;
+    
+    SharedPtr<Texture> tex = Texture::Create("assets/textures/wall.jpg");
+    Entity child = activeScene->CreateEntity("Child");
+    child.AddComponent<MeshFilterComponent>(MeshData::cube);
+    child.AddComponent<MeshRendererComponent>(tex);
+    
+    Entity parent = activeScene->CreateEntity("Parent");
+    parent.AddComponent<MeshFilterComponent>(MeshData::cube);
+    parent.AddComponent<MeshRendererComponent>(tex);
+    auto& p = parent.GetTransform();
+    p.SetPosition({0.0f, 1.0f, 0.0f});
+    
+    auto& trans = child.GetComponent<TransformComponent>();
+    trans.SetParent(&parent.GetTransform());
+    
+    //quick.GetTransform().SetParent(&slow.GetTransform());
+    
+    /// Load backpack model
+    /*ModelLoader loader;
     CANDY_CORE_INFO("Loading backpack model");
     loader.LoadModel("assets/models/backpack/Survival_BackPack_2.fbx");
     CANDY_CORE_INFO("Loaded backpack model");
@@ -43,7 +61,7 @@ namespace Candy
       entity.AddComponent<MeshFilterComponent>(mesh);
       entity.AddComponent<MeshRendererComponent>(texture);
       count++;
-    }
+    }*/
   }
   
   

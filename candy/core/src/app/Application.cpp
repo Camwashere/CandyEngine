@@ -106,6 +106,7 @@ namespace Candy
         CANDY_PROFILE_FUNCTION();
         isRunning=true;
         Renderer::Start();
+        instance->mainWindow->Show();
         while(isRunning)
         {
           frameTime.Update();

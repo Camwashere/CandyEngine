@@ -58,6 +58,8 @@ namespace Candy
     
     public:
         void SetEventCallback(const EventCallbackFunction& callback){windowData.eventCallback = callback;}
+        void Show() const;
+        void Hide() const;
         [[nodiscard]] inline int GetWidth()const{return windowData.GetWindowWidth();}
         [[nodiscard]] inline int GetHeight()const{return windowData.GetWindowHeight();}
         [[nodiscard]] inline bool IsVSyncEnabled()const{return windowData.vsync;}

@@ -1,6 +1,7 @@
 #pragma once
 #include "../base/MatrixBase.hpp"
 #include "../base/MatrixExpression.hpp"
+
 #include <array>
 #include "xmmintrin.h"
 #include <cstring>
@@ -81,7 +82,7 @@ namespace Candy::Math
     static AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> Frustum(float left, float right, float bottom, float top, float near, float far);
     static AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> InfinitePerspective(float fov, float aspectRatio, float near);
     static AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> Transpose(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &matrix);
-    static void DecomposeTransform(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &matrix, Vector3& translation, Vector3& rotation, Vector3& scale);
+    static bool DecomposeTransform(const AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> &matrix, Vector3& translation, QuaternionBase<float>& rotation, Vector3& scale);
     
     // Create a picking region for selection. It takes in the parameters center, delta and viewport and returns a pick matrix.
     static AbstractMatrixBase<float, 4, 4, LayoutPolicyTopToBottom> PickMatrix(const VectorBase<float, 2>& center, const VectorBase<float, 2>& delta, const VectorBase<float, 4>& viewport);

@@ -137,6 +137,8 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/include/candy/graphics/color/ColorRGBA.inl
         candy/core/include/candy/graphics/model/ModelLoader.hpp
         candy/core/src/graphics/model/ModelLoader.cpp
+        candy/core/include/candy/ecs/TransformComponent.hpp
+        candy/core/src/ecs/TransformComponent.cpp
 
 )
 

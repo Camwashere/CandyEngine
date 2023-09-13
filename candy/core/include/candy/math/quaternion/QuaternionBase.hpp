@@ -43,6 +43,8 @@ namespace Candy::Math
     
     template <typename E>
     constexpr QuaternionBase(const VectorExpression<T, E>& expr); //NOLINT
+    
+    QuaternionBase(const AbstractMatrixBase<T, 4, 4, LayoutPolicyTopToBottom>& matrix);
   
   
   
@@ -59,6 +61,7 @@ namespace Candy::Math
     void SetLookRotation(const VectorBase<T, 3>& view, const VectorBase<T, 3>& up = VectorBase<T, 3>::up);
     void ToAngleAxis(T& angle, VectorBase<T, 3>& axis);
     QuaternionBase<T> Conjugate() const;
+    VectorBase<T, 3> ToEuler()const;
     
     [[nodiscard]] QuaternionBase<T> Normalized() const; //NOLINT
     

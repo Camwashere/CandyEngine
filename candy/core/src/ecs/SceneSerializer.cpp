@@ -47,6 +47,22 @@ namespace Candy::Math
     return ret != c4::csubstr::npos;
   }
   
+  size_t to_chars(c4::substr buf, const Candy::Math::Quaternion& v)
+  {
+    // this call to c4::format() is the type-safe equivalent
+    // of snprintf(buf.str, buf.len, "(%f,%f,%f)", v.x, v.y, v.z)
+    return c4::format(buf, "[{},{},{},{}]", v.x, v.y, v.z, v.w);
+  }
+  
+  bool from_chars(c4::csubstr buf, Candy::Math::Quaternion* v)
+  {
+    // equivalent to sscanf(buf.str, "(%f,%f,%f)", &v->x, &v->y, &v->z)
+    // --- actually snscanf(buf.str, buf.len, ...) but there's
+    // no such function in the standard.
+    size_t ret = c4::unformat(buf, "[{},{},{},{}]", v->x, v->y, v->z, v->w);
+    return ret != c4::csubstr::npos;
+  }
+  
   size_t to_chars(c4::substr buf, const Candy::Math::Vector3& v)
   {
     // this call to c4::format() is the type-safe equivalent
@@ -145,9 +161,9 @@ namespace Candy::ECS
       transformNode |= c4::yml::MAP;
       auto& transform = entity.GetComponent<TransformComponent>();
       
-      transformNode["Position"] << transform.position;
-      transformNode["Rotation"] << transform.rotation;
-      transformNode["Scale"] << transform.scale;
+      transformNode["Position"] << transform.GetPosition();
+      transformNode["Rotation"] << transform.GetRotation();
+      transformNode["Scale"] << transform.GetScale();
     }
     
     if (entity.HasComponent<MeshFilterComponent>())
@@ -310,10 +326,13 @@ namespace Candy::ECS
       if (transformComponent.has_key())
       {
         auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-        
-        transformComponent["Position"] >> tc.position;
-        transformComponent["Rotation"] >> tc.rotation;
-        transformComponent["Scale"] >> tc.scale;
+        Math::Vector3 position;
+        Math::Quaternion rotation;
+        Math::Vector3 scale;
+        transformComponent["Position"] >> position;
+        transformComponent["Rotation"] >> rotation;
+        transformComponent["Scale"] >> scale;
+        tc.Set(position, rotation, scale);
       }
       
       auto meshFilterComponent = entity["MeshFilterComponent"];

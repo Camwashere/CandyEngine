@@ -103,7 +103,8 @@ namespace Candy
     Entity selectedEntity = parent->scenePanel->GetSelectedEntity();
     if (selectedEntity && gizmoType != -1)
     {
-      bool is2D = parent->IsSelectedEntity2D();
+      //bool is2D = parent->IsSelectedEntity2D();
+      bool is2D = false;
       ImGuizmo::SetOrthographic(is2D);
       ImGuizmo::SetDrawlist();
       
@@ -115,33 +116,73 @@ namespace Candy
       
       // Entity transform
       auto& tc = selectedEntity.GetComponent<TransformComponent>();
-      Matrix4 transform = tc.GetMatrix();
+      //bool local = tc.HasParent();
+      
+      
+      
+      Matrix4 worldTransform = tc.GetWorldTransform();
+      Matrix4 localTransform = tc.GetLocalTransform();
+      ImGuizmo::MODE mode = ImGuizmo::MODE::LOCAL;
       
       // Snapping
-      bool snap = Input::IsKeyPressed(Key::LeftControl);
+      //bool snap = Input::IsKeyPressed(Key::LeftControl);
+      bool snap = false;
       float snapValue = 0.5f; // Snap to 0.5m for translation/scale
       // Snap to 45 degrees for rotation
       if (gizmoType == ImGuizmo::OPERATION::ROTATE)
         snapValue = 45.0f;
       
       float snapValues[3] = { snapValue, snapValue, snapValue };
+      //cameraProjection[1, 1] *= -1;
       cameraProjection[1, 1] *= -1;
-      cameraProjection[2, 2] *= 0.5f;
-      cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
+      //cameraProjection[2, 2] *= 0.5f;
+      //cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
       
+      //transform[2,3] *= -1;
       ImGuizmo::Manipulate(&cameraView[0], &cameraProjection[0],
-                           (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, &transform[0],
-                           nullptr, snap ? snapValues : nullptr);
+                           (ImGuizmo::OPERATION)gizmoType, mode, &worldTransform[0],
+                           &localTransform[0], snap ? snapValues : nullptr);
+      
+      //transform[2,3] *= -1;
       
       if (ImGuizmo::IsUsing())
       {
-        Vector3 translation, rotation, scale;
-        Matrix4::DecomposeTransform(transform, translation, rotation, scale);
+        Matrix4 local = tc.HasParent()? worldTransform * Matrix4::Inverse(tc.GetParent()->GetWorldTransform()) : worldTransform;
+        Vector3 translation, scale;
+        Quaternion rotation;
+        if (Matrix4::DecomposeTransform(local, translation, rotation, scale))
+        {
+          //CANDY_CORE_INFO("New rotation: {0}, previous rotation: {1}", rotation, tc.GetRotation());
+          tc.SetPosition(translation);
+          tc.SetRotation(rotation);
+          tc.SetScale(scale);
+          //tc.Set(translation, rotation, scale);
+        }
+        else
+        {
+          CANDY_CORE_ERROR("Failed to decompose transform!");
+        }
+        //ImGuizmo::DecomposeMatrixToComponents(&local[0], &translation[0], &rotation[0], &scale[0]);
         
-        Vector3 deltaRotation = rotation - tc.rotation;
-        tc.position = translation;
-        tc.rotation += deltaRotation;
-        tc.scale = scale;
+        
+        // Flip the Z rotation back after used by ImGuizmo
+        //rotation.z = -rotation.z;
+        //rotation.x = Math::ToRadians(rotation.x);
+        //rotation.y = Math::ToRadians(rotation.y);
+        //rotation.z = Math::ToRadians(rotation.z);
+        /*rotation.z *= -1;
+        rotation.y *= -1;
+        rotation.x *= -1;
+        rotation = rotation.ToDegrees();*/
+        //CANDY_CORE_INFO("New rotation: {0}, previous rotation: {1}", rotation, tc.GetRotation());
+        //tc.Set(translation, rotation, scale);
+        /*tc.SetPosition(translation);
+        tc.SetRotation(rotation);
+        tc.SetScale(scale);*/
+        
+        
+        
+        
       }
     }
     ImGui::End();

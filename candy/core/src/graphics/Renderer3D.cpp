@@ -21,9 +21,9 @@ namespace Candy::Graphics
   struct RenderData3D
   {
     static const uint32_t maxTextureSlots = 32; // TODO: RenderCaps
-    static const uint32_t maxQuads = 20000;
-    static const uint32_t maxVertices = maxQuads * 4;
-    static const uint32_t maxIndices = maxQuads * 6;
+    static const uint32_t maxTriangles = 100'000;
+    static const uint32_t maxVertices = maxTriangles * 3;
+    static const uint32_t maxIndices = maxTriangles * 3;
     static const uint32_t maxObjects = 1000;
     
     Renderer3D::Stats stats;
@@ -236,10 +236,21 @@ namespace Candy::Graphics
   {
     if (mesh.IsValid())
     {
+      if (mesh.IndexCount() >= RenderData3D::maxIndices)
+      {
+        CANDY_CORE_ERROR("ERROR! MESH HAS TOO MANY INDICES!");
+        CANDY_CORE_ASSERT(false);
+      }
+      if (mesh.VertexCount() >= RenderData3D::maxVertices)
+      {
+        CANDY_CORE_ERROR("ERROR! MESH HAS TOO MANY VERTICES!");
+        CANDY_CORE_ASSERT(false);
+      }
       if (data.meshIndexCount >= RenderData3D::maxIndices)
       {
         NextBatch();
       }
+      
       
       ObjectData objectData{};
       objectData.objectIndex = data.objects.size();
@@ -264,7 +275,7 @@ namespace Candy::Graphics
       }
       objectData.entityID = entity;
       objectData.indexStart = data.indexOffset;
-      objectData.vertexOffset = data.vertexOffset;
+      objectData.vertexOffset = (int32_t)data.vertexOffset;
       objectData.indexCount = mesh.IndexCount();
       data.objects.push_back(objectData);
       data.transforms.push_back(transform);
@@ -286,9 +297,9 @@ namespace Candy::Graphics
       data.indexOffset += mesh.IndexCount();
       
       data.stats.objectCount++;
-      data.stats.vertexCount += mesh.vertices.size();
-      data.stats.indexCount += mesh.indices.size();
-      data.stats.triangleCount += mesh.indices.size() / 3;
+      data.stats.vertexCount += mesh.VertexCount();
+      data.stats.indexCount += mesh.IndexCount();
+      data.stats.triangleCount += mesh.IndexCount() / 3;
       data.stats.drawCalls++;
     }
   }

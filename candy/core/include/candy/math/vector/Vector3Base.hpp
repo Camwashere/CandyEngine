@@ -29,6 +29,7 @@ namespace Candy::Math
         static constexpr VectorBase<T, 3> Max(const VectorBase<T, 3> &a, const VectorBase<T, 3> &b);
         static constexpr VectorBase<T, 3> Min(const VectorBase<T, 3> &a, const VectorBase<T, 3> &b);
         static constexpr VectorBase<T, 3> Normalize(const VectorBase<T, 3> &vec);
+        static constexpr T Length(const VectorBase<T, 3> &vec);
         
         
     public:
@@ -156,6 +157,8 @@ namespace Candy::Math
         [[nodiscard]] VectorBase<T, 3> MoveTowards(const VectorBase<T, 3> &target, T maxDistanceDelta) const;
         [[nodiscard]] VectorBase<T, 3> Reflect(const VectorBase<T, 3> &inNormal) const;
         [[nodiscard]] VectorBase<T, 3> ScaledToLength(T newLength) const;
+        [[nodiscard]] VectorBase<T, 3> ToRadians()const;
+        [[nodiscard]] VectorBase<T, 3> ToDegrees()const;
         [[nodiscard]] T Sum() const;
         [[nodiscard]] T Difference() const;
         [[nodiscard]] T AbsDifference() const;

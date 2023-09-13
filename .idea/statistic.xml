@@ -8,6 +8,11 @@
         <option value="$PROJECT_DIR$/lib" />
         <option value="$PROJECT_DIR$/build" />
         <option value="$PROJECT_DIR$/dist" />
+        <option value="$PROJECT_DIR$/resources/assets/models" />
+        <option value="$PROJECT_DIR$/resources/assets/textures" />
+        <option value="$PROJECT_DIR$/resources/assets/icons" />
+        <option value="$PROJECT_DIR$/resources/assets/fonts" />
+        <option value="$PROJECT_DIR$/resources/assets/cache" />
       </list>
     </option>
   </component>
