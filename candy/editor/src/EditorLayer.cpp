@@ -31,11 +31,11 @@ namespace Candy
     
     
     /// Load backpack model
-    ModelLoader loader;
+    /*ModelLoader loader;
     loader.scene = activeScene;
     CANDY_CORE_INFO("Loading backpack model");
     loader.LoadModel("assets/models/backpack/Survival_BackPack_2.fbx");
-    CANDY_CORE_INFO("Loaded backpack model");
+    CANDY_CORE_INFO("Loaded backpack model");*/
     
     
   }

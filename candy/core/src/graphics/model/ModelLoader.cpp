@@ -141,13 +141,21 @@ namespace Candy::Graphics
     
     
   }
-  
+ /* static void LoadMaterialTextures(aiTextureType type, aiMaterial* material)
+  {
+    for (uint32_t i=0; i<material->GetTextureCount(type); i++)
+    {
+      
+      aiString path;
+      material->GetTexture(type, i, &path);
+      
+      std::string texturePath = path.C_Str();
+      
+    }
+  }*/
   void ModelLoader::LoadModel(const std::filesystem::path& path)
   {
-    unsigned int readFileFlags = aiProcess_CalcTangentSpace |
-    aiProcess_Triangulate            |
-    aiProcess_JoinIdenticalVertices  |
-    aiProcess_SortByPType;
+    unsigned int readFileFlags = aiProcess_Triangulate | aiProcess_FlipUVs;
     
     const aiScene* aiScene = importer.ReadFile(path.string(), readFileFlags);
     
@@ -161,27 +169,33 @@ namespace Candy::Graphics
     
     SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
     
+    CANDY_CORE_INFO("Material count: {}", aiScene->mNumMaterials);
+    
+    
+    for (uint32_t i=0; i<aiScene->mNumMaterials; i++)
+    {
+      aiMaterial* material = aiScene->mMaterials[i];
+      
+      if (material)
+      {
+        aiString name;
+        material->Get(AI_MATKEY_NAME, name);
+        
+        CANDY_CORE_INFO("MATERIAL: {}", name.C_Str());
+      }
+      
+      
+      for (aiTextureType type = aiTextureType_NONE; type<=aiTextureType_UNKNOWN; type = (aiTextureType)(type+1))
+      {
+        //LoadMaterialTextures(type, material);
+      }
+      
+    }
+    
     
     ProcessNode(rootNode, aiScene, Entity{}, scene, texture);
     
     
-    
-    
-   
-    
-    /*for (uint32_t i=0; i<scene->mNumMaterials; i++)
-    {
-      aiMaterial* material = scene->mMaterials[i];
-      if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-      {
-        aiString path;
-        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
-        {
-          std::string texturePath = path.C_Str();
-          CANDY_CORE_INFO("Texture path: {0}", texturePath);
-        }
-      }
-    }*/
   }
 
 }
