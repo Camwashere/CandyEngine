@@ -1,32 +1,34 @@
 #pragma once
-#include "BaseComponents.hpp"
+//#include "BaseComponents.hpp"
 #include "Scene.hpp"
 #include <entt/entt.hpp>
 namespace Candy::ECS
 {
+  struct TagComponent;
+  struct IDComponent;
+  class TransformComponent;
+  struct ParentComponent;
+  struct ChildrenComponent;
+  
   class Entity {
   private:
     entt::entity handle{entt::null};
     Scene* scene=nullptr;
-  
-  public:
-    Entity()=default;
-    Entity(entt::entity entityID, Scene* parentScene) : handle(entityID), scene(parentScene){}
-    Entity(const Entity &other)=default;
-  
-  public:
-    operator bool()const{return handle!=entt::null;}
-    operator std::uint32_t()const{return (std::uint32_t)handle;}
-    operator entt::entity()const{return handle;}
     
-    bool operator==(const Entity& other)const
-    {
-      return handle==other.handle && scene==other.scene;
-    }
-    bool operator!=(const Entity& other)const
-    {
-      return !(*this==other);
-    }
+  public:
+    Entity();
+    Entity(entt::entity entityID, Scene* parentScene);
+    Entity(const Entity &other);
+    
+  
+  public:
+    operator bool()const;
+    operator std::uint32_t()const;
+    operator entt::entity()const;
+    
+    bool operator==(const Entity& other)const;
+    bool operator!=(const Entity& other)const;
+    
   
   public:
     template<typename T, typename... Args>
@@ -42,7 +44,13 @@ namespace Candy::ECS
     {
       CANDY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component");
       return scene->registry.get<T>(handle);
-      //return scene->registry.GetComponent<T>(handle);
+    }
+    
+    template<typename T>
+    const T& GetComponent()const
+    {
+      CANDY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component");
+      return scene->registry.get<T>(handle);
     }
     template<typename T>
     [[nodiscard]] bool HasComponent()const
@@ -66,11 +74,29 @@ namespace Candy::ECS
     }
   
   public:
-    UUID GetUUID(){return GetComponent<IDComponent>().id;}
-    std::string GetTag(){return GetComponent<TagComponent>().tag;}
-    [[nodiscard]] bool Is2D()const{return HasComponent<SpriteRendererComponent>() || HasComponent<CircleRendererComponent>() || HasComponent<LineRendererComponent>() || HasComponent<TextRendererComponent>();}
-    TransformComponent& GetTransform(){return GetComponent<TransformComponent>();}
-    void SetName(const std::string& tag){GetComponent<TagComponent>().tag=tag;}
+    
+    UUID GetUUID();
+    std::string GetTag();
+    ParentComponent& GetParent();
+    const ParentComponent& GetParent()const;
+    Entity GetParentEntity();
+    Entity GetParentEntity()const;
+    [[nodiscard]] bool HasParent()const;
+    [[nodiscard]] bool HasChildren()const;
+    [[nodiscard]] bool IsParent()const;
+    [[nodiscard]] bool IsChild()const;
+    [[nodiscard]] bool IsRoot()const;
+    [[nodiscard]] bool HasScene()const;
+    bool RemoveChild(const Entity& child);
+    bool AddChild(const Entity& child);
+    ChildrenComponent& GetChildren();
+    const ChildrenComponent& GetChildren()const;
+    [[nodiscard]] bool Is2D()const;
+    TransformComponent& GetTransform();
+    void SetParent(Entity parent);
+    void SetName(const std::string& tag);
+    Scene* GetScene();
+    
     
     
     

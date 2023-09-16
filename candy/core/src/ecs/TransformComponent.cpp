@@ -1,164 +1,168 @@
 #include <candy/ecs/TransformComponent.hpp>
 #include <candy/math/Quaternion.hpp>
 #include <algorithm>
+#include <candy/ecs/BaseComponents.hpp>
+
 namespace Candy::ECS
 {
   
-  void TransformComponent::UpdateLocalTransform()
+  
+  using namespace Math;
+  TransformComponent::TransformComponent(const Entity& e) : entity(e)
   {
-    
-    //Math::Quaternion rot = Math::Quaternion::Euler(rotation.ToRadians());
-    rotation = rotation.Normalized();
-    localTransform = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, position) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rotation) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, scale);
-    //localTransform = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, position) * Math::Quaternion::ToMatrix(rotation) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, scale);
-    if (parent)
-    {
-      parent->UpdateWorldTransform();
-    }
-    UpdateWorldTransform();
-    for (TransformComponent* child : children)
-    {
-      child->UpdateWorldTransform();
-    }
-    
+  
   }
   
-  void TransformComponent::UpdateWorldTransform()
+  
+  /*void TransformComponent::UpdateRelationships()
   {
-    if (parent)
+    if (entity.HasParent())
     {
-      
-      worldTransform = parent->GetWorldTransform() * localTransform;
+      parent = &entity.GetParentEntity().GetComponent<TransformComponent>();
+      parent->AddChild(this);
     }
     else
     {
-      worldTransform = localTransform;
+      parent = nullptr;
+    }
+    
+    
+  }*/
+  Entity TransformComponent::GetEntity()const
+  {
+    return entity;
+  }
+  Matrix4 TransformComponent::GetWorldTransform() const
+  {
+    if (HasParent())
+    {
+      return GetParent()->GetWorldTransform()*GetLocalTransform();
+    }
+    else
+    {
+      return GetLocalTransform();
     }
   }
-  const Math::Matrix4& TransformComponent::GetWorldTransform()const
+  
+  Matrix4 TransformComponent::GetLocalTransform() const
   {
-    return worldTransform;
-  }
-  [[nodiscard]] const Math::Matrix4& TransformComponent::GetLocalTransform()const
-  {
-    return localTransform;
+    return Matrix4::Translate(Matrix4::IDENTITY, localPosition)*Matrix4::Rotate(Matrix4::IDENTITY, localRotation)*Matrix4::Scale(Matrix4::IDENTITY, localScale);
   }
   
-  [[nodiscard]] const Math::Vector3& TransformComponent::GetPosition()const
+  Math::Vector3 TransformComponent::GetLocalPosition() const
   {
-    return position;
+    return localPosition;
   }
   
-  [[nodiscard]] const Math::Quaternion& TransformComponent::GetRotation()const
+  Math::Quaternion TransformComponent::GetLocalRotation() const
   {
-    return rotation;
+    return localRotation;
   }
   
-  [[nodiscard]] const Math::Vector3& TransformComponent::GetScale()const
+  Math::Vector3 TransformComponent::GetLocalScale() const
   {
-    return scale;
+    return localScale;
   }
   
-  void TransformComponent::SetPosition(const Math::Vector3& value)
+  void TransformComponent::SetLocalPosition(const Math::Vector3 &value)
   {
-    position = value;
-    UpdateLocalTransform();
+    localPosition = value;
+    
   }
   
-  void TransformComponent::SetPosition2D(const Math::Vector2& value)
+  
+  void TransformComponent::SetLocalRotation(const Math::Quaternion &value)
   {
-    position.Set(value.x, value.y, position.z);
-    UpdateLocalTransform();
-  }
-  void TransformComponent::SetRotation(const Math::Quaternion& value)
-  {
-    rotation = value;
-    UpdateLocalTransform();
-  }
-  void TransformComponent::SetRotation2D(float value)
-  {
-    rotation.z = value;
-    UpdateLocalTransform();
-  }
-  void TransformComponent::SetScale2D(const Math::Vector2& value)
-  {
-    scale.Set(value.x, value.y, scale.z);
-    UpdateLocalTransform();
-  }
-  void TransformComponent::SetScale(const Math::Vector3& value)
-  {
-    scale = value;
-    UpdateLocalTransform();
-  }
-  void TransformComponent::Set2D(const Math::Vector2& positionValue, float rotationValue, const Math::Vector2& scaleValue)
-  {
-    position.Set(positionValue.x, positionValue.y, position.z);
-    rotation.z = rotationValue;
-    scale.Set(scaleValue.x, scaleValue.y, scale.z);
-    UpdateLocalTransform();
-  }
-  void TransformComponent::Set(const Math::Vector3& positionValue, const Math::Quaternion& rotationValue, const Math::Vector3& scaleValue)
-  {
-    position = positionValue;
-    rotation = rotationValue;
-    scale = scaleValue;
-    UpdateLocalTransform();
+    localRotation = value.Normalized();
+    
   }
   
-  void TransformComponent::ApplyDeltaRotation(const Math::Vector3& rot)
+  
+  void TransformComponent::SetLocalScale(const Math::Vector3 &value)
   {
-    rotation += rot;
-    UpdateLocalTransform();
+    localScale = value;
+    
   }
   
+  void TransformComponent::SetLocal(const Math::Vector3 &positionValue, const Math::Quaternion &rotationValue, const Math::Vector3 &scaleValue)
+  {
+    localPosition = positionValue;
+    localRotation = rotationValue.Normalized();
+    localScale = scaleValue;
+    
+  }
+  
+  Math::Vector3 TransformComponent::GetWorldPosition() const
+  {
+    if (HasParent())
+    {
+      return GetParent()->GetWorldTransform() * localPosition;
+    }
+    else
+    {
+      return localPosition;
+    }
+  }
+  Math::Quaternion TransformComponent::GetWorldRotation()const
+  {
+    if (HasParent())
+    {
+      return GetParent()->GetWorldRotation() * localRotation;
+    }
+    else
+    {
+      return localRotation;
+    }
+  }
+  Math::Vector3 TransformComponent::GetWorldScale()const
+  {
+    if (HasParent())
+    {
+      return GetParent()->GetWorldScale() * localScale;
+      //return parent->GetWorldScale() * localScale;
+    }
+    else
+    {
+      return localScale;
+    }
+  }
   bool TransformComponent::HasParent()const
   {
-    return parent != nullptr;
+    return entity.HasParent();
   }
   
   bool TransformComponent::HasChildren()const
   {
-    return !children.empty();
+    return entity.HasChildren();
   }
   
-  bool TransformComponent::RemoveChild(const TransformComponent* child)
-  {
-    auto it = std::find(children.begin(), children.end(), child);
-    if (it != children.end())
-    {
-      children.erase(it);
-      return true;
-    }
-    return false;
-  }
-  bool TransformComponent::AddChild(TransformComponent* child)
-  {
-    auto it = std::find(children.begin(), children.end(), child);
-    if (it == children.end())
-    {
-      children.push_back(child);
-      return true;
-    }
-    return false;
-  }
   
-  const std::vector<TransformComponent*>& TransformComponent::GetChildren()const
+  
+  std::vector<TransformComponent*> TransformComponent::GetChildren()
   {
+    std::vector<TransformComponent*> children;
+    auto& entityChildren = entity.GetChildren();
+    children.resize(entityChildren.Size());
+    
+    for (int i=0; i<entityChildren.Size(); i++)
+    {
+      children[i] = &entityChildren.children[i].GetComponent<TransformComponent>();
+    }
+    
     return children;
   }
   
-  void TransformComponent::SetParent(TransformComponent* parentValue)
-  {
-    if (parent)
-    {
-      parent->RemoveChild(this);
-    }
-    parent = parentValue;
-    parent->AddChild(this);
-  }
+  
   
   TransformComponent* TransformComponent::GetParent()
   {
-    return parent;
+    CANDY_CORE_ASSERT(HasParent());
+    return &entity.GetParentEntity().GetComponent<TransformComponent>();
+  }
+  
+  const TransformComponent* TransformComponent::GetParent()const
+  {
+    CANDY_CORE_ASSERT(HasParent());
+    return &entity.GetParentEntity().GetComponent<TransformComponent>();
   }
 }

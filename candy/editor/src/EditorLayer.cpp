@@ -1,8 +1,5 @@
 #include <editor/EditorLayer.hpp>
 #include <CandyPch.hpp>
-#include <candy/math/Vector.hpp>
-#include <candy/math/Matrix.hpp>
-#include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/app/Application.hpp>
@@ -31,37 +28,16 @@ namespace Candy
     
     viewport = CreateSharedPtr<Viewport>(this);
     
-    SharedPtr<Texture> tex = Texture::Create("assets/textures/wall.jpg");
-    Entity child = activeScene->CreateEntity("Child");
-    child.AddComponent<MeshFilterComponent>(MeshData::cube);
-    child.AddComponent<MeshRendererComponent>(tex);
     
-    Entity parent = activeScene->CreateEntity("Parent");
-    parent.AddComponent<MeshFilterComponent>(MeshData::cube);
-    parent.AddComponent<MeshRendererComponent>(tex);
-    auto& p = parent.GetTransform();
-    p.SetPosition({0.0f, 1.0f, 0.0f});
-    
-    auto& trans = child.GetComponent<TransformComponent>();
-    trans.SetParent(&parent.GetTransform());
-    
-    //quick.GetTransform().SetParent(&slow.GetTransform());
     
     /// Load backpack model
-    /*ModelLoader loader;
+    ModelLoader loader;
+    loader.scene = activeScene;
     CANDY_CORE_INFO("Loading backpack model");
     loader.LoadModel("assets/models/backpack/Survival_BackPack_2.fbx");
     CANDY_CORE_INFO("Loaded backpack model");
-    CANDY_CORE_INFO("Mesh count: {}", loader.meshes.size());
-    SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
-    int count=0;
-    for (const auto& mesh : loader.meshes)
-    {
-      auto entity = activeScene->CreateEntity("Mesh " + std::to_string(count));
-      entity.AddComponent<MeshFilterComponent>(mesh);
-      entity.AddComponent<MeshRendererComponent>(texture);
-      count++;
-    }*/
+    
+    
   }
   
   

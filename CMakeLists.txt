@@ -139,6 +139,9 @@ add_library(CandyEngine SHARED candy/core/include/CandyPch.hpp candy/core/includ
         candy/core/src/graphics/model/ModelLoader.cpp
         candy/core/include/candy/ecs/TransformComponent.hpp
         candy/core/src/ecs/TransformComponent.cpp
+        candy/core/include/candy/math/Transform.hpp
+        candy/core/src/math/Transform.cpp
+        candy/core/src/ecs/Entity.cpp
 
 )
 

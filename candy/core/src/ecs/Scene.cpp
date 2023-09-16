@@ -85,7 +85,7 @@ namespace Candy::ECS
     entity.AddComponent<IDComponent>(uuid);
     auto& tc = entity.AddComponent<TagComponent>();
     tc.tag = tag.empty() ? "Entity" : tag;
-    entity.AddComponent<TransformComponent>();
+    entity.AddComponent<TransformComponent>(entity);
     
     entityMap[uuid] = entity;
     

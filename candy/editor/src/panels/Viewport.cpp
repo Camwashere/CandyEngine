@@ -9,6 +9,7 @@
 #include <candy/graphics/Renderer3D.hpp>
 #include <imguizmo/ImGuizmo.h>
 #include <editor/EditorLayer.hpp>
+#include <candy/ecs/TransformComponent.hpp>
 
 namespace Candy
 {
@@ -135,8 +136,8 @@ namespace Candy
       float snapValues[3] = { snapValue, snapValue, snapValue };
       //cameraProjection[1, 1] *= -1;
       cameraProjection[1, 1] *= -1;
-      //cameraProjection[2, 2] *= 0.5f;
-      //cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
+      cameraProjection[2, 2] *= 0.5f;
+      cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
       
       //transform[2,3] *= -1;
       ImGuizmo::Manipulate(&cameraView[0], &cameraProjection[0],
@@ -152,33 +153,13 @@ namespace Candy
         Quaternion rotation;
         if (Matrix4::DecomposeTransform(local, translation, rotation, scale))
         {
-          //CANDY_CORE_INFO("New rotation: {0}, previous rotation: {1}", rotation, tc.GetRotation());
-          tc.SetPosition(translation);
-          tc.SetRotation(rotation);
-          tc.SetScale(scale);
-          //tc.Set(translation, rotation, scale);
+          tc.SetLocal(translation, rotation, scale);
         }
         else
         {
           CANDY_CORE_ERROR("Failed to decompose transform!");
         }
-        //ImGuizmo::DecomposeMatrixToComponents(&local[0], &translation[0], &rotation[0], &scale[0]);
         
-        
-        // Flip the Z rotation back after used by ImGuizmo
-        //rotation.z = -rotation.z;
-        //rotation.x = Math::ToRadians(rotation.x);
-        //rotation.y = Math::ToRadians(rotation.y);
-        //rotation.z = Math::ToRadians(rotation.z);
-        /*rotation.z *= -1;
-        rotation.y *= -1;
-        rotation.x *= -1;
-        rotation = rotation.ToDegrees();*/
-        //CANDY_CORE_INFO("New rotation: {0}, previous rotation: {1}", rotation, tc.GetRotation());
-        //tc.Set(translation, rotation, scale);
-        /*tc.SetPosition(translation);
-        tc.SetRotation(rotation);
-        tc.SetScale(scale);*/
         
         
         

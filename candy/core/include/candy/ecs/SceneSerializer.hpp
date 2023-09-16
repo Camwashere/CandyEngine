@@ -1,11 +1,14 @@
 #pragma once
 #include "Scene.hpp"
+#include "BaseComponents.hpp"
 namespace Candy::ECS
 {
   class SceneSerializer
   {
   private:
     SharedPtr<Scene> scene;
+    
+    
   
   
   public:

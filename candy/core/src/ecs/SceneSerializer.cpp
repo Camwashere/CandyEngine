@@ -160,10 +160,9 @@ namespace Candy::ECS
       auto transformNode = child["TransformComponent"];
       transformNode |= c4::yml::MAP;
       auto& transform = entity.GetComponent<TransformComponent>();
-      
-      transformNode["Position"] << transform.GetPosition();
-      transformNode["Rotation"] << transform.GetRotation();
-      transformNode["Scale"] << transform.GetScale();
+      transformNode["Position"] << transform.GetLocalPosition();
+      transformNode["Rotation"] << transform.GetLocalRotation();
+      transformNode["Scale"] << transform.GetLocalScale();
     }
     
     if (entity.HasComponent<MeshFilterComponent>())
@@ -238,6 +237,19 @@ namespace Candy::ECS
       
     }
     
+    if (entity.HasChildren())
+    {
+      auto childrenNode = child["Children"];
+      childrenNode |= c4::yml::SEQ;
+      for (auto& c : entity.GetChildren().children)
+      {
+        CANDY_CORE_ASSERT(entity.HasScene());
+        Entity childEntity{c, entity.GetScene()};
+        SerializeEntity(childrenNode, childEntity);
+      }
+    }
+    
+    
     
     
     
@@ -254,15 +266,24 @@ namespace Candy::ECS
     sceneNode["Name"] << scene->name;
     auto entitiesNode = sceneNode["Entities"];
     entitiesNode |= c4::yml::SEQ;
-    
+    std::vector<Entity> roots{};
     for (auto [entt] : scene->registry.storage<entt::entity>().each())
     {
       
       Entity entity{entt, scene.get()};
-      if (entity)
+      if (entity.IsRoot())
+      {
+        roots.push_back(entity);
+      }
+      /*if (entity)
       {
         SerializeEntity(entitiesNode, entity);
-      }
+      }*/
+    }
+    
+    for (auto& r : roots)
+    {
+      SerializeEntity(entitiesNode, r);
     }
     
     FILE* out = fopen(filepath.string().c_str(), "w");
@@ -273,6 +294,121 @@ namespace Candy::ECS
     }
     c4::yml::emit_yaml(tree, out);
     return true;
+  }
+  
+  void DeserializeEntity(c4::yml::NodeRef& entityNode, Entity parentEntity, const SharedPtr<Scene>& scene)
+  {
+    std::uint64_t uuid;
+    std::string tag;
+    entityNode["Entity"] >> uuid;
+    
+    auto tagComponent = entityNode["TagComponent"];
+    tagComponent["Tag"] >> tag;
+    
+    Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, tag);
+    
+    if (parentEntity)
+    {
+      deserializedEntity.SetParent(parentEntity);
+    }
+    
+    auto transformComponent = entityNode["TransformComponent"];
+    if (transformComponent.has_key())
+    {
+      auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+      Math::Vector3 position;
+      Math::Quaternion rotation;
+      Math::Vector3 scale;
+      
+      transformComponent["Position"] >> position;
+      transformComponent["Rotation"] >> rotation;
+      transformComponent["Scale"] >> scale;
+      tc.SetLocal(position, rotation, scale);
+      
+      /*if (parentEntity)
+      {
+        tc.SetParent(&parentEntity.GetComponent<TransformComponent>());
+      }*/
+      //tc.entity = deserializedEntity;
+    }
+    
+    auto meshFilterComponent = entityNode["MeshFilterComponent"];
+    if (meshFilterComponent.has_key())
+    {
+      MeshData meshData{};
+      meshFilterComponent["Vertices"] >> meshData.vertices;
+      meshFilterComponent["Indices"] >> meshData.indices;
+      
+      auto& meshComp = deserializedEntity.AddComponent<MeshFilterComponent>();
+      meshComp.meshData = meshData;
+      
+    }
+    
+    auto meshRendererComponent = entityNode["MeshRendererComponent"];
+    if (meshRendererComponent.has_key())
+    {
+      std::string texturePath;
+      meshRendererComponent["Texture"] >> texturePath;
+      if (!texturePath.empty())
+      {
+        auto& meshRendererComp = deserializedEntity.AddComponent<MeshRendererComponent>();
+        meshRendererComp.texture = Texture::Create(texturePath);
+      }
+    }
+    
+    auto spriteRendererComponent = entityNode["SpriteRendererComponent"];
+    if (spriteRendererComponent.has_key())
+    {
+      auto& spriteRendererComp = deserializedEntity.AddComponent<SpriteRendererComponent>();
+      std::string texturePath;
+      spriteRendererComponent["Texture"] >> texturePath;
+      if (!texturePath.empty())
+      {
+        
+        spriteRendererComp.texture = Texture::Create(texturePath);
+      }
+      spriteRendererComponent["Color"] >> spriteRendererComp.color;
+      spriteRendererComponent["TilingFactor"] >> spriteRendererComp.tilingFactor;
+    }
+    
+    auto circleRendererComponent = entityNode["CircleRendererComponent"];
+    if (circleRendererComponent.has_key())
+    {
+      auto& circleRendererComp = deserializedEntity.AddComponent<CircleRendererComponent>();
+      circleRendererComponent["Color"] >> circleRendererComp.color;
+      circleRendererComponent["Thickness"] >> circleRendererComp.thickness;
+      circleRendererComponent["Fade"] >> circleRendererComp.fade;
+    }
+    
+    auto lineRendererComponent = entityNode["LineRendererComponent"];
+    if (lineRendererComponent.has_key())
+    {
+      auto& lineRendererComp = deserializedEntity.AddComponent<LineRendererComponent>();
+      lineRendererComponent["Color"] >> lineRendererComp.color;
+      lineRendererComponent["Thickness"] >> lineRendererComp.thickness;
+      lineRendererComponent["Start"] >> lineRendererComp.start;
+      lineRendererComponent["End"] >> lineRendererComp.end;
+    }
+    
+    auto textRendererComponent = entityNode["TextRendererComponent"];
+    if (textRendererComponent.has_key())
+    {
+      auto& textRendererComp = deserializedEntity.AddComponent<TextRendererComponent>();
+      textRendererComponent["Text"] >> textRendererComp.text;
+      textRendererComponent["Color"] >> textRendererComp.color;
+      textRendererComponent["Kerning"] >> textRendererComp.kerning;
+      textRendererComponent["LineSpacing"] >> textRendererComp.lineSpacing;
+      textRendererComp.font = Font::Default();
+    }
+    
+    auto childrenNode = entityNode["Children"];
+    if (childrenNode.has_key())
+    {
+      for (auto child : childrenNode)
+      {
+        DeserializeEntity(child, deserializedEntity, scene);
+      }
+    }
   }
   
   bool SceneSerializer::Deserialize(const std::filesystem::path& filepath)
@@ -312,8 +448,8 @@ namespace Candy::ECS
     
     for (auto entity : entitiesNode)
     {
-      
-      std::uint64_t uuid;
+      DeserializeEntity(entity, Entity(), scene);
+      /*std::uint64_t uuid;
       std::string tag;
       entity["Entity"] >> uuid;
       
@@ -332,7 +468,8 @@ namespace Candy::ECS
         transformComponent["Position"] >> position;
         transformComponent["Rotation"] >> rotation;
         transformComponent["Scale"] >> scale;
-        tc.Set(position, rotation, scale);
+        tc.SetLocal(position, rotation, scale);
+        tc.entity = deserializedEntity;
       }
       
       auto meshFilterComponent = entity["MeshFilterComponent"];
@@ -402,7 +539,7 @@ namespace Candy::ECS
         textRendererComponent["Kerning"] >> textRendererComp.kerning;
         textRendererComponent["LineSpacing"] >> textRendererComp.lineSpacing;
         textRendererComp.font = Font::Default();
-      }
+      }*/
       
       
     }

@@ -16,6 +16,15 @@ namespace Candy::Gum
   {
     idManager.Free(id);
   }
+  
+  bool GumObject::operator==(const GumObject& other)const
+  {
+    return id==other.id;
+  }
+  bool GumObject::operator!=(const GumObject& other)const
+  {
+    return !(*this==other);
+  }
   void GumObject::OnEvent(Events::Event& event)
   {
     if (propagateEvents)
@@ -78,6 +87,14 @@ namespace Candy::Gum
   {
     propagateEvents = false;
   }
+  void GumObject::Hide()
+  {
+    isVisible=false;
+  }
+  void GumObject::Show()
+  {
+    isVisible=true;
+  }
   uint32_t GumObject::GetID() const
   {
     return id;
@@ -128,6 +145,10 @@ namespace Candy::Gum
   GumShape GumObject::GetShape()const
   {
     return shape;
+  }
+  bool GumObject::IsVisible()const
+  {
+    return isVisible;
   }
   bool GumObject::HasChildren()const
   {

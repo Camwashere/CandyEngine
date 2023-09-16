@@ -1,14 +1,18 @@
 #pragma once
 #include <filesystem>
 #include "MeshData.hpp"
-
+#include <candy/ecs/Scene.hpp>
 
 namespace Candy::Graphics
 {
   class ModelLoader
   {
+  
   public:
-    std::vector<MeshData> meshes;
+  
+  public:
+    //std::vector<MeshData> meshes;
+    SharedPtr<ECS::Scene> scene;
     
   
   

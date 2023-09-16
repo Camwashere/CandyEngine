@@ -20,7 +20,19 @@ namespace Candy::ECS
     std::string tag;
   };
   
+  struct ParentComponent
+  {
+    Entity parent;
+    
+    explicit ParentComponent(Entity parentEntity) : parent(parentEntity){}
+  };
   
+  struct ChildrenComponent
+  {
+    std::vector<Entity> children;
+    
+    [[nodiscard]] size_t Size()const{return children.size();}
+  };
   
   
   
@@ -85,5 +97,5 @@ namespace Candy::ECS
   };
   
   using AllComponents =
-  ComponentGroup<IDComponent, TagComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, LineRendererComponent, TextRendererComponent, MeshFilterComponent, MeshRendererComponent>;
+  ComponentGroup<IDComponent, TagComponent, ParentComponent, ChildrenComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, LineRendererComponent, TextRendererComponent, MeshFilterComponent, MeshRendererComponent>;
 }

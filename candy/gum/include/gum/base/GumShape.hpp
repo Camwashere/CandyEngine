@@ -7,11 +7,17 @@
 #include <filesystem>
 namespace Candy::Gum
 {
+  struct GumShapeVertex
+  {
+    Math::Vector2 position;
+    Color color;
+    Math::Vector2 uv;
+    
+  };
   struct GumShapeData
   {
     std::string name;
-    std::vector<Math::Vector2> vertices;
-    std::vector<Math::Vector2> uvs;
+    std::vector<GumShapeVertex> vertices;
     std::vector<uint32_t> indices;
     
   };
@@ -26,6 +32,8 @@ namespace Candy::Gum
     
   private:
     static void InitDefaultShapes();
+    static void InitRectangleData();
+    static void InitTriangleData();
     static void LoadShapes(const std::filesystem::path& shapePath);
   
   public:

@@ -1,10 +1,21 @@
 #include <gum/base/GumRenderer.hpp>
-
+#include <candy/graphics/VertexArray.hpp>
+#include <candy/graphics/Texture.hpp>
 namespace Candy::Gum
 {
   using namespace Graphics;
-  GumRenderer::GumRenderer()
+  using namespace Math;
+  
+  
+  
+  struct GumData
   {
-    //shader = Shader::Create("assets/shaders/gum/Gum.glsl");
+    GumTree tree;
+    GumRenderer::Stats stats{};
+  };
+  
+  void GumRenderer::Init()
+  {
+  
   }
 }

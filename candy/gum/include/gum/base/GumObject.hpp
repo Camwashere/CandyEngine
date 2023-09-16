@@ -17,28 +17,26 @@ class GumObject : public Events::IEventListener
   Math::Vector2 position;
   Math::Vector2 scale;
   float rotation;
+  Math::Matrix4 localTransform;
+  Math::Matrix4 worldTransform;
   uint32_t depth;
   GumShape shape;
   std::vector<GumObject*> children;
   bool propagateEvents=true;
+  bool isVisible=true;
   
   private:
     static Utils::IDManager<uint32_t> idManager;
     
   public:
     GumObject();
-    GumObject(GumObject* parent);
+    explicit GumObject(GumObject* parent);
     ~GumObject();
     
   
-  bool operator==(const GumObject& other)const
-  {
-    return id==other.id;
-  }
-  bool operator!=(const GumObject& other)const
-  {
-    return !(*this==other);
-  }
+  bool operator==(const GumObject& other)const;
+  bool operator!=(const GumObject& other)const;
+  
   public:
     virtual void OnEvent(Events::Event& event)override;
   public:
@@ -53,6 +51,8 @@ class GumObject : public Events::IEventListener
     void SetRotation(float value);
     void SetShape(GumShape value);
     void BlockEvents();
+    void Hide();
+    void Show();
     
     [[nodiscard]] uint32_t GetID()const;
     [[nodiscard]] float GetPosX()const;
@@ -65,6 +65,7 @@ class GumObject : public Events::IEventListener
     [[nodiscard]] float GetRotation()const;
     [[nodiscard]] bool IsRoot()const;
     [[nodiscard]] GumShape GetShape()const;
+    [[nodiscard]] bool IsVisible()const;
     [[nodiscard]] bool HasChildren()const;
     GumObject& GetParent();
     [[nodiscard]] const GumObject& GetParent()const;

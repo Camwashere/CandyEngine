@@ -3,8 +3,12 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <candy/ecs/Entity.hpp>
+#include <candy/ecs/BaseComponents.hpp>
 namespace Candy::Graphics
 {
+  using namespace ECS;
+  using namespace Math;
   
   static Assimp::Importer importer;
   
@@ -18,6 +22,7 @@ namespace Candy::Graphics
     }
     
     MeshData meshData{};
+    
     
     // Load vertices
     for(unsigned int i = 0; i<mesh->mNumVertices; i++)
@@ -64,6 +69,79 @@ namespace Candy::Graphics
     return meshData;
   }
   
+  static Matrix4 ToMatrix4(const aiMatrix4x4& aiMatrix)
+  {
+    Matrix4 result;
+    result.GetColumn(0) = Vector4(aiMatrix.a1, aiMatrix.b1, aiMatrix.c1, aiMatrix.d1);
+    result.GetColumn(1) = Vector4(aiMatrix.a2, aiMatrix.b2, aiMatrix.c2, aiMatrix.d2);
+    result.GetColumn(2) = Vector4(aiMatrix.a3, aiMatrix.b3, aiMatrix.c3, aiMatrix.d3);
+    result.GetColumn(3) = Vector4(aiMatrix.a4, aiMatrix.b4, aiMatrix.c4, aiMatrix.d4);
+    return result;
+  }
+  
+  static void ProcessNode(aiNode* node, const aiScene* aiScene, Entity parent, SharedPtr<Scene> scene, SharedPtr<Texture> texture)
+  {
+    // For each mesh
+    uint32_t maxMeshes = node->mNumMeshes;
+   
+    
+    Matrix4 localTransform = ToMatrix4(node->mTransformation);
+    
+    Vector3 position;
+    Quaternion rotation;
+    Vector3 scale;
+    if (! Matrix4::DecomposeTransform(localTransform, position, rotation, scale))
+    {
+      CANDY_CORE_ASSERT(false, "Failed to decompose transform!");
+      
+    }
+    
+    Entity groupEntity = scene->CreateEntity(node->mName.C_Str());
+    groupEntity.GetTransform().SetLocal(position, rotation, scale);
+    if (parent)
+    {
+      groupEntity.SetParent(parent);
+    }
+    for(unsigned int i = 0; i < maxMeshes; i++)
+    {
+      
+      MeshData mesh = ToMeshData(aiScene->mMeshes[node->mMeshes[i]]);
+      
+      
+      if (mesh.IsValid())
+      {
+        Entity entity = scene->CreateEntity(aiScene->mMeshes[node->mMeshes[i]]->mName.C_Str());
+        
+        //entity.GetTransform().SetLocal(position, rotation, scale);
+        entity.AddComponent<MeshFilterComponent>(mesh);
+        entity.AddComponent<MeshRendererComponent>(texture);
+        if (groupEntity)
+        {
+          entity.SetParent(groupEntity);
+        }
+        
+        
+        
+      }
+      else
+      {
+        CANDY_CORE_ASSERT(false, "Mesh not valid! Failed to load model!");
+      }
+      
+    }
+    
+    if (node->mNumChildren > 0)
+    {
+      for (uint32_t i=0; i<node->mNumChildren; i++)
+      {
+        ProcessNode(node->mChildren[i], aiScene, groupEntity, scene, texture);
+      }
+    }
+    
+    
+    
+  }
+  
   void ModelLoader::LoadModel(const std::filesystem::path& path)
   {
     unsigned int readFileFlags = aiProcess_CalcTangentSpace |
@@ -71,44 +149,27 @@ namespace Candy::Graphics
     aiProcess_JoinIdenticalVertices  |
     aiProcess_SortByPType;
     
-    const aiScene* scene = importer.ReadFile(path.string(), readFileFlags);
+    const aiScene* aiScene = importer.ReadFile(path.string(), readFileFlags);
     
-    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    if(!aiScene || aiScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !aiScene->mRootNode)
     {
       CANDY_CORE_ERROR("Assimp error: {0}", importer.GetErrorString());
       CANDY_CORE_ASSERT(false);
     }
     
-    meshes.resize(scene->mNumMeshes);
-    //unsigned int maxMeshes = 10;
-    uint32_t maxMeshes = scene->mNumMeshes;
-    uint32_t currentIndexCount=0;
+    aiNode* rootNode = aiScene->mRootNode;
     
-    aiNode* rootNode = scene->mRootNode;
+    SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
     
     
-    // For each mesh
-    for(unsigned int i = 0; i < maxMeshes; i++)
-    {
-      
-      MeshData mesh = ToMeshData(scene->mMeshes[i]);
-      if (mesh.IsValid())
-      {
-        currentIndexCount += mesh.IndexCount();
-        if (currentIndexCount > 300'000)
-        {
-          CANDY_CORE_ERROR("Too many indices in file from: {0}", path.string());
-          break;
-        }
-        meshes.push_back(mesh);
-      }
-      else
-      {
-        CANDY_CORE_ERROR("Invalid mesh in file from: {0}", path.string());
-      }
-    }
+    ProcessNode(rootNode, aiScene, Entity{}, scene, texture);
     
-    for (uint32_t i=0; i<scene->mNumMaterials; i++)
+    
+    
+    
+   
+    
+    /*for (uint32_t i=0; i<scene->mNumMaterials; i++)
     {
       aiMaterial* material = scene->mMaterials[i];
       if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -120,7 +181,7 @@ namespace Candy::Graphics
           CANDY_CORE_INFO("Texture path: {0}", texturePath);
         }
       }
-    }
+    }*/
   }
 
 }

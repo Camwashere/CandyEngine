@@ -23,10 +23,20 @@ namespace Candy
     ImGui::Begin("Scene Hierarchy");
     if (context)
     {
+      std::vector<Entity> roots{};
       for (auto [e] : context->registry.storage<entt::entity>().each())
       {
         Entity entity{e, context.get()};
-        DrawEntityNode(entity);
+        if (entity.IsRoot())
+        {
+          roots.push_back(entity);
+        }
+        //DrawEntityNode(entity);
+      }
+      
+      for (auto& root : roots)
+      {
+        DrawEntityNode(root);
       }
 
       
@@ -75,9 +85,20 @@ namespace Candy
   void SceneHierarchyPanel::DrawEntityNode(Entity entity)
   {
     auto& tag = entity.GetComponent<TagComponent>().tag;
+    ImGuiTreeNodeFlags flags;
     
-    ImGuiTreeNodeFlags flags = ((selectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+    
+    
+    if (entity.HasChildren())
+    {
+      flags = ((selectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+    }
+    else
+    {
+      flags = ((selectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_Leaf; // Use ImGuiTreeNodeFlags_Leaf for nodes without children
+    }
     flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+    
     bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
     if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
     {
@@ -95,11 +116,22 @@ namespace Candy
     
     if (opened)
     {
-      flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-      opened = ImGui::TreeNodeEx((void*)9817239, flags, "%s", tag.c_str());
-      if (opened)
+      // Recursively draw children nodes
+      if (entity.HasChildren())
+      {
+        auto& children = entity.GetChildren().children;
+        for(auto& child : children)
+        {
+          DrawEntityNode(child); // recursive call
+        }
+        
         ImGui::TreePop();
-      ImGui::TreePop();
+      }
+      else
+      {
+        ImGui::TreePop();
+      }
+    
     }
     
     if (entityDeleted)
@@ -493,16 +525,16 @@ namespace Candy
     
     DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
     {
-    Math::Vector3 position = component.GetPosition();
-    Math::Vector3 scale = component.GetScale();
-    Math::Quaternion rotation = component.GetRotation();
+    Math::Vector3 position = component.GetLocalPosition();
+    Math::Vector3 scale = component.GetLocalScale();
+    Math::Quaternion rotation = component.GetLocalRotation();
     
     DrawVector3Control("Position", position);
     //DrawVector3Control("Rotation", rotationEuler);
     DrawVector4Control("Rotation", rotation);
     DrawVector3Control("Scale", scale, 1.0f);
     
-    component.Set(position, rotation, scale);
+    component.SetLocal(position, rotation, scale);
     });
     
     if (entity.HasComponent<CircleRendererComponent>())

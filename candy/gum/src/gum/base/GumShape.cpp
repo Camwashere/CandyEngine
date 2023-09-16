@@ -2,26 +2,68 @@
 #include <CandyPch.hpp>
 namespace Candy::Gum
 {
+  using namespace Math;
   std::vector<GumShapeData> GumShape::shapeData;
   std::unordered_map<std::string, uint32_t> GumShape::shapeNameMap;
   const GumShape GumShape::None=0;
   const GumShape GumShape::Rectangle=1;
   const GumShape GumShape::Triangle=2;
   
+  // Rectangle geometry
+  static const Vector2 rectanglePositions[4] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, -1.0f}, {0.0f, -1.0f}};
+  static const Vector2 rectangleUVs[4] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}};
+  static const uint32_t rectangleIndices[6] = {0, 1, 2, 2, 3, 0};
+  
+  // Triangle geometry
+  static const Vector2 trianglePositions[3] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 0.5f}};
+  static const Vector2 triangleUVs[3] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f}};
+  static const uint32_t triangleIndices[3] = {0, 1, 2};
+  
   void GumShape::InitDefaultShapes()
   {
     GumShapeData data;
     data.name = "None";
     RegisterShape(data);
+    InitRectangleData();
+    InitTriangleData();
+  }
+  
+  void GumShape::InitRectangleData()
+  {
+    GumShapeData data;
     data.name = "Rectangle";
-    data.vertices = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, -1.0f}, {0.0f, -1.0f} };
-    data.uvs = { {0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f} };
-    data.indices = { 0, 1, 2, 2, 3, 0 };
+    
+    for (int i=0; i<4; i++)
+    {
+      GumShapeVertex vertex;
+      vertex.position = rectanglePositions[i];
+      vertex.uv = rectangleUVs[i];
+      data.vertices.push_back(vertex);
+    }
+    data.indices.resize(6);
+    for (int i=0; i<6; i++)
+    {
+      data.indices[i] = rectangleIndices[i];
+    }
     RegisterShape(data);
+  }
+  void GumShape::InitTriangleData()
+  {
+    GumShapeData data;
     data.name = "Triangle";
-    data.vertices = { {0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 0.5f} };
-    data.uvs = { {0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 1.0f} };
-    data.indices = { 0, 1, 2 };
+    for (int i=0; i<3; i++)
+    {
+      GumShapeVertex vertex;
+      vertex.position = trianglePositions[i];
+      vertex.uv = triangleUVs[i];
+      data.vertices.push_back(vertex);
+    }
+    
+    data.indices.resize(3);
+    for (int i=0; i<3; i++)
+    {
+      data.indices[i] = triangleIndices[i];
+    }
     RegisterShape(data);
   }
   
