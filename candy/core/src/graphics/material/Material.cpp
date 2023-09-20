@@ -17,7 +17,7 @@ namespace Candy::Graphics
   
   //TODO: Make explicit descriptor set for material parameters. Shader.SetInt() etc functions set global values. Material.SetInt() etc functions set material values.
   // We should also only store parameters in this class that are material parameters. Rather than storing things like camera data
-  void Material::Bind()
+  /*void Material::Bind()
   {
     CANDY_CORE_ASSERT(shader!=nullptr, "Shader is null! Material cannot bind!");
     //shader->Bind();
@@ -49,12 +49,12 @@ namespace Candy::Graphics
         continue;
       }
       param.GetTexture().Bind();
-      /*VkDescriptorImageInfo imageInfo{};
+      *//*VkDescriptorImageInfo imageInfo{};
       imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
       imageInfo.imageView = param.GetTexture().;
       imageInfo.sampler = param.GetSampler();
       
-      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());*/
+      builder.AddImageWrite(param.GetBinding(), &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, param.GetSet());*//*
     }
     
 
@@ -65,7 +65,7 @@ namespace Candy::Graphics
       vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
     }
 
-  }
+  }*/
   
   
   void Material::SetParameter(const std::string& name, const ShaderData::Value& value)

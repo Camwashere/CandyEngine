@@ -27,7 +27,7 @@ namespace Candy::Graphics
     void SetShader(Shader* shader);
     void SetParameter(const std::string& name, const ShaderData::Value& value);
     void SetTexture(const std::string& name, const std::filesystem::path& path);
-    void Bind();
+    //void Bind();
     [[nodiscard]] size_t GetBufferSize()const;
     
     

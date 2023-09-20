@@ -29,12 +29,12 @@ namespace Candy
   }
   void Viewport::OnUpdate()
   {
+    CANDY_PROFILE_FUNCTION();
     parent->activeScene->OnViewportResize((uint32_t)size.x, (uint32_t)size.y);
     
     
     editorCamera.SetViewportSize(size.x, size.y);
     editorCamera.OnUpdate();
-    //orthographicCameraController.OnUpdate();
     Renderer::UpdateCameraData(editorCamera.GetCamera3D(), editorCamera.GetCamera2D());
     parent->activeScene->OnUpdateEditor();
     
@@ -65,11 +65,13 @@ namespace Candy
   
   void Viewport::OnEvent(Events::Event& event)
   {
+    CANDY_PROFILE_FUNCTION();
     editorCamera.OnEvent(event);
     //orthographicCameraController.OnEvent(event);
   }
   void Viewport::OnRenderUI()
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiWindowFlags flags = ImGuiWindowFlags_None;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
     ImGui::Begin("Viewport", nullptr, flags);
@@ -172,6 +174,7 @@ namespace Candy
   
   void Viewport::OnOverlayRender()
   {
+    CANDY_PROFILE_FUNCTION();
     // Show colliders/debug rays etc
     /*if (m_SceneState == SceneState::Play)
     {

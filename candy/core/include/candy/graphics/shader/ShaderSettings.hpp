@@ -1,8 +1,10 @@
 #pragma once
 #include <filesystem>
 #include <vulkan/vulkan.h>
+#include <utility>
 #include <vector>
 #include "ShaderProperty.hpp"
+#include <candy/collections/GenericBuffer.hpp>
 namespace Candy::Graphics
 {
   class SpecializationConstantInput
@@ -10,17 +12,26 @@ namespace Candy::Graphics
   private:
     std::string name;
     ShaderData::Type type;
-    std::variant<int, float, bool> value;
+    Collections::GenericBuffer value;
+    
     
     
   public:
-    SpecializationConstantInput(const std::string& name, int value);
-    SpecializationConstantInput(const std::string& name, float value);
-    SpecializationConstantInput(const std::string& name, bool value);
+    template<typename T>
+    SpecializationConstantInput(std::string  constantName, T constantValue) : name(std::move(constantName)), type(ShaderData::TypeFrom<T>())
+    {
+      size_t size = ShaderData::TypeSize(type);
+      CANDY_CORE_ASSERT(size > 0, "INVALID SPECIALIZATION CONSTANT TYPE");
+      value.Add(constantValue);
+    }
+    
+    
+    
     
     [[nodiscard]] const std::string& GetName()const;
     [[nodiscard]] ShaderData::Type GetType()const;
-    [[nodiscard]] const std::variant<int, float, bool>& GetValue()const;
+    [[nodiscard]] const Collections::GenericBuffer& GetValue()const;
+    [[nodiscard]] size_t GetSize()const;
     
     
     

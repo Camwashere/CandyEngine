@@ -9,6 +9,7 @@ namespace Candy
   using namespace Graphics;
   SceneHierarchyPanel::SceneHierarchyPanel(const SharedPtr<Scene>& scene)
   {
+    CANDY_PROFILE_FUNCTION();
     SetContext(scene);
   }
   
@@ -20,6 +21,7 @@ namespace Candy
   
   void SceneHierarchyPanel::OnRenderUI()
   {
+    CANDY_PROFILE_FUNCTION();
     ImGui::Begin("Scene Hierarchy");
     if (context)
     {
@@ -77,6 +79,7 @@ namespace Candy
   
   void SceneHierarchyPanel::SetSelectedEntity(ECS::Entity entity)
   {
+    CANDY_PROFILE_FUNCTION();
     selectionContext = entity;
     isSelection2D = selectionContext.Is2D();
     
@@ -84,6 +87,7 @@ namespace Candy
   
   void SceneHierarchyPanel::DrawEntityNode(Entity entity)
   {
+    CANDY_PROFILE_FUNCTION();
     auto& tag = entity.GetComponent<TagComponent>().tag;
     ImGuiTreeNodeFlags flags;
     
@@ -145,6 +149,7 @@ namespace Candy
   template<typename T, typename UIFunction>
   static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
   {
+    CANDY_PROFILE_FUNCTION();
     const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
     if (entity.HasComponent<T>())
     {
@@ -184,6 +189,7 @@ namespace Candy
   }
   static void DrawFloatControl(const std::string& label, float& value, float min=0.0f, float max=0.0f, float columnWidth=100.0f)
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
     
@@ -220,6 +226,7 @@ namespace Candy
   }
   static void DrawVector2Control(const std::string& label, Math::Vector2& values, float resetValue = 0.0f, float columnWidth = 100.0f)
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
     
@@ -272,6 +279,7 @@ namespace Candy
   }
   static void DrawVector3Control(const std::string& label, Math::Vector3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
     
@@ -337,6 +345,7 @@ namespace Candy
   }
   static void DrawVector4Control(const std::string& label, Math::Quaternion& values, float resetValue = 0.0f, float columnWidth = 100.0f)
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
     
@@ -416,6 +425,7 @@ namespace Candy
   }
   static void DrawTextControl(const std::string& label, std::string& value, float columnWidth = 100.0f)
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
     
@@ -453,6 +463,7 @@ namespace Candy
   
   static void DrawColorPickerControl(const std::string& label, Color& value, float columnWidth=100.0f)
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
     
@@ -492,6 +503,7 @@ namespace Candy
   
   void SceneHierarchyPanel::DrawComponents(Entity entity)
   {
+    CANDY_PROFILE_FUNCTION();
     if (entity.HasComponent<TagComponent>())
     {
       auto& tag = entity.GetComponent<TagComponent>().tag;
@@ -590,7 +602,9 @@ namespace Candy
             CANDY_CORE_ASSERT(font);
             if (! font->IsLoaded())
             {
-              CANDY_CORE_ASSERT(font->Load());
+              bool loaded = font->Load();
+              CANDY_CORE_ASSERT(loaded);
+              
             }
             component.font = font;
           }
@@ -612,6 +626,7 @@ namespace Candy
   
   template<typename T>
   void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
+    CANDY_PROFILE_FUNCTION();
     if (!selectionContext.HasComponent<T>())
     {
       if (ImGui::MenuItem(entryName.c_str()))

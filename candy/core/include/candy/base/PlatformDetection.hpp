@@ -1,6 +1,5 @@
 #pragma once
 
-#define CANDY_DEBUG
 
 // Platform detection using predefined macros
 #ifdef _WIN32

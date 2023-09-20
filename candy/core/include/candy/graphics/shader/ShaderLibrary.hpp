@@ -2,36 +2,62 @@
 #include <vector>
 #include <filesystem>
 #include "Shader.hpp"
-
+#include <candy/utils/Version.hpp>
+#include "ShaderLibrarySettings.hpp"
 namespace Candy::Graphics
 {
+  
+  
     class ShaderLibrary
     {
-    private:
-        std::filesystem::path cacheDirectory;
-        std::filesystem::path internalShaderDirectory;
-        std::vector<SharedPtr<Shader>> shaders;
-        std::vector<ShaderSet> shaderSets;
-        
-    private:
-      std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts(uint8_t renderPassIndex);
-        
+    
     public:
-      ShaderLibrary();
-        ShaderLibrary(std::filesystem::path  cacheDirectory, std::filesystem::path  internalShaderDirectory, bool createDirectoriesIfNeeded=false);
+      enum DirectoryType
+      {
+        InternalCache = BIT(0),
+        InternalSource = BIT(1),
+        ProjectCache = BIT(2),
+        ProjectSource = BIT(3),
         
-        static ShaderLibrary instance;
-        
+        InternalDirs = InternalCache | InternalSource,
+        ProjectDirs = ProjectCache | ProjectSource,
+        CacheDirs = InternalCache | ProjectCache,
+        SourceDirs = InternalSource | ProjectSource,
+        AllDirs = InternalDirs | ProjectDirs,
+      };
+    
     public:
-      void AddShader(const SharedPtr<Shader>& shader);
-      void Reload();
+      /// Initialize the shader library. Must be called before any shader creation/loading
+      /// @param internalCacheDirectory The directory where the compiled shaders used internally by CandyEngine will be stored
+      /// @param internalShaderDirectory The directory where the source shaders used internally by CandyEngine will be stored
+      /// @param projectCacheDirectory The directory where the compiled shaders used by the project will be stored
+      /// @param projectSourceDirectory The directory where the source shaders used by the project will be stored
+      /// @param createDirectoriesIfNeeded If true, the directories will be created if they don't exist
+      /// @return True if the initialization was successful, false otherwise
+      static bool Init(const ShaderLibrarySettings& settings, bool createDirectoriesIfNeeded=false);
       
-        [[nodiscard]] const std::filesystem::path& GetCacheDirectory()const;
-        [[nodiscard]] const std::filesystem::path& GetInternalShaderDirectory()const;
-        
-        [[nodiscard]] bool IsValid()const;
-        [[nodiscard]] bool HasCacheDirectory()const;
-        [[nodiscard]] bool HasInternalShaderDirectory()const;
+      static void AddShader(const SharedPtr<Shader>& shader);
+      static void Reload();
+      
+      static std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts(uint8_t renderPassIndex);
+      
+      /// Compiled cached shaders used internally by CandyEngine
+      static const std::filesystem::path& GetInternalCacheDirectory();
+      /// Source shaders used internally by CandyEngine
+      static const std::filesystem::path& GetInternalSourceDirectory();
+      
+      /// Compiled cached shaders used by the project
+      static const std::filesystem::path& GetProjectCacheDirectory();
+      
+      /// Source shaders used by the project
+      static const std::filesystem::path& GetProjectSourceDirectory();
+      
+      static const ShaderCompilationSettings& GetCompilationSettings();
+      
+      static bool IsInitialized();
+      
+      static std::string DirectoryTypeToString(DirectoryType type);
+    
         
     private:
       friend class ShaderLayout;

@@ -2,7 +2,7 @@
 #include <CandyPch.hpp>
 namespace Candy::Graphics
 {
-  SpecializationConstantInput::SpecializationConstantInput(const std::string& name, int value)
+  /*SpecializationConstantInput::SpecializationConstantInput(const std::string& name, int value)
   {
     this->name = name;
     this->type = ShaderData::Type::Int;
@@ -19,7 +19,7 @@ namespace Candy::Graphics
     this->name = name;
     this->type = ShaderData::Type::Bool;
     this->value = value;
-  }
+  }*/
   
   const std::string& SpecializationConstantInput::GetName()const
   {
@@ -29,11 +29,14 @@ namespace Candy::Graphics
   {
     return type;
   }
-  const std::variant<int, float, bool>& SpecializationConstantInput::GetValue()const
+  const Collections::GenericBuffer& SpecializationConstantInput::GetValue()const
   {
     return value;
   }
-  
+  size_t SpecializationConstantInput::GetSize()const
+  {
+    return value.Size();
+  }
   
   
   VkPrimitiveTopology  ShaderSettings::TopologyToVulkan(TopologyType value)

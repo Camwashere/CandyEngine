@@ -4,6 +4,7 @@ namespace Candy::Graphics
 {
   Pipeline::Pipeline(const ShaderSettings& shaderSettings) : id(0), settings(shaderSettings)
   {
+    CANDY_PROFILE_FUNCTION();
     InitInputAssembly();
     InitViewportState();
     InitRasterizer();
@@ -248,6 +249,7 @@ namespace Candy::Graphics
   void Pipeline::Bake(VkRenderPass renderPass, const std::vector<VkVertexInputBindingDescription>& bindingDescriptions, const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions,
                       const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineLayout pipelineLayout)
   {
+    CANDY_PROFILE_FUNCTION();
     //shader->BakePipelineLayout();
     layout = pipelineLayout;
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
@@ -272,15 +274,26 @@ namespace Candy::Graphics
     dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
     dynamicState.pDynamicStates = dynamicStates.data();
     
-    //material->BakePipelineLayout();
-    //layout.Bake(shader);
     
-    //std::vector<VkPipelineShaderStageCreateInfo> shaderStages = shader->CreateShaderStageCreateInfos();
     
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    
+    for (const auto& stage : shaderStages)
+    {
+      if (stage.pSpecializationInfo != nullptr)
+      {
+        CANDY_CORE_INFO("In pipeline. Data size: {0} Map Entry Count: {1}",stage.pSpecializationInfo->dataSize, stage.pSpecializationInfo->mapEntryCount);
+        for (int i=0; i<stage.pSpecializationInfo->mapEntryCount; ++i)
+        {
+          CANDY_CORE_INFO("Entry size: {0}, Entry offset: {1}", stage.pSpecializationInfo->pMapEntries[i].size, stage.pSpecializationInfo->pMapEntries[i].offset);
+        }
+      }
+    }
+    
     pipelineInfo.stageCount = shaderStages.size();
     pipelineInfo.pStages = shaderStages.data();
+    
     
     pipelineInfo.pVertexInputState = &vertexInputInfo;
     pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -300,7 +313,7 @@ namespace Candy::Graphics
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
     pipelineInfo.basePipelineIndex = -1; // Optional
     
-    CANDY_CORE_ASSERT(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) == VK_SUCCESS, "Failed to create graphics pipeline!");
+    CANDY_VULKAN_CHECK(vkCreateGraphicsPipelines(Vulkan::LogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline));
     //Vulkan::PushDeleter([=, this](){ vkDestroyPipeline(Vulkan::LogicalDevice(), pipeline, nullptr); });
     Vulkan::DeletionQueue().Push(pipeline);
     

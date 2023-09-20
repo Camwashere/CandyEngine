@@ -3,8 +3,8 @@
 #include <utility>
 #include <ryml_std.hpp>
 #include <ryml.hpp>
-#include <c4/format.hpp>
-namespace Candy
+//#include <c4/format.hpp>
+/*namespace Candy
 {
   size_t to_chars(c4::substr buf, const Candy::Version& v)
   {
@@ -23,7 +23,7 @@ namespace Candy
     v->Set(major, minor, patch);
     return ret != c4::csubstr::npos;
   }
-}
+}*/
 namespace Candy
 {
   ProjectSerializer::ProjectSerializer(SharedPtr<Project> projectValue) : project(std::move(projectValue))
@@ -32,6 +32,7 @@ namespace Candy
   }
   bool ProjectSerializer::Serialize(const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     c4::yml::Tree tree;
     c4::yml::NodeRef root = tree.rootref();
     root |= c4::yml::MAP;
@@ -58,6 +59,7 @@ namespace Candy
   
   bool ProjectSerializer::Deserialize(const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_INFO("DESERIALIZING PROJECT");
     auto& config = project->GetConfiguration();
     

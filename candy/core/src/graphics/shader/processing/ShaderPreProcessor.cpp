@@ -9,6 +9,7 @@ namespace Candy::Graphics
   
   ShaderPreProcessor::ShaderPreProcessor(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     std::string sourceCode = ReadFile(path);
     InitializeSources(sourceCode);
     

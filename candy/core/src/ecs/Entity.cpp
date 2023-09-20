@@ -71,6 +71,7 @@ namespace Candy::ECS
   }
   bool Entity::RemoveChild(const Entity& child)
   {
+    CANDY_PROFILE_FUNCTION();
     if (!HasChildren())
       return false;
     auto& children = GetChildren();
@@ -82,6 +83,7 @@ namespace Candy::ECS
   }
   bool Entity::AddChild(const Entity& child)
   {
+    CANDY_PROFILE_FUNCTION();
     if (!HasChildren())
       AddComponent<ChildrenComponent>();
     auto& children = GetChildren();
@@ -96,6 +98,7 @@ namespace Candy::ECS
   
   void Entity::SetParent(Entity parent)
   {
+    CANDY_PROFILE_FUNCTION();
     if (! HasParent())
     {
       AddComponent<ParentComponent>(parent);
@@ -113,16 +116,22 @@ namespace Candy::ECS
   
   ChildrenComponent& Entity::GetChildren()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(HasChildren(), "Entity does not have children");
     return GetComponent<ChildrenComponent>();
   }
   
   const ChildrenComponent& Entity::GetChildren()const
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(HasChildren(), "Entity does not have children");
     return GetComponent<ChildrenComponent>();
   }
-  bool Entity::Is2D()const{return HasComponent<SpriteRendererComponent>() || HasComponent<CircleRendererComponent>() || HasComponent<LineRendererComponent>() || HasComponent<TextRendererComponent>();}
+  bool Entity::Is2D()const
+  {
+    CANDY_PROFILE_FUNCTION();
+    return HasComponent<SpriteRendererComponent>() || HasComponent<CircleRendererComponent>() || HasComponent<LineRendererComponent>() || HasComponent<TextRendererComponent>();
+  }
   TransformComponent& Entity::GetTransform(){return GetComponent<TransformComponent>();}
   void Entity::SetName(const std::string& tag){GetComponent<TagComponent>().tag=tag;}
   Scene* Entity::GetScene(){return scene;}

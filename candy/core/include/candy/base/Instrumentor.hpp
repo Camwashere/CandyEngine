@@ -202,7 +202,7 @@ namespace Candy {
   }
 }
 
-#define CANDY_PROFILE
+
 #ifdef CANDY_PROFILE
 // Resolve which function signature macro will be used. Note that this only
 // is resolved when the (pre)compiler starts, so the syntax highlighting

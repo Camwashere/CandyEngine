@@ -9,7 +9,7 @@ namespace Candy
   using namespace Graphics;
   ContentBrowserPanel::ContentBrowserPanel(std::filesystem::path  contentRoot) : rootDirectory(std::move(contentRoot)), currentDirectory(rootDirectory)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     //directoryImage = new Texture("assets/icons/DirectoryIcon.png");
     //fileImage = new Texture("assets/icons/FileIcon.png");
     directoryIcon = Texture::Create("assets/icons/DirectoryIcon.png");
@@ -31,6 +31,7 @@ namespace Candy
   
   void ContentBrowserPanel::OnRenderUI()
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiWindowFlags flags = ImGuiWindowFlags_None;
     ImGui::Begin("Content Browser", nullptr, flags);
     
@@ -101,6 +102,7 @@ namespace Candy
   
   void ContentBrowserPanel::ShowFileMenu(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     //CANDY_CORE_INFO("SHOW FILE MENU FOR PATH: {}", path.string());
     CANDY_CORE_ASSERT(std::filesystem::exists(path));
     popupPath = path;
@@ -109,6 +111,7 @@ namespace Candy
   }
   void ContentBrowserPanel::RenderFileMenu()
   {
+    CANDY_PROFILE_FUNCTION();
     if (ImGui::BeginPopup("File Options"))
     {
       if (std::filesystem::is_directory(popupPath))

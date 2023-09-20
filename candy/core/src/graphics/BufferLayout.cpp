@@ -16,6 +16,7 @@ namespace Candy::Graphics
     }
     uint64_t BufferElement::GetComponentCount()const
     {
+      
         return ShaderData::ShaderData::ComponentCount(type);
     }
     VkFormat BufferElement::GetFormat()const
@@ -32,11 +33,13 @@ namespace Candy::Graphics
     
     BufferLayout::BufferLayout(std::initializer_list<BufferElement> bufferElements) : elements(bufferElements)
     {
+      CANDY_PROFILE_FUNCTION();
         CalculateOffsetsAndStride();
     }
     
     void BufferLayout::CalculateOffsetsAndStride()
     {
+      CANDY_PROFILE_FUNCTION();
         std::uint64_t offset=0;
         stride=0;
         for (auto& element : elements)
@@ -49,10 +52,12 @@ namespace Candy::Graphics
     }
   void BufferLayout::Recalculate()
   {
+    
     CalculateOffsetsAndStride();
   }
     void BufferLayout::AddElement(std::string elementName, ShaderData::Type dataType, uint32_t location)
     {
+      CANDY_PROFILE_FUNCTION();
         BufferElement element(std::move(elementName), dataType, location);
         size_t size = element.Size();
         uint64_t offset = 0;

@@ -27,7 +27,10 @@ namespace Candy::ECS
   
   private:
     template<typename T>
-    void OnComponentAdded(Entity entity, T& component);
+    void OnComponentAdded(entt::entity entity, T& component)
+    {
+    
+    }
     
     void RenderScene();
     void RenderScene3D();

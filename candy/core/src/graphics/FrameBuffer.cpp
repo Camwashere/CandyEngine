@@ -9,6 +9,7 @@ namespace Candy::Graphics
   }
   FrameBuffer::FrameBuffer(VkRenderPass pass, Math::Vector2u bufferSize, const std::vector<VkImageView>& bufferAttachments, uint32_t bufferLayers) : size(bufferSize), attachments(bufferAttachments), layers(bufferLayers)
   {
+    CANDY_PROFILE_FUNCTION();
     renderPass = pass;
     VkFramebufferCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -25,6 +26,7 @@ namespace Candy::Graphics
   
   void FrameBuffer::Set(VkRenderPass pass, Math::Vector2u bufferSize, const std::vector<VkImageView>& bufferAttachments, uint32_t bufferLayers)
   {
+    CANDY_PROFILE_FUNCTION();
     renderPass = pass;
     size = bufferSize;
     attachments = bufferAttachments;
@@ -47,6 +49,7 @@ namespace Candy::Graphics
   }
   void FrameBuffer::Bind()
   {
+    CANDY_PROFILE_FUNCTION();
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = renderPass;

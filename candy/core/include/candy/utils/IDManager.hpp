@@ -17,6 +17,9 @@ namespace Candy::Utils
     [[nodiscard]] T GetCurrentMax()const{return currentMax;}
     [[nodiscard]] size_t GetAvailableCount()const{return availableIDs.size();}
     [[nodiscard]] bool HasAvailable()const{return !availableIDs.empty();}
+    
+    
+    
     T Assign()
     {
       if(HasAvailable())
@@ -30,6 +33,7 @@ namespace Candy::Utils
         return currentMax++;
       }
     }
+    
     void Free(T id)
     {
       if(id==currentMax)
@@ -41,11 +45,15 @@ namespace Candy::Utils
         availableIDs.push_back(id);
       }
     }
+    
+    
     void Reset()
     {
       currentMax=START_ID;
       availableIDs.clear();
     }
+    
+    
     [[nodiscard]] bool IsAssigned(T id)const
     {
       if (id < currentMax && id >= START_ID)

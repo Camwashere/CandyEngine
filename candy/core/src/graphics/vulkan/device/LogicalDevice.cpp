@@ -2,10 +2,12 @@
 #include <candy/graphics/vulkan/device/VulkanDeviceManager.hpp>
 #include <set>
 #include <CandyPch.hpp>
+#include <candy/graphics/vulkan/VulkanDebugManager.hpp>
 namespace Candy::Graphics
 {
   LogicalDevice::LogicalDevice(const PhysicalDevice& physicalDevice, const QueueFamilyIndices& indices)
   {
+    CANDY_PROFILE_FUNCTION();
     //QueueFamilyIndices indices = FindQueueFamilies(physicalDevice, surface);
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
@@ -61,7 +63,7 @@ namespace Candy::Graphics
         createInfo.enabledLayerCount = 0;
     }*/
     
-    CANDY_CORE_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) == VK_SUCCESS, "Failed to create vulkan logical device");
+    CANDY_VULKAN_CHECK(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device));
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
   }

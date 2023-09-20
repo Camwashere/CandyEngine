@@ -18,6 +18,7 @@ namespace Candy
     
     Window::Window(WindowData data) : windowData(std::move(data)), fullscreen(false), graphicsContext(nullptr)
     {
+      CANDY_PROFILE_FUNCTION();
         if (GLFW_WINDOW_COUNT==0)
         {
             int success = glfwInit();
@@ -28,7 +29,9 @@ namespace Candy
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        
         handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
+        
         //VulkanInstance::Init(handle);
         
         ++GLFW_WINDOW_COUNT;
@@ -44,6 +47,7 @@ namespace Candy
     
     void Window::EventCallbackInit() const
     {
+      CANDY_PROFILE_FUNCTION();
         // Window Resize
         glfwSetWindowSizeCallback(handle, [](GLFWwindow* window, int width, int height)
         {
@@ -170,6 +174,7 @@ namespace Candy
     
     void Window::Close() const
     {
+      CANDY_PROFILE_FUNCTION();
         glfwDestroyWindow(handle);
         --GLFW_WINDOW_COUNT;
         if (GLFW_WINDOW_COUNT==0)
@@ -188,6 +193,7 @@ namespace Candy
   
   void Window::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
       graphicsContext->OnFrameBufferResize(event);
   }
     void Window::SetVSync(bool enabled)
@@ -205,10 +211,12 @@ namespace Candy
   
   void Window::Show() const
   {
+    CANDY_PROFILE_FUNCTION();
       glfwShowWindow(handle);
   }
   void Window::Hide() const
   {
+    CANDY_PROFILE_FUNCTION();
       glfwHideWindow(handle);
   }
   

@@ -7,20 +7,24 @@ namespace Candy::Graphics
   using namespace Events;
   PerspectiveCamera::PerspectiveCamera() : CameraBase(Vector3::zero), localFront(Math::Vector3(0.0f, 0.0f, 1.0f)), localUp(Vector3::up), pitch(PITCH), yaw(YAW), roll(ROLL), fov(FOV)
   {
+    CANDY_PROFILE_FUNCTION();
     UpdateMatrices();
   }
   PerspectiveCamera::PerspectiveCamera(const Vector3& pos, const Vector3& upValue, float yawValue, float pitchValue)
   : CameraBase(pos), localFront(Math::Vector3(0.0f, 0.0f, 1.0f)), localUp(upValue), pitch(pitchValue), yaw(yawValue), roll(ROLL), fov(FOV)
   {
+    CANDY_PROFILE_FUNCTION();
     UpdateMatrices();
   }
   
   void PerspectiveCamera::UpdateViewMatrix()
   {
+    CANDY_PROFILE_FUNCTION();
     viewMatrix = Matrix4::LookAt(position, position+localFront, localUp);
   }
   void PerspectiveCamera::UpdateProjectionMatrix()
   {
+    CANDY_PROFILE_FUNCTION();
     projectionMatrix = Matrix4::Perspective(Math::ToRadians(fov), GetAspectRatio(), nearClip, farClip);
     projectionMatrix[1,1] *= -1;
     
@@ -28,11 +32,13 @@ namespace Candy::Graphics
   
   void PerspectiveCamera::UpdateMatrices()
   {
+    CANDY_PROFILE_FUNCTION();
     UpdateProjectionMatrix();
     UpdateViewMatrix();
   }
   void PerspectiveCamera::UpdateCameraVectors()
   {
+    CANDY_PROFILE_FUNCTION();
     // calculate the new front vector
     Math::Vector3 frontVec;
     frontVec.x = Math::Cos(Math::ToRadians(yaw)) * Math::Cos(Math::ToRadians(pitch));
@@ -98,11 +104,13 @@ namespace Candy::Graphics
   }
   void PerspectiveCamera::SetViewportSize(float width, float height)
   {
+    CANDY_PROFILE_FUNCTION();
     viewportSize.Set(width, height);
     UpdateProjectionMatrix();
   }
   void PerspectiveCamera::SetViewportSize(const Math::Vector2& value)
   {
+    CANDY_PROFILE_FUNCTION();
     SetViewportSize(value.x, value.y);
   }
   

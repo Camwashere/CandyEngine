@@ -4,6 +4,8 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <GLFW/glfw3.h>
 #include <candy/graphics/RenderCommand.hpp>
+
+
 namespace Candy
 {
     using namespace Events;
@@ -13,6 +15,7 @@ namespace Candy
     
     Application::Application(ApplicationData  applicationData) : appData(std::move(applicationData)), isRunning(false), minimized(false)//, uiLayer(nullptr)
     {
+      CANDY_PROFILE_BEGIN_SESSION("Candy Startup", "profiling/Startup.json");
         CANDY_PROFILE_FUNCTION();
         Log::Init();
         CANDY_CORE_ASSERT(!instance, "Application already exists");
@@ -103,10 +106,11 @@ namespace Candy
     }
     void Application::Run()
     {
-        CANDY_PROFILE_FUNCTION();
         isRunning=true;
         Renderer::Start();
         instance->mainWindow->Show();
+        CANDY_PROFILE_END_SESSION();
+        CANDY_PROFILE_BEGIN_SESSION("Candy Runtime", "profiling/Runtime.json");
         while(isRunning)
         {
           frameTime.Update();
@@ -119,13 +123,16 @@ namespace Candy
           uiLayer->End();
           mainWindow->OnUpdate();
         }
+        CANDY_PROFILE_END_SESSION();
+        CANDY_PROFILE_BEGIN_SESSION("Candy Shutdown", "profiling/Shutdown.json");
         CleanUp();
+        CANDY_PROFILE_END_SESSION();
         
     }
     
     void Application::CleanUp()
     {
-      //CANDY_CORE_INFO("STARTED APPLICATION CLEANUP");
+      CANDY_PROFILE_FUNCTION();
       
       for (Layer *layer: std::ranges::reverse_view(layerStack))
       {

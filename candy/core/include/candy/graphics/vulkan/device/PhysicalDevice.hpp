@@ -2,6 +2,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <optional>
+#include <string>
 namespace Candy::Graphics
 {
     struct QueueFamilyIndices
@@ -29,10 +30,15 @@ namespace Candy::Graphics
         VkPhysicalDeviceProperties properties{};
         VkPhysicalDeviceMemoryProperties memoryProperties{};
         size_t maxAllocationSize;
+        std::string name;
+        
+        
+    private:
+      //std::vector<VkPhysicalDevice> RankSuitableDevices(VkSurfaceKHR surface, const std::vector<VkPhysicalDevice>& foundDevices);
         
     public:
-        PhysicalDevice();
-        explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
+        PhysicalDevice(VkSurfaceKHR surface);
+        //explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
         PhysicalDevice(const PhysicalDevice& other);
         
     public:
@@ -63,6 +69,7 @@ namespace Candy::Graphics
         
     public:
         static bool IsDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface);
+        static long long int RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface);
         static bool CheckExtensionSupport(VkPhysicalDevice device);
         static SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
         static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);

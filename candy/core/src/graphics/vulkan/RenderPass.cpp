@@ -8,6 +8,7 @@ namespace Candy::Graphics
   
   RenderPass::RenderPass(VkFormat colorAttachmentFormat, RenderPassType passType) : type(passType)
   {
+    CANDY_PROFILE_FUNCTION();
     switch(type)
     {
       case RenderPassType::Overlay2D:
@@ -82,7 +83,7 @@ namespace Candy::Graphics
         renderPassInfo.pDependencies = &dependency;
         
         
-        CANDY_CORE_ASSERT(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass) == VK_SUCCESS, "Failed to create render pass!");
+        CANDY_VULKAN_CHECK(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass));
         Vulkan::DeletionQueue().Push(renderPass);
         break;
       }
@@ -94,6 +95,7 @@ namespace Candy::Graphics
   RenderPass::RenderPass(const VkAttachmentDescription& depthAttachment, const std::vector<VkAttachmentDescription>& colorAttachments,
                          const std::vector<VkAttachmentDescription>& inputAttachments)
   {
+    CANDY_PROFILE_FUNCTION();
     std::vector<VkAttachmentDescription> attachments{};
     attachments.resize(colorAttachments.size() + 1 + inputAttachments.size());
     
@@ -160,14 +162,14 @@ namespace Candy::Graphics
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
     
-    CANDY_CORE_ASSERT(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass) == VK_SUCCESS, "Failed to create render pass!");
+    CANDY_VULKAN_CHECK(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass));
     Vulkan::DeletionQueue().Push(renderPass);
   }
   
   
   RenderPass::RenderPass(VkFormat colorAttachmentFormat, VkImageLayout finalLayout) : clearColor(Color::black)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = colorAttachmentFormat;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -237,13 +239,14 @@ namespace Candy::Graphics
     renderPassInfo.pDependencies = &dependency;
     
     
-    CANDY_CORE_ASSERT(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass) == VK_SUCCESS, "Failed to create render pass!");
+    CANDY_VULKAN_CHECK(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass));
     Vulkan::DeletionQueue().Push(renderPass);
     
   }
   
   RenderPass::RenderPass(VkFormat colorAttachmentFormat, VkFormat selectionAttachmentFormat, VkImageLayout finalLayout)
   {
+    CANDY_PROFILE_FUNCTION();
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = colorAttachmentFormat;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -334,7 +337,7 @@ namespace Candy::Graphics
     renderPassInfo.pDependencies = &dependency;
     
     
-    CANDY_CORE_ASSERT(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass) == VK_SUCCESS, "Failed to create render pass!");
+    CANDY_VULKAN_CHECK(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass));
     Vulkan::DeletionQueue().Push(renderPass);
   }
   
@@ -360,6 +363,7 @@ namespace Candy::Graphics
   }
   VkRenderPassBeginInfo RenderPass::BeginPass(FrameBuffer& frameBuffer, Math::Vector2u size)
   {
+    CANDY_PROFILE_FUNCTION();
     VkRenderPassBeginInfo beginPassInfo{};
     
     beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -378,6 +382,7 @@ namespace Candy::Graphics
   }
   VkRenderPassBeginInfo RenderPass::BeginPass(FrameBuffer& frameBuffer, VkExtent2D extent)
   {
+    CANDY_PROFILE_FUNCTION();
     VkRenderPassBeginInfo beginPassInfo{};
     
     beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

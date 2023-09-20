@@ -28,6 +28,7 @@ namespace Candy::Graphics
 
   void Renderer::Init()
   {
+    CANDY_PROFILE_FUNCTION();
     Renderer::instance = new Renderer();
     Font::Init("config/font/atlasGeneratorSettings.yml", "assets/fonts");
     SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
@@ -52,12 +53,14 @@ namespace Candy::Graphics
   }
   void Renderer::Start()
   {
+    CANDY_PROFILE_FUNCTION();
     instance->target->SwapBuffers();
     Renderer::BeginViewportPass();
   }
  
   void Renderer::SetTarget(GraphicsContext* target)
   {
+    CANDY_PROFILE_FUNCTION();
     instance->target = target;
     VkSurfaceFormatKHR surfaceFormat = instance->target->GetSurfaceFormat();
     const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
@@ -68,7 +71,8 @@ namespace Candy::Graphics
   }
   void Renderer::BeginViewportPass()
   {
-    CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
+    CANDY_PROFILE_FUNCTION();
+    CANDY_VULKAN_CHECK(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence));
     instance->currentPassIndex = viewportPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(viewportPassIndex);
     RenderCommand::Reset();
@@ -92,6 +96,7 @@ namespace Candy::Graphics
   }
   void Renderer::BeginOverlayPass()
   {
+    CANDY_PROFILE_FUNCTION();
     //CANDY_CORE_ASSERT(vkResetFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence) == VK_SUCCESS);
     instance->currentPassIndex = overlayPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(overlayPassIndex);
@@ -118,6 +123,7 @@ namespace Candy::Graphics
   
   void Renderer::BeginSelectionPass()
   {
+    CANDY_PROFILE_FUNCTION();
     instance->currentPassIndex = selectionPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(selectionPassIndex);
     RenderCommand::Reset();
@@ -141,6 +147,7 @@ namespace Candy::Graphics
   }
   void Renderer::BeginUIPass()
   {
+    CANDY_PROFILE_FUNCTION();
     instance->currentPassIndex = uiPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(uiPassIndex);
     RenderCommand::Reset();
@@ -164,6 +171,7 @@ namespace Candy::Graphics
   
   void Renderer::BeginScene(const PerspectiveCamera& camera)
   {
+    CANDY_PROFILE_FUNCTION();
     sceneData.viewMatrix = camera.GetViewMatrix();
     sceneData.projectionMatrix = camera.GetProjectionMatrix();
   }
@@ -173,6 +181,7 @@ namespace Candy::Graphics
   }
   void Renderer::UpdateCameraData(const CameraBase& camera3D, const CameraBase& camera2D)
   {
+    CANDY_PROFILE_FUNCTION();
     instance->cameraData.viewMatrix = camera3D.GetViewMatrix();
     instance->cameraData.projectionMatrix = camera3D.GetProjectionMatrix();
     instance->cameraData.viewProjectionMatrix = instance->cameraData.projectionMatrix * instance->cameraData.viewMatrix;
@@ -184,7 +193,6 @@ namespace Candy::Graphics
     
    
     size_t cameraTypeSize = sizeof(Matrix4)*3;
-    
     DescriptorBuilder builder = DescriptorBuilder::Begin();
     VkDescriptorBufferInfo bufferInfo{};
     bufferInfo.buffer = *GetCurrentFrame().uniformBuffer;
@@ -205,7 +213,6 @@ namespace Candy::Graphics
     VkDescriptorSet descriptorSet = GetCurrentFrame().GlobalDescriptor();
     builder.Write(descriptorSet);
     
-   
   }
   
   
@@ -215,6 +222,7 @@ namespace Candy::Graphics
   }
   void Renderer::EndPass()
   {
+    CANDY_PROFILE_FUNCTION();
     RenderCommand::Submit();
   }
   RenderPass& Renderer::GetCurrentPass()

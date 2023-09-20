@@ -11,6 +11,7 @@ namespace Candy::Graphics
   
   void PerspectiveCameraController::OnUpdate()
   {
+    CANDY_PROFILE_FUNCTION();
     float deltaTime = Application::DeltaTime();
     float velocity = movementSpeed * deltaTime;
     const Vector2& mousePos = Input::GetMousePosition();
@@ -65,6 +66,7 @@ namespace Candy::Graphics
   }
   void PerspectiveCameraController::OnEvent(Events::Event& event)
   {
+    CANDY_PROFILE_FUNCTION();
     Events::EventDispatcher dispatcher(event);
     dispatcher.Dispatch<Events::MouseScrollEvent>(CANDY_BIND_EVENT_FUNCTION(PerspectiveCameraController::OnMouseScroll));
     dispatcher.Dispatch<Events::WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(PerspectiveCameraController::OnWindowResized));
@@ -72,6 +74,7 @@ namespace Candy::Graphics
   
   bool PerspectiveCameraController::OnMouseScroll(Events::MouseScrollEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     float deltaTime = Application::DeltaTime();
     float velocity = scrollSensitivity * deltaTime;
     Vector3 direction = Vector3::Cross(camera.localUp, camera.localRight)*event.GetOffsetY();
@@ -81,12 +84,14 @@ namespace Candy::Graphics
   }
   bool PerspectiveCameraController::OnWindowResized(Events::WindowResizeEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     camera.SetViewportSize((float)event.GetWidth(), (float)event.GetHeight());
     camera.UpdateCameraVectors();
     return false;
   }
   void PerspectiveCameraController::MousePan(const Math::Vector2& mouseDelta, float velocity)
   {
+    CANDY_PROFILE_FUNCTION();
     float xOffset = mouseDelta.x;
     float yOffset=mouseDelta.y;
     Vector3 directionA = Vector3::Cross(camera.localUp, camera.localFront)*xOffset;
@@ -98,6 +103,7 @@ namespace Candy::Graphics
   
   void PerspectiveCameraController::MouseRotate(const Math::Vector2& mouseDelta)
   {
+    CANDY_PROFILE_FUNCTION();
     Vector2 offset = mouseDelta * mouseSensitivity;
     
     camera.pitch += offset.y;

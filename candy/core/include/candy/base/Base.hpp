@@ -13,6 +13,7 @@
 #define CANDY_ENABLE_ASSERTS
 #else
 #define CANDY_DEBUGBREAK()
+//#define CANDY_ENABLE_ASSERTS
 #endif
 
 #define CANDY_EXPAND_MACRO(x) x

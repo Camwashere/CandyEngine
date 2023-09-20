@@ -10,12 +10,24 @@ namespace Candy::Graphics
   using namespace ECS;
   using namespace Math;
   
-  static Assimp::Importer importer;
   
   
+  ModelLoader::ModelLoader(const SharedPtr<ECS::Scene>& sceneValue) : scene(sceneValue)
+  {
+    CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_ASSERT(scene);
+    importer = new Assimp::Importer();
+  }
+  
+  ModelLoader::~ModelLoader()
+  {
+    CANDY_PROFILE_FUNCTION();
+    delete importer;
+  }
   
   static MeshData ToMeshData(const aiMesh* mesh)
   {
+    CANDY_PROFILE_FUNCTION();
     if (! mesh)
     {
       return {};
@@ -71,6 +83,7 @@ namespace Candy::Graphics
   
   static Matrix4 ToMatrix4(const aiMatrix4x4& aiMatrix)
   {
+    CANDY_PROFILE_FUNCTION();
     Matrix4 result;
     result.GetColumn(0) = Vector4(aiMatrix.a1, aiMatrix.b1, aiMatrix.c1, aiMatrix.d1);
     result.GetColumn(1) = Vector4(aiMatrix.a2, aiMatrix.b2, aiMatrix.c2, aiMatrix.d2);
@@ -79,8 +92,9 @@ namespace Candy::Graphics
     return result;
   }
   
-  static void ProcessNode(aiNode* node, const aiScene* aiScene, Entity parent, SharedPtr<Scene> scene, SharedPtr<Texture> texture)
+  void ModelLoader::ProcessNode(aiNode* node, const aiScene* aiScene, const Entity& parent, const SharedPtr<Texture>& texture)
   {
+    CANDY_PROFILE_FUNCTION();
     // For each mesh
     uint32_t maxMeshes = node->mNumMeshes;
    
@@ -134,7 +148,7 @@ namespace Candy::Graphics
     {
       for (uint32_t i=0; i<node->mNumChildren; i++)
       {
-        ProcessNode(node->mChildren[i], aiScene, groupEntity, scene, texture);
+        ProcessNode(node->mChildren[i], aiScene, groupEntity, texture);
       }
     }
     
@@ -155,24 +169,27 @@ namespace Candy::Graphics
   }*/
   void ModelLoader::LoadModel(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     unsigned int readFileFlags = aiProcess_Triangulate | aiProcess_FlipUVs;
     
-    const aiScene* aiScene = importer.ReadFile(path.string(), readFileFlags);
+    const aiScene* aiScene = importer->ReadFile(path.string(), readFileFlags);
     
     if(!aiScene || aiScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !aiScene->mRootNode)
     {
-      CANDY_CORE_ERROR("Assimp error: {0}", importer.GetErrorString());
+      CANDY_CORE_ERROR("Assimp error: {0}", importer->GetErrorString());
       CANDY_CORE_ASSERT(false);
     }
     
     aiNode* rootNode = aiScene->mRootNode;
     
-    SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
+    CANDY_CORE_INFO("Children: {0}, Meshes: {1}", rootNode->mNumChildren, aiScene->mNumMeshes);
+    
+    //SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
     
     CANDY_CORE_INFO("Material count: {}", aiScene->mNumMaterials);
     
     
-    for (uint32_t i=0; i<aiScene->mNumMaterials; i++)
+    /*for (uint32_t i=0; i<aiScene->mNumMaterials; i++)
     {
       aiMaterial* material = aiScene->mMaterials[i];
       
@@ -190,10 +207,10 @@ namespace Candy::Graphics
         //LoadMaterialTextures(type, material);
       }
       
-    }
+    }*/
     
     
-    ProcessNode(rootNode, aiScene, Entity{}, scene, texture);
+    ProcessNode(rootNode, aiScene, Entity{}, nullptr);
     
     
   }

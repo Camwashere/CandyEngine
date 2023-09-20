@@ -18,6 +18,7 @@ namespace Candy::Graphics
   
   void CameraController::OnUpdate()
   {
+    CANDY_PROFILE_FUNCTION();
     float deltaTime = Application::DeltaTime();
     float velocity = movementSpeed * deltaTime;
     const Vector2& mousePos = Input::GetMousePosition();
@@ -70,6 +71,7 @@ namespace Candy::Graphics
   
   Math::Vector2 CameraController::PanSpeed()
   {
+    CANDY_PROFILE_FUNCTION();
     float x = Math::Min(camera->viewportSize.x / 1000.0f, 2.4f); // max = 2.4f
     float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
     
@@ -80,6 +82,7 @@ namespace Candy::Graphics
   
   void CameraController::MousePan(const Math::Vector2& mouseDelta, float velocity)
   {
+    CANDY_PROFILE_FUNCTION();
     float xOffset = mouseDelta.x;
     float yOffset=mouseDelta.y;
     Vector3 directionA = Vector3::Cross(camera->localUp, camera->localFront)*xOffset;
@@ -91,6 +94,7 @@ namespace Candy::Graphics
   }
   void CameraController::MouseRotate(const Math::Vector2& mouseDelta, bool constrainPitch)
   {
+    CANDY_PROFILE_FUNCTION();
     Vector2 offset = mouseDelta * mouseSensitivity;
     
     camera->pitch += offset.y;
@@ -111,18 +115,20 @@ namespace Candy::Graphics
   }
   void CameraController::OnEvent(Events::Event& event)
   {
+    CANDY_PROFILE_FUNCTION();
     Events::EventDispatcher dispatcher(event);
     dispatcher.Dispatch<Events::MouseScrollEvent>(CANDY_BIND_EVENT_FUNCTION(CameraController::OnMouseScroll));
     dispatcher.Dispatch<Events::WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(CameraController::OnWindowResized));
   }
   void CameraController::OnResize(float width, float height)
   {
+    CANDY_PROFILE_FUNCTION();
     camera->SetViewportSize(width, height);
     camera->UpdateCameraVectors();
   }
   bool CameraController::OnMouseScroll(Events::MouseScrollEvent& event)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     float deltaTime = Application::DeltaTime();
     float velocity = scrollSensitivity * deltaTime;
     Vector3 direction = Vector3::Cross(camera->localUp, camera->localRight)*event.GetOffsetY();
@@ -132,6 +138,7 @@ namespace Candy::Graphics
   }
   bool CameraController::OnWindowResized(Events::WindowResizeEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     camera->SetViewportSize((float)event.GetWidth(), (float)event.GetHeight());
     camera->UpdateCameraVectors();
     return false;

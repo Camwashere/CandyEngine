@@ -141,6 +141,7 @@ namespace Candy::Graphics
   
   bool FontAtlasSettingsSerializer::Serialize(const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     c4::yml::Tree tree;
     c4::yml::NodeRef root = tree.rootref();
     root |= c4::yml::MAP;
@@ -178,7 +179,7 @@ namespace Candy::Graphics
   }
   bool FontAtlasSettingsSerializer::Deserialize(const std::filesystem::path& filepath)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     // read the file into a string
     std::ifstream fin(filepath);
     std::stringstream buffer;

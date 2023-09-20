@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 #include <CandyPch.hpp>
-#include <candy/graphics/Texture.hpp>
+#include "candy/graphics/texture/Texture.hpp"
 #include <candy/graphics/vulkan/ImageView.hpp>
 namespace Candy
 {

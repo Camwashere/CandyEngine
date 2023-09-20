@@ -8,6 +8,7 @@ namespace Candy::Graphics
   
   SwapChain::SwapChain(GraphicsContext *gc, VkRenderPass renderPass, VkPresentModeKHR presentMode) : context(gc), preferredPresentMode(presentMode)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(Vulkan::HasDeviceManager(), "SwapChain's device manager is null!");
     CANDY_CORE_ASSERT(context->handle, "SwapChain's window handle is null!");
     CANDY_CORE_ASSERT(context->surface != VK_NULL_HANDLE, "SwapChain's surface is null!");
@@ -17,6 +18,7 @@ namespace Candy::Graphics
   
   void SwapChain::Rebuild(VkRenderPass renderPass)
   {
+    CANDY_PROFILE_FUNCTION();
     int width = 0, height = 0;
     glfwGetFramebufferSize(context->handle, &width, &height);
     while (width == 0 || height == 0)
@@ -33,6 +35,7 @@ namespace Candy::Graphics
   
   void SwapChain::Clean()
   {
+    CANDY_PROFILE_FUNCTION();
     Vulkan::DeletionQueue().Delete(&depthImage);
     Vulkan::DeletionQueue().Delete(&depthImageView);
     
@@ -49,6 +52,7 @@ namespace Candy::Graphics
   
   void SwapChain::Build()
   {
+    CANDY_PROFILE_FUNCTION();
     SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(context->surface);
     VkSurfaceFormatKHR surfaceFormat = Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
     VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.presentModes);
@@ -91,7 +95,7 @@ namespace Candy::Graphics
     createInfo.presentMode = presentMode;
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
-    CANDY_CORE_ASSERT(vkCreateSwapchainKHR(Vulkan::LogicalDevice(), &createInfo, nullptr, &swapChain) == VK_SUCCESS, "Failed to create swap chain!");
+    CANDY_VULKAN_CHECK(vkCreateSwapchainKHR(Vulkan::LogicalDevice(), &createInfo, nullptr, &swapChain));
     Vulkan::DeletionQueue().Push(swapChain);
     vkGetSwapchainImagesKHR(Vulkan::LogicalDevice(), swapChain, &imageCount, nullptr);
     
@@ -104,6 +108,7 @@ namespace Candy::Graphics
   
   void SwapChain::CreateDepthResources()
   {
+    CANDY_PROFILE_FUNCTION();
     VkFormat depthFormat = GraphicsContext::FindDepthFormat();
     depthImage.Create(Math::Vector2u(extent.width, extent.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
     //depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
@@ -115,6 +120,7 @@ namespace Candy::Graphics
   
   void SwapChain::CreateBuffers(VkRenderPass renderPass)
   {
+    CANDY_PROFILE_FUNCTION();
     CreateDepthResources();
     buffers.resize(images.size());
     for (size_t i = 0; i<images.size(); i++)
@@ -131,6 +137,7 @@ namespace Candy::Graphics
   
   VkResult SwapChain::AcquireNextImage(VkSemaphore semaphore, uint64_t timeout, VkFence fence)
   {
+    CANDY_PROFILE_FUNCTION();
     return vkAcquireNextImageKHR(Vulkan::LogicalDevice(), swapChain, timeout, semaphore, fence, &imageIndex);
   }
   
@@ -148,6 +155,7 @@ namespace Candy::Graphics
   
   VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)
   {
+    CANDY_PROFILE_FUNCTION();
     for (const auto &availablePresentMode: availablePresentModes)
     {
       if (availablePresentMode == preferredPresentMode)
@@ -170,7 +178,7 @@ namespace Candy::Graphics
   
   VkExtent2D SwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     if (capabilities.currentExtent.width != Math::Limit<uint32_t>::Max())
     {
       return capabilities.currentExtent;

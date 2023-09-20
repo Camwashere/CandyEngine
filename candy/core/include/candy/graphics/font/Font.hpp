@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 #include "candy/base/Base.hpp"
-#include "candy/graphics/Texture.hpp"
+#include "candy/graphics/texture/Texture.hpp"
 #include "FontManager.hpp"
 
 

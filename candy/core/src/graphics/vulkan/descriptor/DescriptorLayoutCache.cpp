@@ -4,6 +4,7 @@ namespace Candy::Graphics
 {
   void DescriptorLayoutCache::Destroy()
   {
+    CANDY_PROFILE_FUNCTION();
     //delete every descriptor layout held
     for (const auto& pair : layoutCache)
     {
@@ -13,6 +14,7 @@ namespace Candy::Graphics
   
   VkDescriptorSetLayout DescriptorLayoutCache::CreateDescriptorSetLayout(VkDescriptorSetLayoutCreateInfo* info)
   {
+    CANDY_PROFILE_FUNCTION();
     DescriptorLayoutInfo layoutInfo;
     layoutInfo.bindings.reserve(info->bindingCount);
     bool isSorted = true;
@@ -61,6 +63,7 @@ namespace Candy::Graphics
   }
   
   bool DescriptorLayoutCache::DescriptorLayoutInfo::operator==(const DescriptorLayoutInfo& other) const{
+    CANDY_PROFILE_FUNCTION();
     if (other.bindings.size() != bindings.size()){
       return false;
     }
@@ -85,6 +88,7 @@ namespace Candy::Graphics
   }
   
   size_t DescriptorLayoutCache::DescriptorLayoutInfo::hash() const{
+    CANDY_PROFILE_FUNCTION();
     using std::size_t;
     using std::hash;
     

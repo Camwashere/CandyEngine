@@ -72,6 +72,7 @@ namespace Candy::Graphics
   
   void OrthographicCameraController::OnResize(float width, float height)
   {
+    CANDY_PROFILE_FUNCTION();
     //aspectRatio = width / height;
     //camera.SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
     camera.SetViewportSize(width, height);

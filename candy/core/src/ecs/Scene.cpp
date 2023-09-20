@@ -15,6 +15,7 @@ namespace Candy::ECS
   template<typename... Component>
   static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
   {
+    CANDY_PROFILE_FUNCTION();
     ([&]()
     {
     auto view = src.view<Component>();
@@ -37,6 +38,7 @@ namespace Candy::ECS
   template<typename... Component>
   static void CopyComponentIfExists(Entity dst, Entity src)
   {
+    CANDY_PROFILE_FUNCTION();
     ([&]()
     {
     if (src.HasComponent<Component>())
@@ -52,6 +54,7 @@ namespace Candy::ECS
   
   SharedPtr<Scene> Scene::Copy(const SharedPtr<Scene>& other)
   {
+    CANDY_PROFILE_FUNCTION();
     SharedPtr<Scene> newScene = CreateSharedPtr<Scene>();
     newScene->name = other->name;
     newScene->viewportWidth = other->viewportWidth;
@@ -76,11 +79,13 @@ namespace Candy::ECS
   
   Entity Scene::CreateEntity(const std::string& tag)
   {
+    CANDY_PROFILE_FUNCTION();
     return CreateEntityWithUUID(UUID(), tag);
   }
   
   Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& tag)
   {
+    CANDY_PROFILE_FUNCTION();
     Entity entity = { registry.create(), this };
     entity.AddComponent<IDComponent>(uuid);
     auto& tc = entity.AddComponent<TagComponent>();
@@ -94,12 +99,14 @@ namespace Candy::ECS
  
   void Scene::DestroyEntity(Entity entity)
   {
+    CANDY_PROFILE_FUNCTION();
     entityMap.erase(entity.GetUUID());
     registry.destroy(entity);
   }
   
   Entity Scene::DuplicateEntity(Entity entity)
   {
+    CANDY_PROFILE_FUNCTION();
     // Copy name because we're going to modify component data structure
     std::string tag = entity.GetTag();
     Entity newEntity = CreateEntity(tag);
@@ -109,6 +116,7 @@ namespace Candy::ECS
   
   Entity Scene::FindEntityByTag(std::string_view tag)
   {
+    CANDY_PROFILE_FUNCTION();
     auto view = registry.view<TagComponent>();
     for (auto entity : view)
     {
@@ -121,12 +129,14 @@ namespace Candy::ECS
   
   Entity Scene::GetEntityByUUID(UUID uuid)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(entityMap.find(uuid) != entityMap.end(), "Entity not found in registry");
     return { entityMap.at(uuid), this };
   }
   
   void Scene::AttachSystem(System* system)
   {
+    CANDY_PROFILE_FUNCTION();
     systemScheduler.AttachSystem(system);
   }
   
@@ -144,6 +154,7 @@ namespace Candy::ECS
   
   void Scene::OnViewportResize(std::uint32_t width, std::uint32_t height)
   {
+    CANDY_PROFILE_FUNCTION();
     if (viewportWidth == width && viewportHeight == height)
     {
       return;
@@ -156,12 +167,14 @@ namespace Candy::ECS
   
   void Scene::OnUpdateEditor()
   {
+    CANDY_PROFILE_FUNCTION();
     //systemScheduler.Update((void*)&camera);
     RenderScene();
     
   }
   void Scene::RenderScene()
   {
+    CANDY_PROFILE_FUNCTION();
     RenderScene3D();
     RenderScene2D();
     Renderer3D::RenderSelectionBuffer();
@@ -169,6 +182,7 @@ namespace Candy::ECS
   }
   void Scene::RenderScene3D()
   {
+    CANDY_PROFILE_FUNCTION();
     Renderer3D::BeginScene();
     
     auto view = registry.view<TransformComponent, MeshFilterComponent, MeshRendererComponent>();
@@ -183,6 +197,7 @@ namespace Candy::ECS
   }
   void Scene::RenderScene2D()
   {
+    CANDY_PROFILE_FUNCTION();
     Renderer2D::BeginScene();
     
     // Draw Sprites
@@ -240,14 +255,14 @@ namespace Candy::ECS
   {
     return CreateSharedPtr<Scene>(name);
   }
-  template<typename T>
+  /*template<typename T>
   void Scene::OnComponentAdded(Entity entity, T& component)
   {
   
-  }
+  }*/
   
   
-  template<>
+  /*template<>
   void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
   {
   }
@@ -260,7 +275,7 @@ namespace Candy::ECS
   template<>
   void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
   {
-  }
+  }*/
   
   
   

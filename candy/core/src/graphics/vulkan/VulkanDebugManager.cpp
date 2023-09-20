@@ -10,7 +10,7 @@ const std::vector<const char*> validationLayers= {
 #ifdef CANDY_DEBUG
 const bool enableValidationLayers = true;
 #else
-const bool enableValidationLayers = false;
+const bool enableValidationLayers = true;
 #endif
 
 
@@ -40,23 +40,7 @@ namespace Candy::Graphics
             default:
                 break;
         }
-        /*switch(messageType)
-        {
-          case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:
-            CANDY_CORE_TRACE("VALIDATION LAYER GENERAL: {0}", pCallbackData->pMessage);
-            break;
-          case VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:
-            CANDY_CORE_TRACE("VALIDATION LAYER VALIDATION: {0}", pCallbackData->pMessage);
-            break;
-          case VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT:
-            CANDY_CORE_TRACE("VALIDATION LAYER PERFORMANCE: {0}", pCallbackData->pMessage);
-            break;
-          case VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT:
-            CANDY_CORE_TRACE("VALIDATION LAYER DEVICE ADDRESS BINDING: {0}", pCallbackData->pMessage);
-            break;
-          default:
-            break;
-        }*/
+        
         return VK_FALSE;
     }
     
@@ -86,6 +70,7 @@ namespace Candy::Graphics
     
     bool static CheckValidationLayerSupport()
     {
+      CANDY_PROFILE_FUNCTION();
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
         
@@ -113,18 +98,20 @@ namespace Candy::Graphics
     
     VulkanDebugManager::VulkanDebugManager(VkInstance instance)
     {
+      CANDY_PROFILE_FUNCTION();
       if (enableValidationLayers)
       {
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
         
-        CANDY_CORE_ASSERT(CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) == VK_SUCCESS, "FAILED TO SET UP DEBUG MESSENGER!");
+        CANDY_VULKAN_CHECK(CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger));
       }
       
     }
     
     VulkanDebugManager::~VulkanDebugManager()
     {
+      CANDY_PROFILE_FUNCTION();
       if (enableValidationLayers)
       {
         DestroyDebugUtilsMessengerEXT(Vulkan::Instance(), debugMessenger, nullptr);
@@ -133,6 +120,7 @@ namespace Candy::Graphics
   
   std::vector<const char*> VulkanDebugManager::GetRequiredExtensions()
   {
+    CANDY_PROFILE_FUNCTION();
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -147,6 +135,7 @@ namespace Candy::Graphics
   
   std::vector<std::string> VulkanDebugManager::GetAvailableExtensions()
   {
+    CANDY_PROFILE_FUNCTION();
     uint32_t extensionCount = 0;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     std::vector<VkExtensionProperties> extensions(extensionCount);
@@ -161,6 +150,7 @@ namespace Candy::Graphics
   
   void VulkanDebugManager::DisplayAvailableExtensions()
   {
+    CANDY_PROFILE_FUNCTION();
     std::vector<std::string> extensions = GetAvailableExtensions();
     CANDY_CORE_INFO("Available Vulkan Extensions: ");
     for (const auto& extension : extensions)
@@ -171,6 +161,7 @@ namespace Candy::Graphics
   
   VkInstanceCreateInfo VulkanDebugManager::GetInstanceCreateInfo()
   {
+    CANDY_PROFILE_FUNCTION();
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     

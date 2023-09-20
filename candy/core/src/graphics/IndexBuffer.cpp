@@ -5,7 +5,7 @@ namespace Candy::Graphics
 {
   IndexBuffer::IndexBuffer(uint64_t indexCount) : VulkanBuffer(sizeof(uint32_t)*indexCount, BufferType::INDEX), count(indexCount)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
@@ -17,13 +17,13 @@ namespace Candy::Graphics
     allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
     allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     
-    CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create index buffer!");
+    CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
     
     Vulkan::DeletionQueue().Push(this);
   }
     IndexBuffer::IndexBuffer(uint32_t* indices, uint64_t indexCount) : VulkanBuffer(sizeof(uint32_t)*indexCount, BufferType::INDEX), count(indexCount)
     {
-        
+      CANDY_PROFILE_FUNCTION();
         VkBuffer stagingBuffer;
         VmaAllocation stagingBufferAllocation;
         CreateStagingBuffer(stagingBuffer, &stagingBufferAllocation);
@@ -45,8 +45,8 @@ namespace Candy::Graphics
         VmaAllocationCreateInfo allocInfo = {};
         allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
         allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-        
-        CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr)==VK_SUCCESS, "Failed to create index buffer!");
+      
+      CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
         
         Vulkan::CopyBuffer(stagingBuffer, buffer, size);
         //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
@@ -64,6 +64,7 @@ namespace Candy::Graphics
   
   void IndexBuffer::SetData(uint32_t* indices, uint64_t indexCount)
   {
+    CANDY_PROFILE_FUNCTION();
     count = indexCount;
     size = sizeof(uint32_t)*count;
     SetDataInternal(indices);
@@ -72,6 +73,7 @@ namespace Candy::Graphics
   
   void IndexBuffer::SetDataInternal(const void* indices)
   {
+    CANDY_PROFILE_FUNCTION();
     VkBuffer stagingBuffer;
     VmaAllocation stagingBufferAllocation;
     

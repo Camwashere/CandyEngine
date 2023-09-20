@@ -11,6 +11,7 @@ namespace Candy::Graphics
   
   bool Mesh::IsValid()const
   {
+    CANDY_PROFILE_FUNCTION();
     return data.IsValid();
   }
   

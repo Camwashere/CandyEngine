@@ -5,6 +5,7 @@
 
 #include "SPIRV-Cross/spirv_cross.hpp"
 #include "SPIRV-Cross/spirv_glsl.hpp"
+#include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
   static std::filesystem::path GetCacheDirectory()
@@ -13,6 +14,7 @@ namespace Candy::Graphics
   }
   static shaderc_shader_kind StageToShaderC(ShaderData::Stage stage)
   {
+    CANDY_PROFILE_FUNCTION();
     switch (stage)
     {
       
@@ -34,22 +36,69 @@ namespace Candy::Graphics
   }
   void ShaderPostProcessor::CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
-    spirv_cross::SmallVector<float> t;
-    options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
-    if (generateDebugInfo)
+    
+    auto settings = ShaderLibrary::GetCompilationSettings();
+    options.SetOptimizationLevel(settings.optimize? shaderc_optimization_level_performance : shaderc_optimization_level_zero);
+    if (settings.generateDebugInfo)
     {
       options.SetGenerateDebugInfo();
     }
-    options.SetAutoBindUniforms(autoMapping);
-    options.SetAutoMapLocations(autoMapping);
-    options.SetAutoSampledTextures(autoMapping);
+    options.SetPreserveBindings(settings.preserveBindings);
+    
+    options.SetForcedVersionProfile(settings.glslVersion, shaderc_profile_core);
+    
+    options.SetTargetSpirv(shaderc_spirv_version_1_3);
+    if (settings.vulkanVersion.GetMajor() == 1)
+    {
+      switch(settings.vulkanVersion.GetMinor())
+      {
+        case 0:
+          options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_0);
+          break;
+        case 1:
+          options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_1);
+          break;
+        case 2:
+          options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
+          break;
+        case 3:
+          options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
+          break;
+        default:
+          CANDY_CORE_WARN("Invalid vulkan version in shader compilation settings ({}). Defaulting to 1.0", settings.vulkanVersion);
+          options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_0);
+          break;
+      }
+    }
+    else
+    {
+      CANDY_CORE_WARN("Invalid vulkan version in shader compilation settings ({}). Defaulting to 1.0", settings.vulkanVersion);
+      options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_0);
+    }
+    
+    
+    options.SetAutoBindUniforms(settings.autoMapping);
+    options.SetAutoMapLocations(settings.autoMapping);
+    options.SetInvertY(settings.invertY);
+    if (settings.suppressWarnings)
+    {
+      options.SetSuppressWarnings();
+    }
+    if (settings.warningsAsErrors)
+    {
+      options.SetWarningsAsErrors();
+    }
     
     
     
-    if (optimize)
-      options.SetOptimizationLevel(shaderc_optimization_level_performance);
+    
+    
+    
+    
+    
     
     
     
@@ -65,7 +114,7 @@ namespace Candy::Graphics
       std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + ShaderData::StageToCachedFileExtension(stage));
       
       std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-      if (in.is_open() && !recompileOnLoad)
+      if (in.is_open() && !settings.recompileOnLoad)
       {
         //CANDY_CORE_INFO("ALREADY HAS SHADER CACHED");
         
@@ -111,6 +160,7 @@ namespace Candy::Graphics
   
   void ShaderPostProcessor::Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary)
   {
+    CANDY_PROFILE_FUNCTION();
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
     
     auto resources = compiler.get_shader_resources();
@@ -132,6 +182,7 @@ namespace Candy::Graphics
   }
   void ShaderPostProcessor::ReflectSpecializationConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& specConstants)
   {
+    CANDY_PROFILE_FUNCTION();
     for (const auto& specConst : specConstants)
     {
       
@@ -142,13 +193,13 @@ namespace Candy::Graphics
       
       ShaderData::Type type = ShaderData::SpirvToType(compiler.get_type(c.constant_type));
       ShaderSpecializationConstant v{};
-      v.id = constID;
+      v.id = specConst.constant_id;
       v.name = name;
       v.type = type;
       v.stage = stage;
       shaderLayout.AddSpecConstant(v);
       
-      CANDY_CORE_INFO("ID: {0}, Constant ID: {1}, Name: {2}, Type: {3}", specConst.id, specConst.constant_id, name, ShaderData::TypeToString(v.type));
+      CANDY_CORE_INFO("ID: {0}, Constant ID: {1}, Name: {2}, Type: {3}", v.id, specConst.constant_id, name, ShaderData::TypeToString(v.type));
       /*uint32_t specID = compiler.get_decoration(specConst.id, spv::DecorationSpecId);
       ShaderData::Type specType = ShaderData::SpirvToType(compiler.get_type(specConst.constant_id));
       std::string name = compiler.get_name(specConst.id);
@@ -157,6 +208,7 @@ namespace Candy::Graphics
   }
   void ShaderPostProcessor::ReflectStageInputs(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageInputs)
   {
+    CANDY_PROFILE_FUNCTION();
     if (stage != ShaderData::Stage::Vertex)
       return;
     for (auto& resource : stageInputs)
@@ -170,6 +222,7 @@ namespace Candy::Graphics
   
   void ShaderPostProcessor::ReflectStageStorageBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageStorageBuffers)
   {
+    CANDY_PROFILE_FUNCTION();
     for (auto& resource : stageStorageBuffers)
     {
 
@@ -195,6 +248,7 @@ namespace Candy::Graphics
   }
   void ShaderPostProcessor::ReflectStageUniformBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageUniformBuffers)
   {
+    CANDY_PROFILE_FUNCTION();
     for (auto& resource : stageUniformBuffers)
     {
       ShaderBlock block{};
@@ -221,6 +275,7 @@ namespace Candy::Graphics
   }
   void ShaderPostProcessor::ReflectStageSampledImages(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageSampledImages)
   {
+    CANDY_PROFILE_FUNCTION();
     for (auto& resource : stageSampledImages)
     {
       ShaderTexture texture{};
@@ -244,6 +299,7 @@ namespace Candy::Graphics
   }
   void ShaderPostProcessor::ReflectStagePushConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage)
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderPushBlock block;
     //block.stage = stage;
     

@@ -7,7 +7,7 @@
 #include <deque>
 #include <ranges>
 #include "UniformBuffer.hpp"
-#include "Texture.hpp"
+#include "candy/graphics/texture/Texture.hpp"
 #include "vulkan/ImageView.hpp"
 #include "candy/graphics/material/Material.hpp"
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"

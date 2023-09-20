@@ -34,6 +34,7 @@ namespace Candy::ECS
   }
   Matrix4 TransformComponent::GetWorldTransform() const
   {
+    CANDY_PROFILE_FUNCTION();
     if (HasParent())
     {
       return GetParent()->GetWorldTransform()*GetLocalTransform();
@@ -46,6 +47,7 @@ namespace Candy::ECS
   
   Matrix4 TransformComponent::GetLocalTransform() const
   {
+    CANDY_PROFILE_FUNCTION();
     return Matrix4::Translate(Matrix4::IDENTITY, localPosition)*Matrix4::Rotate(Matrix4::IDENTITY, localRotation)*Matrix4::Scale(Matrix4::IDENTITY, localScale);
   }
   
@@ -94,6 +96,7 @@ namespace Candy::ECS
   
   Math::Vector3 TransformComponent::GetWorldPosition() const
   {
+    CANDY_PROFILE_FUNCTION();
     if (HasParent())
     {
       return GetParent()->GetWorldTransform() * localPosition;
@@ -105,6 +108,7 @@ namespace Candy::ECS
   }
   Math::Quaternion TransformComponent::GetWorldRotation()const
   {
+    CANDY_PROFILE_FUNCTION();
     if (HasParent())
     {
       return GetParent()->GetWorldRotation() * localRotation;
@@ -116,6 +120,7 @@ namespace Candy::ECS
   }
   Math::Vector3 TransformComponent::GetWorldScale()const
   {
+    CANDY_PROFILE_FUNCTION();
     if (HasParent())
     {
       return GetParent()->GetWorldScale() * localScale;
@@ -140,6 +145,7 @@ namespace Candy::ECS
   
   std::vector<TransformComponent*> TransformComponent::GetChildren()
   {
+    CANDY_PROFILE_FUNCTION();
     std::vector<TransformComponent*> children;
     auto& entityChildren = entity.GetChildren();
     children.resize(entityChildren.Size());
@@ -156,12 +162,14 @@ namespace Candy::ECS
   
   TransformComponent* TransformComponent::GetParent()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(HasParent());
     return &entity.GetParentEntity().GetComponent<TransformComponent>();
   }
   
   const TransformComponent* TransformComponent::GetParent()const
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(HasParent());
     return &entity.GetParentEntity().GetComponent<TransformComponent>();
   }

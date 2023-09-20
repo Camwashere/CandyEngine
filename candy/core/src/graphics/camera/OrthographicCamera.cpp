@@ -19,6 +19,7 @@ namespace Candy::Graphics
   
   void OrthographicCamera::UpdateProjectionMatrix()
   {
+    CANDY_PROFILE_FUNCTION();
     float aspectRatio = GetAspectRatio();
     SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
     
@@ -31,6 +32,7 @@ namespace Candy::Graphics
   
   void OrthographicCamera::SetViewportSize(float width, float height)
   {
+    CANDY_PROFILE_FUNCTION();
     viewportSize.Set(width, height);
     UpdateProjectionMatrix();
   }

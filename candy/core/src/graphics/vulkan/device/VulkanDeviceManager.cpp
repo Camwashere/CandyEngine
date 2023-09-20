@@ -4,9 +4,10 @@
 namespace Candy::Graphics
 {
     
-    VulkanDeviceManager::VulkanDeviceManager(VkSurfaceKHR surface)
+    VulkanDeviceManager::VulkanDeviceManager(VkSurfaceKHR surface) : physicalDevice(surface)
     {
-      uint32_t deviceCount=0;
+      CANDY_PROFILE_FUNCTION();
+      /*uint32_t deviceCount=0;
       vkEnumeratePhysicalDevices(Vulkan::Instance(), &deviceCount, nullptr);
       CANDY_CORE_ASSERT(deviceCount, "Failed to find GPUs with Vulkan support!");
       std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -18,7 +19,8 @@ namespace Candy::Graphics
           physicalDevice = PhysicalDevice(device);
           break;
         }
-      }
+      }*/
+      //physicalDevice = PhysicalDevice(surface);
       CANDY_CORE_ASSERT(physicalDevice.IsValid(), "Failed to find a suitable GPU!");
       
       logicalDevice = LogicalDevice(physicalDevice, physicalDevice.FindQueueFamilies(surface));
@@ -27,6 +29,7 @@ namespace Candy::Graphics
   
   void VulkanDeviceManager::Destroy()
   {
+    CANDY_PROFILE_FUNCTION();
       vkDeviceWaitIdle(logicalDevice);
       vkDestroyDevice(logicalDevice, nullptr);
   }

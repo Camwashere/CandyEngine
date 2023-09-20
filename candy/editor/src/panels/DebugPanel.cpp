@@ -8,6 +8,7 @@ namespace Candy
   using namespace Graphics;
   static void Renderer2DDebugInfo()
   {
+    CANDY_PROFILE_FUNCTION();
     ImGui::SeparatorText("Renderer2D Stats");
     Renderer2D::Stats stats = Renderer2D::GetStats();
     ImGui::Text("Draw Calls: %d", stats.drawCalls);
@@ -19,6 +20,7 @@ namespace Candy
   }
   void DebugPanel::OnRenderUI()
   {
+    CANDY_PROFILE_FUNCTION();
     if (enabled)
     {
       ImGui::Begin("Debug");

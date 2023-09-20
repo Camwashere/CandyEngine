@@ -22,6 +22,7 @@ namespace Candy::Graphics
   }*/
   UniquePtr<DescriptorAllocatorPool> DescriptorAllocatorPool::Create()
   {
+    CANDY_PROFILE_FUNCTION();
     UniquePtr<DescriptorAllocatorPool> impl = CreateUniquePtr<DescriptorAllocatorPool>();
     
     for (int i = 0; i < FRAME_OVERLAP; i++) {
@@ -31,6 +32,7 @@ namespace Candy::Graphics
   }
   DescriptorAllocatorHandle::~DescriptorAllocatorHandle()
   {
+    CANDY_PROFILE_FUNCTION();
     DescriptorAllocatorPool* implPool = static_cast<DescriptorAllocatorPool*>(ownerPool);
     if (implPool) {
       
@@ -40,6 +42,7 @@ namespace Candy::Graphics
   
   DescriptorAllocatorHandle::DescriptorAllocatorHandle(DescriptorAllocatorHandle&& other)
   {
+    CANDY_PROFILE_FUNCTION();
     Return();
     
     vkPool = other.vkPool;
@@ -53,6 +56,7 @@ namespace Candy::Graphics
   
   DescriptorAllocatorHandle& DescriptorAllocatorHandle::operator=(DescriptorAllocatorHandle&& other)
   {
+    CANDY_PROFILE_FUNCTION();
     Return();
     
     vkPool = other.vkPool;
@@ -68,6 +72,7 @@ namespace Candy::Graphics
   
   void DescriptorAllocatorHandle::Return()
   {
+    CANDY_PROFILE_FUNCTION();
     DescriptorAllocatorPool* implPool = static_cast<DescriptorAllocatorPool*>(ownerPool);
     
     if (implPool) {
@@ -81,6 +86,7 @@ namespace Candy::Graphics
   
   bool DescriptorAllocatorHandle::Allocate(const VkDescriptorSetLayout& layout, VkDescriptorSet& builtSet)
   {
+    CANDY_PROFILE_FUNCTION();
     DescriptorAllocatorPool*implPool = static_cast<DescriptorAllocatorPool*>(ownerPool);
     
     
@@ -123,6 +129,7 @@ namespace Candy::Graphics
   
   VkDescriptorPool DescriptorAllocatorPool::createPool(int count, VkDescriptorPoolCreateFlags flags)
   {
+    CANDY_PROFILE_FUNCTION();
     std::vector<VkDescriptorPoolSize> sizes;
     sizes.reserve(poolSizes.sizes.size());
     for (auto sz : poolSizes.sizes) {
@@ -143,6 +150,7 @@ namespace Candy::Graphics
   
   DescriptorAllocatorPool::~DescriptorAllocatorPool()
   {
+    CANDY_PROFILE_FUNCTION();
     for (VkDescriptorPool allocator : clearAllocators) {
       vkDestroyDescriptorPool(Vulkan::LogicalDevice(), allocator, nullptr);
     }
@@ -157,6 +165,7 @@ namespace Candy::Graphics
   }
   void DescriptorAllocatorPool::Reset()
   {
+    CANDY_PROFILE_FUNCTION();
     for (uint32_t i=0; i<FRAME_OVERLAP; i++)
     {
       for (auto al :  descriptorPools[i]->fullAllocators ) {
@@ -180,6 +189,7 @@ namespace Candy::Graphics
   }
   void DescriptorAllocatorPool::Flip(uint32_t newFrameIndex)
   {
+    CANDY_PROFILE_FUNCTION();
     frameIndex = newFrameIndex;
     for (auto al :  descriptorPools[frameIndex]->fullAllocators ) {
       
@@ -201,6 +211,7 @@ namespace Candy::Graphics
   
   void DescriptorAllocatorPool::SetPoolSizeMultiplier(VkDescriptorType type, float multiplier)
   {
+    CANDY_PROFILE_FUNCTION();
     for (auto& s : poolSizes.sizes) {
       if (s.type == type) {
         s.multiplier = multiplier;
@@ -217,6 +228,7 @@ namespace Candy::Graphics
   
   void DescriptorAllocatorPool::ReturnAllocator(DescriptorAllocatorHandle& handle, bool bIsFull)
   {
+    CANDY_PROFILE_FUNCTION();
     std::lock_guard<std::mutex> lk(poolMutex);
     
     
@@ -230,6 +242,7 @@ namespace Candy::Graphics
   
   DescriptorAllocatorHandle DescriptorAllocatorPool::GetAllocator()
   {
+    CANDY_PROFILE_FUNCTION();
     std::lock_guard<std::mutex> lk(poolMutex);
     
     

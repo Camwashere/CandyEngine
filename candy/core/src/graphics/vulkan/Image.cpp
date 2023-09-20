@@ -9,6 +9,7 @@ namespace Candy::Graphics
   }
   Image::Image(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags) : image(VK_NULL_HANDLE), format(imgFormat), allocation(VK_NULL_HANDLE)
   {
+    
     //Vulkan::DeletionQueue().Push(this);
     Create(size, imgFormat, tiling, usageFlags, requiredFlags, allocationCreateFlags);
     //Vulkan::PushDeleter([=, this](){Destroy();});
@@ -18,6 +19,7 @@ namespace Candy::Graphics
   
   void Image::Create(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags)
   {
+    CANDY_PROFILE_FUNCTION();
     format = imgFormat;
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -48,7 +50,7 @@ namespace Candy::Graphics
     allocCreateInfo.requiredFlags = requiredFlags;
     allocCreateInfo.priority = 1.0f;
     
-    CANDY_CORE_ASSERT(vmaCreateImage(Vulkan::Allocator(), &imageInfo, &allocCreateInfo, &image, &allocation, &allocInfo) == VK_SUCCESS, "Failed to create image!");
+    CANDY_VULKAN_CHECK(vmaCreateImage(Vulkan::Allocator(), &imageInfo, &allocCreateInfo, &image, &allocation, &allocInfo));
     Vulkan::DeletionQueue().Push(this);
     //Vulkan::PushDeleter([=, this](){vmaDestroyImage(Vulkan::Allocator(), image, allocation);});
   }

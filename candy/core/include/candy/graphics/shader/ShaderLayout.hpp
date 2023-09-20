@@ -27,8 +27,6 @@ namespace Candy::Graphics
     std::unordered_map<std::string, uint32_t> pushBlockMap;
     std::unordered_map<std::string, uint32_t> pushPropertyMap;
     std::unordered_map<std::string, uint32_t> specConstantMap;
-    //const ShaderSettings settings;
-    //const uint8_t renderPassIndex;
 
     
   private:

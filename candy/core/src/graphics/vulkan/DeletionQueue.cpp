@@ -39,6 +39,7 @@ namespace Candy::Graphics
   
   void DeletionQueue::Flush()
   {
+    CANDY_PROFILE_FUNCTION();
     //Clean();
     for (auto fence : fences)
     {
@@ -125,6 +126,7 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Delete<VkSwapchainKHR>(VkSwapchainKHR vulkanObject)
   {
+    CANDY_PROFILE_FUNCTION();
     vkDestroySwapchainKHR(Vulkan::LogicalDevice(), vulkanObject, nullptr);
     swapChains.erase(vulkanObject);
   }
@@ -132,24 +134,28 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Delete<FrameBuffer*>(FrameBuffer* vulkanObject)
   {
+    CANDY_PROFILE_FUNCTION();
     vkDestroyFramebuffer(Vulkan::LogicalDevice(), *vulkanObject, nullptr);
     frameBuffers.erase(vulkanObject);
   }
   template<>
   void DeletionQueue::Delete<StorageBuffer*>(StorageBuffer* vulkanObject)
   {
+    CANDY_PROFILE_FUNCTION();
     VulkanBuffer::DestroyBuffer(vulkanObject);
     buffers.erase(vulkanObject);
   }
   template<>
   void DeletionQueue::Delete<PixelBuffer*>(PixelBuffer* vulkanObject)
   {
+    CANDY_PROFILE_FUNCTION();
     VulkanBuffer::DestroyBuffer(vulkanObject);
     buffers.erase(vulkanObject);
   }
   template<>
   void DeletionQueue::Delete<Image*>(Image* vulkanObject)
   {
+    CANDY_PROFILE_FUNCTION();
     vmaDestroyImage(Vulkan::Allocator(), *vulkanObject, vulkanObject->GetAllocation());
     images.erase(vulkanObject);
     
@@ -157,6 +163,7 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject)
   {
+    CANDY_PROFILE_FUNCTION();
     vkDestroyImageView(Vulkan::LogicalDevice(), *vulkanObject, nullptr);
     vkDestroySampler(Vulkan::LogicalDevice(), vulkanObject->GetSampler(), nullptr);
     imageViews.erase(vulkanObject);

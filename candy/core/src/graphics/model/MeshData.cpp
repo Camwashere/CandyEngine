@@ -201,6 +201,7 @@ namespace Candy::Graphics
   
   MeshData& MeshData::operator=(const MeshData& other)
   {
+    CANDY_PROFILE_FUNCTION();
     vertices.resize(other.vertices.size());
     indices.resize(other.indices.size());
     for (int i=0; i<other.vertices.size(); i++)
@@ -215,6 +216,7 @@ namespace Candy::Graphics
   }
   bool MeshData::operator==(const MeshData& other)const
   {
+    CANDY_PROFILE_FUNCTION();
     if(vertices.size() != other.vertices.size() || indices.size() != other.indices.size())
     {
       return false;
@@ -239,6 +241,7 @@ namespace Candy::Graphics
   }
   bool MeshData::operator!=(const MeshData& other)const
   {
+    CANDY_PROFILE_FUNCTION();
     return !(*this == other);
   }
   static MeshData CreatePlaneMeshData()
@@ -318,6 +321,7 @@ namespace Candy::Graphics
   
   bool MeshData::IsValid()const
   {
+    CANDY_PROFILE_FUNCTION();
     if(indices.size() % 3 != 0)
     {
       return false;
@@ -341,6 +345,7 @@ namespace Candy::Graphics
   
   std::string MeshData::ToString()const
   {
+    CANDY_PROFILE_FUNCTION();
     std::string str;
     for (int i=0; i<vertices.size(); i++)
     {

@@ -143,6 +143,7 @@ namespace Candy::ECS
   
   static void SerializeEntity(c4::yml::NodeRef& entitiesNode, Entity entity)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(entity.HasComponent<IDComponent>(), "Entity does not have ID Component. Cannot Serialize");
     auto child = entitiesNode.append_child();
     child |= c4::yml::MAP;
@@ -257,6 +258,7 @@ namespace Candy::ECS
   
   bool SceneSerializer::Serialize(const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     c4::yml::Tree tree;
     c4::yml::NodeRef root = tree.rootref();
     
@@ -298,6 +300,7 @@ namespace Candy::ECS
   
   void DeserializeEntity(c4::yml::NodeRef& entityNode, Entity parentEntity, const SharedPtr<Scene>& scene)
   {
+    CANDY_PROFILE_FUNCTION();
     std::uint64_t uuid;
     std::string tag;
     entityNode["Entity"] >> uuid;
@@ -413,6 +416,7 @@ namespace Candy::ECS
   
   bool SceneSerializer::Deserialize(const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     std::ifstream fin(filepath);
     std::stringstream buffer;
     buffer << fin.rdbuf();
@@ -420,7 +424,7 @@ namespace Candy::ECS
     
     if (yaml_str.empty())
     {
-      CANDY_CORE_ERROR("EMPTY YAML STRING WITH PATH: {}", filepath);
+      CANDY_CORE_ERROR("EMPTY YAML STRING WITH PATH: {}", filepath.string());
       return false;
     }
     

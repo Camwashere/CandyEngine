@@ -16,7 +16,7 @@ namespace Candy::Graphics
     {
     private:
       std::string shaderName;
-      //ShaderSettings settings;
+      uint32_t id;
         
       UniquePtr<ShaderPreProcessor> preProcessor;
       ShaderPostProcessor postProcessor;
@@ -28,7 +28,6 @@ namespace Candy::Graphics
     
     public:
       explicit Shader(const ShaderSettings&  settings);
-      //Shader(std::filesystem::path  shaderFilePath, uint8_t renderPassIndex, bool enableDepthTesting=true);
       
     public:
       void Bake();

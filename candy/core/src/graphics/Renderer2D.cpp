@@ -118,6 +118,7 @@ namespace Candy::Graphics
   static RenderData2D data;
   void Renderer2D::Init()
   {
+    CANDY_PROFILE_FUNCTION();
     InitQuads();
     InitCircles();
     InitLines();
@@ -140,6 +141,7 @@ namespace Candy::Graphics
   
   void Renderer2D::InitQuads()
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderSettings quadShaderSettings{};
     quadShaderSettings.filepath = "assets/shaders/renderer2D/Quad.glsl";
     quadShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
@@ -187,6 +189,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::InitCircles()
   {
+    CANDY_PROFILE_FUNCTION();
     // Circles
     ShaderSettings circleShaderSettings{};
     circleShaderSettings.filepath = "assets/shaders/renderer2D/Circle.glsl";
@@ -218,6 +221,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::InitLines()
   {
+    CANDY_PROFILE_FUNCTION();
     // Lines
     ShaderSettings lineShaderSettings{};
     lineShaderSettings.filepath = "assets/shaders/renderer2D/Line.glsl";
@@ -238,12 +242,15 @@ namespace Candy::Graphics
   }
   void Renderer2D::InitText()
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderSettings textShaderSettings{};
     textShaderSettings.filepath = "assets/shaders/renderer2D/Text.glsl";
     textShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     textShaderSettings.depthTesting = false;
     textShaderSettings.alphaColorBlending = true;
-    textShaderSettings.constantInputs.emplace_back("pxRange", Font::GetAtlasGeneratorSettings().pixelRange);
+    SpecializationConstantInput input("pxRange", Font::GetAtlasGeneratorSettings().pixelRange);
+    textShaderSettings.constantInputs.push_back(input);
+    
     
     data.textShader = Shader::Create(textShaderSettings);
     
@@ -257,6 +264,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::InitSelection()
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionQuadSettings{};
     selectionQuadSettings.filepath = "assets/shaders/renderer2D/SelectionQuad.glsl";
     selectionQuadSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
@@ -279,14 +287,17 @@ namespace Candy::Graphics
   }
   void Renderer2D::InitTextures()
   {
-    data.whiteTexture = Texture::Create(TextureSpecification());
+    CANDY_PROFILE_FUNCTION();
+    /*data.whiteTexture = Texture::Create(TextureSpecification());
     uint32_t whiteTextureData = 0xffffffff;
-    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));*/
+    data.whiteTexture = Texture::White();
     
     data.textureSlots[0] = data.whiteTexture;
   }
   void Renderer2D::StartBatch()
   {
+    CANDY_PROFILE_FUNCTION();
     data.quadIndexCount = 0;
     data.quadVertexBufferPtr = data.quadVertexBufferBase;
     
@@ -308,6 +319,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::ResetStats()
   {
+    CANDY_PROFILE_FUNCTION();
     data.stats.drawCalls = 0;
     data.stats.quadCount = 0;
     data.stats.vertexCount = 0;
@@ -317,11 +329,13 @@ namespace Candy::Graphics
   }
   void Renderer2D::NextBatch()
   {
+    CANDY_PROFILE_FUNCTION();
     Flush();
     StartBatch();
   }
   void Renderer2D::Flush()
   {
+    CANDY_PROFILE_FUNCTION();
     if (data.quadIndexCount)
     {
       data.quadShader->Bind();
@@ -404,6 +418,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::RenderSelectionBuffer()
   {
+    CANDY_PROFILE_FUNCTION();
     data.selectionQuadShader->Bind();
     data.selectionQuadShader->Commit();
     
@@ -425,6 +440,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::BeginScene()
   {
+    CANDY_PROFILE_FUNCTION();
     Renderer::BeginOverlayPass();
     
     
@@ -433,16 +449,19 @@ namespace Candy::Graphics
   }
   void Renderer2D::EndScene()
   {
+    CANDY_PROFILE_FUNCTION();
     Flush();
   
   }
   
   void Renderer2D::DrawQuad(const Math::Vector2& position, const Math::Vector2& size, const Math::Vector4& color)
   {
+    CANDY_PROFILE_FUNCTION();
     DrawQuad({ position.x, position.y, 0.0f }, size, color);
   }
   void Renderer2D::DrawQuad(const Math::Vector3& position, const Math::Vector2& size, const Math::Vector4& color, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     Matrix4 transform = Matrix4::Translate(Matrix4::IDENTITY, position)
                           * Matrix4::Scale(Matrix4::IDENTITY, { size.x, size.y, 1.0f });
     
@@ -452,6 +471,7 @@ namespace Candy::Graphics
   
   void Renderer2D::DrawQuad(const Math::Matrix4& transform, const Math::Vector4& color, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     constexpr size_t quadVertexCount = 4;
     const float textureIndex = 0.0f; // White Texture
     //constexpr Math::Vector2 textureCoords[] = { { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
@@ -530,6 +550,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::DrawRotatedQuad(const Math::Vector2& position, const Math::Vector2& size, float rotation, const Math::Vector4& color)
   {
+    
     DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
   }
   void Renderer2D::DrawRotatedQuad(const Math::Vector3& position, const Math::Vector2& size, float rotation, const Math::Vector4& color)
@@ -544,6 +565,7 @@ namespace Candy::Graphics
   }
   void Renderer2D::DrawRotatedQuad(const Math::Vector2& position, const Math::Vector2& size, float rotation, const SharedPtr<Texture>& texture, float tilingFactor, const Math::Vector4& tintColor)
   {
+    CANDY_PROFILE_FUNCTION();
     DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
   }
   void Renderer2D::DrawRotatedQuad(const Math::Vector3& position, const Math::Vector2& size, float rotation, const SharedPtr<Texture>& texture, float tilingFactor, const Math::Vector4& tintColor)
@@ -590,6 +612,7 @@ namespace Candy::Graphics
   
   void Renderer2D::DrawLine(const Vector3& start, Vector3& end, const Vector4& color, float thickness, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     Math::Quaternion rot = Math::Quaternion::Euler(Vector3::zero);
     Math::Matrix4 matrix = Math::Matrix4::Translate(Math::Matrix4::IDENTITY, Vector3::zero) * Math::Matrix4::Rotate(Math::Matrix4::IDENTITY, rot) * Math::Matrix4::Scale(Math::Matrix4::IDENTITY, Vector3::zero);
     DrawLine(matrix, start, end, color, thickness, entityID);
@@ -597,6 +620,7 @@ namespace Candy::Graphics
   
   void Renderer2D::DrawLine(const Math::Matrix4& transform, const Math::Vector3& start, Math::Vector3& end, const Math::Vector4& color, float thickness, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     // Calculate normalized direction vector
     Vector3 dir = Vector3::Normalize(end - start);
     
@@ -648,6 +672,7 @@ namespace Candy::Graphics
   
   void Renderer2D::DrawSprite(const Math::Matrix4& transform, ECS::SpriteRendererComponent& src, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     if (src.texture)
       DrawQuad(transform, src.texture, src.tilingFactor, src.color, entityID);
     else
@@ -657,6 +682,7 @@ namespace Candy::Graphics
   // Glyph: advance
   void Renderer2D::DrawString(const std::string& string, const SharedPtr<Font>& font, const Math::Matrix4& transform, const TextParams& textParams, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     const auto& fontGeometry = font->GetMSDFData()->fontGeometry;
     
     const auto& metrics = fontGeometry.getMetrics();
@@ -766,6 +792,7 @@ namespace Candy::Graphics
   
   void Renderer2D::DrawCharacter(const Math::Matrix4& transform, const Color& color, const Math::Vector2& quadMin, const Math::Vector2& quadMax, const Math::Vector2& texCoordMin, const Math::Vector2& texCoordMax, int entityID)
   {
+    CANDY_PROFILE_FUNCTION();
     Math::Vector3 positions[4] = {Vector3(quadMin.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMin.y, 0.0f), Vector3(quadMax.x, quadMax.y, 0.0f), Vector3(quadMin.x, quadMax.y, 0.0f)};
     
     Math::Vector2 texCoords[4] = {

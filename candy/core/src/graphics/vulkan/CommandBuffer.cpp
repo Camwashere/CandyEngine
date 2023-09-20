@@ -17,6 +17,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::Init(VkSurfaceKHR surface)
   {
+    CANDY_PROFILE_FUNCTION();
     CreateCommandPool(surface);
     CreateCommandBuffers();
     for (int i = 0; i<activeBuffers.size(); i++)
@@ -28,6 +29,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::CreateCommandPool(VkSurfaceKHR surface)
   {
+    CANDY_PROFILE_FUNCTION();
     QueueFamilyIndices queueFamilyIndices = Vulkan::PhysicalDevice().FindQueueFamilies(surface);
     
     VkCommandPoolCreateInfo poolInfo{};
@@ -35,13 +37,14 @@ namespace Candy::Graphics
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     
-    CANDY_CORE_ASSERT(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &commandPool) == VK_SUCCESS, "Failed to create command pool!");
+    CANDY_VULKAN_CHECK(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &commandPool));
     Vulkan::DeletionQueue().Push(commandPool);
     //Vulkan::PushDeleter([=, this](){vkDestroyCommandPool(Vulkan::LogicalDevice(), this->commandPool, nullptr);});
   }
   
   void CommandBuffer::CreateCommandBuffers()
   {
+    CANDY_PROFILE_FUNCTION();
     //commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -51,12 +54,13 @@ namespace Candy::Graphics
     //allocInfo.commandBufferCount=1;
     
     //CANDY_CORE_ASSERT(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &commandBuffers[currentFrame]) == VK_SUCCESS, "Failed to allocate command buffers!");
-    CANDY_CORE_ASSERT(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, commandBuffers.data()) == VK_SUCCESS, "Failed to allocate command buffers!");
+    CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, commandBuffers.data()));
     
   }
   
   void CommandBuffer::SetCurrentBuffer(uint8_t index)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(index<commandBuffers.size(), "Index out of range!");
     currentBuffer = index;
     activeBuffers[index]=true;
@@ -65,6 +69,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
   {
+    CANDY_PROFILE_FUNCTION();
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
     
     VkBufferCopy copyRegion{};
@@ -80,6 +85,7 @@ namespace Candy::Graphics
   
   VkCommandBuffer CommandBuffer::BeginSingleTimeCommands()
   {
+    CANDY_PROFILE_FUNCTION();
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -101,6 +107,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
   {
+    CANDY_PROFILE_FUNCTION();
     vkEndCommandBuffer(commandBuffer);
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -116,7 +123,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
     
     VkImageMemoryBarrier barrier{};
@@ -205,6 +212,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
   {
+    CANDY_PROFILE_FUNCTION();
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
     
     VkBufferImageCopy region{};
@@ -227,6 +235,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::CopyImageToBuffer(VkImage image, VkBuffer buffer, uint32_t width, uint32_t height)
   {
+    CANDY_PROFILE_FUNCTION();
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
     
     VkBufferImageCopy region{};
@@ -271,6 +280,7 @@ namespace Candy::Graphics
   }
   void CommandBuffer::CopyImageToBuffer(VkImage image, VkBuffer buffer, int x, int y, uint32_t width, uint32_t height)
   {
+    CANDY_PROFILE_FUNCTION();
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
     
     VkBufferImageCopy region{};
@@ -317,26 +327,28 @@ namespace Candy::Graphics
   
   void CommandBuffer::Reset()
   {
-    CANDY_CORE_ASSERT(vkResetCommandBuffer(commandBuffers[currentBuffer], 0) == VK_SUCCESS, "Failed to reset command buffer!");
+    CANDY_PROFILE_FUNCTION();
+    CANDY_VULKAN_CHECK(vkResetCommandBuffer(commandBuffers[currentBuffer], 0));
     activeBuffers[currentBuffer] = false;
   }
   
   void CommandBuffer::StartRecording(VkCommandBufferUsageFlags flags)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     Reset();
     VkCommandBufferBeginInfo cmdBeginInfo{};
     cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     cmdBeginInfo.flags = flags;
     cmdBeginInfo.pInheritanceInfo = nullptr;
     
-    CANDY_CORE_ASSERT(vkBeginCommandBuffer(GetCurrentBuffer(), &cmdBeginInfo) == VK_SUCCESS);
+    CANDY_VULKAN_CHECK(vkBeginCommandBuffer(GetCurrentBuffer(), &cmdBeginInfo));
     activeBuffers[currentBuffer] = true;
   }
   
   
   void CommandBuffer::StartRenderPass(const VkRenderPassBeginInfo *renderPassInfo)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdBeginRenderPass(GetCurrentBuffer(), renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     activeBuffers[currentBuffer]=true;
   }
@@ -367,6 +379,7 @@ namespace Candy::Graphics
   }
   std::vector<VkCommandBuffer> CommandBuffer::GetActiveBuffers()
   {
+    CANDY_PROFILE_FUNCTION();
     std::vector<VkCommandBuffer> buffers;
     for (size_t i = 0; i < commandBuffers.size(); i++)
     {
@@ -385,16 +398,19 @@ namespace Candy::Graphics
   
   void CommandBuffer::BindGraphicsPipeline(VkPipeline pipeline)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdBindPipeline(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
   }
   
   void CommandBuffer::BindComputePipeline(VkPipeline pipeline)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdBindPipeline(GetCurrentBuffer(), VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
   }
   
   void CommandBuffer::SetViewport(VkExtent2D extent)
   {
+    CANDY_PROFILE_FUNCTION();
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
@@ -415,6 +431,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::SetViewport(VkViewport viewport)
   {
+    CANDY_PROFILE_FUNCTION();
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
     VkRect2D scissor{};
@@ -428,12 +445,14 @@ namespace Candy::Graphics
   
   void CommandBuffer::SetLineWidth(float value)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdSetLineWidth(GetCurrentBuffer(), value);
   }
   
   
   void CommandBuffer::BindVertexBuffers(const std::vector<VkBuffer> &vertexBuffers)
   {
+    CANDY_PROFILE_FUNCTION();
     VkDeviceSize *offsets;
     memset(offsets, 0, vertexBuffers.size()*sizeof(VkDeviceSize));
     
@@ -442,6 +461,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::BindIndexBuffer(const IndexBuffer &indexBuffer)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdBindIndexBuffer(GetCurrentBuffer(), indexBuffer, 0, VK_INDEX_TYPE_UINT32);
     
   }
@@ -453,6 +473,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::BindDescriptorSets(VkPipelineLayout layout, uint32_t firstSet, const std::vector<VkDescriptorSet> &descriptorSets, const std::vector<uint32_t> &uniformOffsets)
   {
+    CANDY_PROFILE_FUNCTION();
     //CANDY_CORE_INFO("descriptorSets.size()={0}, uniformOffsets.size()={1}", descriptorSets.size(), uniformOffsets.size());
     if (uniformOffsets.empty())
     {
@@ -468,7 +489,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::BindVertexArray(const VertexArray *vertexArray)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     VkBuffer data[vertexArray->vertexBuffers.size()];
     for (int i = 0; i<vertexArray->vertexBuffers.size(); i++)
     {
@@ -484,6 +505,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::DrawEmpty(uint32_t count, VkBuffer dummyBuffer)
   {
+    CANDY_PROFILE_FUNCTION();
 // Bind the dummy buffer
     size_t offset = 0;
     vkCmdBindVertexBuffers(GetCurrentBuffer(), 0, 1, &dummyBuffer, &offset);
@@ -491,20 +513,23 @@ namespace Candy::Graphics
   }
   void CommandBuffer::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdDrawIndexed(GetCurrentBuffer(), indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
   }
   void CommandBuffer::DrawIndexed(const SharedPtr<VertexArray> &vertexArray, int32_t instanceCount, int32_t instanceIndex)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     vkCmdDrawIndexed(GetCurrentBuffer(), static_cast<uint32_t>(vertexArray->indexBuffer->GetCount()), instanceCount, 0, 0, instanceIndex);
   }
   void CommandBuffer::DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t count)
   {
+    CANDY_PROFILE_FUNCTION();
     vertexArray->Bind();
     vkCmdDraw(GetCurrentBuffer(), count, 1, 0, 0);
   }
   void CommandBuffer::EndRenderPass(uint8_t index)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(index<commandBuffers.size());
     if (activeBuffers[index])
     {
@@ -515,6 +540,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::EndRenderPasses()
   {
+    CANDY_PROFILE_FUNCTION();
     for (int i = 0; i<commandBuffers.size(); i++)
     {
       if (activeBuffers[i])
@@ -530,18 +556,20 @@ namespace Candy::Graphics
   
   void CommandBuffer::EndRecording(uint8_t index)
   {
-    CANDY_CORE_ASSERT(vkEndCommandBuffer(commandBuffers[index]) == VK_SUCCESS, "Failed to end record command buffer!");
+    CANDY_PROFILE_FUNCTION();
+    CANDY_VULKAN_CHECK(vkEndCommandBuffer(commandBuffers[index]));
     /*CANDY_CORE_ASSERT(vkEndCommandBuffer(commandBuffers[index]) == VK_SUCCESS, "Failed to end record command buffer!");
     activeBuffers[index]=false;*/
   }
   
   void CommandBuffer::EndRecordings()
   {
+    CANDY_PROFILE_FUNCTION();
     for (int i=0; i<commandBuffers.size(); i++)
     {
       if (activeBuffers[i])
       {
-        CANDY_CORE_ASSERT(vkEndCommandBuffer(commandBuffers[i]) == VK_SUCCESS, "Failed to record command buffer!");
+        CANDY_VULKAN_CHECK(vkEndCommandBuffer(commandBuffers[i]));
       }
     }
     //activeBuffers={false, false, false};
@@ -554,6 +582,7 @@ namespace Candy::Graphics
   
   void CommandBuffer::End(uint8_t index)
   {
+    CANDY_PROFILE_FUNCTION();
     EndRenderPass(index);
     EndRecording(index);
   }
@@ -561,17 +590,20 @@ namespace Candy::Graphics
   
   void CommandBuffer::EndAll()
   {
+    CANDY_PROFILE_FUNCTION();
     EndRenderPasses();
     EndRecordings();
   }
   
   void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t dataSize, const void *data)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdPushConstants(GetCurrentBuffer(), layout, ShaderData::StageToVulkan(shaderStage), 0, dataSize, data);
   }
   
   void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t offset, uint32_t dataSize, const void *data)
   {
+    CANDY_PROFILE_FUNCTION();
     vkCmdPushConstants(GetCurrentBuffer(), layout, ShaderData::StageToVulkan(shaderStage), offset, dataSize, data);
   }
   

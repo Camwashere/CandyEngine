@@ -3,15 +3,81 @@
 #include <candy/graphics/vulkan/device/VulkanDeviceManager.hpp>
 #include <string>
 #include <CandyPch.hpp>
+#include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
   
-  PhysicalDevice::PhysicalDevice() : device(VK_NULL_HANDLE)
+  struct ScoredDevice
   {
-    //vkGetPhysicalDeviceProperties(device, &properties);
+    long long int score;
+    VkPhysicalDevice device;
+  };
+  static std::vector<ScoredDevice> RankSuitableDevices(VkSurfaceKHR surface, const std::vector<VkPhysicalDevice>& foundDevices)
+  {
+    CANDY_PROFILE_FUNCTION();
+    std::vector<ScoredDevice> scoredDevices;
+    for (auto d : foundDevices)
+    {
+      ScoredDevice sd{PhysicalDevice::RateDeviceSuitability(d, surface), d};
+      
+      if (sd.score > 0)
+      {
+        scoredDevices.push_back(sd);
+      }
+    }
+    
+    std::sort(scoredDevices.begin(), scoredDevices.end(), [](const ScoredDevice& a, const ScoredDevice& b){return a.score > b.score;});
+    
+    return scoredDevices;
+  }
+  
+  PhysicalDevice::PhysicalDevice(VkSurfaceKHR surface) : device(VK_NULL_HANDLE)
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    uint32_t deviceCount=0;
+    vkEnumeratePhysicalDevices(Vulkan::Instance(), &deviceCount, nullptr);
+    CANDY_CORE_ASSERT(deviceCount, "Failed to find GPUs with Vulkan support!");
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(Vulkan::Instance(), &deviceCount, devices.data());
+    
+    std::vector<ScoredDevice> scoredDevices = RankSuitableDevices(surface, devices);
+    
+    CANDY_CORE_ASSERT(!scoredDevices.empty(), "Failed to find a suitable GPU!");
+    int64_t currentScore = -1;
+    for (const auto& d : scoredDevices)
+    {
+      CANDY_CORE_INFO("Found GPU with score {0}", d.score);
+      
+      if (d.score == currentScore)
+      {
+        CANDY_CORE_ASSERT(false, "Found multiple GPUs with the same score!");
+      }
+    }
+    
+    device = scoredDevices[0].device;
+    
+    vkGetPhysicalDeviceProperties(device, &properties);
+    
+    vkGetPhysicalDeviceMemoryProperties(device, &memoryProperties);
+    maxAllocationSize=0;
+    for (uint32_t i=0; i<memoryProperties.memoryHeapCount; i++)
+    {
+      if (memoryProperties.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+      {
+        maxAllocationSize = memoryProperties.memoryHeaps[i].size;
+        break;
+      }
+    }
+    CANDY_CORE_ASSERT(maxAllocationSize>0, "Failed to find a suitable GPU!");
+    
+    name = properties.deviceName;
+    CANDY_CORE_INFO("Using GPU: {0}", name);
     
   }
-  PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : device(physicalDevice)
+  
+  
+  /*PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : device(physicalDevice)
   {
     vkGetPhysicalDeviceProperties(device, &properties);
     
@@ -26,7 +92,7 @@ namespace Candy::Graphics
       }
     }
     CANDY_CORE_ASSERT(maxAllocationSize>0, "Failed to find a suitable GPU!");
-  }
+  }*/
   PhysicalDevice::PhysicalDevice(const PhysicalDevice& other) = default;
   
   
@@ -54,7 +120,7 @@ namespace Candy::Graphics
   
   bool PhysicalDevice::CheckExtensionSupport(VkPhysicalDevice device)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
     
@@ -72,30 +138,61 @@ namespace Candy::Graphics
   
   bool PhysicalDevice::IsDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface)
   {
+    CANDY_PROFILE_FUNCTION();
     QueueFamilyIndices indices = FindQueueFamilies(device, surface);
     
     bool extensionsSupported = CheckExtensionSupport(device);
-    bool swapChainAdequate = false;
-    if (extensionsSupported) {
+    
+    if (extensionsSupported)
+    {
       SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device, surface);
-      swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+      bool swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+      
+      VkPhysicalDeviceShaderDrawParametersFeatures parametersFeatures{};
+      
+      parametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+      VkPhysicalDeviceFeatures2 supportedFeatures;
+      supportedFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+      supportedFeatures.pNext = &parametersFeatures;
+      vkGetPhysicalDeviceFeatures2(device, &supportedFeatures);
+      
+      
+      
+      return indices.IsComplete() && swapChainAdequate && supportedFeatures.features.samplerAnisotropy && parametersFeatures.shaderDrawParameters;
     }
+    return false;
     
-    /*VkPhysicalDeviceFeatures supportedFeatures;
-    vkGetPhysicalDeviceFeatures(device, &supportedFeatures);*/
-    VkPhysicalDeviceShaderDrawParametersFeatures parametersFeatures{};
     
-    parametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
-    VkPhysicalDeviceFeatures2 supportedFeatures;
-    supportedFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    supportedFeatures.pNext = &parametersFeatures;
-    vkGetPhysicalDeviceFeatures2(device, &supportedFeatures);
+  }
+  
+  long long int PhysicalDevice::RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface)
+  {
+    CANDY_PROFILE_FUNCTION();
+    if (! IsDeviceSuitable(device, surface))
+    {
+      return -1;
+    }
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(device, &deviceProperties);
     
-    return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.features.samplerAnisotropy && parametersFeatures.shaderDrawParameters;
+    long long int score=0;
+    
+    if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+    {
+      score += 1000;
+    }
+    score += deviceProperties.limits.maxMemoryAllocationCount;
+    score += deviceProperties.limits.maxImageDimension2D;
+    score += deviceProperties.limits.maxBoundDescriptorSets;
+    score += deviceProperties.limits.maxStorageBufferRange;
+    score += deviceProperties.limits.maxComputeSharedMemorySize;
+    CANDY_CORE_INFO("Device {0} scored {1}", deviceProperties.deviceName, score);
+    return score;
   }
   
   SwapChainSupportDetails PhysicalDevice::QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
   {
+    CANDY_PROFILE_FUNCTION();
     SwapChainSupportDetails details;
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
     
@@ -118,6 +215,7 @@ namespace Candy::Graphics
   }
   QueueFamilyIndices PhysicalDevice::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
   {
+    CANDY_PROFILE_FUNCTION();
     QueueFamilyIndices indices;
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -195,6 +293,7 @@ namespace Candy::Graphics
   
   size_t PhysicalDevice::PadUniformBufferSize(size_t originalSize)const
   {
+    CANDY_PROFILE_FUNCTION();
     size_t minUboAlignment = GetMinUniformBufferOffsetAlignment();
     size_t alignedSize = originalSize;
     if (minUboAlignment > 0)

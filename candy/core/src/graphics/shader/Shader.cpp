@@ -14,14 +14,6 @@ using namespace Candy::Utils;
 namespace Candy::Graphics
 {
   
-  
-  static std::filesystem::path GetCacheDirectory()
-  {
-    return "assets/cache/shader";
-    //CANDY_CORE_ASSERT(shaderLibrary->IsValid(), "Shader library is not valid!");
-    //return shaderLibrary->GetCacheDirectory();
-  }
-  
   static shaderc_shader_kind StageToShaderC(ShaderData::Stage stage)
   {
     switch (stage)
@@ -45,27 +37,83 @@ namespace Candy::Graphics
         CANDY_PROFILE_FUNCTION();
       
       preProcessor = ShaderPreProcessor::Create(settings.filepath);
-      //CANDY_CORE_INFO("PREPARING FOR POST PROCESSOR");
       postProcessor.CompileOrGetBinaries(preProcessor->GetSourceStrings(), settings.filepath);
-      //CANDY_CORE_INFO("FINISHED POST PROCESSOR");
-      //pipeline.AddDynamicStates({VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR});
+      
       
         
       // Extract name from filepath
       shaderName = Utils::FileUtils::ExtractNameFromFilePath(settings.filepath);
       
-      //GetLayout().BakePipeline(CreateShaderStageCreateInfos());
-      //BakePipeline(Renderer::GetRenderPass());
-     
-        
     }
   
+    struct SpecConstantData
+    {
+      Collections::GenericBuffer buffer;
+      std::vector<VkSpecializationMapEntry> entries;
+      VkSpecializationInfo specInfo{};
+    };
   void Shader::Bake()
   {
+    CANDY_PROFILE_FUNCTION();
     std::vector<VkPipelineShaderStageCreateInfo> createInfos = CreateShaderStageCreateInfos();
-    for (auto& createInfo : createInfos)
+    std::vector<SpecConstantData> specConstantData(createInfos.size());
+    
+    for (int i=0; i<createInfos.size(); i++)
     {
       size_t currentSize=0;
+      
+      for(const auto& specInput : GetLayout().settings.constantInputs)
+      {
+        ShaderSpecializationConstant specConstant;
+        if (GetLayout().GetSpecConstant(specInput.GetName(), &specConstant))
+        {
+          if (specConstant.stage == ShaderData::VulkanToStage(createInfos[i].stage))
+          {
+            
+            VkSpecializationMapEntry entry{};
+            entry.constantID = specConstant.id;
+            
+            //size_t typeSize = ShaderData::TypeSize(specConstant.type);
+            size_t typeSize = specInput.GetSize();
+            entry.size = typeSize;
+            entry.offset = currentSize;
+            
+            //CANDY_CORE_CRITICAL("Entry size: {0}, Entry offset: {1}", entry.size, entry.offset);
+            specConstantData[i].buffer.AddBuffer(specInput.GetValue());
+            
+            
+            currentSize += entry.size;
+            specConstantData[i].entries.push_back(entry);
+            
+            
+          }
+        }
+        
+      }
+      
+      if (! specConstantData[i].entries.empty())
+      {
+        
+        specConstantData[i].specInfo.mapEntryCount = (uint32_t)specConstantData[i].entries.size();
+        specConstantData[i].specInfo.pMapEntries = specConstantData[i].entries.data();
+        specConstantData[i].specInfo.dataSize = specConstantData[i].buffer.Size();
+        specConstantData[i].specInfo.pData = specConstantData[i].buffer.Data();
+        //CANDY_CORE_CRITICAL("Post: Data size: {0}, Entry count: {1}", specConstantData[i].specInfo.dataSize, specConstantData[i].specInfo.mapEntryCount);
+        
+        
+        
+        
+        createInfos[i].pSpecializationInfo = &specConstantData[i].specInfo;
+      }
+      else
+      {
+        createInfos[i].pSpecializationInfo=nullptr;
+      }
+    }
+    /*for (auto& createInfo : createInfos)
+    {
+      size_t currentSize=0;
+      
       
       
       Collections::GenericBuffer buffer;
@@ -79,24 +127,15 @@ namespace Candy::Graphics
           {
             VkSpecializationMapEntry entry{};
             entry.constantID = specConstant.id;
-            entry.size = ShaderData::TypeSize(specConstant.type);
+            
+            //size_t typeSize = ShaderData::TypeSize(specConstant.type);
+            size_t typeSize = specInput.GetSize();
+            entry.size = typeSize;
             entry.offset = currentSize;
             
-            switch(specInput.GetType())
-            {
-              case ShaderData::Type::Float:
-                buffer.Add(std::get<float>(specInput.GetValue()));
-                break;
-              case ShaderData::Type::Int:
-                buffer.Add(std::get<int>(specInput.GetValue()));
-                break;
-              case ShaderData::Type::Bool:
-                buffer.Add(std::get<bool>(specInput.GetValue()));
-                break;
-              default:
-                break;
-                
-            }
+            CANDY_CORE_CRITICAL("Entry size: {0}, Entry offset: {1}", entry.size, entry.offset);
+            buffer.AddBuffer(specInput.GetValue());
+            
             
             currentSize += entry.size;
             entries.push_back(entry);
@@ -105,104 +144,51 @@ namespace Candy::Graphics
         }
         
       }
-      
+      VkSpecializationInfo specInfo{};
       if (! entries.empty())
       {
-        VkSpecializationInfo specInfo{};
-        specInfo.mapEntryCount = entries.size();
-        specInfo.pMapEntries = entries.data();
-        //specInfo.dataSize = currentSize;
         
+        specInfo.mapEntryCount = (uint32_t)entries.size();
+        specInfo.pMapEntries = entries.data();
         specInfo.dataSize = buffer.Size();
         specInfo.pData = buffer.Data();
+        CANDY_CORE_CRITICAL("Post: Data size: {0}, Entry count: {1}", specInfo.dataSize, specInfo.mapEntryCount);
+        
+        for (size_t i=0; i<specInfo.mapEntryCount; ++i)
+        {
+          CANDY_CORE_CRITICAL("Entry size: {0}, Entry offset: {1}", specInfo.pMapEntries[i].size, specInfo.pMapEntries[i].offset);
+        }
+        
+        
         createInfo.pSpecializationInfo = &specInfo;
       }
-    }
+      else
+      {
+        createInfo.pSpecializationInfo=nullptr;
+      }
+    }*/
     
+    //CANDY_CORE_INFO("Baking pipeline");
     GetLayout().BakePipeline(createInfos);
+    //CANDY_CORE_INFO("Baked pipeline");
+    
   }
   void Shader::Bind()
   {
-    
+    CANDY_PROFILE_FUNCTION();
     RenderCommand::BindPipeline(GetLayout().pipeline);
-    
-    //Vulkan::GetCurrentCommandBuffer().BindPipeline(pipeline);
   }
   
   void Shader::Commit()
   {
+    CANDY_PROFILE_FUNCTION();
     GetLayout().BindAll();
-    //GetLayout().Bind(0);
-    //GetLayout().Bind(1);
-  }
-  /*void Shader::BakePipeline(VkRenderPass renderPass)
-  {
-    VkPipelineLayout pipelineLayout = BakePipelineLayout();
-    GetLayout().BakePipeline(renderPass, CreateShaderStageCreateInfos());
-    //DestroyShaderModules();
-  
+
   }
   
-  VkPipelineLayout Shader::BakePipelineLayout()
-  {
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-    VkPipelineLayout pipelineLayout;
-    
-    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    
-    
-    auto descriptorSetLayouts = BakeDescriptorSetLayouts();
-    //CANDY_CORE_INFO("DESCRIPTOR SET VECTOR SIZE: {}", descriptorSetLayouts.size());
-    for (auto d : descriptorSetLayouts)
-    {
-      if (d==VK_NULL_HANDLE)
-      {
-        CANDY_CORE_ERROR("NULL DESCRIPTOR SET LAYOUT HANDLE");
-      }
-    }
-    pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
-    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
-    
-    auto pushConstantRanges = GetPushConstantRanges();
-    //CANDY_CORE_INFO("Push Constant Range Count: {0}", pushConstantRanges.size());
-    pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size(); // Optional
-    pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data(); // Optional
-    
-    CANDY_CORE_ASSERT(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) == VK_SUCCESS, "Failed to create pipeline layout!");
-    Vulkan::DeletionQueue().Push(pipelineLayout);
-    return pipelineLayout;
-  }
-  std::vector<VkDescriptorSetLayout> Shader::BakeDescriptorSetLayouts()
-  {
-    std::vector<VkDescriptorSetLayout> layouts;
-    layouts.resize(FRAME_OVERLAP);
-    
-    for (int i=0; i<FRAME_OVERLAP; i++)
-    {
-      DescriptorBuilder builder = DescriptorBuilder::Begin();
-      
-      
-      for (const auto& block : GetLayout().uniformBlockProperties)
-      {
-        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
-        //builder.BindBuffer(block.binding, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, ShaderData::StageToVulkan(block.stage));
-      }
-      for (const auto& block : GetLayout().uniformImageProperties)
-      {
-        //CANDY_CORE_INFO("IMAGE BINDING: {}", block.binding);
-        builder.AddBinding(block.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
-        //builder.BindImage(block.binding, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(block.stage));
-      }
-      
-      builder.BuildLayout(&Vulkan::GetCurrentContext().GetFrame(i).globalDescriptor, layouts[i]);
-      
-      //Vulkan::PushDeleter([=, this](){vkDestroyDescriptorSetLayout(Vulkan::LogicalDevice(), layouts[i], nullptr);});
-    }
-    return layouts;
-    
-  }*/
     std::vector<VkPipelineShaderStageCreateInfo> Shader::CreateShaderStageCreateInfos()
     {
+      CANDY_PROFILE_FUNCTION();
         std::vector<VkPipelineShaderStageCreateInfo> ShaderStageCreateInfos;
         for (auto&& [stage, binaryCode] : postProcessor.spirvBinaries)
         {
@@ -212,15 +198,7 @@ namespace Candy::Graphics
             shaderStageCreateInfo.stage = ShaderData::StageToVulkan(stage);
             shaderStageCreateInfo.module = shaderModule;
             shaderStageCreateInfo.pName = "main";
-            
-            
-            
-            
-          
-          
-            
-          
-            //shaderModules.push_back(shaderModule);
+
             ShaderStageCreateInfos.push_back(shaderStageCreateInfo);
         }
         return ShaderStageCreateInfos;
@@ -240,6 +218,7 @@ namespace Candy::Graphics
   
   uint32_t Shader::PushInt(const std::string& name, int value)
   {
+    
       return GetLayout().PushConstant(name, &value);
   }
   uint32_t Shader::PushFloat(const std::string& name, float value)
@@ -338,6 +317,7 @@ namespace Candy::Graphics
   
     VkShaderModule Shader::CreateShaderModule(ShaderData::Stage stage)
     {
+      CANDY_PROFILE_FUNCTION();
         const auto& valuePair = postProcessor.spirvBinaries.find(stage);
         CANDY_CORE_ASSERT(valuePair != postProcessor.spirvBinaries.end(), "Shader binary not found! Cannot attempt to create shader module!");
         const auto& binary = valuePair->second;
@@ -346,7 +326,7 @@ namespace Candy::Graphics
         createInfo.codeSize = binary.size()*sizeof(uint32_t);
         createInfo.pCode = binary.data();
         VkShaderModule shaderModule;
-        CANDY_CORE_ASSERT(vkCreateShaderModule(Vulkan::LogicalDevice(), &createInfo, nullptr, &shaderModule) == VK_SUCCESS, "Failed to create shader module!");
+      CANDY_VULKAN_CHECK(vkCreateShaderModule(Vulkan::LogicalDevice(), &createInfo, nullptr, &shaderModule));
         
         return shaderModule;
     }
@@ -356,11 +336,13 @@ namespace Candy::Graphics
 
   std::vector<VkPushConstantRange> Shader::GetPushConstantRanges()
   {
+    CANDY_PROFILE_FUNCTION();
       return GetLayout().GetPushConstantRanges();
   
   }
   std::vector<char> Shader::ReadSpvFileBinary(const std::string& filename)
   {
+    CANDY_PROFILE_FUNCTION();
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
     CANDY_CORE_ASSERT(file.is_open(), "Failed to open file!");
     
@@ -377,10 +359,10 @@ namespace Candy::Graphics
     
     SharedPtr<Shader> Shader::Create(const ShaderSettings& settings)
     {
+      CANDY_PROFILE_FUNCTION();
       SharedPtr<Shader> shader = CreateSharedPtr<Shader>(settings);
-      ShaderLibrary::instance.AddShader(shader);
+      ShaderLibrary::AddShader(shader);
       return shader;
-        //return CreateSharedPtr<Shader>(settings);
     }
   
     

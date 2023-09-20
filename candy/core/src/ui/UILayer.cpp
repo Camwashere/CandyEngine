@@ -18,6 +18,7 @@ namespace Candy
   
   void UILayer::OnAttach()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_INFO("IMGui Version: {}", ImGui::GetVersion());
     //1: create descriptor pool for IMGUI
     // the size of the pool is very oversize, but its copied from imgui demo itself.
@@ -45,7 +46,7 @@ namespace Candy
     
     
     
-    CANDY_CORE_ASSERT(vkCreateDescriptorPool(Vulkan::LogicalDevice(), &pool_info, nullptr, &uiPool)==VK_SUCCESS, "FAILED TO CREATE IMGUI DESCRIPTOR POOL!");
+    CANDY_VULKAN_CHECK(vkCreateDescriptorPool(Vulkan::LogicalDevice(), &pool_info, nullptr, &uiPool));
     
     
     
@@ -107,7 +108,7 @@ namespace Candy
   
   void UILayer::OnDetach()
   {
-   
+    CANDY_PROFILE_FUNCTION();
     vkDeviceWaitIdle(Vulkan::LogicalDevice());
     
     vkDestroyDescriptorPool(Vulkan::LogicalDevice(), uiPool, nullptr);
@@ -118,6 +119,7 @@ namespace Candy
   
   void UILayer::OnEvent(Events::Event &e)
   {
+    CANDY_PROFILE_FUNCTION();
     if (blockEvents)
     {
       ImGuiIO& io = ImGui::GetIO();
@@ -131,6 +133,7 @@ namespace Candy
   }
   void UILayer::Begin()
   {
+    CANDY_PROFILE_FUNCTION();
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -143,6 +146,7 @@ namespace Candy
   
   void UILayer::End()
   {
+    CANDY_PROFILE_FUNCTION();
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)Application::GetMainWindowReference().GetWidth(), (float)Application::GetMainWindowReference().GetHeight());
     

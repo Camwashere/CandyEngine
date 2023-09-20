@@ -1,5 +1,5 @@
 #pragma once
-#include "candy/graphics/Texture.hpp"
+#include "candy/graphics/texture/Texture.hpp"
 #include "candy/graphics/vulkan/ImageView.hpp"
 namespace Candy::Graphics
 {
@@ -66,7 +66,7 @@ namespace Candy::Graphics
     std::string name;
     uint32_t binding;
     uint32_t set;
-    Texture texture;
+    SharedPtr<Texture> texture;
     //ImageView textureImageView;
   
   public:
@@ -76,7 +76,7 @@ namespace Candy::Graphics
     [[nodiscard]] std::string GetName()const;
     [[nodiscard]] VkSampler GetSampler()const;
     //[[nodiscard]] VkImageView GetImageView()const;
-    [[nodiscard]] const Texture& GetTexture()const{return texture;}
+    [[nodiscard]] const SharedPtr<Texture>& GetTexture()const{return texture;}
     [[nodiscard]] uint32_t GetBinding()const;
     [[nodiscard]] uint32_t GetSet()const;
 

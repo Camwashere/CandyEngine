@@ -1,6 +1,6 @@
 #include <gum/base/GumRenderer.hpp>
 #include <candy/graphics/VertexArray.hpp>
-#include <candy/graphics/Texture.hpp>
+#include "candy/graphics/texture/Texture.hpp"
 namespace Candy::Gum
 {
   using namespace Graphics;

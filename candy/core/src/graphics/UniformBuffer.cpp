@@ -5,11 +5,13 @@ namespace Candy::Graphics
 {
   UniformBuffer::UniformBuffer() : VulkanBuffer(MaxSize(), BufferType::UNIFORM_DYNAMIC)
   {
+    CANDY_PROFILE_FUNCTION();
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
     Vulkan::DeletionQueue().Push(this);
   }
   UniformBuffer::UniformBuffer(uint64_t origSize) : VulkanBuffer(origSize, BufferType::UNIFORM_DYNAMIC)
   {
+    CANDY_PROFILE_FUNCTION();
     VulkanBuffer::CreateBuffer(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, &allocation);
     Vulkan::DeletionQueue().Push(this);
   }
@@ -18,6 +20,7 @@ namespace Candy::Graphics
   
   void UniformBuffer::SetData(uint64_t dataSize, const void* newData)
   {
+    CANDY_PROFILE_FUNCTION();
     char* sceneData;
     vmaMapMemory(Vulkan::Allocator(), allocation, (void**)&sceneData);
     //sceneData += Vulkan::PhysicalDevice().PadUniformBufferSize(sizeof(Color)) * Vulkan::GetCurrentContext().GetCurrentFrameIndex();
@@ -27,6 +30,7 @@ namespace Candy::Graphics
   
   void UniformBuffer::SetData(uint64_t offset, uint64_t dataSize, const void* data)
   {
+    CANDY_PROFILE_FUNCTION();
     char* sceneData;
     vmaMapMemory(Vulkan::Allocator(), allocation, (void**)&sceneData);
     memcpy(sceneData+offset, data, dataSize);
@@ -35,7 +39,7 @@ namespace Candy::Graphics
   
   uint32_t UniformBuffer::MaxSize()
   {
-    
+    CANDY_PROFILE_FUNCTION();
     return Vulkan::PhysicalDevice().GetMaxUniformBufferSize()/3;
   }
   SharedPtr<UniformBuffer> UniformBuffer::Create()

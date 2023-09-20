@@ -2,7 +2,15 @@
 #include <cstdint>
 #include <string>
 #include <fstream>
-#include <spdlog/fmt/bundled/format.h>
+//#include <spdlog/fmt/fmt.h>
+//#include <spdlog/fmt/bundled/format.h>
+#include <fmt/format.h>
+
+namespace c4
+{
+  template<typename T>
+  struct basic_substring;
+}
 namespace Candy
 {
   
@@ -42,6 +50,11 @@ namespace Candy
     [[nodiscard]] explicit operator std::string()const;
     
   };
+  
+  size_t to_chars(c4::basic_substring<char> buf, const Candy::Version& v);
+  bool from_chars(c4::basic_substring<const char> buf, Candy::Version* v);
+  
+  
 }
 template<>
 struct fmt::formatter<Candy::Version>

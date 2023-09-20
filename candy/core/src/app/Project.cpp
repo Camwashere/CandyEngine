@@ -28,11 +28,13 @@ namespace Candy
   }
   SharedPtr<Project> Project::New()
   {
+    CANDY_PROFILE_FUNCTION();
     activeProject = CreateSharedPtr<Project>();
     return activeProject;
   }
   SharedPtr<Project> Project::Load(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     SharedPtr<Project> project = CreateSharedPtr<Project>();
     
     ProjectSerializer serializer(project);
@@ -47,12 +49,14 @@ namespace Candy
   }
   bool Project::SaveActive()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(activeProject);
     std::filesystem::path activePath = GetActiveProjectDirectory()/(activeProject->config.name + PROJECT_FILE_EXTENSION);
     return SaveActive(activePath);
   }
   bool Project::SaveActive(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     ProjectSerializer serializer(activeProject);
     if (serializer.Serialize(path))
     {

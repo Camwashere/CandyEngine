@@ -26,6 +26,6 @@
 #else
 #define CANDY_ASSERT(...)
 #define CANDY_CORE_ASSERT(...)
-#define VulkanCheck(x) x
+
 
 #endif

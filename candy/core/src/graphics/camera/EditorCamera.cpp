@@ -14,6 +14,7 @@ namespace Candy::Graphics
   
   void EditorCamera::OnUpdate()
   {
+    CANDY_PROFILE_FUNCTION();
     float deltaTime = Application::DeltaTime();
     float velocity = settings.movementSpeed * deltaTime;
     const Vector2& mousePos = Input::GetMousePosition();
@@ -69,6 +70,7 @@ namespace Candy::Graphics
   }
   void EditorCamera::OnEvent(Events::Event& event)
   {
+    CANDY_PROFILE_FUNCTION();
     Events::EventDispatcher dispatcher(event);
     dispatcher.Dispatch<Events::MouseScrollEvent>(CANDY_BIND_EVENT_FUNCTION(EditorCamera::OnMouseScroll));
     dispatcher.Dispatch<Events::WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(EditorCamera::OnWindowResized));
@@ -77,6 +79,7 @@ namespace Candy::Graphics
   
   bool EditorCamera::OnMouseScroll(Events::MouseScrollEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     float deltaTime = Application::DeltaTime();
     float velocity = settings.scrollSensitivity * deltaTime;
     Vector3 direction = Vector3::Cross(perspective.localUp, perspective.localRight)*event.GetOffsetY();
@@ -86,12 +89,14 @@ namespace Candy::Graphics
   }
   bool EditorCamera::OnWindowResized(Events::WindowResizeEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     SetViewportSize((float)event.GetWidth(), (float)event.GetHeight());
     //perspective.UpdateCameraVectors();
     return false;
   }
   void EditorCamera::MousePan(const Math::Vector2& mouseDelta, float velocity)
   {
+    CANDY_PROFILE_FUNCTION();
     float xOffset = mouseDelta.x;
     float yOffset=mouseDelta.y;
     Vector3 directionA = Vector3::Cross(perspective.localUp, perspective.localFront)*xOffset;
@@ -103,6 +108,7 @@ namespace Candy::Graphics
   
   void EditorCamera::MouseRotate(const Math::Vector2& mouseDelta)
   {
+    CANDY_PROFILE_FUNCTION();
     Vector2 offset = mouseDelta * settings.mouseSensitivity;
     
     perspective.pitch += offset.y;
@@ -122,6 +128,7 @@ namespace Candy::Graphics
   }
   void EditorCamera::SetViewportSize(float width, float height)
   {
+    CANDY_PROFILE_FUNCTION();
     perspective.SetViewportSize(width, height);
     orthographic.SetViewportSize(width, height);
     //orthographic.SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel)

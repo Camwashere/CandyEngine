@@ -3,7 +3,7 @@
 namespace Candy::Graphics
 {
   DescriptorBuilder DescriptorBuilder::Begin(){
-    
+    CANDY_PROFILE_FUNCTION();
     DescriptorBuilder builder;
     
     builder.cache = &Vulkan::GetDescriptorLayoutCache();
@@ -13,6 +13,7 @@ namespace Candy::Graphics
   
   DescriptorBuilder& DescriptorBuilder::BindBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, VkShaderStageFlags stageFlags)
   {
+    CANDY_PROFILE_FUNCTION();
     //create the descriptor binding for the layout
     VkDescriptorSetLayoutBinding newBinding{};
     
@@ -39,6 +40,7 @@ namespace Candy::Graphics
   }
   DescriptorBuilder& DescriptorBuilder::BindImage(uint32_t binding,  VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags)
   {
+    CANDY_PROFILE_FUNCTION();
     VkDescriptorSetLayoutBinding newBinding{};
     
     newBinding.descriptorCount = 1;
@@ -64,6 +66,7 @@ namespace Candy::Graphics
   
   DescriptorBuilder& DescriptorBuilder::AddBinding(uint32_t binding, VkDescriptorType type, VkShaderStageFlags stageFlags, uint32_t arrayCount)
   {
+    CANDY_PROFILE_FUNCTION();
     VkDescriptorSetLayoutBinding newBinding{};
     if (arrayCount > 1)
     {
@@ -83,6 +86,7 @@ namespace Candy::Graphics
   
   DescriptorBuilder& DescriptorBuilder::AddImageWrite(uint32_t binding,  const VkDescriptorImageInfo* imageInfo, VkDescriptorType type)
   {
+    CANDY_PROFILE_FUNCTION();
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     newWrite.pNext = nullptr;
@@ -97,6 +101,7 @@ namespace Candy::Graphics
   }
   DescriptorBuilder& DescriptorBuilder::AddBufferWrite(uint32_t binding,  const VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type)
   {
+    CANDY_PROFILE_FUNCTION();
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     newWrite.pNext = nullptr;
@@ -111,6 +116,7 @@ namespace Candy::Graphics
   }
   DescriptorBuilder& DescriptorBuilder::AddImageWrite(uint32_t binding,  const VkDescriptorImageInfo* imageInfo, VkDescriptorType type, uint32_t set)
   {
+    CANDY_PROFILE_FUNCTION();
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     newWrite.pNext = nullptr;
@@ -128,6 +134,7 @@ namespace Candy::Graphics
   }
   DescriptorBuilder& DescriptorBuilder::AddImageArrayWrite(uint32_t binding, const std::vector<VkDescriptorImageInfo>& imageInfos, VkDescriptorType type, uint32_t set, uint32_t destinationStart)
   {
+    CANDY_PROFILE_FUNCTION();
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     newWrite.pNext = nullptr;
@@ -145,6 +152,7 @@ namespace Candy::Graphics
   }
   DescriptorBuilder& DescriptorBuilder::AddBufferWrite(uint32_t binding,  const VkDescriptorBufferInfo* bufferInfo, VkDescriptorType type, uint32_t set)
   {
+    CANDY_PROFILE_FUNCTION();
     VkWriteDescriptorSet newWrite{};
     newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     newWrite.pNext = nullptr;
@@ -161,6 +169,7 @@ namespace Candy::Graphics
   
   VkDescriptorSetLayout DescriptorBuilder::BuildLayout()
   {
+    CANDY_PROFILE_FUNCTION();
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.pNext = nullptr;
@@ -174,6 +183,7 @@ namespace Candy::Graphics
   
   bool DescriptorBuilder::AllocateDescriptorSet(VkDescriptorSet* set, VkDescriptorSetLayout layout)
   {
+    CANDY_PROFILE_FUNCTION();
     bool success = alloc->Allocate(set, layout);
     if (!success)
     {
@@ -183,6 +193,7 @@ namespace Candy::Graphics
     return true;
   }
   bool DescriptorBuilder::Build(VkDescriptorSet* set, VkDescriptorSetLayout& layout){
+    CANDY_PROFILE_FUNCTION();
     //build layout first
     layout = BuildLayout();
     if (!AllocateDescriptorSet(set, layout))
@@ -204,11 +215,13 @@ namespace Candy::Graphics
   
   bool DescriptorBuilder::Build(VkDescriptorSet* set)
   {
+    CANDY_PROFILE_FUNCTION();
     VkDescriptorSetLayout layout;
     return Build(set, layout);
   }
   void DescriptorBuilder::Write(VkDescriptorSet set)
   {
+    CANDY_PROFILE_FUNCTION();
     BindWrites(set);
     /*for (VkWriteDescriptorSet w : writes) {
       Renderer::AddWrite(w);
@@ -217,10 +230,12 @@ namespace Candy::Graphics
   }
   void DescriptorBuilder::Write()
   {
+    CANDY_PROFILE_FUNCTION();
     vkUpdateDescriptorSets(Vulkan::LogicalDevice(), writes.size(), writes.data(), 0, nullptr);
   }
   void DescriptorBuilder::BindWrites(VkDescriptorSet set)
   {
+    CANDY_PROFILE_FUNCTION();
     for (VkWriteDescriptorSet& w : writes) {
       w.dstSet = set;
     }

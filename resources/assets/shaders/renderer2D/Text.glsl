@@ -41,7 +41,7 @@ layout(set=2, binding=1) uniform sampler2D u_FontAtlas;
 layout(location = 0) out vec4 outValue;
 
 //const float pxRange = 10.0; // set to distance field's pixel range
-layout(constant_id = 0) const float pxRange=10.0;
+layout(constant_id = 0) const float pxRange=0;
 float screenPxRange() {
 
     vec2 unitRange = vec2(pxRange)/vec2(textureSize(u_FontAtlas, 0));

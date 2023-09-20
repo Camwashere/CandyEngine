@@ -1,4 +1,5 @@
 #include "candy/base/Log.hpp"
+#include <spdlog/spdlog.h>
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
 namespace Candy
@@ -25,6 +26,7 @@ namespace Candy
     clientLogger->set_level(spdlog::level::trace);
     clientLogger->flush_on(spdlog::level::trace);
     
-    
+    coreLogger->trace("Initialized core logger");
+    coreLogger->trace("Yo bruh what {0}", "up");
   }
 }

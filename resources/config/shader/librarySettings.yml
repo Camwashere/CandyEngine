@@ -1,0 +1,16 @@
+ShaderLibrarySettings:
+  InternalCacheDirectory: assets/cache/shader
+  InternalSourceDirectory: assets/shaders
+  ProjectCacheDirectory: projects/TestProject/cache/shaders
+  ProjectSourceDirectory: projects/TestProject/assets/shaders
+  CompilationSettings:
+    AutoMapping: 1
+    PreserveBindings: 0
+    SuppressWarnings: 0
+    WarningsAsErrors: 0
+    InvertY: 0
+    GenerateDebugInfo: 1
+    Optimize: 1
+    RecompileOnLoad: 1
+    GLSLVersion: 460
+    VulkanVersion: '[1,3,0]'

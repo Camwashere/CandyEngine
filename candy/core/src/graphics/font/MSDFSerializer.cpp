@@ -31,6 +31,7 @@ namespace Candy::Graphics
   
   bool MSDFSerializer::Serialize(MSDFData* data, const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(data != nullptr);
     c4::yml::Tree tree;
     c4::yml::NodeRef root = tree.rootref();
@@ -115,6 +116,7 @@ namespace Candy::Graphics
   }
   bool MSDFSerializer::Deserialize(MSDFData* data, const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(data != nullptr);
     
     // read the file into a string

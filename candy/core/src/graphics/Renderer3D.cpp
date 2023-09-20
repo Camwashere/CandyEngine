@@ -57,6 +57,7 @@ namespace Candy::Graphics
   
   void Renderer3D::InitGrid()
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderSettings gridSettings{};
     gridSettings.filepath = "assets/shaders/renderer3D/Grid.glsl";
     gridSettings.renderPassIndex = Renderer::GetViewportPassIndex();
@@ -66,6 +67,7 @@ namespace Candy::Graphics
   }
   void Renderer3D::InitMesh()
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderSettings meshSettings{};
     meshSettings.filepath = "assets/shaders/renderer3D/Mesh.glsl";
     meshSettings.renderPassIndex = Renderer::GetViewportPassIndex();
@@ -86,6 +88,7 @@ namespace Candy::Graphics
   }
   void Renderer3D::InitSelection()
   {
+    CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionSettings{};
     selectionSettings.filepath = "assets/shaders/renderer3D/SelectionMesh.glsl";
     selectionSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
@@ -94,15 +97,18 @@ namespace Candy::Graphics
   
   void Renderer3D::InitMaterial()
   {
-    data.whiteTexture = Texture::Create(TextureSpecification());
+    CANDY_PROFILE_FUNCTION();
+    /*data.whiteTexture = Texture::Create(TextureSpecification());
     uint32_t whiteTextureData = 0xffffffff;
-    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));*/
+    data.whiteTexture = Texture::White();
     
     data.textureSlots[0] = data.whiteTexture;
   }
   
   void Renderer3D::StartBatch()
   {
+    CANDY_PROFILE_FUNCTION();
     data.objects.clear();
     data.transforms.clear();
     
@@ -118,12 +124,14 @@ namespace Candy::Graphics
   }
   void Renderer3D::NextBatch()
   {
+    CANDY_PROFILE_FUNCTION();
     Flush();
     StartBatch();
   }
   
   void Renderer3D::Flush()
   {
+    CANDY_PROFILE_FUNCTION();
     if (data.meshIndexCount)
     {
       data.meshShader->Bind();
@@ -179,6 +187,7 @@ namespace Candy::Graphics
   }
   void Renderer3D::RenderGrid()
   {
+    CANDY_PROFILE_FUNCTION();
     data.gridShader->Bind();
     data.gridShader->Commit();
     
@@ -187,15 +196,17 @@ namespace Candy::Graphics
   
   void Renderer3D::Init()
   {
+    CANDY_PROFILE_FUNCTION();
     InitGrid();
     InitMesh();
     InitSelection();
     InitMaterial();
-    ShaderLibrary::instance.Reload();
+    ShaderLibrary::Reload();
     
   }
   void Renderer3D::ResetStats()
   {
+    CANDY_PROFILE_FUNCTION();
     data.stats.drawCalls=0;
     data.stats.objectCount=0;
     data.stats.vertexCount=0;
@@ -206,17 +217,20 @@ namespace Candy::Graphics
   
   void Renderer3D::BeginScene()
   {
+    CANDY_PROFILE_FUNCTION();
     StartBatch();
     RenderGrid();
   }
  
   void Renderer3D::EndScene()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(data.transforms.size() == data.objects.size(), "Transforms and meshes are not the same size");
     Flush();
   }
   void Renderer3D::RenderSelectionBuffer()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(data.transforms.size() == data.objects.size(), "Transforms and meshes are not the same size");
     Renderer::BeginSelectionPass();
     data.selectionShader->Bind();
@@ -234,6 +248,7 @@ namespace Candy::Graphics
   }
   void Renderer3D::SubmitMesh(uint32_t entity, const MeshData& mesh, const SharedPtr<Texture>& texture, const Math::Matrix4& transform)
   {
+    CANDY_PROFILE_FUNCTION();
     if (mesh.IsValid())
     {
       if (mesh.IndexCount() >= RenderData3D::maxIndices)
@@ -256,23 +271,34 @@ namespace Candy::Graphics
       objectData.objectIndex = data.objects.size();
       objectData.transformIndex = data.transforms.size();
       
-      bool found = false;
-      for (int i=0; i<data.textureSlotIndex; i++)
+      if (texture)
       {
-        if (*data.textureSlots[i] == *texture)
+        bool found = false;
+        
+        for (int i=0; i<data.textureSlotIndex; i++)
         {
-          found = true;
-          objectData.textureIndex = i;
-          break;
+          if (*data.textureSlots[i] == *texture)
+          {
+            found = true;
+            objectData.textureIndex = i;
+            break;
+          }
+        }
+        if (! found)
+        {
+          CANDY_CORE_ASSERT(data.textureSlotIndex < data.maxTextureSlots, "Texture slots are full");
+          data.textureSlots[data.textureSlotIndex] = texture;
+          objectData.textureIndex = data.textureSlotIndex;
+          data.textureSlotIndex++;
         }
       }
-      if (! found)
+      else
       {
-        CANDY_CORE_ASSERT(data.textureSlotIndex < data.maxTextureSlots, "Texture slots are full");
-        data.textureSlots[data.textureSlotIndex] = texture;
-        objectData.textureIndex = data.textureSlotIndex;
-        data.textureSlotIndex++;
+        objectData.textureIndex = 0;
       }
+      
+      
+      
       objectData.entityID = entity;
       objectData.indexStart = data.indexOffset;
       objectData.vertexOffset = (int32_t)data.vertexOffset;

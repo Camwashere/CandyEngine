@@ -2,7 +2,7 @@
 #include "camera/EditorCamera.hpp"
 #include <candy/math/Matrix.hpp>
 #include <candy/math/Vector.hpp>
-#include <candy/graphics/Texture.hpp>
+#include "candy/graphics/texture/Texture.hpp"
 #include <candy/graphics/font/Font.hpp>
 namespace Candy::ECS
 {

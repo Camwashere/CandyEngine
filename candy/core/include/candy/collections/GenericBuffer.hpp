@@ -15,7 +15,17 @@ namespace Candy::Collections
       buffer.insert(buffer.end(), start, start + sizeof(T));
     }
     
-    const char* Data()const
+    void AddBuffer(const GenericBuffer& value)
+    {
+      buffer.insert(buffer.end(), value.buffer.begin(), value.buffer.end());
+    }
+    
+    void Add(const char* data, size_t size)
+    {
+      CANDY_CORE_ASSERT(size > 0);
+      buffer.insert(buffer.end(), data, data + size);
+    }
+    [[nodiscard]] const char* Data()const
     {
       return buffer.data();
     }
@@ -24,9 +34,11 @@ namespace Candy::Collections
       return buffer.data();
     }
     
-    size_t Size()const
+    [[nodiscard]] size_t Size()const
     {
       return buffer.size();
     }
   };
+  
+ 
 }

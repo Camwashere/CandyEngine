@@ -6,6 +6,7 @@ namespace Candy::Graphics
   PixelBuffer::PixelBuffer(const Math::Vector2u& sizeOfImage)
   : VulkanBuffer(sizeof(int), BufferType::PIXEL)
   {
+    CANDY_PROFILE_FUNCTION();
     imageSize = sizeOfImage;
     //CANDY_CORE_INFO("IMAGE SIZE: {}", imageSize);
     pixels = new int[1];
@@ -15,10 +16,12 @@ namespace Candy::Graphics
   
   PixelBuffer::~PixelBuffer()
   {
+    CANDY_PROFILE_FUNCTION();
     delete[] pixels;
   }
   int PixelBuffer::ReadPixel(int x, int y)
   {
+    CANDY_PROFILE_FUNCTION();
     CopyImage(Renderer::GetCurrentFrame().viewportData.selectionImage, x, y);
     int pixel = pixels[0];
     vmaUnmapMemory(Vulkan::Allocator(), allocation); // Unmap memory after reading pixel value from it
@@ -30,6 +33,7 @@ namespace Candy::Graphics
   }
   int PixelBuffer::GetPixel(int x, int y)
   {
+    CANDY_PROFILE_FUNCTION();
     int pixelIndex = y * (int)imageSize.x + x;
     CANDY_CORE_ASSERT(pixelIndex < imageSize.x * imageSize.y, "Pixel index out of bounds");
     return pixels[pixelIndex];
@@ -37,6 +41,7 @@ namespace Candy::Graphics
   
   void PixelBuffer::CopyImage(VkImage image, int x, int y)
   {
+    CANDY_PROFILE_FUNCTION();
     RenderCommand::TransitionImageLayout(image, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
     Renderer::GetCurrentFrame().commandBuffer.CopyImageToBuffer(image, buffer, x, y, 1, 1);
     vmaMapMemory(Vulkan::Allocator(), allocation, &data);

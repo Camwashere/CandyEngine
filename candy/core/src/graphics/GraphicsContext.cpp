@@ -34,8 +34,10 @@ namespace Candy::Graphics
   }
     GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
     {
+      CANDY_PROFILE_FUNCTION();
       handle = windowHandle;
-      CANDY_CORE_ASSERT(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface) == VK_SUCCESS, "Failed to create vulkan window surface!");
+      CANDY_VULKAN_CHECK(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface));
+      //CANDY_CORE_ASSERT(result == VK_SUCCESS, "Failed to create vulkan window surface!");
       Vulkan::InitDeviceManager(surface);
       InitSyncStructures();
       Vulkan::RegisterContext(this);
@@ -46,6 +48,7 @@ namespace Candy::Graphics
     }
   void GraphicsContext::RecreateViewport()
   {
+    CANDY_PROFILE_FUNCTION();
       CleanViewport();
       CreateViewport();
       
@@ -62,6 +65,7 @@ namespace Candy::Graphics
   }
   void GraphicsContext::CreateViewport()
   {
+    CANDY_PROFILE_FUNCTION();
     Vector2u size = {swapChain->extent.width, swapChain->extent.height};
       for (int i=0; i<FRAME_OVERLAP; i++)
       {
@@ -96,6 +100,7 @@ namespace Candy::Graphics
   
   void GraphicsContext::CleanViewport()
   {
+    CANDY_PROFILE_FUNCTION();
     for (int i=0; i<FRAME_OVERLAP; i++)
     {
       Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImage);
@@ -114,6 +119,7 @@ namespace Candy::Graphics
   }
   void GraphicsContext::InitSyncStructures()
   {
+    CANDY_PROFILE_FUNCTION();
     VkFenceCreateInfo fenceCreateInfo{};
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
@@ -124,9 +130,9 @@ namespace Candy::Graphics
     
     for (int i = 0; i < FRAME_OVERLAP; i++) {
       frames[i].commandBuffer.Init(surface);
-      CANDY_CORE_ASSERT(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence)==VK_SUCCESS);
-      CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore)==VK_SUCCESS);
-      CANDY_CORE_ASSERT(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore)==VK_SUCCESS);
+      CANDY_VULKAN_CHECK(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence));
+      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore));
+      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore));
       frames[i].uniformBuffer = UniformBuffer::Create();
       frames[i].storageBuffer = StorageBuffer::Create(sizeof(Matrix4), MAX_OBJECTS);
       frames[i].materialBuffer = UniformBuffer::Create();
@@ -165,6 +171,7 @@ namespace Candy::Graphics
   }
   VkFormat GraphicsContext::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
   {
+    CANDY_PROFILE_FUNCTION();
     for (VkFormat format : candidates)
     {
       VkFormatProperties props;
@@ -187,7 +194,7 @@ namespace Candy::Graphics
     void GraphicsContext::SwapBuffers()
     {
       CANDY_PROFILE_FUNCTION();
-      CANDY_CORE_ASSERT(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, true, UINT64_MAX) == VK_SUCCESS);
+      CANDY_VULKAN_CHECK(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, true, UINT64_MAX));
       VkResult result = swapChain->AcquireNextImage(GetCurrentFrame().presentSemaphore, UINT64_MAX);
       
       if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -205,6 +212,7 @@ namespace Candy::Graphics
     
     void GraphicsContext::Present()
     {
+      CANDY_PROFILE_FUNCTION();
       VkPresentInfoKHR presentInfo{};
       presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
       presentInfo.pSwapchains = &swapChain->swapChain;
@@ -231,12 +239,14 @@ namespace Candy::Graphics
 
     void GraphicsContext::RebuildSwapChain(VkRenderPass renderPass)
     {
+      CANDY_PROFILE_FUNCTION();
       swapChain->Rebuild(renderPass);
     }
     
   
   void GraphicsContext::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     
     Vector2u size = {(uint32_t)event.GetWidth(), (uint32_t)event.GetHeight()};
     //RecreateTarget(size);
@@ -245,6 +255,7 @@ namespace Candy::Graphics
   
   void GraphicsContext::CleanSwapChain()
   {
+    CANDY_PROFILE_FUNCTION();
       swapChain->Clean();
   }
   
@@ -281,12 +292,14 @@ namespace Candy::Graphics
   
   VkSurfaceFormatKHR GraphicsContext::GetSurfaceFormat()
   {
+    CANDY_PROFILE_FUNCTION();
     SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
     return Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
   }
  
   void GraphicsContext::CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size)
   {
+    CANDY_PROFILE_FUNCTION();
     VkFormat depthFormat = GraphicsContext::FindDepthFormat();
     GetFrame(frameIndex).viewportData.depthImage.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
     //GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
@@ -295,6 +308,7 @@ namespace Candy::Graphics
   }
   void GraphicsContext::UpdateFrameIndex()
   {
+    CANDY_PROFILE_FUNCTION();
       previousFrameIndex = currentFrameIndex;
       currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
   }

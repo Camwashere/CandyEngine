@@ -29,10 +29,10 @@ namespace Candy::Graphics
   {
   private:
     std::unordered_map<ShaderData::Stage, std::vector<uint32_t>> spirvBinaries{};
-    bool autoMapping=true;
+    /*bool autoMapping=true;
     bool generateDebugInfo=true;
     bool optimize=true;
-    bool recompileOnLoad=true;
+    bool recompileOnLoad=true;*/
     ShaderLayout shaderLayout;
     
     

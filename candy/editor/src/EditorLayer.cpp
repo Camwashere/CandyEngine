@@ -21,6 +21,7 @@ namespace Candy
   
   EditorLayer::EditorLayer()
   {
+    CANDY_PROFILE_FUNCTION();
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
     OpenScene(Project::GetActive()->GetConfiguration().startScene);
     
@@ -31,11 +32,11 @@ namespace Candy
     
     
     /// Load backpack model
-    /*ModelLoader loader;
-    loader.scene = activeScene;
-    CANDY_CORE_INFO("Loading backpack model");
-    loader.LoadModel("assets/models/backpack/Survival_BackPack_2.fbx");
-    CANDY_CORE_INFO("Loaded backpack model");*/
+    /*ModelLoader loader(activeScene);
+    
+    CANDY_CORE_INFO("Loading Robot model");
+    loader.LoadModel("assets/models/robot/Robot.fbx");
+    CANDY_CORE_INFO("Loaded Robot model");*/
     
     
   }
@@ -56,12 +57,15 @@ namespace Candy
   
   void EditorLayer::OnUpdate()
   {
+    CANDY_PROFILE_FUNCTION();
     
     viewport->OnUpdate();
+   
   }
   
   void EditorLayer::OnRenderUI()
   {
+    CANDY_PROFILE_FUNCTION();
     // Note: Switch this to true to enable dockspace
     static bool dockspaceOpen = true;
     static bool opt_fullscreen_persistant = true;
@@ -129,6 +133,7 @@ namespace Candy
   
   void EditorLayer::MenuBar()
   {
+    CANDY_PROFILE_FUNCTION();
     if (ImGui::BeginMenuBar())
     {
       if (ImGui::BeginMenu("File"))
@@ -176,6 +181,7 @@ namespace Candy
   
   void EditorLayer::OnEvent(Events::Event &event)
   {
+    CANDY_PROFILE_FUNCTION();
     viewport->OnEvent(event);
     
     EventDispatcher dispatcher(event);
@@ -185,6 +191,7 @@ namespace Candy
   
   bool EditorLayer::OnMouseButtonPressed(Events::MousePressedEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     if (event.GetButton() == Mouse::ButtonLeft)
     {
       if (viewport->IsHovered() && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
@@ -196,6 +203,7 @@ namespace Candy
   }
   bool EditorLayer::OnKeyPressed(Events::KeyPressedEvent& event)
   {
+    CANDY_PROFILE_FUNCTION();
     // Shortcuts
     if (event.IsRepeat())
     {
@@ -215,17 +223,20 @@ namespace Candy
   }
   void EditorLayer::SaveProject()
   {
+    CANDY_PROFILE_FUNCTION();
     Project::SaveActive();
     SaveScene();
   }
   
   void EditorLayer::NewScene()
   {
+    CANDY_PROFILE_FUNCTION();
     activeScene = Scene::Create();
     scenePanel->SetContext(activeScene);
   }
   void EditorLayer::OpenScene()
   {
+    CANDY_PROFILE_FUNCTION();
     std::string filepath = Utils::FileDialogs::OpenFile("Candy Scene (*.scene)\0*.scene\0");
     if (!filepath.empty())
     {
@@ -234,6 +245,7 @@ namespace Candy
   }
   void EditorLayer::OpenScene(const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     if (path.extension().string() != ".scene")
     {
       CANDY_WARN("Could not load {0} - not a scene file", path.filename().string());
@@ -251,6 +263,7 @@ namespace Candy
   }
   void EditorLayer::SaveScene()
   {
+    CANDY_PROFILE_FUNCTION();
     if (!activeScenePath.empty())
       SerializeScene(activeScene, activeScenePath);
     else
@@ -258,6 +271,7 @@ namespace Candy
   }
   void EditorLayer::SaveSceneAs()
   {
+    CANDY_PROFILE_FUNCTION();
     std::string filepath = Utils::FileDialogs::SaveFile("Candy Scene (*.scene)\0*.scene\0");
     if (!filepath.empty())
     {
@@ -267,12 +281,14 @@ namespace Candy
   }
   void EditorLayer::SerializeScene(SharedPtr<ECS::Scene> scene, const std::filesystem::path& path)
   {
+    CANDY_PROFILE_FUNCTION();
     SceneSerializer serializer(std::move(scene));
     serializer.Serialize(path.string());
   }
   
   bool EditorLayer::IsSelectedEntity2D()const
   {
+    CANDY_PROFILE_FUNCTION();
     return scenePanel->IsSelectedEntity2D();
   }
 }

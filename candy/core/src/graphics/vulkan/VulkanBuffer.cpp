@@ -4,33 +4,7 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  const char* String_VkResult(VkResult errorCode) {
-    switch (errorCode)
-    {
-#define STR(r) case VK_ ## r: return #r
-      STR(SUCCESS);
-      STR(NOT_READY);
-      STR(TIMEOUT);
-      STR(EVENT_SET);
-      STR(EVENT_RESET);
-      STR(INCOMPLETE);
-      STR(ERROR_OUT_OF_HOST_MEMORY);
-      STR(ERROR_OUT_OF_DEVICE_MEMORY);
-      STR(ERROR_INITIALIZATION_FAILED);
-      STR(ERROR_DEVICE_LOST);
-      STR(ERROR_MEMORY_MAP_FAILED);
-      STR(ERROR_LAYER_NOT_PRESENT);
-      STR(ERROR_EXTENSION_NOT_PRESENT);
-      STR(ERROR_FEATURE_NOT_PRESENT);
-      STR(ERROR_INCOMPATIBLE_DRIVER);
-      STR(ERROR_TOO_MANY_OBJECTS);
-      STR(ERROR_FORMAT_NOT_SUPPORTED);
-      STR(ERROR_FRAGMENTED_POOL);
-      STR(ERROR_UNKNOWN);
-#undef STR
-      default: return "UNKNOWN_ERROR";
-    }
-  }
+  
   uint64_t VulkanBuffer::Size()const{return size;}
   
   VmaAllocation VulkanBuffer::GetAllocation(){return allocation;}
@@ -40,6 +14,7 @@ namespace Candy::Graphics
   
   VulkanBuffer::VulkanBuffer(BufferType bufferType) : type(bufferType)
   {
+    CANDY_PROFILE_FUNCTION();
     switch(type)
     {
       case BufferType::DUMMY:
@@ -94,6 +69,7 @@ namespace Candy::Graphics
   }
   void VulkanBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)const
   {
+    CANDY_PROFILE_FUNCTION();
     VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -107,10 +83,11 @@ namespace Candy::Graphics
     
     
     
-    CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create index staging buffer!");
+    CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr));
   }
   void VulkanBuffer::CreateStagingBuffer(VkBuffer& buffer, uint64_t size, VmaAllocation* bufferAllocation)
   {
+    CANDY_PROFILE_FUNCTION();
     VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -124,10 +101,11 @@ namespace Candy::Graphics
     
     
     
-    CANDY_CORE_ASSERT(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, bufferAllocation, nullptr)==VK_SUCCESS, "Failed to create index staging buffer!");
+    CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, bufferAllocation, nullptr));
   }
     void VulkanBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation* allocation, VmaAllocationInfo* allocInfo)
     {
+      CANDY_PROFILE_FUNCTION();
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
@@ -139,17 +117,19 @@ namespace Candy::Graphics
         allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
         allocCreateInfo.requiredFlags = properties;
       
-      VkResult result = vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocCreateInfo, &buffer, allocation, allocInfo);
+      
       //CANDY_CORE_INFO("CREATED BUFFER SIZE: {0}", size);
-        CANDY_CORE_ASSERT(result==VK_SUCCESS, String_VkResult(result));
+      CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocCreateInfo, &buffer, allocation, allocInfo));
     }
     
     void VulkanBuffer::DestroyBuffer(VkBuffer buffer, VmaAllocation allocation)
     {
+      CANDY_PROFILE_FUNCTION();
         vmaDestroyBuffer(Vulkan::Allocator(), buffer, allocation);
     }
   void VulkanBuffer::DestroyBuffer(VulkanBuffer* vulkanBuffer)
   {
+    CANDY_PROFILE_FUNCTION();
     vmaDestroyBuffer(Vulkan::Allocator(), *vulkanBuffer, vulkanBuffer->allocation);
   }
   

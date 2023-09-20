@@ -1,6 +1,6 @@
 #include <candy/graphics/vulkan/ImageView.hpp>
 #include <candy/graphics/Vulkan.hpp>
-#include <candy/graphics/Texture.hpp>
+#include "candy/graphics/texture/Texture.hpp"
 namespace Candy::Graphics
 {
   ImageView::ImageView() : imageView(VK_NULL_HANDLE)
@@ -8,14 +8,15 @@ namespace Candy::Graphics
     //Vulkan::PushDeleter([=, this](){Destroy();});
     //Vulkan::DeletionQueue().Push(this);
   }
-  ImageView::ImageView(Texture& texture, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
+  /*ImageView::ImageView(Texture& texture, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
     Set(texture, aspectFlags);
     //Vulkan::DeletionQueue().Push(this);
     //Vulkan::PushDeleter([=, this](){Destroy();});
-  }
+  }*/
   ImageView::ImageView(const Image& image, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
+    CANDY_PROFILE_FUNCTION();
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
@@ -28,7 +29,7 @@ namespace Candy::Graphics
     viewInfo.subresourceRange.layerCount = 1;
     
     
-    CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    CANDY_VULKAN_CHECK(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView));
     Vulkan::DeletionQueue().Push(this);
     //Vulkan::Push(imageView);
     //Vulkan::PushDeleter([=, this](){Destroy();});
@@ -55,6 +56,7 @@ namespace Candy::Graphics
   
   void ImageView::CreateSampler()
   {
+    CANDY_PROFILE_FUNCTION();
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     
@@ -79,17 +81,18 @@ namespace Candy::Graphics
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 0.0f;
     
-    CANDY_CORE_ASSERT(vkCreateSampler(Vulkan::LogicalDevice(), &samplerInfo, nullptr, &sampler) == VK_SUCCESS, "Failed to create texture sampler!");
+    CANDY_VULKAN_CHECK(vkCreateSampler(Vulkan::LogicalDevice(), &samplerInfo, nullptr, &sampler));
     //Vulkan::Push(sampler);
     //Vulkan::PushDeleter([=, this](){vkDestroySampler(Vulkan::LogicalDevice(), sampler, nullptr);});
   }
-  void ImageView::Set(Texture& texture, VkImageAspectFlags aspectFlags)
+  /*void ImageView::Set(Texture& texture, VkImageAspectFlags aspectFlags)
   {
     Set(texture.GetImage(), aspectFlags);
     //Set(texture.GetImage(), texture.GetVulkanFormat(), aspectFlags);
-  }
+  }*/
   void ImageView::Set(const Image& image, VkImageAspectFlags aspectFlags)
   {
+    CANDY_PROFILE_FUNCTION();
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
@@ -102,7 +105,7 @@ namespace Candy::Graphics
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
     
-    CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    CANDY_VULKAN_CHECK(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView));
     
     CreateSampler();
     Vulkan::DeletionQueue().Push(this);
@@ -110,6 +113,7 @@ namespace Candy::Graphics
   }
   void ImageView::SetSwapChainImage(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
   {
+    CANDY_PROFILE_FUNCTION();
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
@@ -121,7 +125,7 @@ namespace Candy::Graphics
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
     
-    CANDY_CORE_ASSERT(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView) == VK_SUCCESS, "Failed to create image view!");
+    CANDY_VULKAN_CHECK(vkCreateImageView(Vulkan::LogicalDevice(), &viewInfo, nullptr, &imageView));
     //Vulkan::PushDeleter([=, this](){vkDestroyImageView(Vulkan::LogicalDevice(), *this, nullptr);});
     //Vulkan::Push(imageView);
     CreateSampler();

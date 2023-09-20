@@ -65,19 +65,22 @@ namespace Candy::Graphics
   }
   Font::Font() : data(new MSDFData())
   {
-  
+    CANDY_PROFILE_FUNCTION();
   }
   Font::Font(std::filesystem::path  path) : data(new MSDFData()), filepath(std::move(path))
   {
+    CANDY_PROFILE_FUNCTION();
     Initialize();
   }
   
   Font::~Font()
   {
+    CANDY_PROFILE_FUNCTION();
     delete data;
   }
   void Font::Initialize()
   {
+    CANDY_PROFILE_FUNCTION();
     msdf_atlas::FontHandle* handle = msdf_atlas::FontAtlasLoader::LoadFont(filepath.string().c_str());
     
     if (! handle)
@@ -149,6 +152,7 @@ namespace Candy::Graphics
   
   bool Font::Load()
   {
+    CANDY_PROFILE_FUNCTION();
     if (IsLoaded())
     {
       CANDY_CORE_WARN("Font {0} is already loaded!", name);
@@ -167,6 +171,7 @@ namespace Candy::Graphics
   }
   void Font::LoadAtlas()
   {
+    CANDY_PROFILE_FUNCTION();
     std::string path = "assets/cache/font/" + name + ".msdf";
     if (MSDFSerializer::Deserialize(data, path))
     {
@@ -181,7 +186,7 @@ namespace Candy::Graphics
   // TODO: Convert MSDFData to FontGeometryData
   void Font::GenerateAtlas()
   {
-    
+    CANDY_PROFILE_FUNCTION();
     FontAtlasGeneratorSettings settings = FontManager::GetAtlasGeneratorSettings();
     
     msdf_atlas::TightAtlasPacker atlasPacker;
@@ -291,6 +296,7 @@ namespace Candy::Graphics
   }
   void Font::Init(const FontManagerSettings& settings)
   {
+    CANDY_PROFILE_FUNCTION();
     FontManager::Init(settings);
     
     
@@ -301,6 +307,7 @@ namespace Candy::Graphics
   
   void Font::Shutdown()
   {
+    CANDY_PROFILE_FUNCTION();
     CANDY_CORE_INFO("SHUTDOWN FONT");
     msdf_atlas::FontAtlasLoader::Shutdown();
   }
@@ -309,11 +316,12 @@ namespace Candy::Graphics
   
   bool Font::SaveAtlasGeneratorSettings(const std::filesystem::path& filepath)
   {
+    CANDY_PROFILE_FUNCTION();
     return FontManager::SaveAtlasGeneratorSettings(filepath);
   }
   bool Font::LoadAtlasGeneratorSettings(const std::filesystem::path& filepath)
   {
-    
+    CANDY_PROFILE_FUNCTION();
     return FontManager::LoadAtlasGeneratorSettings(filepath);
     
   }

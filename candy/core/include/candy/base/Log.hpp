@@ -2,8 +2,11 @@
 #include <spdlog/spdlog.h>
 #include "spdlog/fmt/ostr.h"
 #include "Base.hpp"
+
+
 namespace Candy
 {
+  
   class Log
   {
   private:
@@ -13,16 +16,14 @@ namespace Candy
   public:
     static void Init();
     static SharedPtr<spdlog::logger>& GetCoreLogger(){return coreLogger;}
-    
     static SharedPtr<spdlog::logger>& GetClientLogger(){return clientLogger;}
   };
 }
 
 
-
+#ifdef CANDY_ENABLE_LOGGING
 // Core log macros
 #define CANDY_CORE_TRACE(...)    ::Candy::Log::GetCoreLogger()->trace(__VA_ARGS__)
-//#define CANDY_CORE_INFO(...)     ::Candy::Log::GetCoreLogger()->info(__VA_ARGS__); ::Candy::Log::GetCoreLogger()->info("Line: {0}, File: {1}", __LINE__, __FILE__)
 #define CANDY_CORE_INFO(...)     ::Candy::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define CANDY_CORE_WARN(...)     ::Candy::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define CANDY_CORE_ERROR(...)    ::Candy::Log::GetCoreLogger()->error(__VA_ARGS__)
@@ -34,3 +35,21 @@ namespace Candy
 #define CANDY_WARN(...)          ::Candy::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define CANDY_ERROR(...)         ::Candy::Log::GetClientLogger()->error(__VA_ARGS__)
 #define CANDY_CRITICAL(...)      ::Candy::Log::GetClientLogger()->critical(__VA_ARGS__)
+
+#else
+// Core log macros
+#define CANDY_CORE_TRACE(...)
+#define CANDY_CORE_INFO(...)
+#define CANDY_CORE_WARN(...)
+#define CANDY_CORE_ERROR(...)
+#define CANDY_CORE_CRITICAL(...)
+
+// Client log macros
+#define CANDY_TRACE(...)
+#define CANDY_INFO(...)
+#define CANDY_WARN(...)
+#define CANDY_ERROR(...)
+#define CANDY_CRITICAL(...)
+
+#endif
+
