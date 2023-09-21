@@ -218,24 +218,25 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     vertexLayout.AddElement(name, type, location);
   }
-
+  uint32_t ShaderLayout::GetPushID(const std::string& name)const
+  {
+    CANDY_PROFILE_FUNCTION();
+    const auto& it = pushPropertyMap.find(name);
+    CANDY_CORE_ASSERT(it != pushPropertyMap.end(), "Push constant name not found");
+    return it->second;
+  }
   uint32_t ShaderLayout::PushConstant(const std::string& name, const void* data)
   {
     CANDY_PROFILE_FUNCTION();
     const auto& it = pushPropertyMap.find(name);
-    if (it != pushPropertyMap.end())
-    {
-      auto id = it->second;
-      PushConstant(id, data);
-      return id;
-    }
-    CANDY_CORE_ASSERT(false, "Push constant name not found");
-    return {};
+    CANDY_CORE_ASSERT(it != pushPropertyMap.end());
+    auto id = it->second;
+    PushConstant(id, data);
+    return id;
   }
   void ShaderLayout::PushConstant(uint32_t id, const void* data)
   {
     CANDY_PROFILE_FUNCTION();
-    //CANDY_CORE_INFO("Push blocks size: {0}. ID: {1}", pushBlocks.size(), id);
     CANDY_CORE_ASSERT(id < pushProperties.size());
     
     auto& prop = pushProperties[id];

@@ -30,6 +30,10 @@ namespace Candy::Graphics
     
     SharedPtr<Shader> gridShader;
     SharedPtr<Shader> meshShader;
+    uint32_t meshShaderObjectIndexID=0;
+    uint32_t meshShaderTextureIndexID=0;
+    uint32_t meshShaderTilingFactorID=0;
+   
     SharedPtr<Shader> selectionShader;
     uint32_t meshIndexCount = 0;
     uint32_t vertexOffset = 0;
@@ -85,6 +89,10 @@ namespace Candy::Graphics
     
     data.meshVertexBufferBase = new MeshVertex[RenderData3D::maxVertices];
     data.meshIndexBufferBase = new uint32_t[RenderData3D::maxIndices];
+    
+    data.meshShaderObjectIndexID = data.meshShader->GetPushID("objectIndex");
+    data.meshShaderTextureIndexID = data.meshShader->GetPushID("textureIndex");
+    data.meshShaderTilingFactorID = data.meshShader->GetPushID("tilingFactor");
   }
   void Renderer3D::InitSelection()
   {
@@ -128,7 +136,17 @@ namespace Candy::Graphics
     Flush();
     StartBatch();
   }
-  
+  void Renderer3D::FlushVertexData()
+  {
+    if (skipFlush)
+    {
+      skipFlush=false;
+      return;
+    }
+    uint32_t dataSize = (uint32_t)((uint8_t*)data.meshVertexBufferPtr - (uint8_t*)data.meshVertexBufferBase);
+    data.meshVertexBuffer->SetData(data.meshVertexBufferBase, dataSize);
+    data.meshIndexBuffer->SetData(data.meshIndexBufferBase, data.meshIndexCount);
+  }
   void Renderer3D::Flush()
   {
     CANDY_PROFILE_FUNCTION();
@@ -136,9 +154,9 @@ namespace Candy::Graphics
     {
       data.meshShader->Bind();
       
-      uint32_t dataSize = (uint32_t)((uint8_t*)data.meshVertexBufferPtr - (uint8_t*)data.meshVertexBufferBase);
-      data.meshVertexBuffer->SetData(data.meshVertexBufferBase, dataSize);
-      data.meshIndexBuffer->SetData(data.meshIndexBufferBase, data.meshIndexCount);
+      
+      FlushVertexData();
+      
       
       
       data.meshShader->Bind();
@@ -176,9 +194,10 @@ namespace Candy::Graphics
       data.meshVertexArray->Bind();
       for (int i=0; i<data.objects.size(); i++)
       {
-        data.meshShader->PushInt("objectIndex", (int)data.objects[i].objectIndex);
-        data.meshShader->PushInt("textureIndex", (int)data.objects[i].textureIndex);
-        data.meshShader->PushFloat("tilingFactor", 1.0f);
+        
+        data.meshShader->PushInt(data.meshShaderObjectIndexID, (int)data.objects[i].objectIndex);
+        data.meshShader->PushInt(data.meshShaderTextureIndexID, (int)data.objects[i].textureIndex);
+        data.meshShader->PushFloat(data.meshShaderTilingFactorID, 1.0f);
         const auto& object = data.objects[i];
         RenderCommand::DrawIndexed(object.indexCount, 1, object.indexStart, object.vertexOffset, 0);
       }
@@ -249,85 +268,137 @@ namespace Candy::Graphics
   void Renderer3D::SubmitMesh(uint32_t entity, const MeshData& mesh, const SharedPtr<Texture>& texture, const Math::Matrix4& transform)
   {
     CANDY_PROFILE_FUNCTION();
-    if (mesh.IsValid())
+    CANDY_CORE_ASSERT(mesh.IsValid(), "Error, invalid mesh");
+    CANDY_CORE_ASSERT(mesh.IndexCount() < RenderData3D::maxIndices, "Error, mesh has too many indices");
+    CANDY_CORE_ASSERT(mesh.VertexCount() < RenderData3D::maxVertices, "Error, mesh has too many vertices");
+    if (data.meshIndexCount >= RenderData3D::maxIndices)
     {
-      if (mesh.IndexCount() >= RenderData3D::maxIndices)
-      {
-        CANDY_CORE_ERROR("ERROR! MESH HAS TOO MANY INDICES!");
-        CANDY_CORE_ASSERT(false);
-      }
-      if (mesh.VertexCount() >= RenderData3D::maxVertices)
-      {
-        CANDY_CORE_ERROR("ERROR! MESH HAS TOO MANY VERTICES!");
-        CANDY_CORE_ASSERT(false);
-      }
-      if (data.meshIndexCount >= RenderData3D::maxIndices)
-      {
-        NextBatch();
-      }
-      
-      
-      ObjectData objectData{};
-      objectData.objectIndex = data.objects.size();
-      objectData.transformIndex = data.transforms.size();
-      
-      if (texture)
-      {
-        bool found = false;
-        
-        for (int i=0; i<data.textureSlotIndex; i++)
-        {
-          if (*data.textureSlots[i] == *texture)
-          {
-            found = true;
-            objectData.textureIndex = i;
-            break;
-          }
-        }
-        if (! found)
-        {
-          CANDY_CORE_ASSERT(data.textureSlotIndex < data.maxTextureSlots, "Texture slots are full");
-          data.textureSlots[data.textureSlotIndex] = texture;
-          objectData.textureIndex = data.textureSlotIndex;
-          data.textureSlotIndex++;
-        }
-      }
-      else
-      {
-        objectData.textureIndex = 0;
-      }
-      
-      
-      
-      objectData.entityID = entity;
-      objectData.indexStart = data.indexOffset;
-      objectData.vertexOffset = (int32_t)data.vertexOffset;
-      objectData.indexCount = mesh.IndexCount();
-      data.objects.push_back(objectData);
-      data.transforms.push_back(transform);
-      
-      for (size_t i = 0; i < mesh.VertexCount(); i++)
-      {
-        *data.meshVertexBufferPtr = mesh.vertices[i];
-        data.meshVertexBufferPtr++;
-        
-      }
-      
-      for (uint32_t i : mesh.indices)
-      {
-        *data.meshIndexBufferPtr = i;
-        data.meshIndexBufferPtr++;
-      }
-      data.meshIndexCount += mesh.IndexCount();
-      data.vertexOffset += mesh.VertexCount();
-      data.indexOffset += mesh.IndexCount();
-      
-      data.stats.objectCount++;
-      data.stats.vertexCount += mesh.VertexCount();
-      data.stats.indexCount += mesh.IndexCount();
-      data.stats.triangleCount += mesh.IndexCount() / 3;
-      data.stats.drawCalls++;
+      NextBatch();
     }
+    
+    
+    ObjectData objectData{};
+    objectData.objectIndex = data.objects.size();
+    objectData.transformIndex = data.transforms.size();
+    
+    if (texture)
+    {
+      bool found = false;
+      
+      for (int i=0; i<data.textureSlotIndex; i++)
+      {
+        if (*data.textureSlots[i] == *texture)
+        {
+          found = true;
+          objectData.textureIndex = i;
+          break;
+        }
+      }
+      if (! found)
+      {
+        CANDY_CORE_ASSERT(data.textureSlotIndex < data.maxTextureSlots, "Texture slots are full");
+        data.textureSlots[data.textureSlotIndex] = texture;
+        objectData.textureIndex = data.textureSlotIndex;
+        data.textureSlotIndex++;
+      }
+    }
+    else
+    {
+      objectData.textureIndex = 0;
+    }
+    
+    
+    
+    objectData.entityID = entity;
+    objectData.indexStart = data.indexOffset;
+    objectData.vertexOffset = (int32_t)data.vertexOffset;
+    objectData.indexCount = mesh.IndexCount();
+    data.objects.push_back(objectData);
+    data.transforms.push_back(transform);
+    
+    for (size_t i = 0; i < mesh.VertexCount(); i++)
+    {
+      *data.meshVertexBufferPtr = mesh.vertices[i];
+      data.meshVertexBufferPtr++;
+      
+    }
+    
+    for (uint32_t i : mesh.indices)
+    {
+      *data.meshIndexBufferPtr = i;
+      data.meshIndexBufferPtr++;
+    }
+    data.meshIndexCount += mesh.IndexCount();
+    data.vertexOffset += mesh.VertexCount();
+    data.indexOffset += mesh.IndexCount();
+    
+    data.stats.objectCount++;
+    data.stats.vertexCount += mesh.VertexCount();
+    data.stats.indexCount += mesh.IndexCount();
+    data.stats.triangleCount += mesh.IndexCount() / 3;
+    data.stats.drawCalls++;
+  }
+  
+  void Renderer3D::SubmitMesh(uint32_t entity, uint32_t meshIndexCount, uint32_t meshVertexCount, const SharedPtr<Texture>& texture, const Math::Matrix4& transform)
+  {
+    CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_ASSERT(meshIndexCount < RenderData3D::maxIndices, "Error, mesh has too many indices");
+    CANDY_CORE_ASSERT(meshVertexCount < RenderData3D::maxVertices, "Error, mesh has too many vertices");
+    if (data.meshIndexCount >= RenderData3D::maxIndices)
+    {
+      NextBatch();
+    }
+    
+    
+    ObjectData objectData{};
+    objectData.objectIndex = data.objects.size();
+    objectData.transformIndex = data.transforms.size();
+    
+    if (texture)
+    {
+      bool found = false;
+      
+      for (int i=0; i<data.textureSlotIndex; i++)
+      {
+        if (*data.textureSlots[i] == *texture)
+        {
+          found = true;
+          objectData.textureIndex = i;
+          break;
+        }
+      }
+      if (! found)
+      {
+        CANDY_CORE_ASSERT(data.textureSlotIndex < data.maxTextureSlots, "Texture slots are full");
+        data.textureSlots[data.textureSlotIndex] = texture;
+        objectData.textureIndex = data.textureSlotIndex;
+        data.textureSlotIndex++;
+      }
+    }
+    else
+    {
+      objectData.textureIndex = 0;
+    }
+    
+    
+    
+    objectData.entityID = entity;
+    objectData.indexStart = data.indexOffset;
+    objectData.vertexOffset = (int32_t)data.vertexOffset;
+    objectData.indexCount = meshIndexCount;
+    data.objects.push_back(objectData);
+    data.transforms.push_back(transform);
+    
+    
+    data.meshIndexCount += meshIndexCount;
+    data.vertexOffset += meshVertexCount;
+    data.indexOffset += meshIndexCount;
+    
+    data.stats.objectCount++;
+    data.stats.vertexCount += meshVertexCount;
+    data.stats.indexCount += meshIndexCount;
+    data.stats.triangleCount += meshIndexCount / 3;
+    data.stats.drawCalls++;
   }
   Renderer3D::Stats Renderer3D::GetStats()
   {

@@ -21,7 +21,7 @@
 struct GLFWwindow;
 namespace Candy::Graphics
 {
-    static constexpr unsigned int FRAME_OVERLAP = 2;
+  
     static constexpr unsigned int MAX_OBJECTS = 100;
     static constexpr int GLOBAL_SET=0;
     static constexpr int OBJECT_SET=1;
@@ -71,14 +71,15 @@ namespace Candy::Graphics
     
     class GraphicsContext
     {
-    
+    public:
+      static inline const int FRAMES_IN_FLIGHT=1;
     private:
         GLFWwindow* handle;
         VkSurfaceKHR surface=VK_NULL_HANDLE;
         UniquePtr<SwapChain> swapChain;
         uint32_t currentFrameIndex = 0;
         uint32_t previousFrameIndex=0;
-        FrameData frames[FRAME_OVERLAP];
+        FrameData frames[FRAMES_IN_FLIGHT];
         
         
         bool frameBufferResized=false;

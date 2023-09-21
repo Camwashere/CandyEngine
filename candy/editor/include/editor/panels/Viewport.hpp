@@ -39,6 +39,7 @@ namespace Candy
     void OnUpdate();
     void OnEvent(Events::Event& event);
     void OnRenderUI();
+    void OnImGuizmo();
     
     [[nodiscard]] bool IsHovered()const;
     [[nodiscard]] ECS::Entity GetHoveredEntity()const;

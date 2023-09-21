@@ -1,0 +1,1 @@
+Start-Process "https://ui.perfetto.dev"

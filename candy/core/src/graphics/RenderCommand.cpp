@@ -244,6 +244,35 @@ namespace Candy::Graphics
     //BindDescriptorSet(pipeline, GetGlobalDescriptorSet(), offset);
     
   }
+  void RenderCommand::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+  {
+    GetCommandBuffer().CopyBuffer(srcBuffer, dstBuffer, size);
+  }
+  void RenderCommand::CopyBufferImmediate(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+  {
+    CANDY_PROFILE_FUNCTION();
+    ImmediateSubmit([=](VkCommandBuffer cmd)
+                    {
+                      VkBufferCopy copyRegion{};
+                      copyRegion.srcOffset = 0; // Optional
+                      copyRegion.dstOffset = 0; // Optional
+                      copyRegion.size = size;
+                      vkCmdCopyBuffer(cmd, srcBuffer, dstBuffer, 1, &copyRegion);
+                    });
+                    
+    //GetCommandBuffer().CopyBufferImmediate(srcBuffer, dstBuffer, size);
+    /*CommandBuffer* cmd = &Vulkan::GetCurrentContext().GetCurrentFrame().commandBuffer;
+    
+    VkCommandBuffer commandBuffer = cmd->BeginSingleTimeCommands();
+    
+    VkBufferCopy copyRegion{};
+    copyRegion.srcOffset = 0; // Optional
+    copyRegion.dstOffset = 0; // Optional
+    copyRegion.size = size;
+    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+    
+    cmd->EndSingleTimeCommands(commandBuffer);*/
+  }
   void RenderCommand::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
   {
     CANDY_PROFILE_FUNCTION();
@@ -273,16 +302,31 @@ namespace Candy::Graphics
   void RenderCommand::Reset()
   {
     CANDY_PROFILE_FUNCTION();
-    GetFrame().commandBuffer.Reset();
-    GetFrame().commandBuffer.StartRecording(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
+    GetCommandBuffer().Reset();
+    GetCommandBuffer().StartRecording(VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
   }
   
+  void RenderCommand::ResetUtility()
+  {
+    CANDY_PROFILE_FUNCTION();
+    GetCommandBuffer().ResetUtility();
+  }
+  
+  
+  /*VkSubmitInfo submitInfo{};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
+  
+  vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+  vkQueueWaitIdle(Vulkan::LogicalDevice().graphicsQueue);*/
   void RenderCommand::Submit()
   {
     CANDY_PROFILE_FUNCTION();
     GetCommandBuffer().EndAll();
     //GetCommandBuffer().EndRecording();
     std::vector<VkCommandBuffer> activeBuffers = GetCommandBuffer().GetActiveBuffers();
+    
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount=activeBuffers.size();

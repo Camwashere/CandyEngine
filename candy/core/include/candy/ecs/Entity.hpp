@@ -37,7 +37,7 @@ namespace Candy::ECS
       CANDY_PROFILE_FUNCTION();
       CANDY_CORE_ASSERT(!HasComponent<T>(), "Entity already has component");
       T& component = scene->registry.emplace<T>(handle, std::forward<Args>(args)...);
-      scene->OnComponentAdded(*this, component);
+      scene->OnComponentAdded<T>(*this, component);
       return component;
     }
     template<typename T>
@@ -76,6 +76,7 @@ namespace Candy::ECS
     {
       CANDY_PROFILE_FUNCTION();
       CANDY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component");
+      scene->OnComponentRemoved<T>(*this, GetComponent<T>());
       scene->registry.remove<T>(handle);
     }
   
@@ -84,9 +85,9 @@ namespace Candy::ECS
     UUID GetUUID();
     std::string GetTag();
     ParentComponent& GetParent();
-    const ParentComponent& GetParent()const;
+    [[nodiscard]] const ParentComponent& GetParent()const;
     Entity GetParentEntity();
-    Entity GetParentEntity()const;
+    [[nodiscard]] Entity GetParentEntity()const;
     [[nodiscard]] bool HasParent()const;
     [[nodiscard]] bool HasChildren()const;
     [[nodiscard]] bool IsParent()const;
@@ -96,7 +97,7 @@ namespace Candy::ECS
     bool RemoveChild(const Entity& child);
     bool AddChild(const Entity& child);
     ChildrenComponent& GetChildren();
-    const ChildrenComponent& GetChildren()const;
+    [[nodiscard]] const ChildrenComponent& GetChildren()const;
     [[nodiscard]] bool Is2D()const;
     TransformComponent& GetTransform();
     void SetParent(Entity parent);

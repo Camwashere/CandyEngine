@@ -12,6 +12,7 @@ namespace Candy::Graphics
         VkCommandPool commandPool;
         std::array<VkCommandBuffer, 4> commandBuffers;
         std::array<bool, 4> activeBuffers;
+        //VkCommandBuffer utilityBuffer;
         uint8_t currentBuffer=0;
         //VkCommandBuffer mainCommandBuffer;
         
@@ -33,7 +34,8 @@ namespace Candy::Graphics
         
     public:
       void SetCurrentBuffer(uint8_t index);
-        void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+        void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize srcOffset=0, VkDeviceSize dstOffset=0);
+        void CopyBufferImmediate(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         VkCommandBuffer BeginSingleTimeCommands();
         void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
       void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -46,14 +48,17 @@ namespace Candy::Graphics
     public:
         
         void Reset();
+        void ResetUtility();
         void StartRecording(VkCommandBufferUsageFlags flags=0);
         void StartRenderPass(const VkRenderPassBeginInfo* renderPassInfo);
         
     public:
       VkCommandBuffer& GetCurrentBuffer();
       VkCommandBuffer& GetViewportBuffer();
+      VkCommandBuffer& GetOverlayBuffer();
       VkCommandBuffer& GetSelectionBuffer();
       VkCommandBuffer& GetUIBuffer();
+      //VkCommandBuffer& GetUtilityBuffer();
       std::vector<VkCommandBuffer> GetActiveBuffers();
       const std::array<VkCommandBuffer, 4>& GetBuffers();
       size_t GetBufferCount()const;
@@ -79,6 +84,7 @@ namespace Candy::Graphics
         void EndRecording(uint8_t index);
         void EndRecordings();
         void End(uint8_t index);
+        void EndUtility();
         void EndAll();
         //void EndAll();
         //void Destroy();

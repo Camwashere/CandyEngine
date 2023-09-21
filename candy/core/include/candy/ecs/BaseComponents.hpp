@@ -1,11 +1,11 @@
 #pragma once
 #include <candy/base/UUID.hpp>
 #include <candy/math/Math.hpp>
-//#include <Candy/Graphics.hpp>
 #include <entt/entt.hpp>
 #include <candy/graphics/model/Mesh.hpp>
 #include <candy/graphics/material/Material.hpp>
 #include <candy/graphics/font/Font.hpp>
+#include <candy/ecs/MeshComponents.hpp>
 #include <candy/ecs/TransformComponent.hpp>
 namespace Candy::ECS
 {
@@ -24,7 +24,7 @@ namespace Candy::ECS
   {
     Entity parent;
     
-    explicit ParentComponent(Entity parentEntity) : parent(parentEntity){}
+    explicit ParentComponent(const Entity& parentEntity) : parent(parentEntity){}
   };
   
   struct ChildrenComponent
@@ -36,15 +36,7 @@ namespace Candy::ECS
   
   
   
-  struct MeshFilterComponent
-  {
-    Graphics::MeshData meshData;
-  };
   
-  struct MeshRendererComponent
-  {
-    SharedPtr<Graphics::Texture> texture;
-  };
   
   struct SpriteRendererComponent
   {

@@ -45,15 +45,23 @@ namespace Candy::Graphics
   void CommandBuffer::CreateCommandBuffers()
   {
     CANDY_PROFILE_FUNCTION();
+    
     //commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
-    //allocInfo.commandBufferCount=1;
     
-    //CANDY_CORE_ASSERT(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &commandBuffers[currentFrame]) == VK_SUCCESS, "Failed to allocate command buffers!");
+    /*VkCommandBufferAllocateInfo utilAllocInfo{};
+    utilAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    utilAllocInfo.commandPool = commandPool;
+    utilAllocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    utilAllocInfo.commandBufferCount=1;
+    
+    CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &utilAllocInfo, &utilityBuffer));*/
+    
+    
     CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, commandBuffers.data()));
     
   }
@@ -66,8 +74,18 @@ namespace Candy::Graphics
     activeBuffers[index]=true;
     
   }
-  
-  void CommandBuffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+  void CommandBuffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDeviceSize srcOffset, VkDeviceSize dstOffset)
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    
+    /*VkBufferCopy copyRegion{};
+    copyRegion.srcOffset = srcOffset; // Optional
+    copyRegion.dstOffset = dstOffset; // Optional
+    copyRegion.size = size;
+    vkCmdCopyBuffer(utilityBuffer, srcBuffer, dstBuffer, 1, &copyRegion);*/
+  }
+  void CommandBuffer::CopyBufferImmediate(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
   {
     CANDY_PROFILE_FUNCTION();
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
@@ -97,6 +115,7 @@ namespace Candy::Graphics
     vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &commandBuffer);
     
     VkCommandBufferBeginInfo beginInfo{};
+    
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     
@@ -332,6 +351,23 @@ namespace Candy::Graphics
     activeBuffers[currentBuffer] = false;
   }
   
+  void CommandBuffer::ResetUtility()
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    /*CANDY_VULKAN_CHECK(vkResetCommandBuffer(utilityBuffer, 0));
+    
+    
+    VkCommandBufferBeginInfo cmdBeginInfo{};
+    cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    cmdBeginInfo.flags = 0;
+    cmdBeginInfo.pInheritanceInfo = nullptr;
+    
+    CANDY_VULKAN_CHECK(vkBeginCommandBuffer(utilityBuffer, &cmdBeginInfo));*/
+    
+    
+  }
+  
   void CommandBuffer::StartRecording(VkCommandBufferUsageFlags flags)
   {
     CANDY_PROFILE_FUNCTION();
@@ -363,16 +399,24 @@ namespace Candy::Graphics
     return commandBuffers[0];
   }
   
-  VkCommandBuffer &CommandBuffer::GetSelectionBuffer()
+  VkCommandBuffer& CommandBuffer::GetOverlayBuffer()
   {
     return commandBuffers[1];
   }
   
-  VkCommandBuffer &CommandBuffer::GetUIBuffer()
+  VkCommandBuffer &CommandBuffer::GetSelectionBuffer()
   {
     return commandBuffers[2];
   }
   
+  VkCommandBuffer &CommandBuffer::GetUIBuffer()
+  {
+    return commandBuffers[3];
+  }
+  /*VkCommandBuffer& CommandBuffer::GetUtilityBuffer()
+  {
+    return utilityBuffer;
+  }*/
   const std::array<VkCommandBuffer, 4>& CommandBuffer::GetBuffers()
   {
     return commandBuffers;
@@ -587,12 +631,17 @@ namespace Candy::Graphics
     EndRecording(index);
   }
   
+  void CommandBuffer::EndUtility()
+  {
+    //CANDY_VULKAN_CHECK(vkEndCommandBuffer(utilityBuffer));
+  }
   
   void CommandBuffer::EndAll()
   {
     CANDY_PROFILE_FUNCTION();
     EndRenderPasses();
     EndRecordings();
+    EndUtility();
   }
   
   void CommandBuffer::PushConstants(VkPipelineLayout layout, ShaderData::Stage shaderStage, uint32_t dataSize, const void *data)
@@ -607,8 +656,5 @@ namespace Candy::Graphics
     vkCmdPushConstants(GetCurrentBuffer(), layout, ShaderData::StageToVulkan(shaderStage), offset, dataSize, data);
   }
   
-  /*void CommandBuffer::Destroy()
-  {
-    vkDestroyCommandPool(Vulkan::LogicalDevice(), commandPool, nullptr);
-  }*/
+  
 }

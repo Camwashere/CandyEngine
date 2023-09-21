@@ -127,7 +127,7 @@ namespace Candy::Graphics
   }
 
   
-  void Vulkan::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+  /*void Vulkan::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
   {
     CANDY_PROFILE_FUNCTION();
     CommandBuffer* cmd = &Vulkan::GetCurrentContext().GetCurrentFrame().commandBuffer;
@@ -153,7 +153,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     GetCurrentCommandBuffer().CopyBufferToImage(buffer, image, width, height);
   
-  }
+  }*/
   /*void Vulkan::PushDeleter(std::function<void()>&& function)
   {
     vulkan->deletionQueue.PushFunction(std::move(function));

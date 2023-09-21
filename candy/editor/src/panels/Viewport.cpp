@@ -102,6 +102,12 @@ namespace Candy
       ImGui::EndDragDropTarget();
     }
     
+    OnImGuizmo();
+    ImGui::End();
+    ImGui::PopStyleVar();
+  }
+  void Viewport::OnImGuizmo()
+  {
     // Gizmos
     Entity selectedEntity = parent->scenePanel->GetSelectedEntity();
     if (selectedEntity && gizmoType != -1)
@@ -138,19 +144,20 @@ namespace Candy
       float snapValues[3] = { snapValue, snapValue, snapValue };
       //cameraProjection[1, 1] *= -1;
       cameraProjection[1, 1] *= -1;
-      cameraProjection[2, 2] *= 0.5f;
-      cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
+      //cameraProjection[2, 2] *= 0.5f;
+      //cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
       
-      //transform[2,3] *= -1;
+      
       ImGuizmo::Manipulate(&cameraView[0], &cameraProjection[0],
                            (ImGuizmo::OPERATION)gizmoType, mode, &worldTransform[0],
                            &localTransform[0], snap ? snapValues : nullptr);
       
-      //transform[2,3] *= -1;
+      
       
       if (ImGuizmo::IsUsing())
       {
-        Matrix4 local = tc.HasParent()? worldTransform * Matrix4::Inverse(tc.GetParent()->GetWorldTransform()) : worldTransform;
+        
+        Matrix4 local = worldTransform;
         Vector3 translation, scale;
         Quaternion rotation;
         if (Matrix4::DecomposeTransform(local, translation, rotation, scale))
@@ -168,10 +175,7 @@ namespace Candy
         
       }
     }
-    ImGui::End();
-    ImGui::PopStyleVar();
   }
-  
   void Viewport::OnOverlayRender()
   {
     CANDY_PROFILE_FUNCTION();

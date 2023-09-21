@@ -12,6 +12,17 @@ namespace Candy::ECS
   Scene::Scene(std::string sceneName) : name(std::move(sceneName)){}
   Scene::~Scene()=default;
   
+  
+  Scene::SceneUpdateFlag operator|(Scene::SceneUpdateFlag a, Scene::SceneUpdateFlag b)
+  {
+    return (Scene::SceneUpdateFlag)(static_cast<int>(a) | static_cast<int>(b));
+  }
+  
+  Scene::SceneUpdateFlag operator&(Scene::SceneUpdateFlag a, Scene::SceneUpdateFlag b)
+  {
+    return (Scene::SceneUpdateFlag)(static_cast<int>(a) & static_cast<int>(b));
+  }
+  
   template<typename... Component>
   static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
   {
@@ -100,8 +111,25 @@ namespace Candy::ECS
   void Scene::DestroyEntity(Entity entity)
   {
     CANDY_PROFILE_FUNCTION();
+    if (entity.HasChildren())
+    {
+      auto& children = entity.GetChildren().children;
+      for (auto& child : children)
+      {
+        DestroyEntity(child);
+      }
+    }
+    if (entity.HasParent())
+    {
+      Entity parent = entity.GetParent().parent;
+      bool removed = parent.RemoveChild(entity);
+      CANDY_CORE_ASSERT(removed);
+    }
+    
+    
     entityMap.erase(entity.GetUUID());
     registry.destroy(entity);
+    
   }
   
   Entity Scene::DuplicateEntity(Entity entity)
@@ -139,7 +167,10 @@ namespace Candy::ECS
     CANDY_PROFILE_FUNCTION();
     systemScheduler.AttachSystem(system);
   }
-  
+  void Scene::AppendUpdateFlag(SceneUpdateFlag flag)
+  {
+    updateFlag = updateFlag | flag;
+  }
   bool Scene::IsRunning()const{return isRunning;}
   bool Scene::IsPaused()const{return isPaused;}
   void Scene::SetPaused(bool paused){isPaused=paused;}
@@ -179,19 +210,44 @@ namespace Candy::ECS
     RenderScene2D();
     Renderer3D::RenderSelectionBuffer();
     Renderer2D::RenderSelectionBuffer();
+    
+    updateFlag = SceneUpdateFlag::None;
   }
   void Scene::RenderScene3D()
   {
     CANDY_PROFILE_FUNCTION();
     Renderer3D::BeginScene();
     
-    auto view = registry.view<TransformComponent, MeshFilterComponent, MeshRendererComponent>();
-    for (auto entity : view)
+    /*if (updateFlag == SceneUpdateFlag::None)
     {
-      
-      auto [transform, mesh, meshRenderer] = view.get<TransformComponent, MeshFilterComponent, MeshRendererComponent>(entity);
-      Renderer3D::SubmitMesh((uint32_t)entity, mesh.meshData, meshRenderer.texture, transform.GetWorldTransform());
+      Renderer3D::EndScene();
+      return;
+    }*/
+    
+    
+    
+    auto view = registry.view<TransformComponent, MeshFilterComponent, MeshRendererComponent>();
+    
+    if (updateFlag & SceneUpdateFlag::Meshes3D)
+    {
+      for (auto entity : view)
+      {
+        
+        auto [transform, mesh, meshRenderer] = view.get<TransformComponent, MeshFilterComponent, MeshRendererComponent>(entity);
+        Renderer3D::SubmitMesh((uint32_t)entity, mesh.GetMeshData(), meshRenderer.texture, transform.GetWorldTransform());
+      }
     }
+    else
+    {
+      Renderer3D::skipFlush = true;
+      for (auto entity : view)
+      {
+        auto [transform, mesh, meshRenderer] = view.get<TransformComponent, MeshFilterComponent, MeshRendererComponent>(entity);
+        Renderer3D::SubmitMesh((uint32_t)entity, mesh.GetMeshData().IndexCount(), mesh.GetMeshData().VertexCount(), meshRenderer.texture, transform.GetWorldTransform());
+      }
+    }
+    
+    
     
     Renderer3D::EndScene();
   }
@@ -255,11 +311,7 @@ namespace Candy::ECS
   {
     return CreateSharedPtr<Scene>(name);
   }
-  /*template<typename T>
-  void Scene::OnComponentAdded(Entity entity, T& component)
-  {
   
-  }*/
   
   
   /*template<>

@@ -4,6 +4,7 @@
 #include "candy/graphics/material/Material.hpp"
 #include <candy/ecs/Scene.hpp>
 #include <candy/graphics/camera/CameraController.hpp>
+#include <candy/ui/Gizmo.hpp>
 #include "panels/ContentBrowserPanel.hpp"
 #include "panels/SceneHierarchyPanel.hpp"
 #include "panels/Viewport.hpp"
@@ -17,6 +18,7 @@ namespace Candy
   class EditorLayer : public Layer
   {
   private:
+    SharedPtr<Gizmo> gizmo;
     SharedPtr<Candy::ECS::Scene> activeScene;
     std::filesystem::path activeScenePath;
     SharedPtr<SceneHierarchyPanel> scenePanel;

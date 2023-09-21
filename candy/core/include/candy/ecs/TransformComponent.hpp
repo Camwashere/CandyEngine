@@ -8,22 +8,28 @@ namespace Candy::ECS
   
   class TransformComponent
   {
+  
+  private:
+  
   private:
     Entity entity;
-    //TransformComponent* parent=nullptr;
     
-   
     
     Math::Vector3 localPosition = {0.0f, 0.0f, 0.0f};
     Math::Quaternion localRotation = {0.0f, 0.0f, 0.0f, 1.0f};
     Math::Vector3 localScale = {1.0f, 1.0f, 1.0f};
     
+    Math::Matrix4 localMatrix;
+    Math::Matrix4 worldMatrix;
     
-    //std::vector<TransformComponent*> children;
+    bool dirty=false;
     
+    
+    
+  
   private:
-    //void UpdateRelationships();
-    
+    void Update();
+    void MarkDirty();
     
     
   public:
@@ -32,16 +38,16 @@ namespace Candy::ECS
   
   public:
     [[nodiscard]] Entity GetEntity()const;
-    [[nodiscard]] Math::Matrix4 GetWorldTransform()const;
-    [[nodiscard]] Math::Matrix4 GetLocalTransform()const;
+    [[nodiscard]] Math::Matrix4 GetWorldTransform();
+    [[nodiscard]] Math::Matrix4 GetLocalTransform();
     
     [[nodiscard]] Math::Vector3 GetLocalPosition()const;
     [[nodiscard]] Math::Quaternion GetLocalRotation()const;
     [[nodiscard]] Math::Vector3 GetLocalScale()const;
     
-    [[nodiscard]] Math::Vector3 GetWorldPosition()const;
-    [[nodiscard]] Math::Quaternion GetWorldRotation()const;
-    [[nodiscard]] Math::Vector3 GetWorldScale()const;
+    [[nodiscard]] Math::Vector3 GetWorldPosition();
+    [[nodiscard]] Math::Quaternion GetWorldRotation();
+    [[nodiscard]] Math::Vector3 GetWorldScale();
     
     void SetLocalPosition(const Math::Vector3& value);
     void SetLocalRotation(const Math::Quaternion& value);
@@ -62,4 +68,16 @@ namespace Candy::ECS
     friend class SceneSerializer;
     
   };
+}
+
+namespace Candy::ECS
+{
+  template<>
+  inline void Scene::OnComponentUpdated<TransformComponent>(Entity& entity, TransformComponent& component)
+  {
+    AppendUpdateFlag(SceneUpdateFlag::Transforms);
+    
+  }
+  
+  
 }

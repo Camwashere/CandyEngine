@@ -52,7 +52,7 @@ namespace Candy::Graphics
       CleanViewport();
       CreateViewport();
       
-      for (int i=0; i<FRAME_OVERLAP; i++)
+      for (int i=0; i<FRAMES_IN_FLIGHT; i++)
       {
         ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportDescriptor);
         ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportDepthDescriptor);
@@ -67,7 +67,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     Vector2u size = {swapChain->extent.width, swapChain->extent.height};
-      for (int i=0; i<FRAME_OVERLAP; i++)
+      for (int i=0; i<FRAMES_IN_FLIGHT; i++)
       {
         CreateDepthResources(i, size);
         frames[i].viewportData.viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
@@ -101,7 +101,7 @@ namespace Candy::Graphics
   void GraphicsContext::CleanViewport()
   {
     CANDY_PROFILE_FUNCTION();
-    for (int i=0; i<FRAME_OVERLAP; i++)
+    for (int i=0; i<FRAMES_IN_FLIGHT; i++)
     {
       Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImage);
       Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImageView);
@@ -128,7 +128,7 @@ namespace Candy::Graphics
     VkSemaphoreCreateInfo semaphoreCreateInfo{};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     
-    for (int i = 0; i < FRAME_OVERLAP; i++) {
+    for (int i = 0; i < FRAMES_IN_FLIGHT; i++) {
       frames[i].commandBuffer.Init(surface);
       CANDY_VULKAN_CHECK(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence));
       CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore));
@@ -310,7 +310,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
       previousFrameIndex = currentFrameIndex;
-      currentFrameIndex = (currentFrameIndex + 1) % FRAME_OVERLAP;
+      currentFrameIndex = (currentFrameIndex + 1) % FRAMES_IN_FLIGHT;
   }
     
 }

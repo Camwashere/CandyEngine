@@ -76,6 +76,7 @@ namespace Candy::Graphics
     instance->currentPassIndex = viewportPassIndex;
     GetCurrentFrame().commandBuffer.SetCurrentBuffer(viewportPassIndex);
     RenderCommand::Reset();
+    RenderCommand::ResetUtility();
     
     
     std::array<VkClearValue, 2> clearValues{};

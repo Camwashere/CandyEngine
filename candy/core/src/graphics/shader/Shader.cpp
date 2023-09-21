@@ -215,7 +215,10 @@ namespace Candy::Graphics
   const ShaderSettings& Shader::GetSettings()const{return GetLayout().GetSettings();}
   VkPipeline Shader::GetPipeline()const{return GetLayout().GetPipeline();}
   VkPipelineLayout Shader::GetPipelineLayout()const{return GetLayout().GetPipelineLayout();}
-  
+  uint32_t Shader::GetPushID(const std::string& name)const
+  {
+    return GetLayout().GetPushID(name);
+  }
   uint32_t Shader::PushInt(const std::string& name, int value)
   {
     
@@ -241,7 +244,10 @@ namespace Candy::Graphics
   {
     return GetLayout().PushConstant(name, &matrix);
   }
-  
+  void Shader::PushInt(uint32_t id, int value)
+  {
+    GetLayout().PushConstant(id, &value);
+  }
   void Shader::PushFloat(uint32_t id, float value)
   {
     GetLayout().PushConstant(id, &value);

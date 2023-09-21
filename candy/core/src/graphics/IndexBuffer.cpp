@@ -1,6 +1,7 @@
 #include <candy/graphics/IndexBuffer.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/RenderCommand.hpp>
 namespace Candy::Graphics
 {
   IndexBuffer::IndexBuffer(uint64_t indexCount) : VulkanBuffer(sizeof(uint32_t)*indexCount, BufferType::INDEX), count(indexCount)
@@ -48,7 +49,7 @@ namespace Candy::Graphics
       
       CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
         
-        Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+        RenderCommand::CopyBufferImmediate(stagingBuffer, buffer, size);
         //commandBuffer->CopyBuffer(stagingBuffer, buffer, size);
         
         vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
@@ -83,7 +84,7 @@ namespace Candy::Graphics
     vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
     memcpy(data, indices, (size_t) size);
     vmaUnmapMemory(Vulkan::Allocator(), stagingBufferAllocation);
-    Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+    RenderCommand::CopyBufferImmediate(stagingBuffer, buffer, size);
     
     vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
   }

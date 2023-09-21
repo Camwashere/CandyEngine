@@ -170,10 +170,10 @@ namespace Candy::ECS
     {
       auto meshNode = child["MeshFilterComponent"];
       meshNode |= c4::yml::MAP;
-      auto& mesh = entity.GetComponent<MeshFilterComponent>();
+      const auto& meshData = entity.GetComponent<MeshFilterComponent>().GetMeshData();
       
-      meshNode["Vertices"] << mesh.meshData.vertices;
-      meshNode["Indices"] << mesh.meshData.indices;
+      meshNode["Vertices"] << meshData.vertices;
+      meshNode["Indices"] << meshData.indices;
     }
     
     if (entity.HasComponent<MeshRendererComponent>())
@@ -342,8 +342,8 @@ namespace Candy::ECS
       meshFilterComponent["Vertices"] >> meshData.vertices;
       meshFilterComponent["Indices"] >> meshData.indices;
       
-      auto& meshComp = deserializedEntity.AddComponent<MeshFilterComponent>();
-      meshComp.meshData = meshData;
+      auto& meshComp = deserializedEntity.AddComponent<MeshFilterComponent>(meshData);
+      
       
     }
     

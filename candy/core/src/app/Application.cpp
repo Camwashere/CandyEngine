@@ -71,14 +71,7 @@ namespace Candy
       layer->OnAttach();
   }
   
-  void Application::UpdateLayers()
-  {
-      CANDY_PROFILE_FUNCTION();
-      for (Layer* layer : layerStack)
-      {
-        layer->OnUpdate();
-      }
-  }
+  
   UILayer& Application::GetUILayer()
   {
       return *instance->uiLayer;
@@ -114,7 +107,11 @@ namespace Candy
         while(isRunning)
         {
           frameTime.Update();
-          UpdateLayers();
+          for (Layer* layer : layerStack)
+          {
+            layer->OnUpdate();
+          }
+          
           uiLayer->Begin();
           for (Layer* layer : layerStack)
           {

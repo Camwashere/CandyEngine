@@ -73,9 +73,9 @@ namespace Candy::Graphics
     //imageView.Set(image);
     
     
-    Vulkan::TransitionImageLayout(image, format.GetVulkanFormat(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    Vulkan::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-    Vulkan::TransitionImageLayout(image, format.GetVulkanFormat(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    RenderCommand::TransitionImageLayout(image, format.GetVulkanFormat(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    RenderCommand::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+    RenderCommand::TransitionImageLayout(image, format.GetVulkanFormat(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     
     VulkanBuffer::DestroyBuffer(stagingBuffer, stagingBufferAllocation);
     return true;

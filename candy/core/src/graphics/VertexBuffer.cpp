@@ -4,6 +4,7 @@
 #include <candy/graphics/GraphicsContext.hpp>
 #include <vma/vk_mem_alloc.h>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/RenderCommand.hpp>
 
 namespace Candy::Graphics
 {
@@ -77,7 +78,7 @@ namespace Candy::Graphics
     
     CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
     
-    Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+    RenderCommand::CopyBufferImmediate(stagingBuffer, buffer, size);
     
     
     vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
@@ -99,7 +100,7 @@ namespace Candy::Graphics
     vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
     memcpy(data, vertices, (size_t) size);
     vmaUnmapMemory(Vulkan::Allocator(), stagingBufferAllocation);
-    Vulkan::CopyBuffer(stagingBuffer, buffer, size);
+    RenderCommand::CopyBufferImmediate(stagingBuffer, buffer, size);
     
     vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
   }

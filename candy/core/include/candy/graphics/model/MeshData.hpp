@@ -54,5 +54,6 @@ namespace Candy::Graphics
     static const MeshData plane;
     static const MeshData cube;
     static const MeshData triangularPrism;
+    
   };
 }

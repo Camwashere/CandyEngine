@@ -36,10 +36,13 @@ namespace Candy::Graphics
     static void NextBatch();
     
   public:
+    static inline bool skipFlush=false;
     static void Flush();
+    static void FlushVertexData();
     static void BeginScene();
     static void EndScene();
     static void Init();
+    static void SubmitMesh(uint32_t entity, uint32_t meshIndexCount, uint32_t meshVertexCount, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
     static void SubmitMesh(uint32_t entity, const MeshData& data, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
     static Renderer3D::Stats GetStats();
     static void RenderSelectionBuffer();

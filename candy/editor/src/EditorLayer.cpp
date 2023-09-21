@@ -22,6 +22,7 @@ namespace Candy
   EditorLayer::EditorLayer()
   {
     CANDY_PROFILE_FUNCTION();
+    gizmo = CreateSharedPtr<Gizmo>();
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
     OpenScene(Project::GetActive()->GetConfiguration().startScene);
     

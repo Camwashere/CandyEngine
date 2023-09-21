@@ -44,7 +44,7 @@ add_custom_target(
         COMMENT "Copying internal project files if they don't exist..."
 )
 
-set(CANDY_BASE_FILES candy/core/include/candy/base/Assert.hpp
+set(CANDY_BASE_HEADERS candy/core/include/candy/base/Assert.hpp
         candy/core/include/candy/base/Base.hpp
         candy/core/include/candy/base/CandyConcepts.hpp
         candy/core/include/candy/base/Instrumentor.hpp
@@ -54,15 +54,18 @@ set(CANDY_BASE_FILES candy/core/include/candy/base/Assert.hpp
         candy/core/include/candy/base/PlatformDetection.hpp
         candy/core/include/candy/base/PrimitiveTypes.hpp
         candy/core/include/candy/base/RawBuffer.hpp
-        candy/core/include/candy/base/UUID.hpp
-        candy/core/src/base/Log.cpp
+        candy/core/include/candy/base/UUID.hpp)
+
+set(CANDY_BASE_SOURCES candy/core/src/base/Log.cpp
         candy/core/src/base/UUID.cpp)
+
+set(CANDY_BASE_FILES ${CANDY_BASE_HEADERS} ${CANDY_BASE_SOURCES})
 
 set(CANDY_COLLECTIONS_FILES candy/core/include/candy/collections/Array2D.hpp
         candy/core/include/candy/collections/Array3D.hpp
         candy/core/include/candy/collections/GenericBuffer.hpp)
 
-set(CANDY_MATH_FILES candy/core/include/candy/math/Vector.hpp
+set(CANDY_MATH_HEADERS candy/core/include/candy/math/Vector.hpp
         candy/core/include/candy/math/Direction.hpp
         candy/core/include/candy/math/Limit.hpp
         candy/core/include/candy/math/Math.hpp
@@ -94,43 +97,53 @@ set(CANDY_MATH_FILES candy/core/include/candy/math/Vector.hpp
         candy/core/include/candy/math/matrix/base/MatrixBase.hpp
         candy/core/include/candy/math/matrix/base/MatrixExpression.hpp
         candy/core/include/candy/math/direction/Direction2.hpp
-        candy/core/include/candy/math/direction/Direction3.hpp
-        candy/core/src/math/Transform.cpp
+        candy/core/include/candy/math/direction/Direction3.hpp)
+
+set(CANDY_MATH_SOURCES candy/core/src/math/Transform.cpp
         candy/core/src/math/matrix/Matrix3.cpp
         candy/core/src/math/matrix/Matrix4ColumnMajor.cpp
         candy/core/src/math/matrix/Matrix4RowMajor.cpp
         candy/core/src/math/direction/Direction2.cpp
         candy/core/src/math/direction/Direction3.cpp)
 
+set(CANDY_MATH_FILES ${CANDY_MATH_HEADERS} ${CANDY_MATH_SOURCES})
 
-set(CANDY_NOISE_FILES candy/core/include/candy/noise/PerlinNoise.hpp
-        candy/core/src/noise/PerlinNoise.cpp)
 
-set(CANDY_UTILS_FILES candy/core/include/candy/utils/FileUtils.hpp
+set(CANDY_NOISE_HEADERS candy/core/include/candy/noise/PerlinNoise.hpp)
+set(CANDY_NOISE_SOURCES candy/core/src/noise/PerlinNoise.cpp)
+
+set(CANDY_NOISE_FILES ${CANDY_NOISE_HEADERS} ${CANDY_NOISE_SOURCES})
+
+set(CANDY_UTILS_HEADERS candy/core/include/candy/utils/FileUtils.hpp
         candy/core/include/candy/utils/FrameTime.hpp
         candy/core/include/candy/utils/IDManager.hpp
         candy/core/include/candy/utils/Stopwatch.hpp
-        candy/core/include/candy/utils/Version.hpp
-        candy/core/src/utils/FileUtils.cpp
+        candy/core/include/candy/utils/Version.hpp)
+
+set(CANDY_UTILS_SOURCES candy/core/src/utils/FileUtils.cpp
         candy/core/src/utils/FrameTime.cpp
         candy/core/src/utils/Stopwatch.cpp
         candy/core/src/utils/Version.cpp)
 
-set(CANDY_EVENT_FILES candy/core/include/candy/event/Event.hpp
+set(CANDY_UTILS_FILES ${CANDY_UTILS_HEADERS} ${CANDY_UTILS_SOURCES})
+
+set(CANDY_EVENT_HEADERS candy/core/include/candy/event/Event.hpp
         candy/core/include/candy/event/EventDispatcher.hpp
         candy/core/include/candy/event/Events.hpp
         candy/core/include/candy/event/IEventListener.hpp
         candy/core/include/candy/event/Input.hpp
         candy/core/include/candy/event/KeyEvent.hpp
         candy/core/include/candy/event/MouseEvent.hpp
-        candy/core/include/candy/event/WindowEvent.hpp
-        candy/core/src/event/Input.cpp
+        candy/core/include/candy/event/WindowEvent.hpp)
+
+set(CANDY_EVENT_SOURCES candy/core/src/event/Input.cpp
         candy/core/src/event/KeyEvent.cpp
         candy/core/src/event/MouseEvent.cpp
         candy/core/src/event/WindowEvent.cpp)
 
+set(CANDY_EVENT_FILES ${CANDY_EVENT_HEADERS} ${CANDY_EVENT_SOURCES})
 
-set(CANDY_GRAPHICS_FILES candy/core/include/candy/graphics/BufferLayout.hpp
+set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/Color.hpp
         candy/core/include/candy/graphics/FrameBuffer.hpp
         candy/core/include/candy/graphics/GraphicsContext.hpp
@@ -200,8 +213,9 @@ set(CANDY_GRAPHICS_FILES candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/camera/OrthographicCamera.hpp
         candy/core/include/candy/graphics/camera/EditorCamera.hpp
         candy/core/include/candy/graphics/camera/CameraController.hpp
-        candy/core/include/candy/graphics/camera/CameraBase.hpp
-        candy/core/src/graphics/shader/ShaderData.cpp
+        candy/core/include/candy/graphics/camera/CameraBase.hpp)
+
+set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/texture/ImageFormat.cpp
         candy/core/src/graphics/vulkan/descriptor/DescriptorAllocator.cpp
         candy/core/src/graphics/vulkan/descriptor/DescriptorLayoutCache.cpp
@@ -267,10 +281,14 @@ set(CANDY_GRAPHICS_FILES candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/src/graphics/camera/CameraController.cpp
         candy/core/src/graphics/camera/CameraBase.cpp)
 
-set(CANDY_UI_FILES candy/core/include/candy/ui/UILayer.hpp
-        candy/core/src/ui/UILayer.cpp)
+set(CANDY_GRAPHICS_FILES ${CANDY_GRAPHICS_HEADERS} ${CANDY_GRAPHICS_SOURCES})
 
-set(CANDY_ECS_FILES candy/core/include/candy/ecs/BaseComponents.hpp
+set(CANDY_UI_FILES candy/core/include/candy/ui/UILayer.hpp
+        candy/core/src/ui/UILayer.cpp
+        candy/core/include/candy/ui/Gizmo.hpp
+        candy/core/src/ui/Gizmo.cpp)
+
+set(CANDY_ECS_HEADERS candy/core/include/candy/ecs/BaseComponents.hpp
         candy/core/include/candy/ecs/Entity.hpp
         candy/core/include/candy/ecs/Scene.hpp
         candy/core/include/candy/ecs/SceneManager.hpp
@@ -278,27 +296,35 @@ set(CANDY_ECS_FILES candy/core/include/candy/ecs/BaseComponents.hpp
         candy/core/include/candy/ecs/System.hpp
         candy/core/include/candy/ecs/SystemScheduler.hpp
         candy/core/include/candy/ecs/TransformComponent.hpp
-        candy/core/src/ecs/Entity.cpp
+        candy/core/include/candy/ecs/MeshComponents.hpp)
+
+set(CANDY_ECS_SOURCES candy/core/src/ecs/Entity.cpp
         candy/core/src/ecs/Scene.cpp
         candy/core/src/ecs/SceneManager.cpp
         candy/core/src/ecs/SceneSerializer.cpp
         candy/core/src/ecs/System.cpp
         candy/core/src/ecs/SystemScheduler.cpp
-        candy/core/src/ecs/TransformComponent.cpp)
+        candy/core/src/ecs/TransformComponent.cpp
+        candy/core/src/ecs/MeshComponents.cpp)
 
+set(CANDY_ECS_FILES ${CANDY_ECS_HEADERS} ${CANDY_ECS_SOURCES})
 
-
-set(CANDY_APP_FILES candy/core/include/candy/app/Application.hpp
+set(CANDY_APP_HEADERS candy/core/include/candy/app/Application.hpp
         candy/core/include/candy/app/Layer.hpp
         candy/core/include/candy/app/LayerStack.hpp
         candy/core/include/candy/app/Project.hpp
         candy/core/include/candy/app/ProjectSerializer.hpp
-        candy/core/include/candy/app/Window.hpp
-        candy/core/src/app/Application.cpp
+        candy/core/include/candy/app/Window.hpp)
+
+set(CANDY_APP_SOURCES candy/core/src/app/Application.cpp
         candy/core/src/app/LayerStack.cpp
         candy/core/src/app/Project.cpp
         candy/core/src/app/ProjectSerializer.cpp
         candy/core/src/app/Window.cpp)
+
+set(CANDY_APP_FILES ${CANDY_APP_HEADERS} ${CANDY_APP_SOURCES})
+
+
 
 set(CANDY_CORE_FILES ${CANDY_BASE_FILES} ${CANDY_COLLECTIONS_FILES} ${CANDY_MATH_FILES} ${CANDY_NOISE_FILES} ${CANDY_UTILS_FILES} ${CANDY_EVENT_FILES} ${CANDY_GRAPHICS_FILES} ${CANDY_UI_FILES} ${CANDY_ECS_FILES} ${CANDY_APP_FILES} candy/core/include/CandyPch.hpp candy/core/include/CandyPch.cpp)
 

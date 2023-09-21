@@ -25,7 +25,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     UniquePtr<DescriptorAllocatorPool> impl = CreateUniquePtr<DescriptorAllocatorPool>();
     
-    for (int i = 0; i < FRAME_OVERLAP; i++) {
+    for (int i = 0; i < GraphicsContext::FRAMES_IN_FLIGHT; i++) {
       impl->descriptorPools.push_back(std::make_unique<PoolStorage>());
     }
     return impl;
@@ -166,7 +166,7 @@ namespace Candy::Graphics
   void DescriptorAllocatorPool::Reset()
   {
     CANDY_PROFILE_FUNCTION();
-    for (uint32_t i=0; i<FRAME_OVERLAP; i++)
+    for (uint32_t i=0; i<GraphicsContext::FRAMES_IN_FLIGHT; i++)
     {
       for (auto al :  descriptorPools[i]->fullAllocators ) {
         

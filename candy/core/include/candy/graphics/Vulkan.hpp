@@ -61,9 +61,9 @@ namespace Candy::Graphics
     static float GetContextSizeRatio();
     static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 
-    static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-    static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-    static void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+    //static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+    //static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+    //static void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
     
   private:
     friend class GraphicsContext;

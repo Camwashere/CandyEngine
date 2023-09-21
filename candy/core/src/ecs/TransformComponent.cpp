@@ -13,42 +13,65 @@ namespace Candy::ECS
   
   }
   
-  
-  /*void TransformComponent::UpdateRelationships()
+  void TransformComponent::Update()
   {
-    if (entity.HasParent())
+    localMatrix = Matrix4::Translate(Matrix4::IDENTITY, localPosition)*Matrix4::Rotate(Matrix4::IDENTITY, localRotation)*Matrix4::Scale(Matrix4::IDENTITY, localScale);
+    if (HasParent())
     {
-      parent = &entity.GetParentEntity().GetComponent<TransformComponent>();
-      parent->AddChild(this);
+      worldMatrix = GetParent()->GetWorldTransform() * localMatrix;
     }
     else
     {
-      parent = nullptr;
+      worldMatrix = localMatrix;
     }
-    
-    
-  }*/
+    dirty = false;
+  }
+  
+  void TransformComponent::MarkDirty()
+  {
+    dirty = true;
+    if (HasChildren())
+    {
+      auto children = GetChildren();
+      for (auto child : children)
+      {
+        child->MarkDirty();
+      }
+    }
+  }
+  
   Entity TransformComponent::GetEntity()const
   {
     return entity;
   }
-  Matrix4 TransformComponent::GetWorldTransform() const
+  Matrix4 TransformComponent::GetWorldTransform()
   {
     CANDY_PROFILE_FUNCTION();
-    if (HasParent())
+    if (dirty)
+    {
+      Update();
+    }
+    return worldMatrix;
+    
+    /*if (HasParent())
     {
       return GetParent()->GetWorldTransform()*GetLocalTransform();
     }
     else
     {
       return GetLocalTransform();
-    }
+    }*/
   }
   
-  Matrix4 TransformComponent::GetLocalTransform() const
+  Matrix4 TransformComponent::GetLocalTransform()
   {
     CANDY_PROFILE_FUNCTION();
-    return Matrix4::Translate(Matrix4::IDENTITY, localPosition)*Matrix4::Rotate(Matrix4::IDENTITY, localRotation)*Matrix4::Scale(Matrix4::IDENTITY, localScale);
+    if (dirty)
+    {
+      Update();
+    }
+    return localMatrix;
+    //return Matrix4::Translate(Matrix4::IDENTITY, localPosition)*Matrix4::Rotate(Matrix4::IDENTITY, localRotation)*Matrix4::Scale(Matrix4::IDENTITY, localScale);
   }
   
   Math::Vector3 TransformComponent::GetLocalPosition() const
@@ -69,13 +92,14 @@ namespace Candy::ECS
   void TransformComponent::SetLocalPosition(const Math::Vector3 &value)
   {
     localPosition = value;
-    
+    MarkDirty();
   }
   
   
   void TransformComponent::SetLocalRotation(const Math::Quaternion &value)
   {
     localRotation = value.Normalized();
+    MarkDirty();
     
   }
   
@@ -83,6 +107,7 @@ namespace Candy::ECS
   void TransformComponent::SetLocalScale(const Math::Vector3 &value)
   {
     localScale = value;
+    MarkDirty();
     
   }
   
@@ -91,10 +116,11 @@ namespace Candy::ECS
     localPosition = positionValue;
     localRotation = rotationValue.Normalized();
     localScale = scaleValue;
+    MarkDirty();
     
   }
   
-  Math::Vector3 TransformComponent::GetWorldPosition() const
+  Math::Vector3 TransformComponent::GetWorldPosition()
   {
     CANDY_PROFILE_FUNCTION();
     if (HasParent())
@@ -106,7 +132,7 @@ namespace Candy::ECS
       return localPosition;
     }
   }
-  Math::Quaternion TransformComponent::GetWorldRotation()const
+  Math::Quaternion TransformComponent::GetWorldRotation()
   {
     CANDY_PROFILE_FUNCTION();
     if (HasParent())
@@ -118,7 +144,7 @@ namespace Candy::ECS
       return localRotation;
     }
   }
-  Math::Vector3 TransformComponent::GetWorldScale()const
+  Math::Vector3 TransformComponent::GetWorldScale()
   {
     CANDY_PROFILE_FUNCTION();
     if (HasParent())

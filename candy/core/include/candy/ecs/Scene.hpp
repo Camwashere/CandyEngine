@@ -13,9 +13,19 @@ namespace Candy
 }
 namespace Candy::ECS
 {
+  
   class Entity;
   class Scene
   {
+  public:
+    enum  SceneUpdateFlag
+    {
+      None=0,
+      Transforms = BIT(1),
+      Meshes2D = BIT(2),
+      Meshes3D = BIT(3),
+      
+    };
   private:
     entt::registry registry;
     std::unordered_map<UUID, Entity> entityMap;
@@ -24,13 +34,10 @@ namespace Candy::ECS
     bool isRunning = false;
     bool isPaused = true;
     SystemScheduler systemScheduler;
+    SceneUpdateFlag updateFlag = SceneUpdateFlag::None;
   
   private:
-    template<typename T>
-    void OnComponentAdded(entt::entity entity, T& component)
-    {
     
-    }
     
     void RenderScene();
     void RenderScene3D();
@@ -42,6 +49,15 @@ namespace Candy::ECS
     ~Scene();
     
     static SharedPtr<Scene> Copy(const SharedPtr<Scene>& other);
+    
+    template<typename T>
+    void OnComponentAdded(Entity& entity, T& component);
+    
+    template<typename T>
+    void OnComponentRemoved(Entity& entity, T& component);
+    
+    template<typename T>
+    void OnComponentUpdated(Entity& entity, T& component);
   
   public:
     Entity CreateEntity(const std::string &tag = std::string());
@@ -63,11 +79,11 @@ namespace Candy::ECS
     void OnUpdateSimulation();
     void OnStopSimulation();
     
-    
     void OnUpdateEditor();
-    
     void OnViewportResize(std::uint32_t width, std::uint32_t height);
     
+  public:
+    void AppendUpdateFlag(SceneUpdateFlag flag);
     bool IsRunning()const;
     bool IsPaused()const;
     void SetPaused(bool paused);
@@ -82,4 +98,18 @@ namespace Candy::ECS
     friend class ::Candy::SceneHierarchyPanel;
     
   };
+  
+  template<typename T>
+  inline void Scene::OnComponentAdded(Entity& entity, T& component){}
+  template<typename T>
+  inline void Scene::OnComponentRemoved(Entity& entity, T& component){}
+  
+  template<typename T>
+  inline void Scene::OnComponentUpdated(Entity& entity, T& component){}
+  
+  
 }
+
+
+
+

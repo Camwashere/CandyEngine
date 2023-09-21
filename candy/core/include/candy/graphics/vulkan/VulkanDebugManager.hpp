@@ -75,7 +75,7 @@ static constexpr std::string VkResultToString(VkResult result)
   }
 }
 
-#define CANDY_VULKAN_CHECK(x) { VkResult result = x; if (result != VK_SUCCESS) { CANDY_CORE_ERROR("Vulkan error: {0}", VkResultToString(result)); CANDY_DEBUGBREAK(); } }
+#define CANDY_VULKAN_CHECK(x) { VkResult result = x; if (result != VK_SUCCESS) { CANDY_CORE_ERROR("Vulkan error: {0} at: {1} : Line: {2} : Function: {3}", VkResultToString(result), std::filesystem::path(__FILE__).filename().string(), __LINE__, __func__); CANDY_DEBUGBREAK(); } }
 
 #else
   #define CANDY_VULKAN_CHECK(x) x

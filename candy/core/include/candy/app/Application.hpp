@@ -56,7 +56,6 @@ namespace Candy
     void OnEvent(Events::Event &event);
     void PushLayer(Layer *layer);
     void PushOverlay(Layer *layer);
-    void UpdateLayers();
   
   
   public:
