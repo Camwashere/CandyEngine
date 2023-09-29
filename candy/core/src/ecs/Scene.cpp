@@ -107,29 +107,41 @@ namespace Candy::ECS
     
     return entity;
   }
- 
+  void Scene::DestroyEntityTree(Entity parent)
+  {
+    MarkForDelete(parent);
+    for (auto& e : deletionQueue)
+    {
+      DestroyEntity(e);
+    }
+    
+    AppendUpdateFlag(SceneUpdateFlag::Meshes3D);
+    deletionQueue.clear();
+  }
   void Scene::DestroyEntity(Entity entity)
   {
     CANDY_PROFILE_FUNCTION();
-    if (entity.HasChildren())
-    {
-      auto& children = entity.GetChildren().children;
-      for (auto& child : children)
-      {
-        DestroyEntity(child);
-      }
-    }
-    if (entity.HasParent())
-    {
-      Entity parent = entity.GetParent().parent;
-      bool removed = parent.RemoveChild(entity);
-      CANDY_CORE_ASSERT(removed);
-    }
+    
     
     
     entityMap.erase(entity.GetUUID());
     registry.destroy(entity);
     
+  }
+  
+  void Scene::MarkForDelete(Entity entity)
+  {
+    CANDY_PROFILE_FUNCTION();
+    deletionQueue.push_back(entity);
+    
+    if (entity.HasChildren())
+    {
+      auto& children = entity.GetChildren().children;
+      for (auto& child : children)
+      {
+        MarkForDelete(child);
+      }
+    }
   }
   
   Entity Scene::DuplicateEntity(Entity entity)
@@ -230,6 +242,7 @@ namespace Candy::ECS
     
     if (updateFlag & SceneUpdateFlag::Meshes3D)
     {
+      
       for (auto entity : view)
       {
         

@@ -21,8 +21,16 @@ namespace Candy::ECS
     return !(*this==other);
   }
   
-  UUID Entity::GetUUID(){return GetComponent<IDComponent>().id;}
-  std::string Entity::GetTag(){return GetComponent<TagComponent>().tag;}
+  UUID Entity::GetUUID()
+  {
+    CANDY_CORE_ASSERT(HasComponent<IDComponent>(), "Entity does not have ID component");
+    return GetComponent<IDComponent>().id;
+  }
+  std::string Entity::GetTag()
+  {
+    CANDY_CORE_ASSERT(HasComponent<TagComponent>(), "Entity does not have tag component");
+    return GetComponent<TagComponent>().tag;
+  }
   ParentComponent& Entity::GetParent()
   {
     CANDY_CORE_ASSERT(HasParent(), "Entity does not have parent");

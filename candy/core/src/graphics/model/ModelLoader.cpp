@@ -25,7 +25,7 @@ namespace Candy::Graphics
     delete importer;
   }
   
-  static MeshData ToMeshData(const aiMesh* mesh)
+  static MeshData<Graphics::MeshVertex> ToMeshData(const aiMesh* mesh)
   {
     CANDY_PROFILE_FUNCTION();
     if (! mesh)
@@ -33,7 +33,7 @@ namespace Candy::Graphics
       return {};
     }
     
-    MeshData meshData{};
+    MeshData<Graphics::MeshVertex> meshData{};
     
     
     // Load vertices

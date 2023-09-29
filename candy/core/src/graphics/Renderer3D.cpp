@@ -30,6 +30,7 @@ namespace Candy::Graphics
     
     SharedPtr<Shader> gridShader;
     SharedPtr<Shader> meshShader;
+    SharedPtr<Shader> gizmoShader;
     uint32_t meshShaderObjectIndexID=0;
     uint32_t meshShaderTextureIndexID=0;
     uint32_t meshShaderTilingFactorID=0;
@@ -46,6 +47,8 @@ namespace Candy::Graphics
     SharedPtr<VertexArray> meshVertexArray;
     SharedPtr<VertexBuffer> meshVertexBuffer;
     SharedPtr<IndexBuffer> meshIndexBuffer;
+    
+    
     
     SharedPtr<Texture> whiteTexture;
     std::array<SharedPtr<Texture>, maxTextureSlots> textureSlots;
@@ -94,6 +97,8 @@ namespace Candy::Graphics
     data.meshShaderTextureIndexID = data.meshShader->GetPushID("textureIndex");
     data.meshShaderTilingFactorID = data.meshShader->GetPushID("tilingFactor");
   }
+  
+  
   void Renderer3D::InitSelection()
   {
     CANDY_PROFILE_FUNCTION();
@@ -124,6 +129,7 @@ namespace Candy::Graphics
     data.meshVertexBufferPtr = data.meshVertexBufferBase;
     data.meshIndexBufferPtr = data.meshIndexBufferBase;
     
+    
     ResetStats();
     data.vertexOffset=0;
     data.indexOffset=0;
@@ -146,6 +152,7 @@ namespace Candy::Graphics
     uint32_t dataSize = (uint32_t)((uint8_t*)data.meshVertexBufferPtr - (uint8_t*)data.meshVertexBufferBase);
     data.meshVertexBuffer->SetData(data.meshVertexBufferBase, dataSize);
     data.meshIndexBuffer->SetData(data.meshIndexBufferBase, data.meshIndexCount);
+    
   }
   void Renderer3D::Flush()
   {
@@ -203,6 +210,7 @@ namespace Candy::Graphics
       }
       
     }
+    
   }
   void Renderer3D::RenderGrid()
   {
@@ -265,7 +273,7 @@ namespace Candy::Graphics
       RenderCommand::DrawIndexed(object.indexCount, 1, object.indexStart, object.vertexOffset, 0);
     }
   }
-  void Renderer3D::SubmitMesh(uint32_t entity, const MeshData& mesh, const SharedPtr<Texture>& texture, const Math::Matrix4& transform)
+  void Renderer3D::SubmitMesh(uint32_t entity, const MeshData<MeshVertex>& mesh, const SharedPtr<Texture>& texture, const Math::Matrix4& transform)
   {
     CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(mesh.IsValid(), "Error, invalid mesh");
@@ -313,6 +321,7 @@ namespace Candy::Graphics
     objectData.indexStart = data.indexOffset;
     objectData.vertexOffset = (int32_t)data.vertexOffset;
     objectData.indexCount = mesh.IndexCount();
+    
     data.objects.push_back(objectData);
     data.transforms.push_back(transform);
     

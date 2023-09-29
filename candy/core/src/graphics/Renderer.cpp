@@ -275,6 +275,10 @@ namespace Candy::Graphics
   {
     return *instance->renderPasses[selectionPassIndex];
   }
+  Gizmo& Renderer::GetGizmo()
+  {
+    return instance->gizmo;
+  }
   void Renderer::SetClearColor(const Color& value)
   {
     instance->clearColor = value;

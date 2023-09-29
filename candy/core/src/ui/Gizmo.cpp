@@ -7,25 +7,13 @@ namespace Candy
   using namespace Graphics;
   using namespace Math;
   
-  struct GizmoVertex
-  {
-    Vector3 position;
-    Color color;
-  };
   
   
-  
-  struct GizmoMeshData
-  {
-    std::vector<GizmoVertex> vertices;
-    std::vector<uint32_t> indices;
-  };
-  
-  static GizmoMeshData CreateTranslationMesh(const Color& color, int N=8, float r=0.05f, float h=1.0f, float arrowHeight=0.2f, float arrowRadius=0.1f)
+  static MeshData<MeshVertex> CreateTranslationMesh(const Color& color, int N=8, float r=0.05f, float h=1.0f, float arrowHeight=0.2f, float arrowRadius=0.1f)
   {
     
-    
-    std::vector<GizmoVertex> vertices;
+    MeshData<MeshVertex> meshData{};
+    //std::vector<MeshVertexColored> vertices;
 
 // Generate the cylinder
     for (int i = 0; i <= N; i++)
@@ -38,8 +26,8 @@ namespace Candy
       float z = r * Sin(theta);
       
       // Two vertices at each point along the circle to form the cylinder
-      vertices.push_back(GizmoVertex(Vector3(x, 0, z), color));
-      vertices.push_back(GizmoVertex(Vector3(x, h, z), color));
+      meshData.vertices.emplace_back(Vector3(x, 0, z), color, Vector3::zero, Vector2::zero);
+      meshData.vertices.emplace_back(Vector3(x, h, z), color, Vector3::zero, Vector2::zero);
     }
 
 // Generate the cone for the arrow
@@ -51,27 +39,27 @@ namespace Candy
       float z = arrowRadius*Sin(theta);
       
       // Vertex at the base of the arrowhead
-      vertices.push_back(GizmoVertex(Vector3(x, h, z), color));
+      meshData.vertices.emplace_back(Vector3(x, h, z), color, Vector3::zero, Vector2::zero);
       
       // Tip of the arrowhead
       if (i < N)
-        vertices.push_back(GizmoVertex(Vector3(0, h+arrowHeight, 0), color));
+        meshData.vertices.emplace_back(Vector3(0, h+arrowHeight, 0), color, Vector3::zero, Vector2::zero);
     }
     
     
-    std::vector<uint32_t> indices;
+    //std::vector<uint32_t> indices;
 
 // Generate the cylinder
     for (unsigned int i = 0; i < N; i++)
     {
       // Four vertices form a "quad" of the cylinder side
-      indices.push_back(i*2);
-      indices.push_back(i*2+1);
-      indices.push_back(((i+1)%N)*2+1);
+      meshData.indices.push_back(i*2);
+      meshData.indices.push_back(i*2+1);
+      meshData.indices.push_back(((i+1)%N)*2+1);
       
-      indices.push_back(((i+1)%N)*2+1);
-      indices.push_back(((i+1)%N)*2);
-      indices.push_back(i*2);
+      meshData.indices.push_back(((i+1)%N)*2+1);
+      meshData.indices.push_back(((i+1)%N)*2);
+      meshData.indices.push_back(i*2);
     }
     
     unsigned int baseIndexForCone = N*2; // each end of the cylinder had 2*N vertices
@@ -80,22 +68,43 @@ namespace Candy
     for (unsigned int i = 0; i < N; i++)
     {
       // Base of the cone
-      indices.push_back(baseIndexForCone + (i*2));
-      indices.push_back(baseIndexForCone + (((i+1)%N)*2));
-      indices.push_back(baseIndexForCone + (i*2+1));
+      meshData.indices.push_back(baseIndexForCone + (i*2));
+      meshData.indices.push_back(baseIndexForCone + (((i+1)%N)*2));
+      meshData.indices.push_back(baseIndexForCone + (i*2+1));
       
       // Side of the cone
-      indices.push_back(baseIndexForCone + (i*2+1));
-      indices.push_back(baseIndexForCone + (((i+1)%N)*2));
-      indices.push_back(baseIndexForCone + (((i+1)%N)*2+1));
+      meshData.indices.push_back(baseIndexForCone + (i*2+1));
+      meshData.indices.push_back(baseIndexForCone + (((i+1)%N)*2));
+      meshData.indices.push_back(baseIndexForCone + (((i+1)%N)*2+1));
     }
     
-    return GizmoMeshData{vertices, indices};
+    return meshData;
   }
   
   
   Gizmo::Gizmo()
   {
+    translationMesh = CreateTranslationMesh(Color::red);
   
+  }
+  
+  void Gizmo::SetTarget(ECS::TransformComponent* transformTarget)
+  {
+    target = transformTarget;
+  }
+  int Gizmo::GetTargetEntity()const
+  {
+    if (target)
+    {
+      return (int)target->GetEntity();
+    }
+    else
+    {
+      return -1;
+    }
+  }
+  const Graphics::MeshData<Graphics::MeshVertex>& Gizmo::GetTranslationMesh()const
+  {
+    return translationMesh;
   }
 }

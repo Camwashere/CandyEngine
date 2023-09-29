@@ -147,6 +147,41 @@ namespace Candy::Graphics
   };
   
   
+  MeshVertexColored::MeshVertexColored() : position(Vector3::zero), color(Color::white)
+  {
+  
+  }
+  MeshVertexColored::MeshVertexColored(const MeshVertexColored& other) : position(other.position), color(other.color)
+  {
+  
+  }
+  MeshVertexColored::MeshVertexColored(const Math::Vector3& positionValue, const Color& colorValue) : position(positionValue), color(colorValue)
+  {
+  
+  }
+  
+  MeshVertexColored& MeshVertexColored::operator=(const MeshVertexColored& other)
+  {
+    position = other.position;
+    color = other.color;
+    return *this;
+    
+  }
+  bool MeshVertexColored::operator==(const MeshVertexColored& other)const
+  {
+    return position == other.position && color == other.color;
+  }
+  bool MeshVertexColored::operator!=(const MeshVertexColored& other)const
+  {
+    return !(*this == other);
+  }
+  
+  std::string MeshVertexColored::ToString()const
+  {
+    std::string str = "Position: " + position.ToString() + ", " + "Color: " + color.ToString();
+    return str;
+  }
+  
   MeshVertex::MeshVertex() : position(Vector3::zero), color(Color::white), normal(Vector3::up), uv(Vector2::zero)
   {
   
@@ -186,7 +221,7 @@ namespace Candy::Graphics
     
   }
   
-  MeshData::MeshData() : vertices{}, indices{}
+  /*MeshData::MeshData() : vertices{}, indices{}
   {
   
   }
@@ -354,6 +389,260 @@ namespace Candy::Graphics
     
     return str;
     
+  }*/
+  
+  static MeshData<MeshVertex> CreatePlaneMeshData()
+  {
+    MeshData<MeshVertex> mesh{};
+    mesh.vertices.resize(4);
+    
+    mesh.indices = { 0, 2, 1, 0, 3, 2};
+    
+    for (int i=0; i<4; i++)
+    {
+      MeshVertex vertex{};
+      vertex.position = planeVerts[i];
+      vertex.uv = planeUVs[i];
+      vertex.normal = Vector3::up;
+      vertex.color = Color::white;
+      mesh.vertices[i] = vertex;
+    }
+    
+    return mesh;
   }
+  static MeshData<MeshVertex> CreateCubeMeshData()
+  {
+    unsigned int vertexIndex=0;
+    MeshData<MeshVertex> mesh{};
+    
+    for (int p=0; p<6; p++)
+    {
+      std::array<MeshVertex, 4> verts{};
+      
+      for (int i=0; i<4; i++)
+      {
+        verts[i].position = voxelVerts [voxelTris [p][i]];
+        verts[i].normal = voxelNormals[p];
+        verts[i].uv = voxelUvs[i];
+        verts[i].color = Color::white;
+        mesh.vertices.push_back(verts[i]);
+      }
+      
+      
+      
+      mesh.indices.push_back(vertexIndex);
+      mesh.indices.push_back(vertexIndex + 1);
+      mesh.indices.push_back(vertexIndex + 2);
+      mesh.indices.push_back(vertexIndex + 2);
+      mesh.indices.push_back(vertexIndex + 1);
+      mesh.indices.push_back(vertexIndex + 3);
+      vertexIndex += 4;
+      
+      
+      
+    }
+    
+    
+    return mesh;
+  }
+  static MeshData<MeshVertex> CreateTriangularPrismMeshData()
+  {
+    MeshData<MeshVertex> mesh{};
+    for (int i=0; i<triangularPrismVertices.size(); i++)
+    {
+      MeshVertex vertex{};
+      vertex.position = triangularPrismVertices[i];
+      vertex.color = Color::white;
+      vertex.normal = triangularPrismNormals[i];
+      vertex.uv = triangularPrismUvs[i];
+      mesh.vertices.push_back(vertex);
+    }
+    
+    mesh.indices = triangularPrismIndices;
+    return mesh;
+  }
+  
+  
+  MeshData<MeshVertex> MeshPrimitive::GeneratePlane(const Color& color, size_t resolution, float width, float height)
+  {
+    return GeneratePlane({color, resolution, width, height});
+  }
+  
+  MeshData<MeshVertex> MeshPrimitive::GeneratePlane(const PlaneSettings& settings)
+  {
+    MeshData<MeshVertex> meshData{};
+    
+    const float sizeX = settings.width;
+    const float sizeZ = settings.height;
+    const float stepX = sizeX / (float)settings.resolution;
+    const float stepZ = sizeZ / (float)settings.resolution;
+    const float halfSizeX = sizeX * 0.5f;
+    const float halfSizeZ = sizeZ * 0.5f;
+    
+    for (size_t i = 0; i <= settings.resolution; ++i)
+    {
+      for (size_t j = 0; j <= settings.resolution; ++j)
+      {
+        float x = (float)j * stepX - halfSizeX;
+        float z = (float)i * stepZ - halfSizeZ;
+        
+        //Adjust orientation
+        Math::Vector3 pos(x, 0, z);
+        
+        meshData.vertices.emplace_back(pos, settings.color, Vector3::zero, Vector2::zero);
+      }
+    }
+    
+    for (size_t i = 0; i < settings.resolution; ++i)
+    {
+      for (size_t j = 0; j < settings.resolution; ++j)
+      {
+        unsigned int topLeft = i * (settings.resolution + 1) + j;
+        unsigned int topRight = topLeft + 1;
+        unsigned int bottomLeft = (i + 1) * (settings.resolution + 1) + j;
+        unsigned int bottomRight = bottomLeft + 1;
+        
+        // Triangle 1
+        meshData.indices.push_back(topLeft);
+        meshData.indices.push_back(bottomLeft);
+        meshData.indices.push_back(topRight);
+        
+        // Triangle 2
+        meshData.indices.push_back(topRight);
+        meshData.indices.push_back(bottomLeft);
+        meshData.indices.push_back(bottomRight);
+      }
+    }
+    
+    return meshData;
+  }
+  
+  MeshData<MeshVertex> MeshPrimitive::GenerateCylinder()
+  {
+    return GenerateCylinder(CylinderSettings{});
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateCylinder(const Color& color)
+  {
+    CylinderSettings settings{};
+    settings.color = color;
+    return GenerateCylinder(settings);
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateCylinder(const Color& color, size_t resolution, float radius)
+  {
+    CylinderSettings settings{};
+    settings.color = color;
+    settings.resolution = resolution;
+    settings.topRadius = radius;
+    settings.bottomRadius = radius;
+    return GenerateCylinder(settings);
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateCylinder(const Color& color, size_t resolution, float topRadius, float bottomRadius, float height)
+  {
+    return GenerateCylinder({color, resolution, topRadius, bottomRadius, height});
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateCylinder(const CylinderSettings& settings)
+  {
+    MeshData<MeshVertex> meshData{};
+    std::vector<uint32_t> bottomIndices, topIndices;
+    
+    float halfHeight = settings.height / 2.0f;
+    
+    // Generate the cylinder
+    for (size_t i = 0; i <= settings.resolution; i++)
+    {
+      // Angle along the circle
+      float theta = (float)i / (float)settings.resolution * 2.0f * Math::PI;
+      
+      // X and Z coordinates of the point on the circle for both the top and the bottom
+      float topX = settings.topRadius * Cos(theta);
+      float topZ = settings.topRadius * Sin(theta);
+      
+      float bottomX = settings.bottomRadius * Cos(theta);
+      float bottomZ = settings.bottomRadius * Sin(theta);
+      
+      // Two vertices at each point along the circle to form the cylinder, but shifted by -halfHeight
+      bottomIndices.push_back(meshData.vertices.size());
+      meshData.vertices.emplace_back(Vector3(bottomX, -halfHeight, bottomZ), settings.color, Vector3::zero, Vector2::zero);
+      
+      topIndices.push_back(meshData.vertices.size());
+      meshData.vertices.emplace_back(Vector3(topX, halfHeight, topZ), settings.color, Vector3::zero, Vector2::zero);
+    }
+    
+    // Generate the indices for the cylinder sides
+    for (unsigned int i = 0; i < settings.resolution; i++)
+    {
+      meshData.indices.push_back(bottomIndices[i]);
+      meshData.indices.push_back(topIndices[i]);
+      meshData.indices.push_back(topIndices[i+1]);
+      
+      meshData.indices.push_back(topIndices[i+1]);
+      meshData.indices.push_back(bottomIndices[i+1]);
+      meshData.indices.push_back(bottomIndices[i]);
+    }
+    
+    // Center vertices for the top and bottom, also shifted by -halfHeight
+    uint32_t bottomCenterIndex = meshData.vertices.size();
+    meshData.vertices.emplace_back(Vector3(0, -halfHeight, 0), settings.color, Vector3::zero, Vector2::zero);
+    
+    uint32_t topCenterIndex = meshData.vertices.size();
+    meshData.vertices.emplace_back(Vector3(0, halfHeight, 0), settings.color, Vector3::zero, Vector2::zero);
+    
+    // Create n-gon faces for the top and bottom
+    for(int i = 0; i < settings.resolution; i++) {
+      // bottom
+      meshData.indices.push_back(bottomCenterIndex);
+      meshData.indices.push_back(bottomIndices[i]);
+      meshData.indices.push_back(bottomIndices[i + 1]);
+      
+      // top
+      meshData.indices.push_back(topCenterIndex);
+      meshData.indices.push_back(topIndices[i+1]);
+      meshData.indices.push_back(topIndices[i]);
+    }
+    
+    return meshData;
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateCone(const Color& color, int resolution, float radius, float height)
+  {
+    MeshData<MeshVertex> meshData{};
+    // Generate the cone for the arrow
+    for (int i = 0; i <= resolution; i++)
+    {
+      float theta = (float)i * 2.0f * Math::PI / (float)resolution;
+      
+      float x = radius*Cos(theta);
+      float z = radius*Sin(theta);
+      
+      // Vertex at the base of the arrowhead
+      meshData.vertices.emplace_back(Vector3(x, height, z), color, Vector3::zero, Vector2::zero);
+      
+      // Tip of the arrowhead
+      if (i < resolution)
+        meshData.vertices.emplace_back(Vector3(0, height, 0), color, Vector3::zero, Vector2::zero);
+    }
+    
+    // Generate the cone (arrow head)
+    for (unsigned int i = 0; i < resolution; i++)
+    {
+      // Base of the cone
+      meshData.indices.push_back((i*2));
+      meshData.indices.push_back((((i+1)%resolution)*2));
+      meshData.indices.push_back((i*2+1));
+      
+      // Side of the cone
+      meshData.indices.push_back((i*2+1));
+      meshData.indices.push_back((((i+1)%resolution)*2));
+      meshData.indices.push_back((((i+1)%resolution)*2+1));
+    }
+    
+    return meshData;
+  }
+  
+  
+  const MeshData<MeshVertex> MeshPrimitive::plane(CreatePlaneMeshData());
+  const MeshData<MeshVertex> MeshPrimitive::cube(CreateCubeMeshData());
+  const MeshData<MeshVertex> MeshPrimitive::cylinder(GenerateCylinder(Color::white));
+  const MeshData<MeshVertex> MeshPrimitive::cone(GenerateCone(Color::white));
+  const MeshData<MeshVertex> MeshPrimitive::triangularPrism(CreateTriangularPrismMeshData());
   
 }

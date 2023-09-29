@@ -90,4 +90,31 @@ namespace Candy::ECS
   
   using AllComponents =
   ComponentGroup<IDComponent, TagComponent, ParentComponent, ChildrenComponent, TransformComponent, SpriteRendererComponent, CircleRendererComponent, LineRendererComponent, TextRendererComponent, MeshFilterComponent, MeshRendererComponent>;
+  
+  
+}
+
+namespace Candy::ECS
+{
+  template<>
+  inline void Scene::OnComponentRemoved<ChildrenComponent>(Entity& entity, ChildrenComponent& component)
+  {
+    for (auto& child : component.children)
+    {
+      if (child.HasComponent<ParentComponent>())
+      {
+        auto& parent = child.GetParent();
+        if (parent.parent==entity)
+        {
+          child.RemoveComponent<ParentComponent>();
+        }
+      }
+    }
+    
+    entity.GetTransform().SetLocalPosition(entity.GetTransform().GetLocalPosition());
+    //AppendUpdateFlag(SceneUpdateFlag::Meshes3D);
+    
+  }
+  
+  
 }

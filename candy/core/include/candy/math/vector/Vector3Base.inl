@@ -122,6 +122,36 @@ namespace Candy::Math
   {
     return vec.Magnitude();
   }
+  
+  template<typename T>
+  VectorBase<T, 3> VectorBase<T, 3>::Rotated(float theta, const VectorBase<T, 3> &orientation)const
+  {
+    // Ensure the orientation vector is normalized
+    VectorBase<T, 3> k = orientation.Normalized();
+    
+    T costheta = Cos(theta);
+    T sintheta = Sin(theta);
+    
+    T newX = costheta * x + sintheta * (k.y * orientation.z - k.z * y) + (1 - costheta) * k.x * (k.x * x + k.y * y + k.z * z);
+    T newY = costheta * y + sintheta * (k.z * x - k.x * z) + (1 - costheta) * k.y * (k.x * x + k.y * y + k.z * z);
+    T newZ = costheta * z + sintheta * (k.x * y - k.y * x) + (1 - costheta) * k.z * (k.x * x + k.y * y + k.z * z);
+    
+    return {newX, newY, newZ};
+  }
+  template<typename T>
+  void VectorBase<T, 3>::Rotate(float theta, const VectorBase<T, 3> &orientation)
+  {
+    // Ensure the orientation vector is normalized
+    VectorBase<T, 3> k = orientation.Normalized();
+    
+    T costheta = Cos(theta);
+    T sintheta = Sin(theta);
+    
+    x = costheta * x + sintheta * (k.y * orientation.z - k.z * y) + (1 - costheta) * k.x * (k.x * x + k.y * y + k.z * z);
+    y = costheta * y + sintheta * (k.z * x - k.x * z) + (1 - costheta) * k.y * (k.x * x + k.y * y + k.z * z);
+    z = costheta * z + sintheta * (k.x * y - k.y * x) + (1 - costheta) * k.z * (k.x * x + k.y * y + k.z * z);
+    
+  }
     template<typename T>
     VectorBase<T, 3>::VectorBase()=default;
     template<typename T>

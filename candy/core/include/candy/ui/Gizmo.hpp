@@ -3,8 +3,24 @@
 #include <candy/math/Matrix.hpp>
 #include <candy/math/Quaternion.hpp>
 #include <candy/ecs/TransformComponent.hpp>
+#include <candy/graphics/model/MeshData.hpp>
 namespace Candy
 {
+  
+  struct GizmoTranslationMeshSettings
+  {
+    Color color;
+    int resolution=8;
+    float radius=0.05f;
+    float height=1.0f;
+    float arrowHeight=0.2f;
+    float arrowRadius=0.1f;
+  };
+  
+  struct GizmoMeshSettings
+  {
+    GizmoTranslationMeshSettings translation;
+  };
   class Gizmo
   {
   public:
@@ -37,8 +53,22 @@ namespace Candy
     float sensitivity=1.0f;
     bool visible=false;
     
+    GizmoMeshSettings meshSettings;
+    
+    
+    
+    Graphics::MeshData<Graphics::MeshVertex> translationMesh;
+    Graphics::MeshData<Graphics::MeshVertex> rotationMesh;
+    Graphics::MeshData<Graphics::MeshVertex> scaleMesh;
+    
   public:
     Gizmo();
+    
+  public:
+    void SetTarget(ECS::TransformComponent* target);
+    int GetTargetEntity()const;
+    
+    [[nodiscard]] const Graphics::MeshData<Graphics::MeshVertex>& GetTranslationMesh()const;
   };
 }
 

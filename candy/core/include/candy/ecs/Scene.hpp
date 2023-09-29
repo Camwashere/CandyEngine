@@ -20,7 +20,7 @@ namespace Candy::ECS
   public:
     enum  SceneUpdateFlag
     {
-      None=0,
+      None = BIT(0),
       Transforms = BIT(1),
       Meshes2D = BIT(2),
       Meshes3D = BIT(3),
@@ -29,6 +29,7 @@ namespace Candy::ECS
   private:
     entt::registry registry;
     std::unordered_map<UUID, Entity> entityMap;
+    std::vector<Entity> deletionQueue;
     std::string name = "Untitled";
     std::uint32_t viewportWidth=0, viewportHeight=0;
     bool isRunning = false;
@@ -37,7 +38,7 @@ namespace Candy::ECS
     SceneUpdateFlag updateFlag = SceneUpdateFlag::None;
   
   private:
-    
+    void MarkForDelete(Entity entity);
     
     void RenderScene();
     void RenderScene3D();
@@ -63,6 +64,7 @@ namespace Candy::ECS
     Entity CreateEntity(const std::string &tag = std::string());
     Entity CreateEntityWithUUID(UUID uuid, const std::string&tag=std::string());
     void DestroyEntity(Entity entity);
+    void DestroyEntityTree(Entity parent);
     Entity DuplicateEntity(Entity entity);
     Entity FindEntityByTag(std::string_view tag);
     Entity GetEntityByUUID(UUID uuid);

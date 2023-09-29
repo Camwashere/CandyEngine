@@ -32,6 +32,7 @@ namespace Candy::Math
         static constexpr T Length(const VectorBase<T, 3> &vec);
         
         
+        
     public:
         union
         {
@@ -137,6 +138,8 @@ namespace Candy::Math
     
     
     public:
+        [[nodiscard]] VectorBase<T, 3> Rotated(float theta, const VectorBase<T, 3> &orientation)const;
+        void Rotate(float theta, const VectorBase<T, 3> &orientation);
         [[nodiscard]] VectorBase<T, 3> Normalized() const;
         [[nodiscard]] T Magnitude() const;
         [[nodiscard]] T SqrMagnitude() const;

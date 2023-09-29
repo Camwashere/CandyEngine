@@ -15,6 +15,7 @@
 #include <candy/graphics/camera/EditorCamera.hpp>
 #include "model/Mesh.hpp"
 #include <candy/math/Matrix.hpp>
+#include <candy/ui/Gizmo.hpp>
 
 namespace Candy::Graphics
 {
@@ -41,6 +42,7 @@ namespace Candy::Graphics
     std::array<UniquePtr<RenderPass>, 4> renderPasses{};
     uint8_t currentPassIndex=0;
     Color clearColor = Color::black;
+    Gizmo gizmo;
     
   
   private:
@@ -85,6 +87,8 @@ namespace Candy::Graphics
     static RenderPass& GetSelectionPass();
     static RenderPass& GetUIPass();
     static const CameraData& GetCameraData();
+    
+    static Gizmo& GetGizmo();
     
     static void SetClearColor(const Color& value);
     static Color GetClearColor();

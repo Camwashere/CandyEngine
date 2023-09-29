@@ -7,18 +7,18 @@ namespace Candy::ECS
   class MeshFilterComponent
   {
   private:
-    Graphics::MeshData meshData;
+    Graphics::MeshData<Graphics::MeshVertex> meshData;
     
   public:
     MeshFilterComponent();
     MeshFilterComponent(const MeshFilterComponent& other);
-    explicit MeshFilterComponent(const Graphics::MeshData& data);
+    explicit MeshFilterComponent(const Graphics::MeshData<Graphics::MeshVertex>& data);
     
     
   public:
-    void SetMeshData(const Graphics::MeshData& data);
-    [[nodiscard]] const Graphics::MeshData& GetMeshData() const;
-    Graphics::MeshData& GetMeshData();
+    void SetMeshData(const Graphics::MeshData<Graphics::MeshVertex>& data);
+    [[nodiscard]] const Graphics::MeshData<Graphics::MeshVertex>& GetMeshData() const;
+    Graphics::MeshData<Graphics::MeshVertex>& GetMeshData();
     
     
   };
@@ -35,7 +35,6 @@ namespace Candy::ECS
   template<>
   inline void Scene::OnComponentAdded<MeshFilterComponent>(Entity& entity, MeshFilterComponent& component)
   {
-    CANDY_CORE_INFO("Added mesh component!");
     AppendUpdateFlag(SceneUpdateFlag::Meshes3D);
     
   }

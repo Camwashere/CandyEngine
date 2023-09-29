@@ -2,6 +2,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 #include <candy/ecs/BaseComponents.hpp>
+#include <candy/graphics/Renderer.hpp>
 namespace Candy
 {
   using namespace ECS;
@@ -52,7 +53,7 @@ namespace Candy
         {
           if (ImGui::MenuItem("Delete Entity"))
           {
-            context->DestroyEntity(selectionContext);
+            context->DestroyEntityTree(selectionContext);
             selectionContext={};
           }
           
@@ -82,6 +83,15 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     selectionContext = entity;
     isSelection2D = selectionContext.Is2D();
+    if (entity)
+    {
+      Renderer::GetGizmo().SetTarget(&entity.GetTransform());
+    }
+    else
+    {
+      Renderer::GetGizmo().SetTarget(nullptr);
+    }
+    
     
   }
   

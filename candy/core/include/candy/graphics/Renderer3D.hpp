@@ -6,7 +6,7 @@
 #include "candy/graphics/camera/PerspectiveCamera.hpp"
 #include <candy/graphics/camera/EditorCamera.hpp>
 #include "material/Material.hpp"
-
+#include <candy/ui/Gizmo.hpp>
 namespace Candy::Graphics
 {
   
@@ -43,7 +43,8 @@ namespace Candy::Graphics
     static void EndScene();
     static void Init();
     static void SubmitMesh(uint32_t entity, uint32_t meshIndexCount, uint32_t meshVertexCount, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
-    static void SubmitMesh(uint32_t entity, const MeshData& data, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
+    static void SubmitMesh(uint32_t entity, const MeshData<MeshVertex>& data, const SharedPtr<Texture>& texture, const Math::Matrix4& transform=Math::Matrix4::IDENTITY);
+   
     static Renderer3D::Stats GetStats();
     static void RenderSelectionBuffer();
   

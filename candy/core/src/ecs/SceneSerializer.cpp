@@ -338,7 +338,7 @@ namespace Candy::ECS
     auto meshFilterComponent = entityNode["MeshFilterComponent"];
     if (meshFilterComponent.has_key())
     {
-      MeshData meshData{};
+      MeshData<Graphics::MeshVertex> meshData{};
       meshFilterComponent["Vertices"] >> meshData.vertices;
       meshFilterComponent["Indices"] >> meshData.indices;
       
@@ -350,13 +350,23 @@ namespace Candy::ECS
     auto meshRendererComponent = entityNode["MeshRendererComponent"];
     if (meshRendererComponent.has_key())
     {
+      
+      auto textureValueNode = meshRendererComponent["Texture"];
+      
+      CANDY_CORE_ASSERT(textureValueNode.is_keyval() || textureValueNode.is_val());
       std::string texturePath;
-      meshRendererComponent["Texture"] >> texturePath;
+      textureValueNode >> texturePath;
+      CANDY_CORE_INFO("Texture path: {}", texturePath);
       if (!texturePath.empty())
       {
-        auto& meshRendererComp = deserializedEntity.AddComponent<MeshRendererComponent>();
-        meshRendererComp.texture = Texture::Create(texturePath);
+        auto& texComp = deserializedEntity.AddComponent<MeshRendererComponent>();
+        texComp.texture = Texture::Create(texturePath);
       }
+      else
+      {
+        deserializedEntity.AddComponent<MeshRendererComponent>();
+      }
+      
     }
     
     auto spriteRendererComponent = entityNode["SpriteRendererComponent"];

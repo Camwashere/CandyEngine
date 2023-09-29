@@ -6,7 +6,7 @@ namespace Candy::Graphics
   class Mesh
   {
   public:
-    MeshData data;
+    MeshData<MeshVertex> data;
     
   public:
     Mesh();

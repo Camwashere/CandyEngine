@@ -10,7 +10,7 @@ namespace Candy::ECS
   using namespace Math;
   TransformComponent::TransformComponent(const Entity& e) : entity(e)
   {
-  
+    MarkDirty();
   }
   
   void TransformComponent::Update()
