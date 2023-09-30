@@ -1,5 +1,7 @@
 #include "candy/graphics/shader/ShaderLibrary.hpp"
 #include "CandyPch.hpp"
+#include <candy/graphics/shader/Shader.hpp>
+#include <candy/graphics/shader/ShaderLayout.hpp>
 #include <utility>
 #include <filesystem>
 #include <candy/graphics/Vulkan.hpp>

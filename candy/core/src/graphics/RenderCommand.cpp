@@ -1,11 +1,42 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/VertexArray.hpp>
+#include <candy/graphics/vulkan/pipeline/Pipeline.hpp>
+#include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/Renderer2D.hpp>
 #include <candy/graphics/Renderer3D.hpp>
 #include <candy/graphics/texture/TextureManager.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
+  struct UploadContext
+  {
+    VkFence uploadFence=nullptr;
+    VkCommandPool commandPool=nullptr;
+    VkCommandBuffer commandBuffer=nullptr;
+  };
+  
+  
+  
+  struct RenderCommandData
+  {
+    VulkanBuffer* dummyBuffer=nullptr;
+    UploadContext uploadContext{};
+    
+    RenderMode renderMode=RenderMode::Shaded;
+    
+  };
+  static RenderCommandData data;
+  
+  void RenderCommand::SetRenderMode(RenderMode mode)
+  {
+    data.renderMode = mode;
+  }
+  
+  RenderMode RenderCommand::GetRenderMode()
+  {
+    return data.renderMode;
+  }
   
   void RenderCommand::InitSyncStructures()
   {
@@ -14,12 +45,10 @@ namespace Candy::Graphics
     uploadFenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     
     
-    CANDY_VULKAN_CHECK(vkCreateFence(Vulkan::LogicalDevice(), &uploadFenceCreateInfo, nullptr, &uploadContext.uploadFence));
-    Vulkan::DeletionQueue().Push(uploadContext.uploadFence);
-    //Vulkan::PushDeleter([=](){vkDestroyFence(Vulkan::LogicalDevice(), uploadContext.uploadFence, nullptr);});
+    CANDY_VULKAN_CHECK(vkCreateFence(Vulkan::LogicalDevice(), &uploadFenceCreateInfo, nullptr, &data.uploadContext.uploadFence));
+    Vulkan::DeletionQueue().Push(data.uploadContext.uploadFence);
   }
-  VulkanBuffer* RenderCommand::dummyBuffer=nullptr;
-  UploadContext RenderCommand::uploadContext;
+  
   VkCommandBufferBeginInfo RenderCommand::CommandBufferBeginInfo(VkCommandBufferUsageFlags flags)
   {
     CANDY_PROFILE_FUNCTION();
@@ -58,21 +87,20 @@ namespace Candy::Graphics
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     //create pool for upload context
-    CANDY_VULKAN_CHECK(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &uploadContext.commandPool));
-    Vulkan::DeletionQueue().Push<VkCommandPool>(uploadContext.commandPool);
-    //Vulkan::PushDeleter([=](){vkDestroyCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, nullptr);});
+    CANDY_VULKAN_CHECK(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &data.uploadContext.commandPool));
+    Vulkan::DeletionQueue().Push<VkCommandPool>(data.uploadContext.commandPool);
     
     
     //allocate the default command buffer that we will use for the instant commands
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = uploadContext.commandPool;
+    allocInfo.commandPool = data.uploadContext.commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    //allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
+    
     allocInfo.commandBufferCount=1;
     
-    VkCommandBuffer cmd;
-    CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &uploadContext.commandBuffer));
+    
+    CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, &data.uploadContext.commandBuffer));
   }
   void RenderCommand::Init()
   {
@@ -88,7 +116,7 @@ namespace Candy::Graphics
     
     Renderer2D::Init();
     Renderer3D::Init();
-    dummyBuffer = new VulkanBuffer(BufferType::DUMMY);
+    data.dummyBuffer = new VulkanBuffer(BufferType::DUMMY);
     
     
   }
@@ -112,7 +140,7 @@ namespace Candy::Graphics
   void RenderCommand::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function)
   {
     CANDY_PROFILE_FUNCTION();
-    VkCommandBuffer cmd = uploadContext.commandBuffer;
+    VkCommandBuffer cmd = data.uploadContext.commandBuffer;
     
     //begin the command buffer recording. We will use this command buffer exactly once before resetting, so we tell vulkan that
     VkCommandBufferBeginInfo cmdBeginInfo = CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
@@ -129,18 +157,18 @@ namespace Candy::Graphics
     
     //submit command buffer to the queue and execute it.
     // uploadFence will now block until the graphic commands finish execution
-    CANDY_VULKAN_CHECK(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submit, uploadContext.uploadFence));
+    CANDY_VULKAN_CHECK(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submit, data.uploadContext.uploadFence));
     
-    vkWaitForFences(Vulkan::LogicalDevice(), 1, &uploadContext.uploadFence, true, 9999999999);
-    vkResetFences(Vulkan::LogicalDevice(), 1, &uploadContext.uploadFence);
+    vkWaitForFences(Vulkan::LogicalDevice(), 1, &data.uploadContext.uploadFence, true, 9999999999);
+    vkResetFences(Vulkan::LogicalDevice(), 1, &data.uploadContext.uploadFence);
     
     // reset the command buffers inside the command pool
-    vkResetCommandPool(Vulkan::LogicalDevice(), uploadContext.commandPool, 0);
+    vkResetCommandPool(Vulkan::LogicalDevice(), data.uploadContext.commandPool, 0);
   }
   void RenderCommand::DrawEmpty(uint32_t count)
   {
     CANDY_PROFILE_FUNCTION();
-    GetCommandBuffer().DrawEmpty(count, *dummyBuffer);
+    GetCommandBuffer().DrawEmpty(count, *data.dummyBuffer);
   }
   void RenderCommand::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
   {
@@ -150,7 +178,6 @@ namespace Candy::Graphics
   void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, int32_t instanceCount, int32_t instanceIndex)
   {
     CANDY_PROFILE_FUNCTION();
-    //vertexArray->Bind();
     GetCommandBuffer().DrawIndexed(vertexArray, instanceCount, instanceIndex);
   
   }
@@ -165,10 +192,10 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     switch(pipeline.GetType())
     {
-      case ShaderSettings::PipelineType::Graphics:
+      case PipelineType::Graphics:
         GetCommandBuffer().BindGraphicsPipeline(pipeline);
         break;
-      case ShaderSettings::PipelineType::Compute:
+      case PipelineType::Compute:
         GetCommandBuffer().BindComputePipeline(pipeline);
         break;
       default:
@@ -236,13 +263,10 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     GetCommandBuffer().SetViewport(viewport);
   }
-  void RenderCommand::SetUniform(uint32_t offset, uint32_t size, const void* data)
+  void RenderCommand::SetUniform(uint32_t offset, uint32_t size, const void* uniformData)
   {
     CANDY_PROFILE_FUNCTION();
-    GetFrame().uniformBuffer->SetData(offset, size, data);
-    //uint32_t paddedOffset = Vulkan::PhysicalDevice().PadUniformBufferSize(size);
-    //BindDescriptorSet(pipeline, GetGlobalDescriptorSet(), offset);
-    
+    GetFrame().uniformBuffer->SetData(offset, size, uniformData);
   }
   void RenderCommand::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
   {
@@ -259,19 +283,6 @@ namespace Candy::Graphics
                       copyRegion.size = size;
                       vkCmdCopyBuffer(cmd, srcBuffer, dstBuffer, 1, &copyRegion);
                     });
-                    
-    //GetCommandBuffer().CopyBufferImmediate(srcBuffer, dstBuffer, size);
-    /*CommandBuffer* cmd = &Vulkan::GetCurrentContext().GetCurrentFrame().commandBuffer;
-    
-    VkCommandBuffer commandBuffer = cmd->BeginSingleTimeCommands();
-    
-    VkBufferCopy copyRegion{};
-    copyRegion.srcOffset = 0; // Optional
-    copyRegion.dstOffset = 0; // Optional
-    copyRegion.size = size;
-    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-    
-    cmd->EndSingleTimeCommands(commandBuffer);*/
   }
   void RenderCommand::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
   {
@@ -288,15 +299,15 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     GetFrame().commandBuffer.TransitionImageLayout(image, format, oldLayout, newLayout);
   }
-  void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t dataSize, const void* data)
+  void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t dataSize, const void* pushData)
   {
     CANDY_PROFILE_FUNCTION();
-    GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, dataSize, data);
+    GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, dataSize, pushData);
   }
-  void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* data)
+  void RenderCommand::PushConstants(VkPipelineLayout pipelineLayout, ShaderData::Stage stage, uint32_t offset, uint32_t dataSize, const void* pushData)
   {
     CANDY_PROFILE_FUNCTION();
-    GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, offset, dataSize, data);
+    GetFrame().commandBuffer.PushConstants(pipelineLayout, stage, offset, dataSize, pushData);
   }
   
   void RenderCommand::Reset()
@@ -313,18 +324,11 @@ namespace Candy::Graphics
   }
   
   
-  /*VkSubmitInfo submitInfo{};
-  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-  submitInfo.commandBufferCount = 1;
-  submitInfo.pCommandBuffers = &commandBuffer;
   
-  vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-  vkQueueWaitIdle(Vulkan::LogicalDevice().graphicsQueue);*/
   void RenderCommand::Submit()
   {
     CANDY_PROFILE_FUNCTION();
     GetCommandBuffer().EndAll();
-    //GetCommandBuffer().EndRecording();
     std::vector<VkCommandBuffer> activeBuffers = GetCommandBuffer().GetActiveBuffers();
     
     VkSubmitInfo submitInfo{};

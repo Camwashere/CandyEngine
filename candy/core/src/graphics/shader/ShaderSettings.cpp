@@ -39,6 +39,8 @@ namespace Candy::Graphics
   }
   
   
+  
+  
   VkPrimitiveTopology  ShaderSettings::TopologyToVulkan(TopologyType value)
   {
     switch (value)
@@ -72,15 +74,15 @@ namespace Candy::Graphics
     }
   }
   
-  VkPolygonMode ShaderSettings::PolygonToVulkan(PolygonType value)
+  VkPolygonMode ShaderSettings::RenderModeToVulkan(RenderMode value)
   {
     switch (value)
     {
-      case PolygonType::FILL:
+      case RenderMode::Shaded:
         return VK_POLYGON_MODE_FILL;
-      case PolygonType::LINE:
+      case RenderMode::Wireframe:
         return VK_POLYGON_MODE_LINE;
-      case PolygonType::POINT:
+      case RenderMode::Point:
         return VK_POLYGON_MODE_POINT;
       default:
         CANDY_CORE_ASSERT(false, "INVALID POLYGON TYPE");

@@ -31,12 +31,11 @@ namespace Candy::Graphics
     
   private:
     VkPipelineLayout BakePipelineLayout();
-    std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts();
     VkDescriptorType GetDescriptorType(size_t setIndex);
     void BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
   public:
-    explicit ShaderLayout(ShaderSettings  settings);
+    explicit ShaderLayout(ShaderSettings settings);
     void BindAll();
     void Bind(uint32_t set);
     uint32_t GetPushID(const std::string& name)const;

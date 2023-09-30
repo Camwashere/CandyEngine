@@ -2,6 +2,7 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/texture/Texture.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
@@ -66,10 +67,12 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings gridSettings{};
+    gridSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
     gridSettings.filepath = "assets/shaders/renderer3D/Grid.glsl";
     gridSettings.renderPassIndex = Renderer::GetViewportPassIndex();
     gridSettings.depthTesting = true;
     gridSettings.alphaColorBlending = true;
+    
     data.gridShader = Shader::Create(gridSettings);
   }
   void Renderer3D::InitMesh()
@@ -80,6 +83,9 @@ namespace Candy::Graphics
     meshSettings.renderPassIndex = Renderer::GetViewportPassIndex();
     meshSettings.depthTesting = true;
     meshSettings.alphaColorBlending = true;
+    meshSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
+    meshSettings.configs.push_back(PipelineConfigSettings{RenderMode::Wireframe});
+    
     data.meshShader = Shader::Create(meshSettings);
     
     data.meshVertexArray=VertexArray::Create();
@@ -103,6 +109,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionSettings{};
+    selectionSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
     selectionSettings.filepath = "assets/shaders/renderer3D/SelectionMesh.glsl";
     selectionSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     data.selectionShader = Shader::Create(selectionSettings);
@@ -111,9 +118,7 @@ namespace Candy::Graphics
   void Renderer3D::InitMaterial()
   {
     CANDY_PROFILE_FUNCTION();
-    /*data.whiteTexture = Texture::Create(TextureSpecification());
-    uint32_t whiteTextureData = 0xffffffff;
-    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));*/
+    
     data.whiteTexture = Texture::White();
     
     data.textureSlots[0] = data.whiteTexture;

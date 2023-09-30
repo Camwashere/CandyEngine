@@ -2,24 +2,25 @@
 #include <vulkan/vulkan.h>
 #include <functional>
 #include <CandyPch.hpp>
-#include "VertexArray.hpp"
+#include <candy/graphics/shader/ShaderData.hpp>
 #include <candy/math/Vector.hpp>
-#include "vulkan/pipeline/Pipeline.hpp"
-#include <candy/graphics/GraphicsContext.hpp>
+
 namespace Candy::Graphics
 {
-  struct UploadContext
+  enum class RenderMode
   {
-    VkFence uploadFence;
-    VkCommandPool commandPool;
-    VkCommandBuffer commandBuffer;
+    Shaded=0,
+    Wireframe=1,
+    Point=2,
   };
   
+  class CommandBuffer;
+  struct FrameData;
+  class VertexArray;
+  class Pipeline;
   class RenderCommand
   {
-    private:
-    static VulkanBuffer* dummyBuffer;
-    static UploadContext uploadContext;
+  
   private:
     static VkCommandBufferBeginInfo CommandBufferBeginInfo(VkCommandBufferUsageFlags flags=0);
     static VkSubmitInfo SubmitInfo(VkCommandBuffer* cmd);
@@ -45,6 +46,8 @@ namespace Candy::Graphics
     static void SetClearColor(float r, float g, float b);
     static void SetLineWidth(float value);
     
+    static void SetRenderMode(RenderMode mode);
+    static RenderMode GetRenderMode();
     
     static void BindDescriptorSets(const Pipeline& pipeline, uint32_t firstSet, const std::vector<VkDescriptorSet>& descriptorSets, const std::vector<uint32_t>& uniformOffsets);
     static void SetViewport(VkExtent2D extent);

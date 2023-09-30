@@ -1,12 +1,14 @@
 #pragma once
 #include <vector>
 #include <filesystem>
-#include "Shader.hpp"
 #include <candy/utils/Version.hpp>
+#include <candy/base/Base.hpp>
 #include "ShaderLibrarySettings.hpp"
+#include <vulkan/vulkan.h>
 namespace Candy::Graphics
 {
   
+  class Shader;
   
     class ShaderLibrary
     {

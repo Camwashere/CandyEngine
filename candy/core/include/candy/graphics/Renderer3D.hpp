@@ -5,10 +5,10 @@
 #include "model/Mesh.hpp"
 #include "candy/graphics/camera/PerspectiveCamera.hpp"
 #include <candy/graphics/camera/EditorCamera.hpp>
-#include "material/Material.hpp"
 #include <candy/ui/Gizmo.hpp>
 namespace Candy::Graphics
 {
+  class Texture;
   
   class Renderer3D
   {

@@ -5,12 +5,16 @@
 #include "candy/graphics/Color.hpp"
 #include "ShaderData.hpp"
 #include "vulkan/vulkan.h"
-#include "ShaderSettings.hpp"
-#include "processing/ShaderPreProcessor.hpp"
-#include "processing/ShaderPostProcessor.hpp"
+//#include "ShaderSettings.hpp"
+//#include "processing/ShaderPreProcessor.hpp"
+//#include "processing/ShaderPostProcessor.hpp"
 #include "../vulkan/pipeline/Pipeline.hpp"
 namespace Candy::Graphics
 {
+  
+  class ShaderLayout;
+  class ShaderPreProcessor;
+  class ShaderPostProcessor;
   
     class Shader
     {
@@ -19,7 +23,7 @@ namespace Candy::Graphics
       uint32_t id;
         
       UniquePtr<ShaderPreProcessor> preProcessor;
-      ShaderPostProcessor postProcessor;
+      UniquePtr<ShaderPostProcessor> postProcessor;
     
     private:
       VkShaderModule CreateShaderModule(ShaderData::Stage stage);
@@ -36,7 +40,7 @@ namespace Candy::Graphics
       
     public:
       // Push constant functions
-      uint32_t GetPushID(const std::string& name)const;
+      [[nodiscard]] uint32_t GetPushID(const std::string& name)const;
       
       
       uint32_t PushInt(const std::string& name, int value);
@@ -70,19 +74,19 @@ namespace Candy::Graphics
       
       
     public:
-      const std::string& GetName()const;
-      const std::filesystem::path& GetFilepath()const;
-      const ShaderSettings& GetSettings()const;
-      VkPipeline GetPipeline()const;
-      VkPipelineLayout GetPipelineLayout()const;
+      [[nodiscard]] const std::string& GetName()const;
+      [[nodiscard]] const std::filesystem::path& GetFilepath()const;
+      [[nodiscard]] const ShaderSettings& GetSettings()const;
+      [[nodiscard]] VkPipeline GetPipeline()const;
+      [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
         
       
-      ShaderPostProcessor& GetPostProcessor(){return postProcessor;}
-      ShaderLayout& GetLayout(){return postProcessor.shaderLayout;}
-      const ShaderLayout& GetLayout()const{return postProcessor.shaderLayout;}
-      BufferLayout GetBufferLayout()const{return postProcessor.shaderLayout.vertexLayout;}
-      size_t GetMaterialBufferSize()const{return postProcessor.shaderLayout.materialBufferSize;}
-      size_t GetGlobalBufferSize()const{return postProcessor.shaderLayout.globalBufferSize;}
+      ShaderPostProcessor& GetPostProcessor();
+      ShaderLayout& GetLayout();
+      [[nodiscard]] const ShaderLayout& GetLayout()const;
+      [[nodiscard]] BufferLayout GetBufferLayout()const;
+      [[nodiscard]] size_t GetMaterialBufferSize()const;
+      [[nodiscard]] size_t GetGlobalBufferSize()const;
         
     public:
       static std::vector<char> ReadSpvFileBinary(const std::string& filename);

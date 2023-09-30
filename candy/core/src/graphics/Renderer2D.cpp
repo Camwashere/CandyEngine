@@ -144,6 +144,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     ShaderSettings quadShaderSettings{};
     quadShaderSettings.filepath = "assets/shaders/renderer2D/Quad.glsl";
+    quadShaderSettings.configs.push_back({RenderMode::Shaded});
     quadShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     quadShaderSettings.depthTesting = false;
     quadShaderSettings.alphaColorBlending = true;
@@ -193,6 +194,7 @@ namespace Candy::Graphics
     // Circles
     ShaderSettings circleShaderSettings{};
     circleShaderSettings.filepath = "assets/shaders/renderer2D/Circle.glsl";
+    circleShaderSettings.configs.push_back({RenderMode::Shaded});
     circleShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     circleShaderSettings.depthTesting = false;
     circleShaderSettings.alphaColorBlending = true;
@@ -225,6 +227,7 @@ namespace Candy::Graphics
     // Lines
     ShaderSettings lineShaderSettings{};
     lineShaderSettings.filepath = "assets/shaders/renderer2D/Line.glsl";
+    lineShaderSettings.configs.push_back({RenderMode::Shaded});
     lineShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     lineShaderSettings.depthTesting = false;
     
@@ -245,6 +248,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     ShaderSettings textShaderSettings{};
     textShaderSettings.filepath = "assets/shaders/renderer2D/Text.glsl";
+    textShaderSettings.configs.push_back({RenderMode::Shaded});
     textShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     textShaderSettings.depthTesting = false;
     textShaderSettings.alphaColorBlending = true;
@@ -267,30 +271,28 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionQuadSettings{};
     selectionQuadSettings.filepath = "assets/shaders/renderer2D/SelectionQuad.glsl";
+    selectionQuadSettings.configs.push_back({RenderMode::Shaded});
     selectionQuadSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionQuadSettings.depthTesting = false;
     data.selectionQuadShader = Shader::Create(selectionQuadSettings);
     
     ShaderSettings selectionCircleSettings{};
     selectionCircleSettings.filepath = "assets/shaders/renderer2D/SelectionCircle.glsl";
+    selectionCircleSettings.configs.push_back({RenderMode::Shaded});
     selectionCircleSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionCircleSettings.depthTesting = false;
     data.selectionCircleShader = Shader::Create(selectionCircleSettings);
     
     ShaderSettings selectionLineSettings{};
     selectionLineSettings.filepath = "assets/shaders/renderer2D/SelectionLine.glsl";
+    selectionLineSettings.configs.push_back({RenderMode::Shaded});
     selectionLineSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionLineSettings.depthTesting = false;
     data.selectionLineShader = Shader::Create(selectionLineSettings);
-    
-    
   }
   void Renderer2D::InitTextures()
   {
     CANDY_PROFILE_FUNCTION();
-    /*data.whiteTexture = Texture::Create(TextureSpecification());
-    uint32_t whiteTextureData = 0xffffffff;
-    data.whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));*/
     data.whiteTexture = Texture::White();
     
     data.textureSlots[0] = data.whiteTexture;
@@ -474,7 +476,6 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     constexpr size_t quadVertexCount = 4;
     const float textureIndex = 0.0f; // White Texture
-    //constexpr Math::Vector2 textureCoords[] = { { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
     
     const float tilingFactor = 1.0f;
     

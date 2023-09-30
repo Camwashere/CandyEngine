@@ -11,6 +11,7 @@
 #include <candy/utils/FileUtils.hpp>
 #include <utility>
 #include <candy/graphics/model/ModelLoader.hpp>
+#include <candy/graphics/model/MeshPrimitive.hpp>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
 using namespace Candy::ECS;
@@ -33,6 +34,8 @@ namespace Candy
     viewport = CreateSharedPtr<Viewport>(this);
     
     Gizmo meshGizmo;
+    
+    
 
     
     
@@ -167,6 +170,19 @@ namespace Candy
         if (ImGui::MenuItem("Redo"))
         {
         
+        }
+        ImGui::EndMenu();
+      }
+      
+      if (ImGui::BeginMenu("View"))
+      {
+        if (ImGui::MenuItem("Shaded"))
+        {
+          RenderCommand::SetRenderMode(RenderMode::Shaded);
+        }
+        if (ImGui::MenuItem("Wireframe"))
+        {
+          RenderCommand::SetRenderMode(RenderMode::Wireframe);
         }
         ImGui::EndMenu();
       }

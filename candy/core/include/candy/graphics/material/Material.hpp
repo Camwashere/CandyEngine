@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include "candy/graphics/shader/Shader.hpp"
 #include "MaterialData.hpp"
 namespace Candy::Graphics
@@ -36,4 +37,4 @@ namespace Candy::Graphics
   public:
     static SharedPtr<Material> Create(Shader* shader);
   };
-}
+}*/

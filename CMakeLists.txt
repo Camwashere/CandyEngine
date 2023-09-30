@@ -213,7 +213,8 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/camera/OrthographicCamera.hpp
         candy/core/include/candy/graphics/camera/EditorCamera.hpp
         candy/core/include/candy/graphics/camera/CameraController.hpp
-        candy/core/include/candy/graphics/camera/CameraBase.hpp)
+        candy/core/include/candy/graphics/camera/CameraBase.hpp
+        candy/core/include/candy/graphics/model/MeshPrimitive.hpp)
 
 set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/texture/ImageFormat.cpp
@@ -279,7 +280,8 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/camera/OrthographicCamera.cpp
         candy/core/src/graphics/camera/EditorCamera.cpp
         candy/core/src/graphics/camera/CameraController.cpp
-        candy/core/src/graphics/camera/CameraBase.cpp)
+        candy/core/src/graphics/camera/CameraBase.cpp
+        candy/core/src/graphics/model/MeshPrimitive.cpp)
 
 set(CANDY_GRAPHICS_FILES ${CANDY_GRAPHICS_HEADERS} ${CANDY_GRAPHICS_SOURCES})
 

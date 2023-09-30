@@ -5,15 +5,43 @@
 namespace Candy::Graphics
 {
   
-  /*enum class PipelineType
-  {
-    Graphics=0,
-    Compute,
-    RayTracing,
-    None,
-  };*/
+  
   
   class Pipeline
+  {
+  private:
+    ShaderSettings settings;
+    std::vector<VkPipeline> configs;
+    uint32_t activeConfig;
+    VkPipelineLayout layout = VK_NULL_HANDLE;
+    
+    
+  private:
+    VkPipelineInputAssemblyStateCreateInfo GetInputAssembly();
+    VkPipelineViewportStateCreateInfo GetViewportState();
+    VkPipelineRasterizationStateCreateInfo GetRasterizer(const PipelineConfigSettings& config);
+    VkPipelineMultisampleStateCreateInfo GetMultisampling();
+    VkPipelineColorBlendAttachmentState GetColorBlendAttachment();
+    VkPipelineColorBlendStateCreateInfo GetColorBlending(VkPipelineColorBlendAttachmentState& attachment);
+    VkPipelineDepthStencilStateCreateInfo GetDepthStencil();
+    
+    std::vector<VkDynamicState> GetDynamicStates();
+    
+  public:
+    explicit Pipeline(ShaderSettings  settings);
+    
+    operator VkPipeline()const;
+    operator VkPipeline();
+    
+  public:
+    void Bake(VkRenderPass renderPass, const std::vector<VkVertexInputBindingDescription>& bindingDescriptions, const std::vector<VkVertexInputAttributeDescription>& attributeDescriptions,
+              const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages, VkPipelineLayout pipelineLayout);
+    
+    [[nodiscard]] PipelineType GetType()const;
+    [[nodiscard]] VkPipelineLayout GetLayout()const;
+    void SetActiveConfig(uint32_t config);
+  };
+  /*class Pipeline
   {
   private:
     uint32_t id;
@@ -73,5 +101,5 @@ namespace Candy::Graphics
  
     
  
-  };
+  };*/
 }
