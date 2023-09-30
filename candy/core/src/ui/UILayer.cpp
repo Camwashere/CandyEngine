@@ -79,6 +79,7 @@ namespace Candy
     init_info.MinImageCount = 3;
     init_info.ImageCount = 10;
     init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    VK_SAMPLE_COUNT_16_BIT;
     
    
     
@@ -152,6 +153,7 @@ namespace Candy
     
     // Rendering
     ImGui::Render();
+    
     
     
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), Vulkan::GetCurrentCommandBuffer());

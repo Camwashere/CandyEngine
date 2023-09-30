@@ -602,42 +602,106 @@ namespace Candy::Graphics
     
     return meshData;
   }
-  MeshData<MeshVertex> MeshPrimitive::GenerateCone(const Color& color, int resolution, float radius, float height)
+  
+  MeshData<MeshVertex> MeshPrimitive::GenerateCone(const Color& color)
+  {
+    ConeSettings settings{};
+    settings.color = color;
+    return GenerateCone(settings);
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateCone(const ConeSettings& settings)
   {
     MeshData<MeshVertex> meshData{};
-    // Generate the cone for the arrow
-    for (int i = 0; i <= resolution; i++)
+    std::vector<uint32_t> bottomIndices;
+    
+    float halfHeight = settings.height / 2.0f;
+    
+    // Generate the cone
+    for (size_t i = 0; i <= settings.resolution; i++)
     {
-      float theta = (float)i * 2.0f * Math::PI / (float)resolution;
+      // Angle along the circle
+      float theta = (float)i / (float)settings.resolution * 2.0f * Math::PI;
       
-      float x = radius*Cos(theta);
-      float z = radius*Sin(theta);
+      // X and Z coordinates of the point on the circle for the bottom
+      float bottomX = settings.radius * Cos(theta);
+      float bottomZ = settings.radius * Sin(theta);
       
-      // Vertex at the base of the arrowhead
-      meshData.vertices.emplace_back(Vector3(x, height, z), color, Vector3::zero, Vector2::zero);
-      
-      // Tip of the arrowhead
-      if (i < resolution)
-        meshData.vertices.emplace_back(Vector3(0, height, 0), color, Vector3::zero, Vector2::zero);
+      // Bottom vertices of the cone
+      bottomIndices.push_back(meshData.vertices.size());
+      meshData.vertices.emplace_back(Vector3(bottomX, -halfHeight, bottomZ), settings.color, Vector3::zero, Vector2::zero);
     }
     
-    // Generate the cone (arrow head)
-    for (unsigned int i = 0; i < resolution; i++)
+    // Single top vertex of the cone
+    uint32_t topIndex = meshData.vertices.size();
+    meshData.vertices.emplace_back(Vector3(0, halfHeight, 0), settings.color, Vector3::zero, Vector2::zero);
+    
+    // Generate the indices for the cone sides
+    for (unsigned int i = 0; i < settings.resolution; i++)
     {
-      // Base of the cone
-      meshData.indices.push_back((i*2));
-      meshData.indices.push_back((((i+1)%resolution)*2));
-      meshData.indices.push_back((i*2+1));
-      
-      // Side of the cone
-      meshData.indices.push_back((i*2+1));
-      meshData.indices.push_back((((i+1)%resolution)*2));
-      meshData.indices.push_back((((i+1)%resolution)*2+1));
+      meshData.indices.push_back(bottomIndices[i]);
+      meshData.indices.push_back(topIndex);
+      meshData.indices.push_back(bottomIndices[(i+1)%settings.resolution]);
+    }
+    
+    // Center vertex for the bottom
+    uint32_t bottomCenterIndex = meshData.vertices.size();
+    meshData.vertices.emplace_back(Vector3(0, -halfHeight, 0), settings.color, Vector3::zero, Vector2::zero);
+    
+    // Generate the indices for the bottom face
+    for (int i = 0; i < settings.resolution; i++)
+    {
+      meshData.indices.push_back(bottomCenterIndex);
+      meshData.indices.push_back(bottomIndices[i]);
+      meshData.indices.push_back(bottomIndices[(i+1)%settings.resolution]);
     }
     
     return meshData;
   }
-  
+  MeshData<MeshVertex> MeshPrimitive::GenerateTorus(const Color& color)
+  {
+    TorusSettings settings{};
+    settings.color = color;
+    return GenerateTorus(settings);
+  }
+  MeshData<MeshVertex> MeshPrimitive::GenerateTorus(const TorusSettings& settings)
+  {
+    MeshData<MeshVertex> meshData{};
+    
+    for (size_t i = 0; i < settings.radialResolution; i++)
+    {
+      for (size_t j = 0; j < settings.tubeResolution; j++)
+      {
+        // Compute angles for radial and tube circles
+        float radialAngle = (float)i / (float)settings.radialResolution * 2.0f * Math::PI;
+        float tubeAngle = (float)j / (float)settings.tubeResolution * 2.0f * Math::PI;
+        
+        float tubeX = settings.tubeRadius * Cos(tubeAngle);       // tube X coordinate
+        float tubeY = settings.tubeRadius * Sin(tubeAngle);       // tube Y coordinate
+        
+        float centerX = (settings.radius + tubeX) * Cos(radialAngle); // final X coordinate
+        float centerY = (settings.radius + tubeX) * Sin(radialAngle); // final Y coordinate
+        
+        meshData.vertices.emplace_back(Vector3(centerX, centerY, tubeY), settings.color, Vector3::zero, Vector2::zero);
+        
+        // Compute indices
+        size_t curIndex = i * settings.tubeResolution + j;
+        size_t nextIndex = i * settings.tubeResolution + ((j + 1) % settings.tubeResolution);
+        size_t nextRadialIndex = ((i + 1) % settings.radialResolution) * settings.tubeResolution + j;
+        size_t nextRadialNextIndex = ((i + 1) % settings.radialResolution) * settings.tubeResolution + ((j + 1) % settings.tubeResolution);
+        
+        // Two triangles to form a surface
+        meshData.indices.push_back(curIndex);
+        meshData.indices.push_back(nextIndex);
+        meshData.indices.push_back(nextRadialNextIndex);
+        
+        meshData.indices.push_back(curIndex);
+        meshData.indices.push_back(nextRadialNextIndex);
+        meshData.indices.push_back(nextRadialIndex);
+      }
+    }
+    
+    return meshData;
+  }
   
   const MeshData<MeshVertex> MeshPrimitive::plane(CreatePlaneMeshData());
   const MeshData<MeshVertex> MeshPrimitive::cube(CreateCubeMeshData());

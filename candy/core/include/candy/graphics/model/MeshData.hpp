@@ -208,6 +208,21 @@ namespace Candy::Graphics
       float bottomRadius=0.05f;
       float height=1.0f;
     };
+    struct ConeSettings
+    {
+      Color color=Color::white;
+      size_t resolution=8;
+      float radius=0.05f;
+      float height=1.0f;
+    };
+    struct TorusSettings
+    {
+      Color color = Color::white;
+      size_t tubeResolution = 8;
+      size_t radialResolution = 8;
+      float radius = 1.0f;
+      float tubeRadius = 0.25f;
+    };
   public:
     static MeshData<MeshVertex> GeneratePlane(const Color& color, size_t resolution=1, float width=1.0f, float height=1.0f);
     static MeshData<MeshVertex> GeneratePlane(const PlaneSettings& settings);
@@ -218,7 +233,12 @@ namespace Candy::Graphics
     static MeshData<MeshVertex> GenerateCylinder(const Color& color, size_t resolution, float topRadius, float bottomRadius, float height=1.0f);
     static MeshData<MeshVertex> GenerateCylinder(const CylinderSettings& settings);
     
-    static MeshData<MeshVertex> GenerateCone(const Color& color, int resolution=8, float radius=0.05f, float height=1.0f);
+    static MeshData<MeshVertex> GenerateCone(const Color& color);
+    static MeshData<MeshVertex> GenerateCone(const ConeSettings& settings);
+    
+    static MeshData<MeshVertex> GenerateTorus(const Color& color);
+    static MeshData<MeshVertex> GenerateTorus(const TorusSettings& settings);
+    
     static const MeshData<MeshVertex> plane;
     static const MeshData<MeshVertex> cube;
     static const MeshData<MeshVertex> cylinder;

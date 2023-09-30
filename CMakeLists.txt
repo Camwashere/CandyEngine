@@ -28,7 +28,7 @@ add_custom_target(
         ${CMAKE_BINARY_DIR}/assets
         COMMENT "Copying internal asset files...")
 
-add_custom_target(
+#[[add_custom_target(
         CopyConfig ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources/config
@@ -42,7 +42,7 @@ add_custom_target(
         ${CMAKE_SOURCE_DIR}/resources/projects
         $<$<NOT:$<STREQUAL:${CMAKE_SOURCE_DIR}/resources/projects,${CMAKE_BINARY_DIR}/projects>>:${CMAKE_BINARY_DIR}/projects>
         COMMENT "Copying internal project files if they don't exist..."
-)
+)]]
 
 set(CANDY_BASE_HEADERS candy/core/include/candy/base/Assert.hpp
         candy/core/include/candy/base/Base.hpp
@@ -286,7 +286,9 @@ set(CANDY_GRAPHICS_FILES ${CANDY_GRAPHICS_HEADERS} ${CANDY_GRAPHICS_SOURCES})
 set(CANDY_UI_FILES candy/core/include/candy/ui/UILayer.hpp
         candy/core/src/ui/UILayer.cpp
         candy/core/include/candy/ui/Gizmo.hpp
-        candy/core/src/ui/Gizmo.cpp)
+        candy/core/src/ui/Gizmo.cpp
+        candy/core/include/candy/ui/GumLayer.hpp
+        candy/core/src/ui/GumLayer.cpp)
 
 set(CANDY_ECS_HEADERS candy/core/include/candy/ecs/BaseComponents.hpp
         candy/core/include/candy/ecs/Entity.hpp
@@ -339,6 +341,21 @@ set(CANDY_EDITOR_FILES candy/editor/include/editor/panels/ContentBrowserPanel.hp
         candy/editor/src/panels/DebugPanel.cpp
         candy/editor/src/panels/ContentBrowserPanel.cpp)
 
+set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
+        candy/gum/include/gum/GumInstance.hpp
+        candy/gum/include/gum/GumGraph.hpp
+        candy/gum/include/gum/GumObject.hpp
+        candy/gum/include/gum/GumTransform.hpp
+        candy/gum/include/gum/GumComponents.hpp
+)
+
+set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
+        candy/gum/src/GumObject.cpp
+        candy/gum/src/GumGraph.cpp
+        candy/gum/src/GumTransform.cpp)
+
+set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
+
 set(IM_GUI_SOURCES lib/imgui/imgui.h lib/imgui/imconfig.h lib/imgui/imgui.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_draw.cpp lib/imgui/imgui_internal.h
         lib/imgui/imgui_tables.cpp lib/imgui/imgui_widgets.cpp lib/imgui/imstb_rectpack.h lib/imgui/imstb_textedit.h lib/imgui/imstb_truetype.h lib/imgui/backends/imgui_impl_vulkan.h
         lib/imgui/backends/imgui_impl_vulkan.cpp lib/imgui/backends/imgui_impl_glfw.h lib/imgui/backends/imgui_impl_glfw.cpp)
@@ -354,7 +371,9 @@ set(VMA_LIB_FILES lib/vma/vk_mem_alloc.h)
 
 set(CANDY_BUNDLED_LIB_FILES ${IM_GUI_SOURCES} ${IM_GUIZMO_SOURCES} ${STB_LIB_FILES} ${VMA_LIB_FILES})
 
-set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_BUNDLED_LIB_FILES})
+set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
+        candy/gum/include/gum/GumInstance.hpp
+)
 
 
 
@@ -420,7 +439,7 @@ set(VCPKG_ROOT "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
         ${VCPKG_ROOT}
         $<TARGET_FILE_DIR:CandyEngineTest>)]]
 
-add_dependencies(CandyEngineTest CopyAssets CopyConfig CopyProjects)
+add_dependencies(CandyEngineTest CopyAssets)
 
 target_link_libraries(CandyEngineTest PRIVATE CandyEngine)
 

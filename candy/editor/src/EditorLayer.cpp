@@ -33,30 +33,7 @@ namespace Candy
     viewport = CreateSharedPtr<Viewport>(this);
     
     Gizmo meshGizmo;
-    
-    /*Entity plane = activeScene->CreateEntity("Generated Plane");
-    plane.AddComponent<MeshFilterComponent>(MeshPrimitive::GeneratePlane(Color::red, 1));
-    plane.AddComponent<MeshRendererComponent>();
-    
-    Entity shaft = activeScene->CreateEntity("Generated Cylinder");
-    //shaft.GetComponent<TransformComponent>().SetLocalPosition({0, 0, 0.5f});
-    shaft.AddComponent<MeshFilterComponent>(MeshPrimitive::GenerateCylinder(Color::green, 8, 0.05f, 0.1f));
-    shaft.AddComponent<MeshRendererComponent>();*/
-    
-    /*Entity head = activeScene->CreateEntity("Arrow Head");
-    head.AddComponent<MeshFilterComponent>(MeshPrimitive::cone);
-    head.AddComponent<MeshRendererComponent>();*/
-    
-    
-    
-    
-    
-    /// Load backpack model
-    /*ModelLoader loader(activeScene);
-    
-    CANDY_CORE_INFO("Loading Robot model");
-    loader.LoadModel("assets/models/robot/Robot.fbx");
-    CANDY_CORE_INFO("Loaded Robot model");*/
+
     
     
   }
