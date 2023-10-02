@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include <cmath>
 namespace Candy::Math
 {
@@ -414,4 +415,4 @@ namespace Candy::Math
     return QuaternionBase<T>::Normalize(*this);
   }
   
-}
+}*/

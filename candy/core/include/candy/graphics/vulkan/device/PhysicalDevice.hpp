@@ -3,6 +3,8 @@
 #include <vector>
 #include <optional>
 #include <string>
+
+
 namespace Candy::Graphics
 {
     struct QueueFamilyIndices
@@ -33,12 +35,8 @@ namespace Candy::Graphics
         std::string name;
         
         
-    private:
-      //std::vector<VkPhysicalDevice> RankSuitableDevices(VkSurfaceKHR surface, const std::vector<VkPhysicalDevice>& foundDevices);
-        
     public:
         PhysicalDevice(VkSurfaceKHR surface);
-        //explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
         PhysicalDevice(const PhysicalDevice& other);
         
     public:
@@ -68,6 +66,10 @@ namespace Candy::Graphics
         bool CheckDeviceExtensionSupport();
         
     public:
+      static VkPhysicalDeviceFeatures2 GetSupportedDeviceFeatures();
+      static bool EnableDeviceFeature(const std::string& name);
+      static bool EnableDeviceFeatures(const std::vector<std::string>& names);
+      static bool CheckSupportedDeviceFeatures(const VkPhysicalDeviceFeatures2& features);
         static bool IsDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface);
         static long long int RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface);
         static bool CheckExtensionSupport(VkPhysicalDevice device);

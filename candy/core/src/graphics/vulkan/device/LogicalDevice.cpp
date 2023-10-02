@@ -3,18 +3,21 @@
 #include <set>
 #include <CandyPch.hpp>
 #include <candy/graphics/vulkan/VulkanDebugManager.hpp>
+
 namespace Candy::Graphics
 {
-  LogicalDevice::LogicalDevice(const PhysicalDevice& physicalDevice, const QueueFamilyIndices& indices)
+  
+  
+  
+  LogicalDevice::LogicalDevice(const PhysicalDevice &physicalDevice, const QueueFamilyIndices &indices)
   {
     CANDY_PROFILE_FUNCTION();
-    //QueueFamilyIndices indices = FindQueueFamilies(physicalDevice, surface);
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
     
     // Assign priority to queue to influence the scheduling of command buffer execution
     float queuePriority = 1.0f;
-    for (uint32_t queueFamily : uniqueQueueFamilies)
+    for (uint32_t queueFamily: uniqueQueueFamilies)
     {
       // Describe number of queue we want for a single queue family.
       // Currently we only want one with graphics capabilities
@@ -28,12 +31,11 @@ namespace Candy::Graphics
     
     
     
+    VkPhysicalDeviceFeatures2 deviceFeatures = PhysicalDevice::GetSupportedDeviceFeatures();
     
-    // Specify the set of device features we will be using that we queried support for
-    // in the IsDeviceSuitable function using vkGetPhysicalDeviceFeatures
-    VkPhysicalDeviceFeatures2 deviceFeatures{};
-    deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    deviceFeatures.features.samplerAnisotropy=VK_TRUE;
+    
+    
+    
     
     VkPhysicalDeviceShaderDrawParametersFeatures drawParametersFeatures{};
     drawParametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
@@ -67,12 +69,6 @@ namespace Candy::Graphics
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
   }
-  
-  
-  
-  
-  
-  
   
   
 }

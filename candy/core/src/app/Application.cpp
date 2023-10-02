@@ -148,7 +148,7 @@ namespace Candy
         isRunning=false;
         
     }
-    
+  
     bool Application::OnWindowClose(Events::WindowCloseEvent& event)
     {
         isRunning=false;
@@ -174,6 +174,43 @@ namespace Candy
       CANDY_PROFILE_FUNCTION();
       mainWindow->OnFrameBufferResize(event);
       return false;
+  }
+  
+  void Matrix4InverseTest(const Matrix4& mat, int iterations=10)
+  {
+    CANDY_PROFILE_FUNCTION();
+    for (int i=0; i<iterations; i++)
+    {
+      Matrix4::Inverse(mat);
+    }
+  }
+  
+  void Matrix4FastInverseTest(const Matrix4& mat, int iterations=10)
+  {
+      CANDY_PROFILE_FUNCTION();
+    for (int i=0; i<iterations; i++)
+    {
+      
+      Matrix4::FastInverse(mat);
+    }
+  }
+  void Matrix4Tests(int iterations=1)
+  {
+    CANDY_PROFILE_FUNCTION();
+    for (int i=0; i<iterations; i++)
+    {
+      Matrix4 mat = Matrix4::Random(0.0f, 50.0f);
+      Matrix4InverseTest(mat, 10);
+      Matrix4FastInverseTest(mat, 10);
+    }
+    
+  }
+  void Application::RunTests()
+  {
+      CANDY_PROFILE_END_SESSION();
+      CANDY_PROFILE_BEGIN_SESSION("Candy Tests", "profiling/Tests.json");
+      Matrix4Tests(50);
+      CANDY_PROFILE_END_SESSION();
   }
     
     

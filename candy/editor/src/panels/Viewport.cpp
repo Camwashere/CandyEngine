@@ -148,9 +148,9 @@ namespace Candy
       //cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
       
       
-      ImGuizmo::Manipulate(&cameraView[0], &cameraProjection[0],
-                           (ImGuizmo::OPERATION)gizmoType, mode, &worldTransform[0],
-                           &localTransform[0], snap ? snapValues : nullptr);
+      ImGuizmo::Manipulate(cameraView.Data(), cameraProjection.Data(),
+                           (ImGuizmo::OPERATION)gizmoType, mode, worldTransform.Data(),
+                           localTransform.Data(), snap ? snapValues : nullptr);
       
       
       

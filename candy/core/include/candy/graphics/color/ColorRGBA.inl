@@ -9,7 +9,7 @@ namespace Candy
   template<typename T> ColorBase<T, 4>::ColorBase(const Math::VectorBase<T, 2> &vector) : Math::VectorBase<T, 4>(vector.x, vector.y, 0, 1){}
   template<typename T> ColorBase<T, 4>::ColorBase(const Math::VectorBase<T, 3> &vector) : Math::VectorBase<T, 4>(vector.x, vector.y, vector.z, 1) {}
   template<typename T> ColorBase<T, 4>::ColorBase(const Math::VectorBase<T, 4> &vector) : Math::VectorBase<T, 4>(vector) {}
-  template<typename T> ColorBase<T, 4>::ColorBase(const Math::QuaternionBase<T> &quaternion) : Math::VectorBase<T, 4>(quaternion.x, quaternion.y, quaternion.z, quaternion.w) {}
+  
   
   
   
@@ -21,8 +21,7 @@ namespace Candy
   ColorBase<T, 4>::operator Math::VectorBase<T, 2>()const{return ToVector2();}
   template<typename T>
   ColorBase<T, 4>::operator Math::VectorBase<T, 3>()const{return ToVector3();}
-  template<typename T>
-  ColorBase<T, 4>::operator Math::QuaternionBase<T>()const{return ToQuaternion();}
+  
   
   
   template<typename T>
@@ -40,11 +39,7 @@ namespace Candy
   {
     return {r, g, b, a};
   }
-  template<typename T>
-  Math::QuaternionBase<T> ColorBase<T, 4>::ToQuaternion() const
-  {
-    return {r, g, b, a};
-  }
+  
   
   
   template<typename T>

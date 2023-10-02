@@ -4,6 +4,26 @@
 
 namespace Candy::Math
 {
+  template<typename T>
+    T VectorBase<T, 2>::Length(const VectorBase<T, 2>& vec)
+  {
+    return vec.Magnitude();
+  }
+  template<typename T>
+    T VectorBase<T, 2>::SqrLength(const VectorBase<T, 2>& vec)
+  {
+    return vec.SqrMagnitude();
+  }
+  template<typename T>
+    T VectorBase<T, 2>::Magnitude(const VectorBase<T, 2>& vec)
+  {
+    return vec.Magnitude();
+  }
+  template<typename T>
+    T VectorBase<T, 2>::SqrMagnitude(const VectorBase<T, 2>& vec)
+  {
+    return vec.SqrMagnitude();
+  }
     
     template<typename T>
     T VectorBase<T, 2>::Dot(const VectorBase<T, 2> &a, const VectorBase<T, 2> &b)
@@ -106,8 +126,12 @@ namespace Candy::Math
     { return {Math::Min(a.x, b.x), Math::Min(a.y, b.y)}; }
     
     template<typename T>
-    VectorBase<T, 2> VectorBase<T, 2>::Normalize(const VectorBase<T, 2> &vec)
-    { return vec / vec.Magnitude(); }
+    void VectorBase<T, 2>::Normalize(VectorBase<T, 2> &vec)
+    { vec.Normalize(); }
+  
+  template<typename T>
+  VectorBase<T, 2> VectorBase<T, 2>::Normalized(const VectorBase<T, 2> &vec)
+  { return vec / vec.Magnitude(); }
     
     
     template<typename T>
@@ -418,6 +442,18 @@ namespace Candy::Math
     template<typename T>
     T VectorBase<T, 2>::SqrMagnitude() const
     { return x * x + y * y; }
+    
+    template<typename T>
+    T VectorBase<T, 2>::Length() const
+    {
+        return Magnitude();
+    }
+  
+    template<typename T>
+    T VectorBase<T, 2>::SqrLength() const
+    {
+        return SqrMagnitude();
+    }
     
     template<typename T>
     T VectorBase<T, 2>::Dot(const VectorBase<T, 2> &other) const

@@ -4,6 +4,7 @@
 #include <Candy/Math/Vector.hpp>
 #include "../Color.hpp"
 #include "../FrameBuffer.hpp"
+#include <array>
 namespace Candy::Graphics
 {
   

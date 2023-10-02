@@ -17,8 +17,8 @@ namespace Candy::Noise
     float PerlinNoise::Evaluate(float x) const {
         int X = Math::FloorToInt(x) & periodMinusOne;
         x -= Math::Floor(x);
-        float u = Math::Interpolate::Fade(x);
-        float value = Math::Interpolate::Lerp(u, Grad(perm[X], x), Grad(perm[X + 1], x - 1));
+        float u = Math::Fade(x);
+        float value = Math::Lerp(u, Grad(perm[X], x), Grad(perm[X + 1], x - 1));
         return (value+1)/2.0f;
     }
     
@@ -30,15 +30,15 @@ namespace Candy::Noise
         x-= Math::Floor(x);
         y-= Math::Floor(y);
         
-        // Compute Math::Interpolate::fade curves
-        float u = Math::Interpolate::Fade(x);
-        float v = Math::Interpolate::Fade(y);
+        // Compute Math::fade curves
+        float u = Math::Fade(x);
+        float v = Math::Fade(y);
         
         int A = (perm[X]+Y) & periodMinusOne;
         int B = (perm[X+1] + Y) & periodMinusOne;
         
-        float value = Math::Interpolate::Lerp(v, Math::Interpolate::Lerp(u, Grad(perm[A], x, y), Grad(perm[B], x - 1, y)),
-                                              Math::Interpolate::Lerp(u, Grad(perm[A + 1], x, y - 1), Grad(perm[B + 1], x - 1, y - 1)));
+        float value = Math::Lerp(v, Math::Lerp(u, Grad(perm[A], x, y), Grad(perm[B], x - 1, y)),
+                                              Math::Lerp(u, Grad(perm[A + 1], x, y - 1), Grad(perm[B + 1], x - 1, y - 1)));
         return (value+1.0f)*0.5f;
     }
     
@@ -51,10 +51,10 @@ namespace Candy::Noise
         x-= Math::Floor(x);
         y-= Math::Floor(y);
         z-= Math::Floor(z);
-        // Compute Math::Interpolate::fade curves for each of X, Y, Z
-        float u = Math::Interpolate::Fade(x);
-        float v = Math::Interpolate::Fade(y);
-        float w = Math::Interpolate::Fade(z);
+        // Compute Math::fade curves for each of X, Y, Z
+        float u = Math::Fade(x);
+        float v = Math::Fade(y);
+        float w = Math::Fade(z);
         // Hash coordinates of the 8 cube corners
         int A  = (perm[X ] + Y) & periodMinusOne;
         int B  = (perm[X+1] + Y) & periodMinusOne;
@@ -63,10 +63,10 @@ namespace Candy::Noise
         int AB = (perm[A+1] + Z) & periodMinusOne;
         int BB = (perm[B+1] + Z) & periodMinusOne;
         // Add blended results from 8 corners of the cube
-        float value = Math::Interpolate::Lerp(w, Math::Interpolate::Lerp(v, Math::Interpolate::Lerp(u, Grad(perm[AA  ], x, y  , z  ), Grad(perm[BA  ], x - 1, y  , z  )),
-                                                                         Math::Interpolate::Lerp(u, Grad(perm[AB  ], x, y - 1, z  ), Grad(perm[BB  ], x - 1, y - 1, z  ))),
-                                              Math::Interpolate::Lerp(v, Math::Interpolate::Lerp(u, Grad(perm[AA + 1], x, y  , z - 1), Grad(perm[BA + 1], x - 1, y  , z - 1)),
-                                                                      Math::Interpolate::Lerp(u, Grad(perm[AB + 1], x, y - 1, z - 1), Grad(perm[BB + 1], x - 1, y - 1, z - 1))));
+        float value = Math::Lerp(w, Math::Lerp(v, Math::Lerp(u, Grad(perm[AA  ], x, y  , z  ), Grad(perm[BA  ], x - 1, y  , z  )),
+                                                                         Math::Lerp(u, Grad(perm[AB  ], x, y - 1, z  ), Grad(perm[BB  ], x - 1, y - 1, z  ))),
+                                              Math::Lerp(v, Math::Lerp(u, Grad(perm[AA + 1], x, y  , z - 1), Grad(perm[BA + 1], x - 1, y  , z - 1)),
+                                                                      Math::Lerp(u, Grad(perm[AB + 1], x, y - 1, z - 1), Grad(perm[BB + 1], x - 1, y - 1, z - 1))));
         return (value+1.0f)*0.5f;
     }
     

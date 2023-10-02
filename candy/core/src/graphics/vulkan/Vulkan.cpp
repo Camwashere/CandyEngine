@@ -1,5 +1,4 @@
 #include <candy/graphics/Vulkan.hpp>
-#include "Candy/Graphics/GraphicsContext.hpp"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #define VMA_IMPLEMENTATION
@@ -8,9 +7,10 @@
 namespace Candy::Graphics
 {
   Vulkan* Vulkan::vulkan = nullptr;
-  Vulkan::Vulkan()
+  Vulkan::Vulkan(const std::filesystem::path& featuresPath) : vulkanFeaturesPath(featuresPath)
   {
     CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_ASSERT(std::filesystem::exists(vulkanFeaturesPath), "Vulkan features file does not exist");
     deviceManager = nullptr;
     instance = CreateUniquePtr<VulkanInstance>();
     allocator = VK_NULL_HANDLE;
@@ -38,19 +38,12 @@ namespace Candy::Graphics
   void Vulkan::Init()
   {
     CANDY_PROFILE_FUNCTION();
-    vulkan = new Vulkan();
+    vulkan = new Vulkan("config/vulkan/enabledVulkanFeatures.csv");
+    
     Renderer::Init();
     
   }
- /* DeletionQueue& Vulkan::GetDeletionQueue()
-  {
-    return vulkan->deletionQueue;
-  }*/
- /*template<typename T>
- void Vulkan::Push(T object)
- {
-   vulkan->deletionQueue.Push<T>(object);
- }*/
+
  DeletionQueue& Vulkan::DeletionQueue()
  {
    
@@ -79,6 +72,10 @@ namespace Candy::Graphics
   bool Vulkan::HasDeviceManager()
   {
     return vulkan->deviceManager != nullptr;
+  }
+  const std::filesystem::path& Vulkan::GetVulkanFeaturesPath()
+  {
+   return vulkan->vulkanFeaturesPath;
   }
   DescriptorAllocator& Vulkan::GetDescriptorAllocator()
   {
@@ -126,45 +123,11 @@ namespace Candy::Graphics
     return (float)GetCurrentContext().swapChain->extent.width / (float)GetCurrentContext().swapChain->extent.height;
   }
 
-  
-  /*void Vulkan::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
-  {
-    CANDY_PROFILE_FUNCTION();
-    CommandBuffer* cmd = &Vulkan::GetCurrentContext().GetCurrentFrame().commandBuffer;
-    
-    VkCommandBuffer commandBuffer = cmd->BeginSingleTimeCommands();
-    
-    VkBufferCopy copyRegion{};
-    copyRegion.srcOffset = 0; // Optional
-    copyRegion.dstOffset = 0; // Optional
-    copyRegion.size = size;
-    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-    
-    cmd->EndSingleTimeCommands(commandBuffer);
-  }
-  void Vulkan::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
-  {
-    CANDY_PROFILE_FUNCTION();
-    GetCurrentCommandBuffer().TransitionImageLayout(image, format, oldLayout, newLayout);
-  
-  }
-  void Vulkan::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
-  {
-    CANDY_PROFILE_FUNCTION();
-    GetCurrentCommandBuffer().CopyBufferToImage(buffer, image, width, height);
-  
-  }*/
-  /*void Vulkan::PushDeleter(std::function<void()>&& function)
-  {
-    vulkan->deletionQueue.PushFunction(std::move(function));
-  }*/
   void Vulkan::Shutdown()
   {
     CANDY_PROFILE_FUNCTION();
     vkDeviceWaitIdle(LogicalDevice());
-    //vulkan->contexts[0]->Terminate();
     vulkan->deletionQueue.Flush();
-    //vulkan->descriptorAllocator->Flip();
     vulkan->descriptorAllocator->Reset();
     vulkan->descriptorAllocator.reset();
     vulkan->descriptorLayoutCache.Destroy();

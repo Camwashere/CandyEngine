@@ -29,30 +29,25 @@ namespace Candy::Graphics
     std::vector<GraphicsContext*> contexts;
     GraphicsContext* currentContext;
     DeletionQueue deletionQueue;
+    std::filesystem::path vulkanFeaturesPath;
     
   private:
     void CreateAllocators();
     static void InitDeviceManager(VkSurfaceKHR surface);
     
   public:
-    Vulkan();
+    Vulkan(const std::filesystem::path& featuresPath);
     
   public:
     static void Init();
     static void Shutdown();
-    //static void PushDeleter(std::function<void()>&& function);
-    /*template<typename T>
-    static void Push(T object)
-    {
-      CANDY_CORE_ASSERT(false, "Unknown vulkan object type");
-      vulkan->deletionQueue.Push<T>(object);
-    }*/
     static DeletionQueue& DeletionQueue();
     static VkInstance Instance();
     static VmaAllocator Allocator();
     static PhysicalDevice& PhysicalDevice();
     static LogicalDevice& LogicalDevice();
     static bool HasDeviceManager();
+    static const std::filesystem::path& GetVulkanFeaturesPath();
     static DescriptorAllocator& GetDescriptorAllocator();
     static DescriptorLayoutCache& GetDescriptorLayoutCache();
     static void RegisterContext(GraphicsContext* context);
@@ -60,10 +55,7 @@ namespace Candy::Graphics
     static CommandBuffer& GetCurrentCommandBuffer();
     static float GetContextSizeRatio();
     static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-
-    //static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-    //static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-    //static void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+    
     
   private:
     friend class GraphicsContext;

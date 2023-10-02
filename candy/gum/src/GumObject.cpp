@@ -36,12 +36,12 @@ namespace Candy::Gum
   
   UUID GumObject::GetUUID()
   {
-    CANDY_CORE_ASSERT(HasComponent<GumID>(), "Entity does not have ID component");
+    CANDY_CORE_ASSERT(HasComponent<GumID>(), "GumObject does not have ID component");
     return GetComponent<GumID>().id;
   }
   std::string GumObject::GetTag()
   {
-    CANDY_CORE_ASSERT(HasComponent<GumTag>(), "Entity does not have tag component");
+    CANDY_CORE_ASSERT(HasComponent<GumTag>(), "GumObject does not have tag component");
     return GetComponent<GumTag>().tag;
   }
   GumParent& GumObject::GetParent()
@@ -84,6 +84,11 @@ namespace Candy::Gum
   bool GumObject::IsRoot()const
   {
     return !HasParent();
+  }
+  
+  bool GumObject::HasTransform()const
+  {
+    return HasComponent<GumTransform>();
   }
   
   bool GumObject::HasGraph()const
@@ -149,7 +154,18 @@ namespace Candy::Gum
     return GetComponent<GumChildren>();
   }
   
-  GumTransform& GumObject::GetTransform(){return GetComponent<GumTransform>();}
+  GumTransform& GumObject::GetTransform()
+  {
+    CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_ASSERT(HasTransform(), "GumObject does not have transform");
+    return GetComponent<GumTransform>();
+  }
+  const GumTransform& GumObject::GetTransform()const
+  {
+    CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_ASSERT(HasTransform(), "GumObject does not have transform");
+    return GetComponent<GumTransform>();
+  }
   void GumObject::SetName(const std::string& tag){GetComponent<GumTag>().tag=tag;}
   GumGraph* GumObject::GetGraph(){return graph;}
 }

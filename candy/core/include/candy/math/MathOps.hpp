@@ -29,6 +29,13 @@ namespace Candy::Math
     static constexpr const float Lemniscate = 2.62205755429211981046f;
     static constexpr const float Gravity = 6.67430f;
     static constexpr const float SpeedOfLightMetersPerSecond = 299792458.0f;
+  
+  enum class Concavity
+  {
+    Straight=0,
+    Convex,
+    Concave,
+  };
     
     template<int N>
     struct powerStruct;
@@ -60,15 +67,15 @@ namespace Candy::Math
     };
     
     template<typename T>
-    inline float Floor(T value)
+    inline T Floor(T value)
     { return std::floor(value); }
     
     template<typename T>
-    inline float Ceil(float value)
+    inline T Ceil(T value)
     { return std::ceil(value); }
     
     template<typename T>
-    inline float Round(float value)
+    inline T Round(T value)
     { return std::round(value); }
     
     
@@ -306,7 +313,7 @@ namespace Candy::Math
     { return b < a ? b : a; }
     
     template<typename T>
-    inline T Abs(const T &a)
+    T Abs(const T &a)
     { return std::abs(a); }
     
     template<typename T>
@@ -338,44 +345,41 @@ namespace Candy::Math
   {return ! EpsilonEqual(a, b, epsilon);}
   
   
-    
-    
-    namespace Interpolate
+  inline float Smoothstep(float edge0, float edge1, float x)
+  {
+    if (x < edge0)
     {
-        inline float Smoothstep(float edge0, float edge1, float x)
-        {
-            if (x < edge0)
-            {
-                return 0.0f;
-            }
-            if (x >= edge1)
-            {
-                return 1.0f;
-            }
-            return x * x * (3 - 2 * x);
-        }
-        
-        // Ken Perlin improved smoothstep. (slightly slower running time)
-        inline float Smootherstep(float edge0, float edge1, float x)
-        {
-            x = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
-            return ((6 * x - 15) * x + 10) * x * x * x;
-        }
-        
-        inline float InverseSmoothstep(float x)
-        { return 0.5f - Sin(Asin(1.0f - 2.0f * x) / 3.0f); }
-        
-        inline float Lerp(float a, float b, float t)
-        { return a + t * (b - a); }
-        
-        inline float CosineInterpolate(float a, float b, float t)
-        {
-            float t2 = (1.0f - Cos(t * PI)) / 2.0f;
-            return a * (1.0f - t2) + b * t2;
-        }
-        
-        inline float Fade(float t)
-        { return ((6 * t - 15) * t + 10) * t * t * t; }
+      return 0.0f;
     }
+    if (x >= edge1)
+    {
+      return 1.0f;
+    }
+    return x * x * (3 - 2 * x);
+  }
+  
+  // Ken Perlin improved smoothstep. (slightly slower running time)
+  inline float Smootherstep(float edge0, float edge1, float x)
+  {
+    x = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+    return ((6 * x - 15) * x + 10) * x * x * x;
+  }
+  
+  inline float InverseSmoothstep(float x)
+  { return 0.5f - Sin(Asin(1.0f - 2.0f * x) / 3.0f); }
+  
+  inline float Lerp(float a, float b, float t)
+  { return a + t * (b - a); }
+  
+  inline float CosineInterpolate(float a, float b, float t)
+  {
+    float t2 = (1.0f - Cos(t * PI)) / 2.0f;
+    return a * (1.0f - t2) + b * t2;
+  }
+  
+  inline float Fade(float t)
+  { return ((6 * t - 15) * t + 10) * t * t * t; }
+    
+  
     
 }

@@ -1,12 +1,15 @@
-
-
 #include <candy/app/Application.hpp>
 
 #include <editor/EditorLayer.hpp>
+
 using namespace Candy;
+
+
+
+
 int main(int argc, char** argv)
 {
-  
+ 
   ApplicationData appData{"CandyApp", {1,0,0}};
   ApplicationCommandLineArgs commandLineArgs{argc, argv};
   appData.commandLineArgs = commandLineArgs;

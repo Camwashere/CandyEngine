@@ -1,4 +1,5 @@
 #pragma once
+/*
 #include "../vector/Vector4Base.hpp"
 #include "../Matrix.hpp"
 #include "../MathOps.hpp"
@@ -81,4 +82,4 @@ struct fmt::formatter<Candy::Math::QuaternionBase<T>> {
     return format_to(ctx.out(), "({0}, {1}, {2}, {3})", vec.x, vec.y, vec.z, vec.w);
   }
 };
-#include "QuaternionBase.inl"
+#include "QuaternionBase.inl"*/

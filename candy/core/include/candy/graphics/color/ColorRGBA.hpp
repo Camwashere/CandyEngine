@@ -38,7 +38,7 @@ namespace Candy {
     explicit ColorBase(const Math::VectorBase<T, 2>& vector);
     explicit ColorBase(const Math::VectorBase<T, 3>& vector);
     explicit ColorBase(const Math::VectorBase<T, 4>& vector);
-    explicit ColorBase(const Math::QuaternionBase<T>& quaternion);
+    
     
     template<typename E>
     ColorBase(const Math::VectorExpression<T, E> &expr);
@@ -59,7 +59,7 @@ namespace Candy {
     
     explicit operator Math::VectorBase<T, 2>()const;
     explicit operator Math::VectorBase<T, 3>()const;
-    explicit operator Math::QuaternionBase<T>()const;
+    
   
   public:
     void Invert();
@@ -75,7 +75,7 @@ namespace Candy {
     [[nodiscard]] Math::VectorBase<T, 2> ToVector2()const;
     [[nodiscard]] Math::VectorBase<T, 3> ToVector3()const;
     [[nodiscard]] Math::VectorBase<T, 4> ToVector4()const;
-    [[nodiscard]] Math::QuaternionBase<T> ToQuaternion()const;
+    
     [[nodiscard]] ColorBase rr() const;
     [[nodiscard]] ColorBase rg() const;
     [[nodiscard]] ColorBase rb() const;

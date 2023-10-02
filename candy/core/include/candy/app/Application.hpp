@@ -59,6 +59,7 @@ namespace Candy
   
   
   public:
+    static void RunTests();
     static UILayer& GetUILayer();
     static inline Window &GetMainWindowReference() {return *instance->mainWindow;}
     static Application &Instance() {return *instance;}

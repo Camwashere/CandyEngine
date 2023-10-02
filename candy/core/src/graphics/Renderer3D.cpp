@@ -83,7 +83,7 @@ namespace Candy::Graphics
     meshSettings.renderPassIndex = Renderer::GetViewportPassIndex();
     meshSettings.depthTesting = true;
     meshSettings.alphaColorBlending = true;
-    meshSettings.lineWidth = 3.0f;
+    meshSettings.lineWidth = 1.0f;
     meshSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
     meshSettings.configs.push_back(PipelineConfigSettings{RenderMode::Wireframe});
     

@@ -92,6 +92,7 @@ namespace Candy::Gum
     [[nodiscard]] bool IsParent()const;
     [[nodiscard]] bool IsChild()const;
     [[nodiscard]] bool IsRoot()const;
+    [[nodiscard]] bool HasTransform()const;
     [[nodiscard]] bool HasGraph()const;
     bool RemoveChild(const GumObject& child);
     bool AddChild(const GumObject& child);
@@ -99,6 +100,7 @@ namespace Candy::Gum
     [[nodiscard]] const GumChildren& GetChildren()const;
     std::string GetTag();
     GumTransform& GetTransform();
+    const GumTransform& GetTransform()const;
     void SetParent(GumObject parent);
     void SetName(const std::string& tag);
     GumGraph* GetGraph();

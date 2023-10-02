@@ -12,7 +12,10 @@ namespace Candy::Math
     public:
         static constexpr bool isLeaf = true;
     public: // Static Methods
-        
+        static T Length(const VectorBase<T, 2>& vec);
+        static T SqrLength(const VectorBase<T, 2>& vec);
+        static T Magnitude(const VectorBase<T, 2>& vec);
+        static T SqrMagnitude(const VectorBase<T, 2>& vec);
         // How closely are these two vectors aligned. A value of 0 means the vectors are orthogonal
         static T Dot(const VectorBase<T, 2> &a, const VectorBase<T, 2> &b);
         static T Determinant(const VectorBase<T, 2> &a, const VectorBase<T, 2> &b);
@@ -31,7 +34,8 @@ namespace Candy::Math
         static VectorBase<T, 2> Reflect(const VectorBase<T, 2> &inDirection, const VectorBase<T, 2> &inNormal);
         static VectorBase<T, 2> Max(const VectorBase<T, 2> &a, const VectorBase<T, 2> &b);
         static VectorBase<T, 2> Min(const VectorBase<T, 2> &a, const VectorBase<T, 2> &b);
-        static VectorBase<T, 2> Normalize(const VectorBase<T, 2> &vec);
+        static VectorBase<T, 2> Normalized(const VectorBase<T, 2>& vec);
+        static void Normalize(VectorBase<T, 2>& vec);
     
     public: // Members
         union
@@ -142,6 +146,8 @@ namespace Candy::Math
         [[nodiscard]] VectorBase<T, 2> Normalized() const;
         [[nodiscard]] T Magnitude() const;
         [[nodiscard]] T SqrMagnitude() const;
+        [[nodiscard]] T Length() const;
+        [[nodiscard]] T SqrLength() const;
         [[nodiscard]] T Dot(const VectorBase<T, 2> &other) const;
         [[nodiscard]] T Determinant(const VectorBase<T, 2> &b) const;
         [[nodiscard]] T Distance(const VectorBase<T, 2> &b) const;
@@ -186,6 +192,12 @@ namespace Candy::Math
         [[nodiscard]]   size_t Dimensions() const;
         [[nodiscard]]   size_t Size() const;
     };
+  
+  template<typename T>
+  inline VectorBase<T, 2> Abs(const VectorBase<T, 2> &vec)
+  {
+    return VectorBase<T, 2>(Abs(vec.x), Abs(vec.y));
+  }
 }
 
 

@@ -1,6 +1,7 @@
 #include <candy/graphics/camera/EditorCamera.hpp>
 #include <candy/event/Events.hpp>
 #include <candy/app/Application.hpp>
+#include <candy/math/Quaternion.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;

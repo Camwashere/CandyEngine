@@ -1,59 +1,46 @@
 #pragma once
-#include "../base/MatrixBase.hpp"
+#include <cstdint>
+#include <array>
+#include <candy/math/Vector.hpp>
 #include "../base/MatrixExpression.hpp"
 #include "xmmintrin.h"
-#include <cstring>
-#include <iomanip>
 namespace Candy::Math
 {
+ 
   
-  
-  template<>
-  class AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> : public MatrixIndexData<3, 3>, public LayoutPolicyLeftToRight, public MatrixExpression<float, AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>>
+  class Matrix3 : public MatrixExpression<float, Matrix3>
   {
-  
   private:
-    static constexpr index_t AccessIndex(index_t x, index_t y){return LayoutPolicyLeftToRight::AccessIndex<index_t, 3, 3>(x, y);}
+    static constexpr int TOTAL_SIZE = 9;
+    static constexpr int ROWS = 3;
+    static constexpr int COLUMNS = 3;
+  
   public:
-    using MatrixIndexData<3, 3>::COLUMNS;
-    using MatrixIndexData<3, 3>::ROWS;
-    using MatrixIndexData<3, 3>::TOTAL_SIZE;
-    using MatrixIndexData<3, 3>::IS_SQUARE;
-    using MatrixIndexData<3, 3>::isLeaf;
-  
-  
-  
-  
+    static const Matrix3 IDENTITY;
   
   private:
     union
     {
-      alignas(16) float data[TOTAL_SIZE]{};
-      alignas(16) VectorBase<float, COLUMNS> rows[ROWS];
-      alignas(16) __m128 m128[3];
-      
+      std::array<float, TOTAL_SIZE> data{};
+      std::array<Vector3, 3> columns;
     };
   
   
+  
+  
   public:
-    AbstractMatrixBase();
-    explicit AbstractMatrixBase(float diagonal);
-    explicit AbstractMatrixBase(const VectorBase<float, COLUMNS>& diagonal);
-    AbstractMatrixBase(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other);
-    
-    AbstractMatrixBase(VectorBase<float, COLUMNS> row0, VectorBase<float, COLUMNS> row1, VectorBase<float, COLUMNS> row2);
-    
-    
-    AbstractMatrixBase(float r0c0, float r0c1, float r0c2,
-                       float r1c0, float r1c1, float r1c2,
-                       float r2c0, float r2c1, float r2c2);
-    
+    Matrix3();
+    explicit Matrix3(float diagonal);
+    explicit Matrix3(const Vector3& diagonal);
+    Matrix3(const Matrix3& other);
+    Matrix3(Vector3 col0, Vector3 col1, Vector3 col2);
+    Matrix3(std::initializer_list<float> elements);
     
     template<typename U, typename E>
     requires(std::is_arithmetic_v<U>)
-    AbstractMatrixBase(const MatrixExpression<U, E> &expr)
+    Matrix3(const MatrixExpression<U, E> &expr)
     {
-      for (index_t i=0; i<TOTAL_SIZE; ++i)
+      for (int i=0; i<TOTAL_SIZE; ++i)
       {
         data[i] = expr[i];
       }
@@ -61,51 +48,99 @@ namespace Candy::Math
     }
   
   public:
-    static AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> Diagonal(float diagonal);
-    static AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> Diagonal(const VectorBase<float, 3>& value);
-    static AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> Diagonal(float v0, float v1, float v2);
-    static AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> CreateFromRows(const VectorBase<float, 3>& r0, const VectorBase<float, 3>& r1, const VectorBase<float, 3>& r2);
-    static AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> CreateFromColumns(const VectorBase<float, 3>& c0, const VectorBase<float, 3>& c1, const VectorBase<float, 3>& c2);
-
-    
-
+    static Matrix3 Diagonal(float diagonal);
+    static Matrix3 Diagonal(const Vector3& value);
+    static Matrix3 Diagonal(float v0, float v1, float v2);
+    static Matrix3 Inverse(const Matrix3 &matrix);
+    static Matrix3 CreateFromRows(const Vector3& r0, const Vector3& r1, const Vector3& r2);
+    static Matrix3 CreateFromColumns(const Vector3& c0, const Vector3& c1, const Vector3& c2);
+    static Matrix3 Orthographic(float left, float right, float bottom, float top);
+    static Matrix3 Translate(const Matrix3& matrix, const Vector2& translation);
+    static Matrix3 Rotate(const Matrix3& matrix, float rotation);
+    static Matrix3 Scale(const Matrix3& matrix, const Vector2& scale);
+    static Matrix3 Transpose(const Matrix3 &matrix);
+    static bool DecomposeTransform(const Matrix3 &matrix, Vector2& translation, float& rotation, Vector2& scale);
+    static float Determinant(const Matrix3& matrix);
   
   
   
   public:
-    float& operator[](index_t index);
-    float& operator[](index_t row, index_t column);
-    float operator[](index_t index)const;
-    float operator[](index_t row, index_t column)const;
+    /// @returns The column at the specified index.
+    Vector3& operator[](int index);
     
-    bool operator==(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other)const;
-    bool operator!=(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other)const;
+    /// @returns The column at the specified index.
+    Vector3 operator[](int index)const;
     
-    VectorBase<float, 3> operator*(const VectorBase<float, 3>& vec)const;
-    AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight> operator*(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other)const;
+    /// @returns The entry stored at the specified row and column.
+    float& operator[](int row, int column);
     
-    void operator+=(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other);
-    void operator-=(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other);
-    void operator*=(const AbstractMatrixBase<float, 3, 3, LayoutPolicyLeftToRight>& other);
+    /// @returns The entry stored at the specified row and column.
+    float operator[](int row, int column)const;
+    
+    bool operator==(const Matrix3& other)const;
+    bool operator!=(const Matrix3& other)const;
+    Vector2 operator*(const Vector2& vec)const;
+    Vector3 operator*(const Vector3& vec)const;
+    Matrix3 operator*(const Matrix3& other)const;
+    
+    void operator+=(const Matrix3& other);
+    void operator-=(const Matrix3& other);
+    void operator*=(const Matrix3& other);
   
   
   public:
-    VectorBase<float, COLUMNS>& Row(index_t index)&;
-    [[nodiscard]] const VectorBase<float, COLUMNS>& Row(index_t index)const&;
-  
-  
-  public:
-    [[nodiscard]] constexpr index_t GetColumnCount()const{return COLUMNS;}
-    [[nodiscard]] constexpr index_t GetRowCount()const{return ROWS;}
-    [[nodiscard]] constexpr index_t GetTotalSize()const{return TOTAL_SIZE;}
-    [[nodiscard]] constexpr bool IsSquare()const{return IS_SQUARE;}
+    /// @returns The entry stored at the specified index. @note The internal array is column major.
+    float& Entry(int index);
+    
+    /// @returns The entry stored at the specified index. @note The internal array is column major.
+    [[nodiscard]] float Entry(int index)const;
+    
+    /// @returns The entry stored at the specified row and column.
+    float& Entry(int row, int column);
+    /// @returns The entry stored at the specified row and column.
+    [[nodiscard]] float Entry(int row, int column)const;
+    
+    /// @returns The column at the specified index.
+    Vector3& GetColumn(int index);
+    
+    /// @returns The column at the specified index.
+    [[nodiscard]] const Vector3& GetColumn(int index)const;
+    
+    /// @returns The row at the specified index. @note Can't modify the row. The returned row is a copy.
+    [[nodiscard]] Vector3 GetRow(int index)const;
+    
+    /// @returns The translation part of the matrix.
+    [[nodiscard]] Vector2 GetTranslation()const;
+    
+    /// @returns The scale part of the matrix.
+    [[nodiscard]] Vector2 GetScale()const;
+    
+    /// @returns The rotation part of the matrix.
+    [[nodiscard]] float GetRotation()const;
+    
+    /// @returns A pointer to the underlying data, laid out as a column major array of 9 floats.
+    [[nodiscard]] const float* Data()const;
+    
+    /// @returns A pointer to the underlying data, laid out as a column major array of 9 floats.
+    float* Data();
     
     
   };
-  
-  
 }
 
+template<>
+struct fmt::formatter<Candy::Math::Matrix3> {
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  
+  template <typename FormatContext>
+  auto format(const Candy::Math::Matrix3& matrix, FormatContext& ctx) {
+    return format_to(ctx.out(), "{0}\n{1}\n{2}",
+                     Candy::Math::Vector3(matrix.Entry(0), matrix.Entry(3), matrix.Entry(6)),
+                     Candy::Math::Vector3(matrix.Entry(1), matrix.Entry(4), matrix.Entry(7)),
+                     Candy::Math::Vector3(matrix.Entry(2), matrix.Entry(5), matrix.Entry(8)));
+  }
+};
 
-
-std::ostream &operator<<(std::ostream &ostream, const Candy::Math::AbstractMatrixBase<float, 3, 3, Candy::Math::LayoutPolicyLeftToRight> &mat);
+std::ostream &operator<<(std::ostream &ostream, const Candy::Math::Matrix3 &mat);

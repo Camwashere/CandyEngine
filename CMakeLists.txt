@@ -28,7 +28,7 @@ add_custom_target(
         ${CMAKE_BINARY_DIR}/assets
         COMMENT "Copying internal asset files...")
 
-#[[add_custom_target(
+add_custom_target(
         CopyConfig ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources/config
@@ -36,7 +36,7 @@ add_custom_target(
         COMMENT "Copying internal config files if they don't exist..."
 )
 
-add_custom_target(
+#[[add_custom_target(
         CopyProjects ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/resources/projects
@@ -91,20 +91,26 @@ set(CANDY_MATH_HEADERS candy/core/include/candy/math/Vector.hpp
         candy/core/include/candy/math/quaternion/QuaternionBase.hpp
         candy/core/include/candy/math/quaternion/QuaternionBase.inl
         candy/core/include/candy/math/matrix/specialization/Matrix3.hpp
-        candy/core/include/candy/math/matrix/specialization/Matrix4ColumnMajor.hpp
-        candy/core/include/candy/math/matrix/specialization/Matrix4RowMajor.hpp
-        candy/core/include/candy/math/matrix/base/LayoutPolicy.hpp
-        candy/core/include/candy/math/matrix/base/MatrixBase.hpp
         candy/core/include/candy/math/matrix/base/MatrixExpression.hpp
         candy/core/include/candy/math/direction/Direction2.hpp
-        candy/core/include/candy/math/direction/Direction3.hpp)
+        candy/core/include/candy/math/direction/Direction3.hpp
+        candy/core/include/candy/math/matrix/specialization/Matrix4.hpp
+        candy/core/include/candy/math/geometry/Bounds2D.hpp
+        candy/core/include/candy/math/curve/BezierCurve.hpp
+        candy/core/include/candy/math/curve/BezierCurveQuadratic.hpp
+        candy/core/include/candy/math/curve/BezierCurveCubic.hpp
+)
 
-set(CANDY_MATH_SOURCES candy/core/src/math/Transform.cpp
+set(CANDY_MATH_SOURCES
         candy/core/src/math/matrix/Matrix3.cpp
-        candy/core/src/math/matrix/Matrix4ColumnMajor.cpp
-        candy/core/src/math/matrix/Matrix4RowMajor.cpp
         candy/core/src/math/direction/Direction2.cpp
-        candy/core/src/math/direction/Direction3.cpp)
+        candy/core/src/math/direction/Direction3.cpp
+        candy/core/src/math/matrix/Matrix4.cpp
+        candy/core/src/math/Quaternion.cpp
+        candy/core/src/math/geometry/Bounds2D.cpp
+        candy/core/src/math/curve/BezierCurve.cpp
+        candy/core/src/math/curve/BezierCurveQuadratic.cpp
+        candy/core/src/math/curve/BezierCurveCubic.cpp)
 
 set(CANDY_MATH_FILES ${CANDY_MATH_HEADERS} ${CANDY_MATH_SOURCES})
 
@@ -349,6 +355,7 @@ set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/GumObject.hpp
         candy/gum/include/gum/GumTransform.hpp
         candy/gum/include/gum/GumComponents.hpp
+        candy/gum/include/gum/GumShape.hpp
 )
 
 set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
@@ -441,7 +448,7 @@ set(VCPKG_ROOT "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
         ${VCPKG_ROOT}
         $<TARGET_FILE_DIR:CandyEngineTest>)]]
 
-add_dependencies(CandyEngineTest CopyAssets)
+add_dependencies(CandyEngineTest CopyAssets CopyConfig)
 
 target_link_libraries(CandyEngineTest PRIVATE CandyEngine)
 
