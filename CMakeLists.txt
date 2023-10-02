@@ -355,13 +355,15 @@ set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/GumObject.hpp
         candy/gum/include/gum/GumTransform.hpp
         candy/gum/include/gum/GumComponents.hpp
-        candy/gum/include/gum/GumShape.hpp
+        candy/gum/include/gum/shape/GumShape.hpp
+        candy/gum/include/gum/shape/ShapeManager.hpp
 )
 
 set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
         candy/gum/src/GumObject.cpp
         candy/gum/src/GumGraph.cpp
-        candy/gum/src/GumTransform.cpp)
+        candy/gum/src/GumTransform.cpp
+        candy/gum/src/GumShape.cpp)
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 

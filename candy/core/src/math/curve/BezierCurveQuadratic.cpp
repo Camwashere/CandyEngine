@@ -38,7 +38,7 @@ namespace Candy::Math
     
     for(int i = 1; i <= n; ++i)
     {
-      float t = (float)i/n; // Calculate parameter t
+      float t = (float)i/(float)n; // Calculate parameter t
       Vector2 curr = Evaluate(t);
       length += Vector2::Length(curr - prev);
       prev = curr;
@@ -73,16 +73,23 @@ namespace Candy::Math
     return Evaluate(closestT);
   }
   
-  std::vector<Vector2> BezierCurveQuadratic::ToLineSegments(size_t subdivisions)const
+  std::vector<Vector2> BezierCurveQuadratic::ToLineSegments(float curvatureThreshold, size_t minSubdivisions, size_t maxSubdivisions)const
   {
+    // Calculate curvature of curve here (simplified to absolute difference of tangent vectors here)
+    Vector2 startTangent = Vector2::Normalized(control - start);
+    Vector2 endTangent = Vector2::Normalized(end - control);
+    float curvature = Vector2::Magnitude(startTangent-endTangent);
+    
+    // Calculate adaptive number of subdivisions based on curvature
+    size_t n = minSubdivisions + static_cast<int>(curvature / curvatureThreshold);
+    n = Clamp(n, minSubdivisions, maxSubdivisions); // Clamp to [min_n, max_n]
+    
     std::vector<Vector2> lineSegments;
-    lineSegments.reserve(subdivisions + 1);
+    lineSegments.reserve(n + 1);
     
-    float step = 1.0 / float(subdivisions);
-    
-    for (size_t i = 0; i <= subdivisions; ++i)
+    for (size_t i = 0; i <= n; ++i)
     {
-      float t = step * float(i);
+      float t = (float)i / (float)n;
       Vector2 pointOnCurve = Evaluate(t);
       lineSegments.push_back(pointOnCurve);
     }

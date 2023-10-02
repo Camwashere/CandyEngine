@@ -31,7 +31,7 @@ namespace Candy::Math
      * @param minSubdivisions Minimum number of subdivisions
      * @param maxSubdivisions Maximum number of subdivisions
      * @return The approximate length of the curve */
-    [[nodiscard]] float Length(float curvatureThreshold=0.1f, size_t minSubdivisions=3, size_t maxSubdivisions=200)const;
+    [[nodiscard]] float Length(float curvatureThreshold=0.1f, size_t minSubdivisions=2, size_t maxSubdivisions=20)const;
     
     /**
      * @brief Calculate the tangent vector at time t
@@ -50,7 +50,7 @@ namespace Candy::Math
      * @brief Approximate the number of line segments that make up the curve
      * @param subdivisions How many line segments will be used to approximate the curve. Higher values result in a more precise approximation, yet will take longer
      * @return A vector of line segments that make up the curve. It's size is equal to subdivisions + 1 */
-    [[nodiscard]] std::vector<Vector2> ToLineSegments(size_t subdivisions=10)const;
+    [[nodiscard]] std::vector<Vector2> ToLineSegments(float curvatureThreshold=0.1f, size_t minSubdivisions=2, size_t maxSubdivisions=20)const;
     
     /**
      * @brief Calculate the determinant of the quadratic bezier curve
