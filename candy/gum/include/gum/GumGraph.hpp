@@ -1,8 +1,9 @@
 #pragma once
-#include <entt/entt.hpp>
-#include <candy/base/UUID.hpp>
-#include <candy/event/Events.hpp>
+#include "GumTypes.hpp"
+#include "candy/event/Events.hpp"
 #include <unordered_map>
+#include <deque>
+#include <queue>
 namespace Candy::Gum
 {
   class GumObject;
@@ -10,46 +11,54 @@ namespace Candy::Gum
   class GumGraph
   {
   private:
-    entt::registry registry;
-    std::unordered_map<UUID, GumObject> objectMap;
-    std::vector<GumObject> deletionQueue;
+    GumIDVector<SharedPtr<GumObject>> objects;
+    std::queue<GumID> dirtyObjects;
+    std::deque<GumID> availableIDs{};
     std::string name;
     
   private:
-    void MarkForDelete(GumObject object);
+    [[nodiscard]] bool HasAvailableIDs()const;
+    void DetachObjectData(const SharedPtr<GumObject>& object);
+    [[nodiscard]] bool IsIDAssigned(GumID id)const;
+    
+    void Render();
     
   public:
-    explicit GumGraph(const std::string& graphName);
+    explicit GumGraph(std::string_view name);
     
   public:
-    template<typename T>
-    void OnComponentAdded(GumObject& object, T& component);
+    void Update();
     
-    template<typename T>
-    void OnComponentRemoved(GumObject& object, T& component);
     
   public:
-    GumObject CreateObject(const std::string &tag = std::string());
-    GumObject CreateObjectWithUUID(UUID uuid, const std::string&tag=std::string());
-    void DestroyObject(GumObject entity);
-    void DestroyObjectTree(GumObject parent);
-    GumObject DuplicateObject(GumObject entity);
-    GumObject FindObjectByTag(std::string_view tag);
-    GumObject GetObjectByUUID(UUID uuid);
-    [[nodiscard]] std::string GetName()const;
-    
-  public:
-    void OnUpdate();
-    void OnEvent(Events::Event& event);
+    GumID AddObject(const SharedPtr<GumObject>& object);
     
     
+    template<typename Derived, typename... Args>
+    std::enable_if<std::is_base_of<GumObject, Derived>::value, WeakPtr<Derived>>
+    AddObject(Args&&... args)
+    {
+      SharedPtr<Derived> object = MakeShared<Derived>(this, std::forward<Args>(args)...);
+      AddObject(object);
+      return std::static_pointer_cast<WeakPtr>(object);
+    }
     
-  private:
+    bool RemoveObject(GumID id);
+    [[nodiscard]] const GumObject* GetObject(GumID id)const;
+    GumObject* GetObject(GumID id);
+    
+    
     friend class GumObject;
+    
+  
+    
+  
+    
+    
+    
+  
+  
   };
   
-  template<typename T>
-  inline void GumGraph::OnComponentAdded(GumObject& object, T& component){}
-  template<typename T>
-  inline void GumGraph::OnComponentRemoved(GumObject& object, T& component){}
+ 
 }

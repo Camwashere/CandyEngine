@@ -1,171 +1,274 @@
-#include <gum/GumObject.hpp>
-#include <gum/GumComponents.hpp>
+#include "gum/GumObject.hpp"
 #include "CandyPch.hpp"
+
 namespace Candy::Gum
 {
-  
-  GumObject::GumObject()=default;
-  GumObject::GumObject(entt::entity objectHandle, GumGraph* gumGraph) : handle(objectHandle), graph(gumGraph)
+  using namespace Math;
+  GumObject::GumObject(GumGraph* gumGraph) : graph(gumGraph)
   {
-  
-  }
-  GumObject::GumObject(const GumObject &other)=default;
-  
-  
-  GumObject::operator bool()const
-  {
-    return handle!=entt::null;
-  }
-  GumObject::operator std::uint32_t()const
-  {
-    return (std::uint32_t)handle;
-  }
-  GumObject::operator entt::entity()const
-  {
-    return handle;
   }
   
-  bool GumObject::operator==(const GumObject& other)const
+  
+  
+  GumObject::operator bool() const
   {
-    return handle==other.handle && graph == other.graph;
-  }
-  bool GumObject::operator!=(const GumObject& other)const
-  {
-    return !(*this==other);
+    return id.IsValid();
   }
   
-  UUID GumObject::GetUUID()
+  GumObject::operator GumID() const
   {
-    CANDY_CORE_ASSERT(HasComponent<GumID>(), "GumObject does not have ID component");
-    return GetComponent<GumID>().id;
-  }
-  std::string GumObject::GetTag()
-  {
-    CANDY_CORE_ASSERT(HasComponent<GumTag>(), "GumObject does not have tag component");
-    return GetComponent<GumTag>().tag;
-  }
-  GumParent& GumObject::GetParent()
-  {
-    CANDY_CORE_ASSERT(HasParent(), "GumObject does not have parent");
-    return GetComponent<GumParent>();
-  }
-  const GumParent& GumObject::GetParent()const
-  {
-    CANDY_CORE_ASSERT(HasParent(), "GumObject does not have parent");
-    return GetComponent<GumParent>();
-  }
-  GumObject GumObject::GetParentObject()
-  {
-    CANDY_CORE_ASSERT(HasParent(), "GumObject does not have parent");
-    return GumObject(GetParent().parent, graph);
+    return id;
   }
   
-  GumObject GumObject::GetParentObject()const
+  bool GumObject::operator==(const GumObject& other) const
   {
-    CANDY_CORE_ASSERT(HasParent(), "GumObject does not have parent");
-    return GumObject(GetParent().parent, graph);
-  }
-  bool GumObject::HasParent()const
-  {
-    return HasComponent<GumParent>();
-  }
-  bool GumObject::HasChildren()const
-  {
-    return HasComponent<GumChildren>();
-  }
-  bool GumObject::IsParent()const
-  {
-    return HasChildren();
-  }
-  bool GumObject::IsChild()const
-  {
-    return HasParent();
-  }
-  bool GumObject::IsRoot()const
-  {
-    return !HasParent();
+    return id==other.id;
   }
   
-  bool GumObject::HasTransform()const
+  bool GumObject::operator!=(const GumObject& other) const
   {
-    return HasComponent<GumTransform>();
+    return id!=other.id;
+  }
+  void GumObject::SetVisible(bool value)
+  {
+    visible = value;
+  }
+  void GumObject::SetShape(const SharedPtr<GumShape>& gumShape)
+  {
+    shape = gumShape;
+    MarkDirty(DirtyFlags::Shape);
+  }
+  GumID GumObject::GetID() const
+  {
+    return id;
   }
   
-  bool GumObject::HasGraph()const
+  GumID GumObject::GetParentID() const
   {
-    return graph!=nullptr;
-  }
-  bool GumObject::RemoveChild(const GumObject& child)
-  {
-    CANDY_PROFILE_FUNCTION();
-    if (!HasChildren())
-      return false;
-    auto& children = GetChildren();
-    auto it = std::find(children.children.begin(), children.children.end(), child);
-    if (it==children.children.end())
-      return false;
-    children.children.erase(it);
-    return true;
-  }
-  bool GumObject::AddChild(const GumObject& child)
-  {
-    CANDY_PROFILE_FUNCTION();
-    if (!HasChildren())
-      AddComponent<GumChildren>();
-    auto& children = GetChildren();
-    auto it = std::find(children.children.begin(), children.children.end(), child);
-    if (it!=children.children.end())
-      return false;
-    
-    
-    children.children.push_back(child);
-    return true;
+    return parentID;
   }
   
-  void GumObject::SetParent(GumObject parent)
+  
+  bool GumObject::Contains(const Math::Vector2& point) const
   {
-    CANDY_PROFILE_FUNCTION();
-    if (! HasParent())
+    if (worldBounds.Contains(point))
     {
-      AddComponent<GumParent>(parent);
-      parent.AddChild(*this);
+    
+    }
+    return false;
+  }
+  const GumObject* GumObject::GetParent() const
+  {
+    return graph->GetObject(parentID);
+  
+  }
+  
+  GumObject* GumObject::GetParent()
+  {
+    return graph->GetObject(parentID);
+    
+  }
+  
+  
+  void GumObject::SetLocalPosition(const Math::Vector2& position)
+  {
+    transform.localPosition = position;
+    MarkDirty(DirtyFlags::Transform);
+  }
+  void GumObject::SetLocalRotation(float rotation)
+  {
+    transform.localRotation = rotation;
+    MarkDirty(DirtyFlags::Transform);
+  }
+  void GumObject::SetLocalScale(const Math::Vector2& scale)
+  {
+    transform.localScale = scale;
+    MarkDirty(DirtyFlags::Transform);
+  }
+  void GumObject::SetLocalTransform(const Math::Vector2& position, float rotation, const Math::Vector2& scale)
+  {
+    transform.localPosition = position;
+    transform.localRotation = rotation;
+    transform.localScale = scale;
+    MarkDirty(DirtyFlags::Transform);
+  }
+  void GumObject::SetLocalDepthIndex(int depthIndex)
+  {
+    localDepthIndex = depthIndex;
+    MarkDirty(DirtyFlags::DepthIndex);
+  }
+  
+  const GumTransform& GumObject::GetTransform() const
+  {
+    return transform;
+  }
+  
+  
+  
+  const GumGraph* GumObject::GetGraph() const
+  {
+    return graph;
+  }
+  
+  GumGraph* GumObject::GetGraph()
+  {
+    return graph;
+  }
+  
+  
+  
+  bool GumObject::HasParent() const
+  {
+    return parentID.IsValid();
+  }
+  
+  
+  const Math::Bounds2D& GumObject::GetWorldBounds() const
+  {
+    return worldBounds;
+  }
+  const Math::Bounds2D& GumObject::GetLocalBounds() const
+  {
+    CANDY_CORE_ASSERT(shape, "GumObject::GetLocalBounds() shape is null!");
+    return shape->GetBoundingBox();
+  }
+  
+  bool GumObject::HasChildren() const
+  {
+    return !childrenIDs.empty();
+  }
+  
+  size_t GumObject::GetChildCount() const
+  {
+    return childrenIDs.size();
+  }
+  
+  const GumShape* GumObject::GetShape() const
+  {
+    CANDY_CORE_ASSERT(shape, "GumObject::GetShape() shape is null!");
+    return shape.get();
+  }
+  
+  GumShape* GumObject::GetShape()
+  {
+    CANDY_CORE_ASSERT(shape, "GumObject::GetShape() shape is null!");
+    return shape.get();
+  }
+  const GumObject* GumObject::GetChild(size_t index) const
+  {
+    CANDY_CORE_ASSERT(index<childrenIDs.size(), "GumObject::GetChild() index out of bounds");
+    return graph->GetObject(childrenIDs[index]);
+  }
+  
+  GumObject* GumObject::GetChild(size_t index)
+  {
+    CANDY_CORE_ASSERT(index<childrenIDs.size(), "GumObject::GetChild() index out of bounds");
+    return graph->GetObject(childrenIDs[index]);
+  }
+  
+  std::vector<GumObject*> GumObject::GetChildren()
+  {
+    std::vector<GumObject*> children(childrenIDs.size());
+    for (size_t i = 0; i < childrenIDs.size(); i++)
+    {
+      children[i] = graph->GetObject(childrenIDs[i]);
+      CANDY_CORE_ASSERT(children[i], "GumObject::GetChildren() Children vector contains null object!");
+    }
+    return children;
+  }
+  
+  std::vector<const GumObject*> GumObject::GetChildren() const
+  {
+    std::vector<const GumObject*> children(childrenIDs.size());
+    for (size_t i = 0; i<childrenIDs.size(); i++)
+    {
+      children[i] = graph->GetObject(childrenIDs[i]);
+      CANDY_CORE_ASSERT(children[i], "GumObject::GetChildren() Children vector contains null object!");
+    }
+    return children;
+  }
+  
+  GumID GumObject::GetChildID(size_t index) const
+  {
+    CANDY_CORE_ASSERT(index<childrenIDs.size(), "GumObject::GetChildID() index out of bounds");
+    return childrenIDs[index];
+  }
+  
+  const std::vector<GumID>& GumObject::GetChildrenIDs() const
+  {
+    return childrenIDs;
+  }
+  
+  std::vector<GumID>& GumObject::GetChildrenIDs()
+  {
+    return childrenIDs;
+  }
+  
+  bool GumObject::IsVisible() const
+  {
+    return visible;
+  }
+  
+  
+  
+  void GumObject::MarkDirty(DirtyFlags flag)
+  {
+    AppendDirtyFlag(flag);
+    if (!HasDirtyFlag(DirtyFlags::Queued))
+    {
+      graph->dirtyObjects.push(id);
+      AppendDirtyFlag(DirtyFlags::Queued);
+    }
+  }
+  void GumObject::AppendDirtyFlag(DirtyFlags flag)
+  {
+    
+    dirtyFlags = static_cast<DirtyFlags>(static_cast<uint16_t>(dirtyFlags) | static_cast<uint16_t>(flag));
+    
+    
+  }
+  void GumObject::RemoveDirtyFlag(DirtyFlags flag)
+  {
+    dirtyFlags = static_cast<DirtyFlags>(static_cast<uint16_t>(dirtyFlags) & ~static_cast<uint16_t>(flag));
+  }
+  bool GumObject::HasDirtyFlag(DirtyFlags flag) const
+  {
+    return (static_cast<uint16_t>(dirtyFlags) & static_cast<uint16_t>(flag)) != 0;
+  }
+  void GumObject::MarkClean()
+  {
+    dirtyFlags = DirtyFlags::None;
+  }
+  
+  void GumObject::CalculateTransformMatrices()
+  {
+    transform.localMatrix = Matrix3::Translate(Matrix3::IDENTITY, transform.localPosition)*Matrix3::Rotate(Matrix3::IDENTITY, transform.localRotation)*Matrix3::Scale(Matrix3::IDENTITY, transform.localScale);
+    if (HasParent())
+    {
+      transform.worldMatrix = GetParent()->GetTransform().worldMatrix*transform.localMatrix;
     }
     else
     {
-      GumObject oldParent{GetParent().parent, graph};
-      oldParent.RemoveChild(*this);
-      GetParent().parent = parent;
-      parent.AddChild(*this);
-      
+      transform.worldMatrix = transform.localMatrix;
+    }
+    
+  }
+  void GumObject::CalculateDepthIndices()
+  {
+    if (HasParent())
+    {
+      worldDepthIndex = GetParent()->worldDepthIndex + localDepthIndex;
+    }
+    else
+    {
+      worldDepthIndex = localDepthIndex;
     }
   }
   
-  GumChildren& GumObject::GetChildren()
+  void GumObject::CalculateLocalBounds()
   {
-    CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(HasChildren(), "GumObject does not have children");
-    return GetComponent<GumChildren>();
+    CANDY_CORE_ASSERT(shape);
+    shape->ReCalculateBoundingBox();
+    worldBounds = shape->GetBoundingBox();
   }
-  
-  const GumChildren& GumObject::GetChildren()const
-  {
-    CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(HasChildren(), "GumObject does not have children");
-    return GetComponent<GumChildren>();
-  }
-  
-  GumTransform& GumObject::GetTransform()
-  {
-    CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(HasTransform(), "GumObject does not have transform");
-    return GetComponent<GumTransform>();
-  }
-  const GumTransform& GumObject::GetTransform()const
-  {
-    CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(HasTransform(), "GumObject does not have transform");
-    return GetComponent<GumTransform>();
-  }
-  void GumObject::SetName(const std::string& tag){GetComponent<GumTag>().tag=tag;}
-  GumGraph* GumObject::GetGraph(){return graph;}
 }

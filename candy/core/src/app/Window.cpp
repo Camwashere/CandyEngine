@@ -179,10 +179,7 @@ namespace Candy
         --GLFW_WINDOW_COUNT;
         if (GLFW_WINDOW_COUNT==0)
         {
-          /*renderer->Shutdown();
-          graphicsContext->Terminate();
-          Vulkan::Shutdown();
-          glfwTerminate();*/
+          
           Application::Shutdown();
         }
     }

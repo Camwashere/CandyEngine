@@ -23,11 +23,29 @@ namespace Candy::Gum
   {
   
   }
-  void GumInstance::NewFrame()
+  void GumInstance::BeginPass()
   {
-    Renderer::BeginUIPass();
+    CANDY_PROFILE_FUNCTION();
+    /*instance->currentPassIndex = uiPassIndex;
+    GetCurrentFrame().commandBuffer.SetCurrentBuffer(uiPassIndex);
+    RenderCommand::Reset();
+    
+    std::array<VkClearValue, 2> clearValues{};
+    
+    clearValues[0].color = {instance->clearColor.r, instance->clearColor.g, instance->clearColor.b, instance->clearColor.a};
+    clearValues[1].depthStencil = {1.0f, 0};
+    Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
+    VkRenderPassBeginInfo rpInfo = GetUIPass().BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), size);
+    rpInfo.clearValueCount = clearValues.size();
+    rpInfo.pClearValues = clearValues.data();
+    
+    
+    GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
+    
+    Math::Vector2u position = {0, 0};
+    RenderCommand::SetViewport(position, size);*/
   }
-  void GumInstance::EndFrame()
+  void GumInstance::EndPass()
   {
   
   }

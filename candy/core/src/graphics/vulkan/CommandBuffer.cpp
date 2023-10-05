@@ -39,27 +39,20 @@ namespace Candy::Graphics
     
     CANDY_VULKAN_CHECK(vkCreateCommandPool(Vulkan::LogicalDevice(), &poolInfo, nullptr, &commandPool));
     Vulkan::DeletionQueue().Push(commandPool);
-    //Vulkan::PushDeleter([=, this](){vkDestroyCommandPool(Vulkan::LogicalDevice(), this->commandPool, nullptr);});
+    
   }
   
   void CommandBuffer::CreateCommandBuffers()
   {
     CANDY_PROFILE_FUNCTION();
     
-    //commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+    
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
     
-    /*VkCommandBufferAllocateInfo utilAllocInfo{};
-    utilAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    utilAllocInfo.commandPool = commandPool;
-    utilAllocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    utilAllocInfo.commandBufferCount=1;
-    
-    CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &utilAllocInfo, &utilityBuffer));*/
     
     
     CANDY_VULKAN_CHECK(vkAllocateCommandBuffers(Vulkan::LogicalDevice(), &allocInfo, commandBuffers.data()));
@@ -78,12 +71,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     
-    
-    /*VkBufferCopy copyRegion{};
-    copyRegion.srcOffset = srcOffset; // Optional
-    copyRegion.dstOffset = dstOffset; // Optional
-    copyRegion.size = size;
-    vkCmdCopyBuffer(utilityBuffer, srcBuffer, dstBuffer, 1, &copyRegion);*/
+   
   }
   void CommandBuffer::CopyBufferImmediate(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
   {

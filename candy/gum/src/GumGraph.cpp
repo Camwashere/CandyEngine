@@ -1,154 +1,138 @@
-#include <gum/GumGraph.hpp>
+#include "gum/GumGraph.hpp"
 #include "CandyPch.hpp"
-#include <gum/GumObject.hpp>
-#include <gum/GumComponents.hpp>
+#include "gum/GumObject.hpp"
+#include <gum/GumRenderer.hpp>
 namespace Candy::Gum
 {
   
-  template<typename... Component>
-  static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+  GumGraph::GumGraph(std::string_view graphName) : name(graphName)
   {
-    CANDY_PROFILE_FUNCTION();
-    ([&]()
+  }
+  
+  
+  void GumGraph::Update()
+  {
+    // Loop while there are dirty objects in the queue
+    while (!dirtyObjects.empty())
     {
-    auto view = src.view<Component>();
-    for (auto srcEntity : view)
-    {
-      entt::entity dstEntity = enttMap.at(src.get<GumID>(srcEntity).id);
+      // Get the dirty object from the front of the queue
+      const GumID id = dirtyObjects.front();
+      dirtyObjects.pop();
       
-      auto& srcComponent = src.get<Component>(srcEntity);
-      dst.emplace_or_replace<Component>(dstEntity, srcComponent);
-    }
-    }(), ...);
-  }
-  
-  template<typename... Component>
-  static void CopyComponent(GumComponentGroup<Component...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
-  {
-    CopyComponent<Component...>(dst, src, enttMap);
-  }
-  
-  template<typename... Component>
-  static void CopyComponentIfExists(GumObject dst, GumObject src)
-  {
-    CANDY_PROFILE_FUNCTION();
-    ([&]()
-    {
-    if (src.HasComponent<Component>())
-      dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
-    }(), ...);
-  }
-  
-  template<typename... Component>
-  static void CopyComponentIfExists(GumComponentGroup<Component...>, GumObject dst, GumObject src)
-  {
-    CopyComponentIfExists<Component...>(dst, src);
-  }
-  
-  
-  GumGraph::GumGraph(const std::string& graphName) : name(graphName)
-  {
-  
-  }
-  
-  GumObject GumGraph::CreateObject(const std::string &tag)
-  {
-    CANDY_PROFILE_FUNCTION();
-    return CreateObjectWithUUID(UUID(), tag);
-  }
-  GumObject GumGraph::CreateObjectWithUUID(UUID uuid, const std::string&tag)
-  {
-    CANDY_PROFILE_FUNCTION();
-    GumObject object = { registry.create(), this };
-    object.AddComponent<GumID>(uuid);
-    auto& tc = object.AddComponent<GumTag>();
-    tc.tag = tag.empty() ? "Object" : tag;
-    object.AddComponent<GumTransform>(object);
-    
-    objectMap[uuid] = object;
-    
-    return object;
-  }
-  void GumGraph::DestroyObject(GumObject object)
-  {
-    CANDY_PROFILE_FUNCTION();
-    
-    objectMap.erase(object.GetUUID());
-    registry.destroy(object);
-  }
-  void GumGraph::DestroyObjectTree(GumObject parent)
-  {
-    MarkForDelete(parent);
-    for (auto& e : deletionQueue)
-    {
-      DestroyObject(e);
-    }
-    
-    //AppendUpdateFlag(SceneUpdateFlag::Meshes3D);
-    deletionQueue.clear();
-  }
-  
-  void GumGraph::MarkForDelete(GumObject object)
-  {
-    CANDY_PROFILE_FUNCTION();
-    deletionQueue.push_back(object);
-    
-    if (object.HasChildren())
-    {
-      auto& children = object.GetChildren().children;
-      for (auto& child : children)
+      GumObject* object = objects[id].get();
+      
+      // Process the dirty object here
+      if (object->HasDirtyFlag(GumObject::DirtyFlags::Transform))
       {
-        MarkForDelete(child);
+        object->CalculateTransformMatrices();
+      }
+      if (object->HasDirtyFlag(GumObject::DirtyFlags::DepthIndex))
+      {
+        object->CalculateDepthIndices();
+      }
+      if (object->HasDirtyFlag(GumObject::DirtyFlags::Shape))
+      {
+        object->CalculateLocalBounds();
+      }
+      
+      // Store the parent's prior dirty flags to update children if necessary
+      GumObject::DirtyFlags parentDirtyFlags = object->dirtyFlags;
+      // Mark the object as clean
+      object->MarkClean();
+      
+      // Enqueue the children if they are not already dirty
+      for (GumID childId: object->childrenIDs)
+      {
+        if (objects[childId]->dirtyFlags == GumObject::DirtyFlags::None)
+        {
+          objects[childId]->AppendDirtyFlag(parentDirtyFlags);
+          dirtyObjects.push(childId);
+        }
       }
     }
+    
+    // Render the scene now that the object data has been updated
+    Render();
   }
-  GumObject GumGraph::DuplicateObject(GumObject original)
+  
+  void GumGraph::Render()
   {
-    if (original.HasParent() or original.HasChildren())
+    GumRenderer::BeginScene();
+    
+    for (const auto& object : objects)
     {
-      CANDY_CORE_INFO("OR WORKING IN C++");
+      if (object->IsVisible())
+      {
+        GumRenderer::SubmitShape(object->transform.worldMatrix, object->shape.get(), object->worldDepthIndex);
+      }
+      
     }
-    CANDY_PROFILE_FUNCTION();
-    // Copy name because we're going to modify component data structure
-    std::string tag = original.GetTag();
-    GumObject clone = CreateObject(tag);
-    CopyComponentIfExists(AllGumComponents{}, clone, original);
-    return clone;
+    
+    GumRenderer::EndScene();
   }
   
-  
-  void GumGraph::OnUpdate()
+  bool GumGraph::HasAvailableIDs() const
   {
-  
+    return !availableIDs.empty();
   }
-  
-  void GumGraph::OnEvent(Events::Event& event)
+  bool GumGraph::RemoveObject(GumID id)
   {
-  
-  }
-  
-  
-  GumObject GumGraph::FindObjectByTag(std::string_view tag)
-  {
-    CANDY_PROFILE_FUNCTION();
-    auto view = registry.view<GumTag>();
-    for (auto object : view)
+    if (id.IsNull())
     {
-      const GumTag& tc = view.get<GumTag>(object);
-      if (tc.tag == tag)
-        return GumObject{ object, this };
+      return false;
     }
-    return {};
+    else if (id == objects.LastID())
+    {
+      DetachObjectData(objects.Last());
+      objects.PopBack();
+    }
+    else
+    {
+      DetachObjectData(objects[id]);
+      availableIDs.push_back(id);
+    }
+    return true;
+    
   }
-  GumObject GumGraph::GetObjectByUUID(UUID uuid)
+  const GumObject* GumGraph::GetObject(GumID id)const
   {
-    CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(objectMap.find(uuid) != objectMap.end(), "Object not found in registry");
-    return { objectMap.at(uuid), this };
+    return objects[id].get();
   }
   
-  std::string GumGraph::GetName()const
+  GumObject* GumGraph::GetObject(GumID id)
   {
-    return name;
+    return objects[id].get();
+  }
+  void GumGraph::DetachObjectData(const SharedPtr<GumObject>& object)
+  {
+    object->childrenIDs.clear();
+    object->parentID = GumID::NULL_ID;
+    object->graph = nullptr;
+    object->id = GumID::NULL_ID;
+  }
+  
+  GumID GumGraph::AddObject(const SharedPtr<GumObject>& object)
+  {
+    if (HasAvailableIDs())
+    {
+      GumID id = availableIDs.front();
+      availableIDs.pop_front();
+      objects[id] = object;
+      return id;
+    }
+    else
+    {
+      objects.PushBack(object);
+      return objects.LastID();
+    }
+  }
+  
+  bool GumGraph::IsIDAssigned(GumID id) const
+  {
+    if (id<objects.LastID() && id>=objects.FirstID())
+    {
+      return std::find(availableIDs.begin(), availableIDs.end(), id) == availableIDs.end();
+    }
+    return false;
   }
 }

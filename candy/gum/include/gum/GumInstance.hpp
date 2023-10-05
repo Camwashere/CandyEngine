@@ -20,8 +20,8 @@ namespace Candy::Gum
   public:
     static void Init(const std::filesystem::path& iniConfigPath);
     static void Shutdown();
-    static void NewFrame();
-    static void EndFrame();
+    static void BeginPass();
+    static void EndPass();
     static void Render();
     //static GumContext& GetContext();
     static Version GetVersion();

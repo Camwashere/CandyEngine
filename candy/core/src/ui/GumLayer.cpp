@@ -43,16 +43,15 @@ namespace Candy
   void GumLayer::Begin()
   {
     CANDY_PROFILE_FUNCTION();
-    GumInstance::NewFrame();
-    Renderer::BeginUIPass();
+    GumInstance::BeginPass();
+    //Renderer::BeginUIPass();
   }
   
   void GumLayer::End()
   {
     CANDY_PROFILE_FUNCTION();
     
-    // Rendering
-    GumInstance::EndFrame();
+    
     
     
     

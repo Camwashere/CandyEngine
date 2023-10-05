@@ -63,7 +63,8 @@ set(CANDY_BASE_FILES ${CANDY_BASE_HEADERS} ${CANDY_BASE_SOURCES})
 
 set(CANDY_COLLECTIONS_FILES candy/core/include/candy/collections/Array2D.hpp
         candy/core/include/candy/collections/Array3D.hpp
-        candy/core/include/candy/collections/GenericBuffer.hpp)
+        candy/core/include/candy/collections/GenericBuffer.hpp
+        candy/core/include/candy/collections/DualMap.hpp)
 
 set(CANDY_MATH_HEADERS candy/core/include/candy/math/Vector.hpp
         candy/core/include/candy/math/Direction.hpp
@@ -124,7 +125,9 @@ set(CANDY_UTILS_HEADERS candy/core/include/candy/utils/FileUtils.hpp
         candy/core/include/candy/utils/FrameTime.hpp
         candy/core/include/candy/utils/IDManager.hpp
         candy/core/include/candy/utils/Stopwatch.hpp
-        candy/core/include/candy/utils/Version.hpp)
+        candy/core/include/candy/utils/Version.hpp
+        candy/core/include/candy/utils/ObjectIDManager.hpp
+        candy/core/include/candy/utils/ObjectIDTypes.hpp)
 
 set(CANDY_UTILS_SOURCES candy/core/src/utils/FileUtils.cpp
         candy/core/src/utils/FrameTime.cpp
@@ -349,23 +352,7 @@ set(CANDY_EDITOR_FILES candy/editor/include/editor/panels/ContentBrowserPanel.hp
         candy/editor/src/panels/DebugPanel.cpp
         candy/editor/src/panels/ContentBrowserPanel.cpp)
 
-set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
-        candy/gum/include/gum/GumInstance.hpp
-        candy/gum/include/gum/GumGraph.hpp
-        candy/gum/include/gum/GumObject.hpp
-        candy/gum/include/gum/GumTransform.hpp
-        candy/gum/include/gum/GumComponents.hpp
-        candy/gum/include/gum/shape/GumShape.hpp
-        candy/gum/include/gum/shape/ShapeManager.hpp
-)
 
-set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
-        candy/gum/src/GumObject.cpp
-        candy/gum/src/GumGraph.cpp
-        candy/gum/src/GumTransform.cpp
-        candy/gum/src/GumShape.cpp)
-
-set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 
 set(IM_GUI_SOURCES lib/imgui/imgui.h lib/imgui/imconfig.h lib/imgui/imgui.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_draw.cpp lib/imgui/imgui_internal.h
         lib/imgui/imgui_tables.cpp lib/imgui/imgui_widgets.cpp lib/imgui/imstb_rectpack.h lib/imgui/imstb_textedit.h lib/imgui/imstb_truetype.h lib/imgui/backends/imgui_impl_vulkan.h
@@ -381,6 +368,31 @@ set(STB_LIB_FILES lib/stb/include/stb/stb_image.h
 set(VMA_LIB_FILES lib/vma/vk_mem_alloc.h)
 
 set(CANDY_BUNDLED_LIB_FILES ${IM_GUI_SOURCES} ${IM_GUIZMO_SOURCES} ${STB_LIB_FILES} ${VMA_LIB_FILES})
+
+set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
+        candy/gum/include/gum/GumInstance.hpp
+        candy/gum/include/gum/GumGraph.hpp
+        candy/gum/include/gum/GumObject.hpp
+        candy/gum/include/gum/GumTransform.hpp
+        candy/gum/include/gum/shape/GumPolygon.hpp
+        candy/gum/include/gum/shape/GumShapeData.hpp
+        candy/gum/include/gum/shape/GumShape.hpp
+        candy/gum/include/gum/GumTypes.hpp
+        candy/gum/include/gum/GumRenderer.hpp
+        candy/gum/include/gum/GumCommand.hpp
+)
+
+set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
+        candy/gum/src/GumObject.cpp
+        candy/gum/src/GumGraph.cpp
+        candy/gum/src/GumTransform.cpp
+        candy/gum/src/shape/GumPolygon.cpp
+        candy/gum/src/shape/GumShape.cpp
+        candy/gum/src/shape/GumShapeData.cpp
+        candy/gum/src/GumRenderer.cpp
+)
+
+set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 
 set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
         candy/gum/include/gum/GumInstance.hpp
