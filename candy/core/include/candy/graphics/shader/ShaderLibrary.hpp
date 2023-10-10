@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <candy/utils/Version.hpp>
 #include <candy/base/Base.hpp>
-#include "ShaderLibrarySettings.hpp"
+#include "candy/graphics/shader/config/ShaderLibrarySettings.hpp"
 #include <vulkan/vulkan.h>
 namespace Candy::Graphics
 {
@@ -40,6 +40,7 @@ namespace Candy::Graphics
       
       static void AddShader(const SharedPtr<Shader>& shader);
       static void Reload();
+      static void Bake();
       
       static std::vector<VkDescriptorSetLayout> BakeDescriptorSetLayouts(uint8_t renderPassIndex);
       

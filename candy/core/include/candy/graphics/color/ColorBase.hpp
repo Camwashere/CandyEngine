@@ -24,16 +24,24 @@ namespace Candy
     };
     
     
-    
-    /*template<ColorLayout COLOR_FORMAT, ColorDataType COLOR_DATA_TYPE>
-    class ColorBase
+    enum class ColorChannels
     {
-    
-    public:
-        [[nodiscard]] ColorLayout GetLayout()const{return COLOR_FORMAT;}
-        [[nodiscard]] ColorDataType GetDataType()const{return COLOR_DATA_TYPE;}
-        
-    };*/
+      NONE=-1,
+      R=BIT(0),
+      G=BIT(1),
+      B=BIT(2),
+      A=BIT(3),
+      
+      RED=R,
+      GREEN=G,
+      BLUE=B,
+      ALPHA=A,
+      
+      ALL=R|G|B|A,
+      RGBA=ALL,
+      
+      
+    };
     
     template<typename T, uint8_t CHANNELS>
     struct ColorBase : public Math::VectorBase<T, CHANNELS>

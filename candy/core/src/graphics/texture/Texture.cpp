@@ -3,10 +3,6 @@
 #include "stb/include/stb/stb_image.h"
 #include <vulkan/vulkan.h>
 #include "CandyPch.hpp"
-#include "candy/graphics/vulkan/VulkanBuffer.hpp"
-#include "candy/graphics/Vulkan.hpp"
-#include <utility>
-#include "candy/graphics/RenderCommand.hpp"
 #include <candy/graphics/texture/TextureManager.hpp>
 namespace Candy::Graphics
 {

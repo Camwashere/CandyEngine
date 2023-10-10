@@ -6,6 +6,7 @@
 #include "imgui/backends/imgui_impl_vulkan.h"
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/vulkan/RenderPass.hpp>
 #include <imguizmo/ImGuizmo.h>
 
 namespace Candy
@@ -98,7 +99,7 @@ namespace Candy
     // Clear font texture from cpu memory
     ImGui_ImplVulkan_DestroyFontUploadObjects();
     
-    for (int i=0; i<GraphicsContext::FRAMES_IN_FLIGHT; i++)
+    for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
     {
       Renderer::GetFrame(i).viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.viewportImageView.GetSampler(), Renderer::GetFrame(i).viewportData.viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       //Renderer::GetFrame(i).viewportData.viewportSelectionDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.selectionImageView.GetSampler(), Renderer::GetFrame(i).viewportData.selectionImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -156,7 +157,7 @@ namespace Candy
     
     
     
-    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), Vulkan::GetCurrentCommandBuffer());
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), RenderCommand::GetRenderCommandBuffer());
     
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

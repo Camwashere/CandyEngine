@@ -3,87 +3,175 @@
 #include <GLFW/glfw3.h>
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
-#include <candy/graphics/vulkan/VulkanInstance.hpp>
+#include <candy/graphics/vulkan/device/VulkanDeviceManager.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorAllocator.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorLayoutCache.hpp>
+#include <candy/graphics/GraphicsContext.hpp>
+#include <candy/graphics/Renderer.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
+
+#include "candy/graphics/RenderCommand.hpp"
+#include <candy/graphics/Renderer2D.hpp>
+#include <candy/graphics/Renderer3D.hpp>
+#include <candy/graphics/texture/TextureManager.hpp>
+#include <candy/graphics/shader/ShaderLibrary.hpp>
 namespace Candy::Graphics
 {
-  Vulkan* Vulkan::vulkan = nullptr;
-  Vulkan::Vulkan(const std::filesystem::path& featuresPath) : vulkanFeaturesPath(featuresPath)
+  static int MAX_FRAMES_IN_FLIGHT = 3;
+  struct VulkanData
   {
-    CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(std::filesystem::exists(vulkanFeaturesPath), "Vulkan features file does not exist");
-    deviceManager = nullptr;
-    instance = CreateUniquePtr<VulkanInstance>();
-    allocator = VK_NULL_HANDLE;
-  }
+    int currentFramesInFlight=2;
+    VkInstance instance=nullptr;
+    VulkanDeviceManager* deviceManager=nullptr;
+    VmaAllocator allocator=nullptr;
+    DescriptorAllocator* descriptorAllocator = nullptr;
+    DescriptorLayoutCache descriptorLayoutCache;
+    std::vector<SharedPtr<GraphicsContext>> contexts;
+    GraphicsContext* currentContext = nullptr;
+    DeletionQueue deletionQueue;
+    std::filesystem::path vulkanFeaturesPath;
+  };
   
-  void Vulkan::CreateAllocators()
-  {
-    CANDY_PROFILE_FUNCTION();
-    VmaAllocatorCreateInfo allocatorCreateInfo = {};
-    
-    allocatorCreateInfo.physicalDevice = deviceManager->physicalDevice;
-    allocatorCreateInfo.device = deviceManager->logicalDevice;
-    allocatorCreateInfo.instance = instance->instance;
-    
-    CANDY_VULKAN_CHECK(vmaCreateAllocator(&allocatorCreateInfo, &allocator));
-    
-    descriptorAllocator = CreateUniquePtr<DescriptorAllocator>();
-  }
+  static VulkanData data;
+  
+  
+  
   void Vulkan::InitDeviceManager(VkSurfaceKHR surface)
   {
     CANDY_PROFILE_FUNCTION();
-    vulkan->deviceManager = new VulkanDeviceManager(surface);
-    vulkan->CreateAllocators();
+    data.deviceManager = new VulkanDeviceManager(surface);
+    
+    // Create allocators
+    VmaAllocatorCreateInfo allocatorCreateInfo = {};
+    
+    allocatorCreateInfo.physicalDevice = data.deviceManager->physicalDevice;
+    allocatorCreateInfo.device = data.deviceManager->logicalDevice;
+    allocatorCreateInfo.instance = data.instance;
+    
+    CANDY_VULKAN_CHECK(vmaCreateAllocator(&allocatorCreateInfo, &data.allocator));
+    
+    data.descriptorAllocator = new DescriptorAllocator();
+    Vulkan::DeletionQueue().Push(data.descriptorAllocator);
+    
+    
   }
-  void Vulkan::Init()
+  
+  void Vulkan::InitInstance(const std::string& appName, const Version& appVersion)
+  {
+    CANDY_CORE_ASSERT(VulkanDebugManager::ValidationLayersEnabled() && VulkanDebugManager::ValidationLayersSupported());
+    VkApplicationInfo appInfo{};
+    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo.pApplicationName = appName.c_str();
+    appInfo.applicationVersion = VK_MAKE_VERSION(appVersion.GetMajor(), appVersion.GetMinor(), appVersion.GetPatch());
+    appInfo.pEngineName = "Candy Engine";
+    appInfo.engineVersion = VK_MAKE_VERSION(1, 3, 0);
+    appInfo.apiVersion = VK_API_VERSION_1_3;
+    
+    
+    //VkInstanceCreateInfo createInfo = VulkanDebugManager::GetInstanceCreateInfo();
+    
+    
+    VkInstanceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pApplicationInfo = &appInfo;
+    
+    auto extensions = VulkanDebugManager::GetRequiredExtensions();
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    createInfo.ppEnabledExtensionNames = extensions.data();
+    
+    // TODO Figure out how to move this section to VulkanDebugManager
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    if (VulkanDebugManager::ValidationLayersEnabled())
+    {
+      createInfo.enabledLayerCount = static_cast<uint32_t>(VulkanDebugManager::GetValidationLayerCount());
+      createInfo.ppEnabledLayerNames = VulkanDebugManager::GetValidationLayers().data();
+      
+      VulkanDebugManager::PopulateDebugMessengerCreateInfo(debugCreateInfo);
+      createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
+    }
+    else
+    {
+      createInfo.enabledLayerCount = 0;
+      createInfo.pNext = nullptr;
+    }
+    
+    
+    CANDY_VULKAN_CHECK(vkCreateInstance(&createInfo, nullptr, &data.instance));
+  }
+  
+  
+  GraphicsContext* Vulkan::Init(GLFWwindow* mainWindow)
   {
     CANDY_PROFILE_FUNCTION();
-    vulkan = new Vulkan("config/vulkan/enabledVulkanFeatures.csv");
+    data.vulkanFeaturesPath = "config/vulkan/enabledVulkanFeatures.csv";
+    data.deviceManager = nullptr;
+    data.deletionQueue.Push(&data.descriptorLayoutCache);
+    InitInstance("Candy App", Version(1, 0, 0));
+    VulkanDebugManager::Init(data.instance);
+    VkSurfaceKHR surface;
+    CANDY_VULKAN_CHECK(glfwCreateWindowSurface(Vulkan::Instance(), mainWindow, nullptr, &surface));
+    Vulkan::DeletionQueue().Push(surface);
     
-    Renderer::Init();
+    Vulkan::InitDeviceManager(surface);
+    Renderer::Init(Vulkan::GetSurfaceFormat(surface));
+    RenderCommand::Init(surface);
+    
+    data.contexts.push_back(CreateSharedPtr<GraphicsContext>(mainWindow, surface));
+    data.currentContext = data.contexts[0].get();
+    Renderer::SetTarget(data.currentContext);
+    RenderCommand::SetTarget(data.currentContext);
+    
+    TextureManager::Init();
+    ShaderLibrarySettings settings = ShaderLibrarySettings::Load("config/shader/librarySettings.yml");
+    
+    bool shaderLibraryInitialized = ShaderLibrary::Init(settings);
+    CANDY_CORE_ASSERT(shaderLibraryInitialized, "Failed to initialize shader library");
+    Renderer2D::Init();
+    Renderer3D::Init();
+    
+    return data.currentContext;
     
   }
 
  DeletionQueue& Vulkan::DeletionQueue()
  {
    
-   return vulkan->deletionQueue;
+   return data.deletionQueue;
  }
   VkInstance Vulkan::Instance()
   {
-    
-    return vulkan->instance->instance;
+    return data.instance;
   }
   
   VmaAllocator Vulkan::Allocator()
   {
-    return vulkan->allocator;
+    return data.allocator;
   }
   
   PhysicalDevice& Vulkan::PhysicalDevice()
   {
-    return vulkan->deviceManager->physicalDevice;
+    return data.deviceManager->physicalDevice;
   }
   LogicalDevice& Vulkan::LogicalDevice()
   {
-    return vulkan->deviceManager->logicalDevice;
+    return data.deviceManager->logicalDevice;
   }
   
   bool Vulkan::HasDeviceManager()
   {
-    return vulkan->deviceManager != nullptr;
+    return data.deviceManager != nullptr;
   }
   const std::filesystem::path& Vulkan::GetVulkanFeaturesPath()
   {
-   return vulkan->vulkanFeaturesPath;
+   return data.vulkanFeaturesPath;
   }
   DescriptorAllocator& Vulkan::GetDescriptorAllocator()
   {
-    return *vulkan->descriptorAllocator;
+    return *data.descriptorAllocator;
   }
   DescriptorLayoutCache& Vulkan::GetDescriptorLayoutCache()
   {
-    return vulkan->descriptorLayoutCache;
+    return data.descriptorLayoutCache;
   }
   VkSurfaceFormatKHR Vulkan::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
   {
@@ -96,43 +184,41 @@ namespace Candy::Graphics
     }
     return availableFormats[0];
   }
-  void Vulkan::RegisterContext(GraphicsContext* context)
+  
+  VkSurfaceFormatKHR Vulkan::GetSurfaceFormat(VkSurfaceKHR surface)
   {
-    CANDY_PROFILE_FUNCTION();
-    vulkan->contexts.push_back(context);
-    vulkan->currentContext = context;
-    Renderer::SetTarget(context);
-    
-    
+    SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
+    return ChooseSwapSurfaceFormat(swapChainSupport.formats);
   }
+  
+
   
 
   GraphicsContext& Vulkan::GetCurrentContext()
   {
-    CANDY_CORE_ASSERT(vulkan->currentContext, "FAILED TO GET CURRENT CONTEXT. THE CURRENT CONTEXT IS NULL");
-    return *vulkan->currentContext;
+    CANDY_CORE_ASSERT(data.currentContext, "FAILED TO GET CURRENT CONTEXT. THE CURRENT CONTEXT IS NULL");
+    return *data.currentContext;
   }
-
-  CommandBuffer& Vulkan::GetCurrentCommandBuffer()
-  {
-    CANDY_PROFILE_FUNCTION();
-    return GetCurrentContext().GetCurrentFrame().commandBuffer;
-  }
+  
   float Vulkan::GetContextSizeRatio()
   {
     return (float)GetCurrentContext().swapChain->extent.width / (float)GetCurrentContext().swapChain->extent.height;
+  }
+  
+  int Vulkan::GetFramesInFlight()
+  {
+    return data.currentFramesInFlight;
   }
 
   void Vulkan::Shutdown()
   {
     CANDY_PROFILE_FUNCTION();
-    vkDeviceWaitIdle(LogicalDevice());
-    vulkan->deletionQueue.Flush();
-    vulkan->descriptorAllocator->Reset();
-    vulkan->descriptorAllocator.reset();
-    vulkan->descriptorLayoutCache.Destroy();
-    vmaDestroyAllocator(vulkan->allocator);
-    vulkan->deviceManager->Destroy();
+    CANDY_VULKAN_CHECK(vkDeviceWaitIdle(LogicalDevice()));
+    data.deletionQueue.Flush();
+    
+    
+    VulkanDebugManager::Destroy();
+    vkDestroyInstance(Instance(), nullptr);
    
   }
 }

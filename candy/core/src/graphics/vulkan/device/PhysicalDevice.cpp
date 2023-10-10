@@ -270,14 +270,30 @@ namespace Candy::Graphics
   
   bool PhysicalDevice::IsValid()const{return device != VK_NULL_HANDLE;}
   
-  QueueFamilyIndices PhysicalDevice::FindQueueFamilies(VkSurfaceKHR surface)
+  /*QueueFamilyIndices PhysicalDevice::FindQueueFamilies(VkSurfaceKHR surface)
   {
     return FindQueueFamilies(device, surface);
-  }
+  }*/
   
   SwapChainSupportDetails PhysicalDevice::QuerySwapChainSupport(VkSurfaceKHR surface)
   {
     return QuerySwapChainSupport(device, surface);
+  }
+  
+  uint32_t PhysicalDevice::GetQueueFamilyPropertyCount() const
+  {
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+    return queueFamilyCount;
+  }
+  
+  std::vector<VkQueueFamilyProperties> PhysicalDevice::GetQueueFamilyProperties() const
+  {
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+    return queueFamilies;
   }
   
   bool PhysicalDevice::IsDeviceSuitable(VkSurfaceKHR surface)
@@ -311,7 +327,7 @@ namespace Candy::Graphics
   bool PhysicalDevice::IsDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface)
   {
     CANDY_PROFILE_FUNCTION();
-    QueueFamilyIndices indices = FindQueueFamilies(device, surface);
+    //QueueFamilyIndices indices = FindQueueFamilies(device, surface);
     
     bool extensionsSupported = CheckExtensionSupport(device);
     
@@ -330,7 +346,8 @@ namespace Candy::Graphics
       
       bool isFeaturesSupported = CheckSupportedDeviceFeatures(supportedFeatures);
       
-      return indices.IsComplete() && swapChainAdequate && isFeaturesSupported && parametersFeatures.shaderDrawParameters;
+      return swapChainAdequate && isFeaturesSupported && parametersFeatures.shaderDrawParameters;
+      //return indices.IsComplete() && swapChainAdequate && isFeaturesSupported && parametersFeatures.shaderDrawParameters;
     }
     return false;
     
@@ -385,7 +402,7 @@ namespace Candy::Graphics
     
     return details;
   }
-  QueueFamilyIndices PhysicalDevice::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
+  /*QueueFamilyIndices PhysicalDevice::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
   {
     CANDY_PROFILE_FUNCTION();
     QueueFamilyIndices indices;
@@ -396,10 +413,21 @@ namespace Candy::Graphics
     
     // Find at least one queue family that supports VK_QUEUE_GRAPHICS_BIT
     int i = 0;
-    for (const auto& queueFamily : queueFamilies) {
-      if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+    for (const auto& queueFamily: queueFamilies)
+    {
+      if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+      {
         indices.graphicsFamily = i;
       }
+      if (queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT)
+      {
+        indices.computeFamily = i;
+      }
+      if (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT)
+      {
+        indices.transferFamily = i;
+      }
+      
       VkBool32 presentSupport = false;
       vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
       if (presentSupport)
@@ -414,7 +442,7 @@ namespace Candy::Graphics
     }
     
     return indices;
-  }
+  }*/
   
   const char* PhysicalDevice::GetName()const
   {

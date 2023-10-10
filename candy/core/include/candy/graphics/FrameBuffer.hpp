@@ -19,7 +19,7 @@ namespace Candy::Graphics
     
   public:
     FrameBuffer();
-    FrameBuffer(VkRenderPass renderPass, Math::Vector2u size, const std::vector<VkImageView>& attachments, uint32_t layers=1);
+    
     void Bind();
     void Set(VkRenderPass renderPass, Math::Vector2u size, const std::vector<VkImageView>& attachments, uint32_t layers=1);
     

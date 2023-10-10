@@ -5,47 +5,46 @@
 #include "../Color.hpp"
 #include "../FrameBuffer.hpp"
 #include <array>
+#include <candy/graphics/vulkan/RenderPassConfig.hpp>
+
 namespace Candy::Graphics
 {
   
-  
-  enum class RenderPassType
+  enum class RenderPassState
   {
     None=0,
-    Overlay2D=1,
+    Running,
+    Stopped,
   };
-    class RenderPass
-    {
-    private:
-        VkRenderPass renderPass=VK_NULL_HANDLE;
-        std::array<VkClearValue, 2> clearValues;
-        Color clearColor;
-        RenderPassType type=RenderPassType::None;
-   
-    public:
-      RenderPass(VkFormat colorAttachmentFormat, RenderPassType passType);
-      explicit RenderPass(const VkAttachmentDescription& depthAttachment, const std::vector<VkAttachmentDescription>& colorAttachments,const std::vector<VkAttachmentDescription>& inputAttachments);
-        explicit RenderPass(VkFormat colorAttachmentFormat, VkImageLayout finalLayout);
-        explicit RenderPass(VkFormat colorAttachmentFormat, VkFormat selectionAttachmentFormat, VkImageLayout finalLayout);
-        ~RenderPass();
-        
-    public:
-        operator VkRenderPass()const{return renderPass;}
-        operator VkRenderPass(){return renderPass;}
-        
-        [[nodiscard]] bool IsValid()const{return renderPass != VK_NULL_HANDLE;}
-        
-        
-    public:
-      void SetClearColor(Color color);
-      void SetDepthStencil(float depth, uint32_t stencil);
-      Color GetClearColor()const;
-      VkRenderPassBeginInfo BeginPass(FrameBuffer& frameBuffer, Math::Vector2u size);
-        [[nodiscard]] VkRenderPassBeginInfo BeginPass(FrameBuffer& frameBuffer, VkExtent2D extent);
-        //void Destroy();
-        
-    private:
-      //friend class Renderer;
-        
-    };
+  
+  
+  
+  
+  class RenderPass
+  {
+  private:
+    VkRenderPass renderPass = VK_NULL_HANDLE;
+    std::string name;
+    RenderPassState state = RenderPassState::None;
+    
+    RenderPassConfig config;
+  
+  public:
+    RenderPass(std::string passName, RenderPassConfig configuration);
+    
+    operator VkRenderPass(); //NOLINT
+    operator VkRenderPass() const; //NOLINT
+  
+  public:
+    void Begin();
+    void End();
+    [[nodiscard]] bool IsRunning()const;
+    [[nodiscard]] bool IsStopped()const;
+    [[nodiscard]] RenderPassState GetCurrentState()const;
+    [[nodiscard]] RenderPassConfig GetConfig()const;
+    [[nodiscard]] std::string GetName() const;
+    [[nodiscard]] bool NeedsUniqueFrameBuffer() const;
+    
+    
+  };
 }

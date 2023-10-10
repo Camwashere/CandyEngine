@@ -1,10 +1,10 @@
 #include <candy/graphics/VertexBuffer.hpp>
 
-#include <utility>
 #include <candy/graphics/GraphicsContext.hpp>
 #include <vma/vk_mem_alloc.h>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 
 namespace Candy::Graphics
 {
@@ -15,13 +15,14 @@ namespace Candy::Graphics
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
-    VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT|VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    bufferInfo.usage = usage;
+   
+    bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     
     VmaAllocationCreateInfo allocInfo = {};
     allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
     allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    
     
     
     CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
@@ -35,12 +36,12 @@ namespace Candy::Graphics
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
-    VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT|VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    bufferInfo.usage = usage;
+    bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     
     VmaAllocationCreateInfo allocInfo = {};
     allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+    
     allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     
     
@@ -52,23 +53,10 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     
-    VkBuffer stagingBuffer;
-    VmaAllocation stagingBufferAllocation;
-    
-    CreateStagingBuffer(stagingBuffer, &stagingBufferAllocation);
-    
-    count = bufferSize/sizeof(float);
-    void *data;
-    vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
-    memcpy(data, vertices, (size_t) bufferSize);
-    vmaUnmapMemory(Vulkan::Allocator(), stagingBufferAllocation);
-    
-    
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
-    VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT|VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    bufferInfo.usage = usage;
+    bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     
     VmaAllocationCreateInfo allocInfo = {};
@@ -77,12 +65,10 @@ namespace Candy::Graphics
     
     
     CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
-    
-    RenderCommand::CopyBufferImmediate(stagingBuffer, buffer, size);
-    
-    
-    vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
+
     Vulkan::DeletionQueue().Push(this);
+    
+    SetDataInternal(vertices);
   }
   
   VertexBuffer::~VertexBuffer() = default;
@@ -91,18 +77,14 @@ namespace Candy::Graphics
   void VertexBuffer::SetDataInternal(const void *vertices)
   {
     CANDY_PROFILE_FUNCTION();
-    VkBuffer stagingBuffer;
-    VmaAllocation stagingBufferAllocation;
     
-    CreateStagingBuffer(stagingBuffer, &stagingBufferAllocation);
+    void* data;
+    vmaMapMemory(Vulkan::Allocator(), allocation, &data); // Map the buffer memory
+    memcpy(data, vertices, (size_t) size); // Copy the vertices data into the mapped memory
     
-    void *data;
-    vmaMapMemory(Vulkan::Allocator(), stagingBufferAllocation, &data);
-    memcpy(data, vertices, (size_t) size);
-    vmaUnmapMemory(Vulkan::Allocator(), stagingBufferAllocation);
-    RenderCommand::CopyBufferImmediate(stagingBuffer, buffer, size);
-    
-    vmaDestroyBuffer(Vulkan::Allocator(), stagingBuffer, stagingBufferAllocation);
+    // Guarantee that the write operations completed before it's used
+    vmaFlushAllocation(Vulkan::Allocator(), allocation, 0, VK_WHOLE_SIZE);
+    vmaUnmapMemory(Vulkan::Allocator(), allocation); // Unmap the buffer memory
   }
   
   void VertexBuffer::SetData(const void* data, uint32_t dataSize)
@@ -120,11 +102,7 @@ namespace Candy::Graphics
   {
     return layout;
   }
-  
-  /*uint64_t VertexBuffer::Size()const
-  {
-      return size;
-  }*/
+
   
   VkVertexInputBindingDescription VertexBuffer::GetVertexBindingDescription() const
   {

@@ -1,6 +1,8 @@
 #include <candy/graphics/PixelBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
+#include <candy/graphics/Renderer.hpp>
 namespace Candy::Graphics
 {
   PixelBuffer::PixelBuffer(const Math::Vector2u& sizeOfImage)
@@ -43,7 +45,8 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     RenderCommand::TransitionImageLayout(image, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-    Renderer::GetCurrentFrame().commandBuffer.CopyImageToBuffer(image, buffer, x, y, 1, 1);
+    //Renderer::GetCurrentFrame().commandBuffer.CopyImageToBuffer(image, buffer, x, y, 1, 1);
+    RenderCommand::CopyImageToBuffer(image, buffer, x, y, 1, 1);
     vmaMapMemory(Vulkan::Allocator(), allocation, &data);
     memcpy(pixels, static_cast<int*>(data), sizeof(int));
   }

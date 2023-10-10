@@ -1,6 +1,8 @@
 #include <candy/graphics/UniformBuffer.hpp>
 #include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
+#include <candy/graphics/vulkan/device/PhysicalDevice.hpp>
 namespace Candy::Graphics
 {
   UniformBuffer::UniformBuffer() : VulkanBuffer(MaxSize(), BufferType::UNIFORM_DYNAMIC)

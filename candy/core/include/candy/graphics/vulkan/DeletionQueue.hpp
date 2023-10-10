@@ -9,15 +9,18 @@
 #include <candy/graphics/StorageBuffer.hpp>
 #include <list>
 #include <set>
+#include <candy/graphics/UniformBuffer.hpp>
+#include <candy/graphics/VertexBuffer.hpp>
+#include <candy/graphics/IndexBuffer.hpp>
+#include <candy/graphics/PixelBuffer.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorAllocator.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorLayoutCache.hpp>
 namespace Candy::Graphics
 {
   class DeletionQueue
   {
   private:
-    //std::deque<std::function<void()>> queue;
     std::set<VkSwapchainKHR> swapChains;
-    //std::set<VkFramebuffer> frameBuffers;
-    //std::set<StorageBuffer*> storageBuffers;
     std::set<FrameBuffer*> frameBuffers;
     std::set<Image*> images;
     std::set<ImageView*> imageViews;
@@ -28,40 +31,38 @@ namespace Candy::Graphics
     std::set<VkFence> fences;
     std::set<VkSemaphore> semaphores;
     std::set<VulkanBuffer*> buffers;
-    
+    std::set<VkSurfaceKHR> surfaces;
+    std::set<DescriptorAllocator*> descriptorAllocators;
+    std::set<DescriptorLayoutCache*> descriptorLayoutCaches;
+    std::set<VkDevice> logicalDevices;
     
     
     
   public:
-    //void PushFunction(std::function<void()>&& function);
-    /*void PushSwapChain(VkSwapchainKHR swapChain);
-    void PushImageView(ImageView* imageView);
-    void PushRenderPass(VkRenderPass renderPass);
-    void PushPipelineLayout(VkPipelineLayout pipelineLayout);
-    void PushPipeline(VkPipeline pipeline);
-    void PushCommandPool(VkCommandPool commandPool);
-    void PushBuffer(VulkanBuffer* buffer);
-    void PushFence(VkFence fence);
-    void PushSemaphore()*/
     template<typename T>
     void Push(T vulkanObject);
-    
     template<typename T>
     void Delete(T vulkanObject);
     
-    //void RemoveFrameBuffer(VkFramebuffer frameBuffer);
     
-    /*void CleanFrameBuffers();
-    void CleanImages();
-    void CleanImageViews();
-    void Clean();*/
-  
     void Flush();
-    
   };
+  
+
+  template<>
+  void DeletionQueue::Push<VkDevice>(VkDevice vulkanObject);
+  
+  template<>
+  void DeletionQueue::Push<VkSurfaceKHR>(VkSurfaceKHR vulkanObject);
+  
+  template<>
+  void DeletionQueue::Push<DescriptorAllocator*>(DescriptorAllocator* vulkanObject);
+  
+  template<>
+  void DeletionQueue::Push<DescriptorLayoutCache*>(DescriptorLayoutCache* vulkanObject);
+  
   template<>
   void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
-  
   template<>
   void DeletionQueue::Push<Image*>(Image* vulkanObject);
   template<>
@@ -97,8 +98,6 @@ namespace Candy::Graphics
   
   template<>
   void DeletionQueue::Delete<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
- /* template<>
-  void DeletionQueue::Delete<VkFramebuffer>(VkFramebuffer vulkanObject);*/
   template<>
   void DeletionQueue::Delete<Image*>(Image* vulkanObject);
   template<>

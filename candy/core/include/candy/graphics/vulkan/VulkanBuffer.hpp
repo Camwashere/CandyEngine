@@ -27,7 +27,7 @@ namespace Candy::Graphics
     
         
     protected:
-      void CreateStagingBuffer(VkBuffer& buffer, VmaAllocation* allocation)const;
+    
       
     public:
       VulkanBuffer(BufferType type);

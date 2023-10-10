@@ -175,9 +175,6 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/vulkan/SwapChain.hpp
         candy/core/include/candy/graphics/vulkan/VulkanBuffer.hpp
         candy/core/include/candy/graphics/vulkan/VulkanDebugManager.hpp
-        candy/core/include/candy/graphics/vulkan/VulkanInstance.hpp
-        candy/core/include/candy/graphics/vulkan/pipeline/PipelineLayout.hpp
-        candy/core/include/candy/graphics/vulkan/pipeline/Pipeline.hpp
         candy/core/include/candy/graphics/vulkan/device/VulkanDeviceManager.hpp
         candy/core/include/candy/graphics/vulkan/device/PhysicalDevice.hpp
         candy/core/include/candy/graphics/vulkan/device/LogicalDevice.hpp
@@ -193,7 +190,7 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/shader/processing/ShaderPostProcessor.hpp
         candy/core/include/candy/graphics/font/FontAtlasSettingsSerializer.hpp
         candy/core/include/candy/graphics/texture/Texture.hpp
-        candy/core/include/candy/graphics/shader/ShaderLibrarySettings.hpp
+        candy/core/include/candy/graphics/shader/config/ShaderLibrarySettings.hpp
         candy/core/include/candy/graphics/shader/ShaderLibrary.hpp
         candy/core/include/candy/graphics/shader/processing/ShaderPreProcessor.hpp
         candy/core/include/candy/graphics/font/MSDFSerializer.hpp
@@ -202,7 +199,7 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/color/ColorRGBA8.hpp
         candy/core/include/candy/graphics/material/Material.hpp
         candy/core/include/candy/graphics/shader/ShaderLayout.hpp
-        candy/core/include/candy/graphics/shader/ShaderSettings.hpp
+        candy/core/include/candy/graphics/shader/config/ShaderSettings.hpp
         candy/core/include/candy/graphics/color/ColorBase.hpp
         candy/core/include/candy/graphics/color/ColorRGBA.inl
         candy/core/include/candy/graphics/model/Mesh.hpp
@@ -223,7 +220,18 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/camera/EditorCamera.hpp
         candy/core/include/candy/graphics/camera/CameraController.hpp
         candy/core/include/candy/graphics/camera/CameraBase.hpp
-        candy/core/include/candy/graphics/model/MeshPrimitive.hpp)
+        candy/core/include/candy/graphics/model/MeshPrimitive.hpp
+        candy/core/include/candy/graphics/vulkan/CommandPool.hpp
+        candy/core/include/candy/graphics/vulkan/VulkanPch.hpp
+        candy/core/include/candy/graphics/shader/ShaderBufferManager.hpp
+        candy/core/include/candy/graphics/vulkan/VulkanQueueManager.hpp
+        candy/core/include/candy/graphics/FrameResources.hpp
+        candy/core/include/candy/graphics/vulkan/RenderPassScheduler.hpp
+        candy/core/include/candy/graphics/vulkan/RenderPassConfig.hpp
+        candy/core/include/candy/graphics/shader/config/ShaderProfile.hpp
+        candy/core/include/candy/graphics/shader/config/ShaderEnums.hpp
+        candy/core/include/candy/graphics/shader/config/ShaderDynamicState.hpp
+        candy/core/include/candy/graphics/shader/config/ShaderProfileSettings.hpp)
 
 set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/texture/ImageFormat.cpp
@@ -237,7 +245,7 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/model/MeshData.cpp
         candy/core/src/graphics/VertexBuffer.cpp
         candy/core/src/graphics/texture/InternalTexture.cpp
-        candy/core/src/graphics/shader/ShaderLibrarySettings.cpp
+        candy/core/src/graphics/shader/config/ShaderLibrarySettings.cpp
         candy/core/src/graphics/shader/processing/ShaderPreProcessor.cpp
         candy/core/src/graphics/model/Mesh.cpp
         candy/core/src/graphics/Renderer2D.cpp
@@ -247,17 +255,15 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/shader/ShaderLibrary.cpp
         candy/core/src/graphics/vulkan/device/LogicalDevice.cpp
         candy/core/src/graphics/vulkan/VulkanDebugManager.cpp
-        candy/core/src/graphics/vulkan/pipeline/PipelineLayout.cpp
         candy/core/src/graphics/shader/processing/ShaderSource.cpp
         candy/core/src/graphics/Renderer3D.cpp
-        candy/core/src/graphics/vulkan/pipeline/Pipeline.cpp
         candy/core/src/graphics/vulkan/descriptor/DescriptorBuilder.cpp
         candy/core/src/graphics/vulkan/descriptor/DescriptorSetLayout.cpp
         candy/core/src/graphics/vulkan/Vulkan.cpp
         candy/core/src/graphics/GraphicsContext.cpp
         candy/core/src/graphics/vulkan/CommandBuffer.cpp
         candy/core/src/graphics/UniformBuffer.cpp
-        candy/core/src/graphics/shader/ShaderSettings.cpp
+        candy/core/src/graphics/shader/config/ShaderSettings.cpp
         candy/core/src/graphics/model/ModelLoader.cpp
         candy/core/src/graphics/vulkan/device/PhysicalDevice.cpp
         candy/core/src/graphics/FrameBuffer.cpp
@@ -275,7 +281,6 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/vulkan/Image.cpp
         candy/core/src/graphics/shader/processing/ShaderPostProcessor.cpp
         candy/core/src/graphics/vulkan/DeletionQueue.cpp
-        candy/core/src/graphics/vulkan/VulkanInstance.cpp
         candy/core/src/graphics/material/MaterialData.cpp
         candy/core/src/graphics/material/Material.cpp
         candy/core/src/graphics/font/MSDFSerializer.cpp
@@ -290,7 +295,15 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/camera/EditorCamera.cpp
         candy/core/src/graphics/camera/CameraController.cpp
         candy/core/src/graphics/camera/CameraBase.cpp
-        candy/core/src/graphics/model/MeshPrimitive.cpp)
+        candy/core/src/graphics/model/MeshPrimitive.cpp
+        candy/core/src/graphics/vulkan/CommandPool.cpp
+        candy/core/src/graphics/FrameResources.cpp
+        candy/core/src/graphics/vulkan/VulkanQueueManager.cpp
+        candy/core/src/graphics/vulkan/RenderPassScheduler.cpp
+        candy/core/src/graphics/vulkan/RenderPassConfig.cpp
+        candy/core/src/graphics/shader/config/ShaderProfile.cpp
+        candy/core/src/graphics/shader/config/ShaderDynamicState.cpp
+        candy/core/src/graphics/shader/config/ShaderEnums.cpp)
 
 set(CANDY_GRAPHICS_FILES ${CANDY_GRAPHICS_HEADERS} ${CANDY_GRAPHICS_SOURCES})
 
@@ -337,9 +350,11 @@ set(CANDY_APP_SOURCES candy/core/src/app/Application.cpp
 
 set(CANDY_APP_FILES ${CANDY_APP_HEADERS} ${CANDY_APP_SOURCES})
 
+set(CANDY_LAYER_HEADERS candy/core/include/candy/layer/InputLayer.hpp)
 
+set(CANDY_LAYER_FILES ${CANDY_LAYER_HEADERS})
 
-set(CANDY_CORE_FILES ${CANDY_BASE_FILES} ${CANDY_COLLECTIONS_FILES} ${CANDY_MATH_FILES} ${CANDY_NOISE_FILES} ${CANDY_UTILS_FILES} ${CANDY_EVENT_FILES} ${CANDY_GRAPHICS_FILES} ${CANDY_UI_FILES} ${CANDY_ECS_FILES} ${CANDY_APP_FILES} candy/core/include/CandyPch.hpp candy/core/include/CandyPch.cpp)
+set(CANDY_CORE_FILES ${CANDY_BASE_FILES} ${CANDY_COLLECTIONS_FILES} ${CANDY_MATH_FILES} ${CANDY_NOISE_FILES} ${CANDY_UTILS_FILES} ${CANDY_EVENT_FILES} ${CANDY_GRAPHICS_FILES} ${CANDY_UI_FILES} ${CANDY_ECS_FILES} ${CANDY_APP_FILES} ${CANDY_LAYER_FILES} candy/core/include/CandyPch.hpp candy/core/include/CandyPch.cpp)
 
 set(CANDY_EDITOR_FILES candy/editor/include/editor/panels/ContentBrowserPanel.hpp
         candy/editor/include/editor/EditorLayer.hpp

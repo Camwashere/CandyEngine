@@ -7,7 +7,7 @@
 #include "../../vulkan/descriptor/DescriptorBuilder.hpp"
 #include "../ShaderLayout.hpp"
 #include "../../vulkan/descriptor/DescriptorSetLayout.hpp"
-#include "../ShaderSettings.hpp"
+#include "candy/graphics/shader/config/ShaderSettings.hpp"
 
 namespace spirv_cross
 {
@@ -23,36 +23,42 @@ namespace spirv_cross
   struct SpecializationConstant;
  
 }
+namespace shaderc
+{
+  class Compiler;
+}
 namespace Candy::Graphics
 {
+  struct ShaderCompilationSettings;
   class ShaderPostProcessor
   {
   private:
     std::unordered_map<ShaderData::Stage, std::vector<uint32_t>> spirvBinaries{};
-    /*bool autoMapping=true;
-    bool generateDebugInfo=true;
-    bool optimize=true;
-    bool recompileOnLoad=true;*/
-    ShaderLayout shaderLayout;
+    //ShaderLayout shaderLayout;
     
     
   private:
-    void CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath);
-    void Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary);
-    void ReflectSpecializationConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& stageSpecializationConstants);
-    void ReflectStageInputs(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageInputs);
-    void ReflectStageStorageBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageStorageBuffers);
-    void ReflectStageUniformBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageUniformBuffers);
-    void ReflectStageSampledImages(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageSampledImages);
-    void ReflectStagePushConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage);
+    
+    void Reflect(ShaderLayout& shaderLayout, ShaderData::Stage stage, std::vector<uint32_t> spirvBinary);
+    void ReflectSpecializationConstants(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& stageSpecializationConstants);
+    void ReflectStageInputs(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageInputs);
+    void ReflectStageStorageBuffers(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageStorageBuffers);
+    void ReflectStageUniformBuffers(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageUniformBuffers);
+    void ReflectStageSampledImages(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource, 8>& stageSampledImages);
+    void ReflectStagePushConstants(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage);
     
     
     
   public:
-    explicit ShaderPostProcessor(const ShaderSettings& settings);
+    ShaderPostProcessor(const ShaderCompilationSettings& compilationSettings, const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath);
+    void BuildLayout(ShaderLayout& layout);
+    //static std::unordered_map<ShaderData::Stage, std::vector<uint32_t>> CompileOrGetBinaries(const ShaderCompilationSettings& compilationSettings, const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath);
+    //void CompileOrGetBinaries(const ShaderCompilationSettings& compilationSettings, const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath);
+    //explicit ShaderPostProcessor(const ShaderSettings& settings);
+    
     
   public:
-    ShaderLayout& GetLayout();
+    //ShaderLayout& GetLayout();
     
   private:
     friend class Shader;

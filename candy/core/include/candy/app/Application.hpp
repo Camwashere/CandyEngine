@@ -44,7 +44,9 @@ namespace Candy
     bool OnWindowResize(Events::WindowResizeEvent &event);
     bool OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
     
+    void PollEvents();
     void Run();
+    void Update();
     void Close();
     void CleanUp();
   

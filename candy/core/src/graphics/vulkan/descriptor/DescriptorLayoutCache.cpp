@@ -1,7 +1,11 @@
 #include "candy/graphics/vulkan/descriptor/DescriptorLayoutCache.hpp"
 #include "candy/graphics/Vulkan.hpp"
+#include <candy/graphics/vulkan/device/LogicalDevice.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
+  
+  
   void DescriptorLayoutCache::Destroy()
   {
     CANDY_PROFILE_FUNCTION();

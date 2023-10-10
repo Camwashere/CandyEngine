@@ -3,44 +3,15 @@
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy::Graphics
 {
-  /*void DeletionQueue::PushFunction(std::function<void()>&& function)
-  {
-    queue.push_back(std::move(function));
-  }*/
-  
-  /*void DeletionQueue::PushSwapChain(VkSwapchainKHR swapChain)
-  {
-    swapChains.push_back(swapChain);
-  }
-  void DeletionQueue::PushImageView(ImageView* imageView)
-  {
-    imageViews.push_back(imageView);
-  }
-  void DeletionQueue::PushRenderPass(VkRenderPass renderPass)
-  {
-    renderPasses.push_back(renderPass);
-  }
-  void DeletionQueue::PushPipelineLayout(VkPipelineLayout pipelineLayout)
-  {
-    pipelineLayouts.push_back(pipelineLayout);
-  }
-  void DeletionQueue::PushPipeline(VkPipeline pipeline)
-  {
-    pipelines.push_back(pipeline);
-  }
-  void DeletionQueue::PushCommandPool(VkCommandPool commandPool)
-  {
-    commandPools.push_back(commandPool);
-  }
-  void DeletionQueue::PushBuffer(VkBuffer buffer)
-  {
-    buffers.push_back(buffer);
-  }*/
+ 
   
   void DeletionQueue::Flush()
   {
     CANDY_PROFILE_FUNCTION();
-    //Clean();
+    CANDY_CORE_INFO("Flushing deletion queue");
+    std::vector<VkFence> fencesVector(fences.begin(), fences.end());
+    CANDY_CORE_INFO("Fences buffer size");
+    CANDY_VULKAN_CHECK(vkWaitForFences(Vulkan::LogicalDevice(), fencesVector.size(), fencesVector.data(), VK_FALSE, UINT64_MAX));
     for (auto fence : fences)
     {
       vkDestroyFence(Vulkan::LogicalDevice(), fence, nullptr);
@@ -116,6 +87,35 @@ namespace Candy::Graphics
       vkDestroySwapchainKHR(Vulkan::LogicalDevice(), swapChain, nullptr);
     }
     swapChains.clear();
+    
+    // 12. DescriptorAllocatorPool
+    for (auto descriptorAllocator : descriptorAllocators)
+    {
+      descriptorAllocator->Destroy();
+    }
+    
+    // 13. DescriptorLayoutCache
+    for (auto& descriptorLayoutCache : descriptorLayoutCaches)
+    {
+      descriptorLayoutCache->Destroy();
+    }
+    
+    // 14. VmaAllocators
+    vmaDestroyAllocator(Vulkan::Allocator());
+    
+    // 15. VkDevices/Logical devices
+    for (auto& logicalDevice : logicalDevices)
+    {
+      vkDestroyDevice(logicalDevice, nullptr);
+    }
+    
+    // 16. VkSurfaces
+    for (auto& surface : surfaces)
+    {
+      vkDestroySurfaceKHR(Vulkan::Instance(), surface, nullptr);
+    }
+    
+    CANDY_CORE_INFO("Finished flushing deletion queue");
   }
   
   template<typename T>
@@ -173,6 +173,35 @@ namespace Candy::Graphics
   void DeletionQueue::Push(T vulkanObject)
   {
     CANDY_CORE_ASSERT(false, "DeletionQueue::Push<T> is not implemented for this type!");
+  }
+  
+  
+  template<>
+  void DeletionQueue::Push<VmaAllocator>(VmaAllocator vulkanObject)
+  {
+    vmaDestroyAllocator(vulkanObject);
+  }
+  
+  template<>
+  void DeletionQueue::Push<VkDevice>(VkDevice vulkanObject)
+  {
+    logicalDevices.insert(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Push<VkSurfaceKHR>(VkSurfaceKHR vulkanObject)
+  {
+    surfaces.insert(vulkanObject);
+  }
+  template<>
+  void DeletionQueue::Push<DescriptorAllocator*>(DescriptorAllocator* vulkanObject)
+  {
+    descriptorAllocators.insert(vulkanObject);
+  }
+  
+  template<>
+  void DeletionQueue::Push<DescriptorLayoutCache*>(DescriptorLayoutCache* vulkanObject)
+  {
+    descriptorLayoutCaches.insert(vulkanObject);
   }
   template<>
   void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject)

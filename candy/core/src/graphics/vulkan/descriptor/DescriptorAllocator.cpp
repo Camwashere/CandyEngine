@@ -1,6 +1,6 @@
 #include "candy/graphics/vulkan/descriptor/DescriptorAllocator.hpp"
 #include <candy/graphics/Vulkan.hpp>
-#include <candy/graphics/GraphicsContext.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
   DescriptorAllocator::DescriptorAllocator()
@@ -15,7 +15,7 @@ namespace Candy::Graphics
     pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10.f);
     pool->SetPoolSizeMultiplier(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 10.f);
     
-    
+  
   }
   
   DescriptorAllocatorHandle DescriptorAllocator::GetHandle()
@@ -34,6 +34,12 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     pool->Flip(frameIndex);
+  }
+  
+  void DescriptorAllocator::Destroy()
+  {
+    pool->Reset();
+    pool.reset();
   }
   void DescriptorAllocator::Reset()
   {

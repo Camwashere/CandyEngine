@@ -6,8 +6,6 @@ namespace Candy::Graphics
   {
     ShaderPushProperty p = property;
     p.id = properties.size();
-    //p.offset = size;
-    //p.stage = stage;
     size += p.size;
     properties.push_back(p);
   }

@@ -179,6 +179,10 @@ namespace Candy::ECS
     CANDY_PROFILE_FUNCTION();
     systemScheduler.AttachSystem(system);
   }
+  void Scene::ClearUpdateFlags()
+  {
+    updateFlag = SceneUpdateFlag::None;
+  }
   void Scene::AppendUpdateFlag(SceneUpdateFlag flag)
   {
     updateFlag = updateFlag | flag;
@@ -212,32 +216,26 @@ namespace Candy::ECS
   {
     CANDY_PROFILE_FUNCTION();
     //systemScheduler.Update((void*)&camera);
-    RenderScene();
+    //RenderScene();
     
   }
-  void Scene::RenderScene()
+  /*void Scene::RenderScene()
   {
     CANDY_PROFILE_FUNCTION();
     RenderScene3D();
+    Renderer::BeginOverlayPass();
     RenderScene2D();
+    Renderer::BeginSelectionPass();
     Renderer3D::RenderSelectionBuffer();
     Renderer2D::RenderSelectionBuffer();
     
-    updateFlag = SceneUpdateFlag::None;
-  }
+    ClearUpdateFlags();
+    //updateFlag = SceneUpdateFlag::None;
+  }*/
   void Scene::RenderScene3D()
   {
     CANDY_PROFILE_FUNCTION();
     Renderer3D::BeginScene();
-    
-    /*if (updateFlag == SceneUpdateFlag::None)
-    {
-      Renderer3D::EndScene();
-      return;
-    }*/
-    
-    
-    
     auto view = registry.view<TransformComponent, MeshFilterComponent, MeshRendererComponent>();
     
     if (updateFlag & SceneUpdateFlag::Meshes3D)
@@ -252,7 +250,7 @@ namespace Candy::ECS
     }
     else
     {
-      Renderer3D::skipFlush = true;
+      //Renderer3D::skipFlush = true;
       for (auto entity : view)
       {
         auto [transform, mesh, meshRenderer] = view.get<TransformComponent, MeshFilterComponent, MeshRendererComponent>(entity);

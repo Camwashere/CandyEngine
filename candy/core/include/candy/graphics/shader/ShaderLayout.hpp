@@ -2,18 +2,18 @@
 #include "ShaderData.hpp"
 #include "../UniformBuffer.hpp"
 #include <candy/math/Matrix.hpp>
-#include "../vulkan/pipeline/Pipeline.hpp"
 #include <candy/graphics/BufferLayout.hpp>
 #include "ShaderProperty.hpp"
-#include "ShaderSettings.hpp"
+#include "candy/graphics/shader/config/ShaderSettings.hpp"
 namespace Candy::Graphics
 {
 
   class ShaderLayout
   {
   private:
-    const ShaderSettings settings;
-    Pipeline pipeline;
+    //const ShaderSettings settings;
+    VkPipelineLayout pipelineLayout;
+    //Pipeline pipeline;
     
     
   public:
@@ -30,14 +30,15 @@ namespace Candy::Graphics
 
     
   private:
-    VkPipelineLayout BakePipelineLayout();
+    //TODO Don't make this require render pass index, this function is currently the reason why overlay2D needs a seperate descriptor set
+    void BakePipelineLayout(uint32_t renderPassIndex);
     VkDescriptorType GetDescriptorType(size_t setIndex);
-    void BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
+    //void BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
   public:
-    explicit ShaderLayout(ShaderSettings settings);
-    void BindAll();
-    void Bind(uint32_t set);
+    explicit ShaderLayout();
+    void BindAllDescriptorSets(uint32_t renderPassIndex);
+    void BindDescriptorSet(uint32_t renderPassIndex, uint32_t set);
     uint32_t GetPushID(const std::string& name)const;
     uint32_t PushConstant(const std::string& name, const void* data);
     void PushConstant(uint32_t id, const void* data);
@@ -59,9 +60,7 @@ namespace Candy::Graphics
     void AddTexture(const ShaderTexture& texture);
 
   public:
-    [[nodiscard]] const ShaderSettings& GetSettings()const{return settings;}
-    [[nodiscard]] VkPipeline GetPipeline()const;
-    [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
+    [[nodiscard]] VkPipelineLayout GetPipelineLayout()const{return pipelineLayout;}
     [[nodiscard]] size_t GetMaterialBufferSize()const{return materialBufferSize;}
     [[nodiscard]] size_t GetGlobalBufferSize()const{return globalBufferSize;}
     

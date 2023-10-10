@@ -35,8 +35,9 @@ namespace Candy
     
     editorCamera.SetViewportSize(size.x, size.y);
     editorCamera.OnUpdate();
+    
     Renderer::UpdateCameraData(editorCamera.GetCamera3D(), editorCamera.GetCamera2D());
-    parent->activeScene->OnUpdateEditor();
+    Renderer::RenderScene(parent->activeScene);
     
     
     

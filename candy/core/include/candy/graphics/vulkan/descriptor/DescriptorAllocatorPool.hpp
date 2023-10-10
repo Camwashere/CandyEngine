@@ -70,7 +70,10 @@ namespace Candy::Graphics
     //static DescriptorAllocatorPool* Create();
     static UniquePtr<DescriptorAllocatorPool> Create();
     
+    
+    
     void Reset();
+    
     //not thread safe
     //switches default allocators to the next frame. When frames loop it will reset the descriptors of that frame
     void Flip(uint32_t newFrameIndex);

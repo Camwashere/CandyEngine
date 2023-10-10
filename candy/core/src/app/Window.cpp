@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <candy/app/Application.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/RenderCommand.hpp>
 namespace Candy
 {
     using namespace Graphics;
@@ -16,7 +17,7 @@ namespace Candy
     
     
     
-    Window::Window(WindowData data) : windowData(std::move(data)), fullscreen(false), graphicsContext(nullptr)
+    Window::Window(WindowData data) : windowData(std::move(data)), fullscreen(false)//, graphicsContext(nullptr)
     {
       CANDY_PROFILE_FUNCTION();
         if (GLFW_WINDOW_COUNT==0)
@@ -24,9 +25,28 @@ namespace Candy
             int success = glfwInit();
             CANDY_CORE_ASSERT(success, "FAILED TO INITIALIZE GLFW");
             glfwSetErrorCallback(GLFWErrorCallback);
-            Vulkan::Init();
+            //Vulkan::Init();
+          
+          glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+          glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+          glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+          
+          handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
+          
+          //VulkanInstance::Init(handle);
+          
+          ++GLFW_WINDOW_COUNT;
+          //graphicsContext = CreateUniquePtr<GraphicsContext>(handle);
+          
+          //renderer = new Renderer(graphicsContext);
+          
+          glfwSetWindowUserPointer(handle, &windowData);
+          SetVSync(true);
+          EventCallbackInit();
+          
+          graphicsContext = Vulkan::Init(handle);
         }
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        /*glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         
@@ -35,13 +55,13 @@ namespace Candy
         //VulkanInstance::Init(handle);
         
         ++GLFW_WINDOW_COUNT;
-        graphicsContext = CreateUniquePtr<GraphicsContext>(handle);
+        //graphicsContext = CreateUniquePtr<GraphicsContext>(handle);
        
         //renderer = new Renderer(graphicsContext);
         
         glfwSetWindowUserPointer(handle, &windowData);
         SetVSync(true);
-        EventCallbackInit();
+        EventCallbackInit();*/
       
     }
     
@@ -160,17 +180,23 @@ namespace Candy
         
     }
     
-    void Window::OnUpdate()
+    void Window::StartFrame()
     {
-        CANDY_PROFILE_FUNCTION();
-        
-        glfwPollEvents();
-        Renderer::EndPass();
-        graphicsContext->Present();
-        graphicsContext->SwapBuffers();
-        Renderer::BeginViewportPass();
-        
+      CANDY_PROFILE_FUNCTION();
+      graphicsContext->NextSwapChainImage();
+      graphicsContext->GetCurrentFrame().commandPool.BeginCommandBuffer(0);
+      Renderer::BeginViewportPass();
     }
+    
+    void Window::EndFrame()
+    {
+      CANDY_PROFILE_FUNCTION();
+      RenderCommand::EndRenderPass();
+      RenderCommand::Submit();
+      graphicsContext->Present();
+    }
+    
+
     
     void Window::Close() const
     {

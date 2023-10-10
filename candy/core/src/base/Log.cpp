@@ -26,7 +26,5 @@ namespace Candy
     clientLogger->set_level(spdlog::level::trace);
     clientLogger->flush_on(spdlog::level::trace);
     
-    coreLogger->trace("Initialized core logger");
-    coreLogger->trace("Yo bruh what {0}", "up");
   }
 }

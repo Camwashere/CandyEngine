@@ -18,6 +18,7 @@ namespace Candy::Graphics
     bool Allocate(VkDescriptorSet* set, VkDescriptorSetLayout layout);
     void Flip(uint32_t frameIndex);
     void Reset();
+    void Destroy();
     //void Destroy();
   
   };

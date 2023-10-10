@@ -84,12 +84,12 @@ namespace Candy::Gum
   static RegistryData data;
   GumID GumShapeDataRegistry::RegisterShapeData(const GumShapeDataInternal& shapeData)
   {
-    data.dynamicRegistry.RegisterShapeData(shapeData);
+    return data.dynamicRegistry.RegisterShapeData(shapeData);
   }
  
   GumID GumShapeDataRegistry::RegisterShapeData(const std::string& name, const GumShapeDataInternal& shapeData)
   {
-    data.staticRegistry.RegisterShapeData(name, shapeData);
+    return data.staticRegistry.RegisterShapeData(name, shapeData);
   }
   GumID GumShapeDataRegistry::GetShapeDataID(const std::string& name)
   {

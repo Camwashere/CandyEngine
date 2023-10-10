@@ -7,16 +7,18 @@
 
 namespace Candy::Graphics
 {
-    struct QueueFamilyIndices
+    /*struct QueueFamilyIndices
     {
         std::optional<uint32_t> graphicsFamily;
         std::optional<uint32_t> presentFamily;
+        std::optional<uint32_t> computeFamily;
+        std::optional<uint32_t> transferFamily;
         
         [[nodiscard]] bool IsComplete() const
         {
-            return graphicsFamily.has_value() && presentFamily.has_value();
+          return graphicsFamily.has_value() && presentFamily.has_value() && computeFamily.has_value();
         }
-    };
+    };*/
     
     struct SwapChainSupportDetails
     {
@@ -61,7 +63,9 @@ namespace Candy::Graphics
         
     public:
         SwapChainSupportDetails QuerySwapChainSupport(VkSurfaceKHR surface);
-        QueueFamilyIndices FindQueueFamilies(VkSurfaceKHR surface);
+        uint32_t GetQueueFamilyPropertyCount()const;
+      std::vector<VkQueueFamilyProperties> GetQueueFamilyProperties()const;
+        //QueueFamilyIndices FindQueueFamilies(VkSurfaceKHR surface);
         bool IsDeviceSuitable(VkSurfaceKHR surface);
         bool CheckDeviceExtensionSupport();
         
@@ -74,6 +78,6 @@ namespace Candy::Graphics
         static long long int RateDeviceSuitability(VkPhysicalDevice device, VkSurfaceKHR surface);
         static bool CheckExtensionSupport(VkPhysicalDevice device);
         static SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
-        static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
+        //static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
     };
 }

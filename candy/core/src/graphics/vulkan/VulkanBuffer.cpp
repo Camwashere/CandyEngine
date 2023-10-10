@@ -2,6 +2,8 @@
 #include <CandyPch.hpp>
 
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/VulkanPch.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
   
@@ -38,7 +40,24 @@ namespace Candy::Graphics
   
   VulkanBuffer::VulkanBuffer(uint64_t bufferSize, BufferType bufferType) : size(bufferSize), type(bufferType)
   {
-  
+    /*VkBufferCreateInfo bufferInfo{};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = size;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+   
+    *//*VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    bufferInfo.usage = usage;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;*//*
+    
+    VmaAllocationCreateInfo allocInfo = {};
+    
+    allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+    allocInfo.requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    
+    
+    CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr));
+    Vulkan::DeletionQueue().Push(this);*/
   }
   
   bool VulkanBuffer::IsStatic()const
@@ -67,7 +86,7 @@ namespace Candy::Graphics
   {
     return type;
   }
-  void VulkanBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)const
+  /*void VulkanBuffer::CreateStagingBuffer(VkBuffer& buf, VmaAllocation* bufferAllocation)const
   {
     CANDY_PROFILE_FUNCTION();
     VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
@@ -84,7 +103,7 @@ namespace Candy::Graphics
     
     
     CANDY_VULKAN_CHECK(vmaCreateBuffer(Vulkan::Allocator(), &bufferInfo, &allocInfo, &buf, bufferAllocation, nullptr));
-  }
+  }*/
   void VulkanBuffer::CreateStagingBuffer(VkBuffer& buffer, uint64_t size, VmaAllocation* bufferAllocation)
   {
     CANDY_PROFILE_FUNCTION();

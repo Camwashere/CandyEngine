@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
+#include "candy/graphics/RenderCommand.hpp"
 
 namespace Candy::Graphics
 {
@@ -12,6 +14,16 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(Vulkan::HasDeviceManager(), "SwapChain's device manager is null!");
     CANDY_CORE_ASSERT(context->handle, "SwapChain's window handle is null!");
     CANDY_CORE_ASSERT(context->surface != VK_NULL_HANDLE, "SwapChain's surface is null!");
+    imageAvailableFences.resize(Vulkan::GetFramesInFlight());
+    VkFenceCreateInfo fenceInfo{};
+    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    //fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    fenceInfo.flags = 0;
+    for (int i=0; i<imageAvailableFences.size(); i++)
+    {
+      CANDY_VULKAN_CHECK(vkCreateFence(Vulkan::LogicalDevice(), &fenceInfo, nullptr, &imageAvailableFences[i]));
+      Vulkan::DeletionQueue().Push(imageAvailableFences[i]);
+    }
     Build();
     CreateBuffers(renderPass);
   }
@@ -74,7 +86,7 @@ namespace Candy::Graphics
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     
-    QueueFamilyIndices indices = Vulkan::PhysicalDevice().FindQueueFamilies(context->surface);
+    QueueFamilyIndices indices = Vulkan::LogicalDevice().GetQueueFamilyIndices();
     uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
     
     if (indices.graphicsFamily != indices.presentFamily)
@@ -114,7 +126,8 @@ namespace Candy::Graphics
     //depthImageView.Set(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
     depthImageView.Set(depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
     
-    context->GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    //context->GetCurrentFrame().commandBuffer.TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    RenderCommand::TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     
   }
   
@@ -135,10 +148,10 @@ namespace Candy::Graphics
   }
   
   
-  VkResult SwapChain::AcquireNextImage(VkSemaphore semaphore, uint64_t timeout, VkFence fence)
+  VkResult SwapChain::AcquireNextImage(VkSemaphore semaphore, uint64_t timeout)
   {
     CANDY_PROFILE_FUNCTION();
-    return vkAcquireNextImageKHR(Vulkan::LogicalDevice(), swapChain, timeout, semaphore, fence, &imageIndex);
+    return vkAcquireNextImageKHR(Vulkan::LogicalDevice(), swapChain, timeout, semaphore, imageAvailableFences[context->GetCurrentFrameIndex()], &imageIndex);
   }
   
   void SwapChain::SetPreferredPresentMode(VkPresentModeKHR mode)
@@ -150,7 +163,13 @@ namespace Candy::Graphics
     return preferredPresentMode;
   }
   
-  FrameBuffer &SwapChain::GetCurrentFrameBuffer() {return buffers[imageIndex].frameBuffer;}
+  FrameBuffer &SwapChain::GetCurrentFrameBuffer()
+  {
+    CANDY_PROFILE_FUNCTION();
+    CANDY_VULKAN_CHECK(vkWaitForFences(Vulkan::LogicalDevice(), 1, &imageAvailableFences[context->GetCurrentFrameIndex()], VK_TRUE, UINT64_MAX));
+    CANDY_VULKAN_CHECK(vkResetFences(Vulkan::LogicalDevice(), 1, &imageAvailableFences[context->GetCurrentFrameIndex()]));
+    return buffers[imageIndex].frameBuffer;
+  }
   
   
   VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes)

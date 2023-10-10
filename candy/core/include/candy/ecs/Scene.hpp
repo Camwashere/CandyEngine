@@ -11,6 +11,11 @@ namespace Candy
 {
   class SceneHierarchyPanel;
 }
+
+namespace Candy::Graphics
+{
+  class Renderer;
+}
 namespace Candy::ECS
 {
   
@@ -40,7 +45,7 @@ namespace Candy::ECS
   private:
     void MarkForDelete(Entity entity);
     
-    void RenderScene();
+    //void RenderScene();
     void RenderScene3D();
     void RenderScene2D();
   
@@ -85,6 +90,7 @@ namespace Candy::ECS
     void OnViewportResize(std::uint32_t width, std::uint32_t height);
     
   public:
+    void ClearUpdateFlags();
     void AppendUpdateFlag(SceneUpdateFlag flag);
     bool IsRunning()const;
     bool IsPaused()const;
@@ -98,6 +104,7 @@ namespace Candy::ECS
     friend class SceneManager;
     friend class SceneSerializer;
     friend class ::Candy::SceneHierarchyPanel;
+    friend class ::Candy::Graphics::Renderer;
     
   };
   

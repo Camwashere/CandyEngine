@@ -38,7 +38,8 @@ namespace Candy
     private:
         WindowData windowData;
         bool fullscreen;
-        UniquePtr<Graphics::GraphicsContext> graphicsContext;
+        Graphics::GraphicsContext* graphicsContext;
+        //UniquePtr<Graphics::GraphicsContext> graphicsContext;
         
     public:
         GLFWwindow* handle;
@@ -50,7 +51,8 @@ namespace Candy
     public:
         explicit Window(WindowData data);
         ~Window();
-        
+        void StartFrame();
+        void EndFrame();
         void OnUpdate();
         void SetVSync(bool enabled);
         void OnWindowResize(Events::WindowResizeEvent& event);
@@ -63,7 +65,7 @@ namespace Candy
         [[nodiscard]] inline int GetWidth()const{return windowData.GetWindowWidth();}
         [[nodiscard]] inline int GetHeight()const{return windowData.GetWindowHeight();}
         [[nodiscard]] inline bool IsVSyncEnabled()const{return windowData.vsync;}
-        Graphics::GraphicsContext& GetGraphicsContext(){return *graphicsContext;}
+        //Graphics::GraphicsContext& GetGraphicsContext(){return *graphicsContext;}
     
     };
 }

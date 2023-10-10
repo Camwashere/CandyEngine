@@ -1,28 +1,15 @@
 #include <candy/graphics/FrameBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <utility>
+#include <candy/graphics/vulkan/device/LogicalDevice.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
   FrameBuffer::FrameBuffer() : size(0, 0), layers(1)
   {
   
   }
-  FrameBuffer::FrameBuffer(VkRenderPass pass, Math::Vector2u bufferSize, const std::vector<VkImageView>& bufferAttachments, uint32_t bufferLayers) : size(bufferSize), attachments(bufferAttachments), layers(bufferLayers)
-  {
-    CANDY_PROFILE_FUNCTION();
-    renderPass = pass;
-    VkFramebufferCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    createInfo.flags = 0;
-    createInfo.height = size.height;
-    createInfo.width = size.width;
-    createInfo.layers = layers;
-    createInfo.attachmentCount = attachments.size();
-    createInfo.pAttachments = attachments.data();
-    createInfo.renderPass = pass;
-    
-    vkCreateFramebuffer(Vulkan::LogicalDevice(), &createInfo, nullptr, &buffer);
-  }
+  
   
   void FrameBuffer::Set(VkRenderPass pass, Math::Vector2u bufferSize, const std::vector<VkImageView>& bufferAttachments, uint32_t bufferLayers)
   {

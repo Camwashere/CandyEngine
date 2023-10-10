@@ -4,6 +4,8 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/texture/Texture.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp>
+#include <candy/graphics/GraphicsContext.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -62,16 +64,67 @@ namespace Candy::Graphics
   
   static RenderData3D data;
   
+  static ShaderBlendAttachmentConfig QuickBlendAttachment(bool alphaColorBlending)
+  {
+    ShaderBlendAttachmentConfig colorBlendAttachment{};
+    if (alphaColorBlending)
+    {
+      colorBlendAttachment.enabledChannels = ColorChannels::RGBA;
+      colorBlendAttachment.enableBlending = true;
+      colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+      colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    }
+    else
+    {
+      colorBlendAttachment.enabledChannels = ColorChannels::RGBA;
+      colorBlendAttachment.enableBlending = false;
+    }
+    return colorBlendAttachment;
+  }
+  
+  static ShaderDepthStencilSettings QuickDepthStencil(bool depthTestEnabled)
+  {
+    ShaderDepthStencilSettings depthStencil{};
+    
+    if (depthTestEnabled)
+    {
+      // Depth and stencil state
+      
+      depthStencil.depthBufferReading = true;
+      depthStencil.depthBufferWriting = true;
+      depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+      depthStencil.stencilTest = false;
+      depthStencil.front = {}; // Optional
+      depthStencil.back = {}; // Optional
+    }
+    else
+    {
+      // Depth and stencil state
+      depthStencil.depthBufferReading = true;
+      depthStencil.depthBufferWriting = false;
+      depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+      depthStencil.stencilTest = false;
+      depthStencil.front = {}; // Optional
+      depthStencil.back = {}; // Optional
+    }
+    
+    return depthStencil;
+  }
   
   void Renderer3D::InitGrid()
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings gridSettings{};
-    gridSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
-    gridSettings.filepath = "assets/shaders/renderer3D/Grid.glsl";
-    gridSettings.renderPassIndex = Renderer::GetViewportPassIndex();
-    gridSettings.depthTesting = true;
-    gridSettings.alphaColorBlending = true;
+    gridSettings.sourceFilePath = "assets/shaders/renderer3D/Grid.glsl";
+    auto& profileSettings = gridSettings.profileSettings;
+    
+    profileSettings.renderPassIndex = Renderer::GetViewportPassIndex();
+    profileSettings.SetDepthStencil(true);
+    profileSettings.AddBlendAttachment(true);
     
     data.gridShader = Shader::Create(gridSettings);
   }
@@ -79,13 +132,13 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings meshSettings{};
-    meshSettings.filepath = "assets/shaders/renderer3D/Mesh.glsl";
-    meshSettings.renderPassIndex = Renderer::GetViewportPassIndex();
-    meshSettings.depthTesting = true;
-    meshSettings.alphaColorBlending = true;
-    meshSettings.lineWidth = 1.0f;
-    meshSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
-    meshSettings.configs.push_back(PipelineConfigSettings{RenderMode::Wireframe});
+    meshSettings.sourceFilePath = "assets/shaders/renderer3D/Mesh.glsl";
+    
+    auto& profileSettings = meshSettings.profileSettings;
+    profileSettings.renderPassIndex = Renderer::GetViewportPassIndex();
+    
+    profileSettings.SetDepthStencil(true);
+    profileSettings.AddBlendAttachment(true);
     
     data.meshShader = Shader::Create(meshSettings);
     
@@ -110,9 +163,10 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionSettings{};
-    selectionSettings.configs.push_back(PipelineConfigSettings{RenderMode::Shaded});
-    selectionSettings.filepath = "assets/shaders/renderer3D/SelectionMesh.glsl";
-    selectionSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    auto& configSettings = selectionSettings.profileSettings;
+    selectionSettings.sourceFilePath = "assets/shaders/renderer3D/SelectionMesh.glsl";
+    configSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    configSettings.renderMode = PolygonRenderMode::Shaded;
     data.selectionShader = Shader::Create(selectionSettings);
   }
   
@@ -150,6 +204,7 @@ namespace Candy::Graphics
   }
   void Renderer3D::FlushVertexData()
   {
+    CANDY_PROFILE_FUNCTION();
     if (skipFlush)
     {
       skipFlush=false;
@@ -165,14 +220,14 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     if (data.meshIndexCount)
     {
-      data.meshShader->Bind();
+      //data.meshShader->Bind();
       
       
       FlushVertexData();
       
       
       
-      data.meshShader->Bind();
+      //data.meshShader->Bind();
       
       Renderer::GetCurrentFrame().storageBuffer->SetData(data.transforms.data(), sizeof(Matrix4) * data.transforms.size());
       
@@ -203,11 +258,11 @@ namespace Candy::Graphics
       textureBuilder.Write();
       
       
-      data.meshShader->Commit();
+      //data.meshShader->Commit();
+      data.meshShader->Bind();
       data.meshVertexArray->Bind();
       for (int i=0; i<data.objects.size(); i++)
       {
-        
         data.meshShader->PushInt(data.meshShaderObjectIndexID, (int)data.objects[i].objectIndex);
         data.meshShader->PushInt(data.meshShaderTextureIndexID, (int)data.objects[i].textureIndex);
         data.meshShader->PushFloat(data.meshShaderTilingFactorID, 1.0f);
@@ -222,7 +277,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     data.gridShader->Bind();
-    data.gridShader->Commit();
+    //data.gridShader->Commit();
     
     RenderCommand::DrawEmpty(6);
   }
@@ -234,7 +289,7 @@ namespace Candy::Graphics
     InitMesh();
     InitSelection();
     InitMaterial();
-    ShaderLibrary::Reload();
+    ShaderLibrary::Bake();
     
   }
   void Renderer3D::ResetStats()
@@ -265,10 +320,10 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(data.transforms.size() == data.objects.size(), "Transforms and meshes are not the same size");
-    Renderer::BeginSelectionPass();
+    //Renderer::BeginSelectionPass();
     data.selectionShader->Bind();
     
-    data.selectionShader->Commit();
+    //data.selectionShader->Commit();
     data.selectionShader->PushInt("entityID", -1);
     data.meshVertexArray->Bind();
     for (int i=0; i<data.objects.size(); i++)

@@ -30,17 +30,25 @@ namespace Candy::Graphics
     }
   }
   
-  ShaderPostProcessor::ShaderPostProcessor(const ShaderSettings& settings) : shaderLayout(settings)
+  /*ShaderPostProcessor::ShaderPostProcessor(const ShaderSettings& settings) //: shaderLayout(settings)
   {
   
+  }*/
+  void ShaderPostProcessor::BuildLayout(ShaderLayout& layout)
+  {
+    auto& shaderData = spirvBinaries;
+    for (auto&& [stage, data] : shaderData)
+    {
+      Reflect(layout, stage, data);
+    }
   }
-  void ShaderPostProcessor::CompileOrGetBinaries(const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath)
+  ShaderPostProcessor::ShaderPostProcessor(const ShaderCompilationSettings& settings, const std::unordered_map<ShaderData::Stage, std::string>& sources, const std::filesystem::path& filepath)
   {
     CANDY_PROFILE_FUNCTION();
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
     
-    auto settings = ShaderLibrary::GetCompilationSettings();
+    //auto settings = ShaderLibrary::GetCompilationSettings();
     options.SetOptimizationLevel(settings.optimize? shaderc_optimization_level_performance : shaderc_optimization_level_zero);
     if (settings.generateDebugInfo)
     {
@@ -93,16 +101,6 @@ namespace Candy::Graphics
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     std::filesystem::path cacheDirectory = GetCacheDirectory();
     
     auto& shaderData = spirvBinaries;
@@ -150,15 +148,17 @@ namespace Candy::Graphics
       }
     }
     
-    for (auto&& [stage, data] : shaderData)
+    
+    
+    /*for (auto&& [stage, data] : shaderData)
     {
       Reflect(stage, data);
-    }
+    }*/
     
   }
   
   
-  void ShaderPostProcessor::Reflect(ShaderData::Stage stage, std::vector<uint32_t> spirvBinary)
+  void ShaderPostProcessor::Reflect(ShaderLayout& shaderLayout, ShaderData::Stage stage, std::vector<uint32_t> spirvBinary)
   {
     CANDY_PROFILE_FUNCTION();
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
@@ -169,18 +169,18 @@ namespace Candy::Graphics
     if (!specConstants.empty())
     {
       CANDY_CORE_INFO("Has spec constants");
-      ReflectSpecializationConstants(compiler, stage, specConstants);
+      ReflectSpecializationConstants(shaderLayout, compiler, stage, specConstants);
     }
     
     
-    ReflectStageInputs(compiler, stage, resources.stage_inputs);
-    ReflectStageStorageBuffers(compiler, stage, resources.storage_buffers);
-    ReflectStageUniformBuffers(compiler, stage, resources.uniform_buffers);
-    ReflectStageSampledImages(compiler, stage, resources.sampled_images);
-    ReflectStagePushConstants(compiler, stage);
+    ReflectStageInputs(shaderLayout, compiler, stage, resources.stage_inputs);
+    ReflectStageStorageBuffers(shaderLayout, compiler, stage, resources.storage_buffers);
+    ReflectStageUniformBuffers(shaderLayout, compiler, stage, resources.uniform_buffers);
+    ReflectStageSampledImages(shaderLayout, compiler, stage, resources.sampled_images);
+    ReflectStagePushConstants(shaderLayout, compiler, stage);
     spirv_cross::SmallVector<spirv_cross::Resource> stageInputs;
   }
-  void ShaderPostProcessor::ReflectSpecializationConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& specConstants)
+  void ShaderPostProcessor::ReflectSpecializationConstants(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& specConstants)
   {
     CANDY_PROFILE_FUNCTION();
     for (const auto& specConst : specConstants)
@@ -206,7 +206,7 @@ namespace Candy::Graphics
       CANDY_CORE_INFO("Specialization constant: {0} with ID: {1} and type: {2}", name, specID, ShaderData::TypeToString(specType));*/
     }
   }
-  void ShaderPostProcessor::ReflectStageInputs(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageInputs)
+  void ShaderPostProcessor::ReflectStageInputs(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageInputs)
   {
     CANDY_PROFILE_FUNCTION();
     if (stage != ShaderData::Stage::Vertex)
@@ -220,7 +220,7 @@ namespace Candy::Graphics
   }
   
   
-  void ShaderPostProcessor::ReflectStageStorageBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageStorageBuffers)
+  void ShaderPostProcessor::ReflectStageStorageBuffers(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageStorageBuffers)
   {
     CANDY_PROFILE_FUNCTION();
     for (auto& resource : stageStorageBuffers)
@@ -246,7 +246,7 @@ namespace Candy::Graphics
 
     }
   }
-  void ShaderPostProcessor::ReflectStageUniformBuffers(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageUniformBuffers)
+  void ShaderPostProcessor::ReflectStageUniformBuffers(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageUniformBuffers)
   {
     CANDY_PROFILE_FUNCTION();
     for (auto& resource : stageUniformBuffers)
@@ -273,7 +273,7 @@ namespace Candy::Graphics
       shaderLayout.AddBlock(block);
     }
   }
-  void ShaderPostProcessor::ReflectStageSampledImages(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageSampledImages)
+  void ShaderPostProcessor::ReflectStageSampledImages(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::Resource>& stageSampledImages)
   {
     CANDY_PROFILE_FUNCTION();
     for (auto& resource : stageSampledImages)
@@ -297,7 +297,7 @@ namespace Candy::Graphics
       shaderLayout.AddTexture(texture);
     }
   }
-  void ShaderPostProcessor::ReflectStagePushConstants(const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage)
+  void ShaderPostProcessor::ReflectStagePushConstants(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage)
   {
     CANDY_PROFILE_FUNCTION();
     ShaderPushBlock block;
@@ -348,9 +348,9 @@ namespace Candy::Graphics
   
   }
   
-  ShaderLayout& ShaderPostProcessor::GetLayout()
+  /*ShaderLayout& ShaderPostProcessor::GetLayout()
   {
     return shaderLayout;
-  }
+  }*/
 
 }

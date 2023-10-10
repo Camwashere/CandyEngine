@@ -19,7 +19,7 @@ namespace Candy::Graphics
     public:
       explicit IndexBuffer(uint64_t count);
         IndexBuffer(uint32_t* indices, uint64_t count);
-        ~IndexBuffer();
+       
         
     public:
       void SetData(uint32_t* indices, uint64_t indexCount);

@@ -1,5 +1,5 @@
 #pragma once
-#include <candy/utils/Version.hpp>
+#include "candy/utils/Version.hpp"
 #include <filesystem>
 namespace Candy::Graphics
 {

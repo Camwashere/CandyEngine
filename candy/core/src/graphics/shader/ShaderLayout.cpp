@@ -2,13 +2,15 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/utils/IDManager.hpp>
 #include <candy/graphics/RenderCommand.hpp>
-#include <candy/math/Matrix.hpp>
 #include <utility>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <candy/graphics/Renderer.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
+#include <candy/graphics/vulkan/RenderPass.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
-  ShaderLayout::ShaderLayout(ShaderSettings  shaderSettings) : settings(std::move(shaderSettings)), pipeline(settings)
+  ShaderLayout::ShaderLayout()
   {
     CANDY_PROFILE_FUNCTION();
     materialBufferSize=0;
@@ -16,17 +18,17 @@ namespace Candy::Graphics
     sets.emplace_back();
     
   }
-  void ShaderLayout::BindAll()
+  void ShaderLayout::BindAllDescriptorSets(uint32_t renderPassIndex)
   {
     CANDY_PROFILE_FUNCTION();
     std::vector<uint32_t> dynamicOffsets{0, 0};
-    RenderCommand::BindDescriptorSets(pipeline, 0, {Renderer::GetCurrentFrame().GlobalDescriptor()}, dynamicOffsets);
+    RenderCommand::BindDescriptorSets(pipelineLayout, 0, {Renderer::GetCurrentFrame().GlobalDescriptor()}, dynamicOffsets);
     for (size_t i=1; i<sets.size(); i++)
     {
-      Bind(i);
+      BindDescriptorSet(renderPassIndex, i);
     }
   }
-  void ShaderLayout::Bind(uint32_t set)
+  void ShaderLayout::BindDescriptorSet(uint32_t renderPassIndex, uint32_t set)
   {
     CANDY_PROFILE_FUNCTION();
     if (sets[set].IsEmpty())
@@ -34,28 +36,28 @@ namespace Candy::Graphics
       
       return;
     }
-    RenderCommand::BindDescriptorSets(pipeline, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set, settings.renderPassIndex)}, sets[set].offsets);
+    RenderCommand::BindDescriptorSets(pipelineLayout, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set, renderPassIndex)}, sets[set].offsets);
    
   }
-  void ShaderLayout::BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
+ /* void ShaderLayout::BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
   {
     CANDY_PROFILE_FUNCTION();
     VkPipelineLayout pipelineLayout = BakePipelineLayout();
     
     pipeline.Bake(Renderer::GetRenderPass(settings.renderPassIndex), GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
-  }
+  }*/
   
-  VkPipelineLayout ShaderLayout::BakePipelineLayout()
+  void ShaderLayout::BakePipelineLayout(uint32_t renderPassIndex)
   {
     CANDY_PROFILE_FUNCTION();
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-    VkPipelineLayout pipelineLayout;
+    //VkPipelineLayout pipelineLayout;
     
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     
     
     //auto descriptorSetLayouts = BakeDescriptorSetLayouts();
-    auto descriptorSetLayouts = ShaderLibrary::BakeDescriptorSetLayouts(settings.renderPassIndex);
+    auto descriptorSetLayouts = ShaderLibrary::BakeDescriptorSetLayouts(renderPassIndex);
     
     
     pipelineLayoutInfo.setLayoutCount = descriptorSetLayouts.size();
@@ -68,7 +70,7 @@ namespace Candy::Graphics
     
     CANDY_VULKAN_CHECK(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout));
     Vulkan::DeletionQueue().Push(pipelineLayout);
-    return pipelineLayout;
+    //return pipelineLayout;
   }
   
   
@@ -239,8 +241,8 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(id < pushProperties.size());
     
-    auto& prop = pushProperties[id];
-    RenderCommand::PushConstants(pipeline.GetLayout(), ShaderData::Stage::All, prop->offset, prop->size, data);
+    ShaderPushProperty* prop = pushProperties[id];
+    RenderCommand::PushConstants(pipelineLayout, ShaderData::Stage::All, prop->offset, prop->size, data);
   }
   uint32_t ShaderLayout::SetUniform(const std::string& name, const void* data)
   {
@@ -266,7 +268,7 @@ namespace Candy::Graphics
   }
   
   
-  VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
-  VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}
+  //VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
+  //VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}
 
 }

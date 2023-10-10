@@ -1,5 +1,6 @@
 #include <candy/graphics/StorageBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
   StorageBuffer::StorageBuffer(uint64_t objSize, uint64_t objCount) : VulkanBuffer(objSize*objCount, BufferType::STORAGE_DYNAMIC), objectSize(objSize), objectCount(objCount)

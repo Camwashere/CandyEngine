@@ -1,5 +1,6 @@
 #include <candy/graphics/vulkan/descriptor/DescriptorSetLayout.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorLayoutCache.hpp>
 namespace Candy::Graphics
 {
   void DescriptorSetLayout::BindBuffer(uint32_t binding, ShaderData::Stage stage)
@@ -22,17 +23,7 @@ namespace Candy::Graphics
     
     bindings.push_back(layoutBinding);
     
-    /*VkWriteDescriptorSet newWrite{};
-    newWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    newWrite.pNext = nullptr;
-    
-    newWrite.descriptorCount = 1;
-    newWrite.descriptorType = type;
-    newWrite.pBufferInfo = nullptr;
-    newWrite.pImageInfo = nullptr;
-    newWrite.dstBinding = binding;
-    
-    writes.push_back(newWrite);*/
+   
   }
   
   void DescriptorSetLayout::Build()

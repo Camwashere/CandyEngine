@@ -85,11 +85,11 @@ namespace Candy
     isSelection2D = selectionContext.Is2D();
     if (entity)
     {
-      Renderer::GetGizmo().SetTarget(&entity.GetTransform());
+      //Renderer::GetGizmo().SetTarget(&entity.GetTransform());
     }
     else
     {
-      Renderer::GetGizmo().SetTarget(nullptr);
+      //Renderer::GetGizmo().SetTarget(nullptr);
     }
     
     

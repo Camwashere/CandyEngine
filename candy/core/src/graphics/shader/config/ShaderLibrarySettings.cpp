@@ -1,30 +1,8 @@
-#include <candy/graphics/shader/ShaderLibrarySettings.hpp>
+#include "candy/graphics/shader/config/ShaderLibrarySettings.hpp"
 #include "CandyPch.hpp"
-#include <ryml_std.hpp>
-#include <ryml.hpp>
-//#include <c4/format.hpp>
+#include "rapidyaml/src/ryml_std.hpp"
+#include "rapidyaml/src/ryml.hpp"
 
-
-/*namespace Candy
-{
-  size_t to_chars(c4::substr buf, const Candy::Version& v)
-  {
-    // this call to c4::format() is the type-safe equivalent
-    // of snprintf(buf.str, buf.len, "(%f,%f,%f)", v.x, v.y, v.z)
-    return c4::format(buf, "[{},{},{}]", v.GetMajor(), v.GetMinor(), v.GetPatch());
-  }
-  
-  bool from_chars(c4::csubstr buf, Candy::Version* v)
-  {
-    // equivalent to sscanf(buf.str, "(%f,%f,%f)", &v->x, &v->y, &v->z)
-    // --- actually snscanf(buf.str, buf.len, ...) but there's
-    // no such function in the standard.
-    uint32_t major, minor, patch;
-    size_t ret = c4::unformat(buf, "[{},{}]", major, minor, patch);
-    v->Set(major, minor, patch);
-    return ret != c4::csubstr::npos;
-  }
-}*/
 
 namespace Candy::Graphics
 {

@@ -10,6 +10,8 @@
 #include <candy/graphics/font/Font.hpp>
 #include <candy/graphics/font/MSDFData.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp>
+#include <candy/graphics/GraphicsContext.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -116,6 +118,58 @@ namespace Candy::Graphics
   };
   
   static RenderData2D data;
+  
+  
+  /*static ShaderBlendAttachmentConfig QuickBlendAttachment(bool alphaColorBlending)
+  {
+    ShaderBlendAttachmentConfig colorBlendAttachment{};
+    if (alphaColorBlending)
+    {
+      colorBlendAttachment.enabledChannels = ColorChannels::RGBA;
+      colorBlendAttachment.enableBlending = true;
+      colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+      colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+      colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+      colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    }
+    else
+    {
+      colorBlendAttachment.enabledChannels = ColorChannels::RGBA;
+      colorBlendAttachment.enableBlending = false;
+    }
+    return colorBlendAttachment;
+  }
+  
+  static ShaderDepthStencilSettings QuickDepthStencil(bool depthTestEnabled)
+  {
+    ShaderDepthStencilSettings depthStencil{};
+    
+    if (depthTestEnabled)
+    {
+      // Depth and stencil state
+      
+      depthStencil.depthBufferReading = true;
+      depthStencil.depthBufferWriting = true;
+      depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+      depthStencil.stencilTest = false;
+      depthStencil.front = {}; // Optional
+      depthStencil.back = {}; // Optional
+    }
+    else
+    {
+      // Depth and stencil state
+      depthStencil.depthBufferReading = true;
+      depthStencil.depthBufferWriting = false;
+      depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+      depthStencil.stencilTest = false;
+      depthStencil.front = {}; // Optional
+      depthStencil.back = {}; // Optional
+    }
+    
+    return depthStencil;
+  }*/
   void Renderer2D::Init()
   {
     CANDY_PROFILE_FUNCTION();
@@ -143,11 +197,11 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings quadShaderSettings{};
-    quadShaderSettings.filepath = "assets/shaders/renderer2D/Quad.glsl";
-    quadShaderSettings.configs.push_back({RenderMode::Shaded});
-    quadShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
-    quadShaderSettings.depthTesting = false;
-    quadShaderSettings.alphaColorBlending = true;
+    quadShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Quad.glsl";
+    auto& profileSettings = quadShaderSettings.profileSettings;
+    profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    profileSettings.SetDepthStencil(false);
+    profileSettings.AddBlendAttachment(true);
     
     data.quadShader=Shader::Create(quadShaderSettings);
     
@@ -193,11 +247,11 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     // Circles
     ShaderSettings circleShaderSettings{};
-    circleShaderSettings.filepath = "assets/shaders/renderer2D/Circle.glsl";
-    circleShaderSettings.configs.push_back({RenderMode::Shaded});
-    circleShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
-    circleShaderSettings.depthTesting = false;
-    circleShaderSettings.alphaColorBlending = true;
+    circleShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Circle.glsl";
+    auto& profileSettings = circleShaderSettings.profileSettings;
+    profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    profileSettings.SetDepthStencil(false);
+    profileSettings.AddBlendAttachment(true);
     
     data.circleShader = Shader::Create(circleShaderSettings);
     data.circleVertexArray = VertexArray::Create();
@@ -226,10 +280,10 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     // Lines
     ShaderSettings lineShaderSettings{};
-    lineShaderSettings.filepath = "assets/shaders/renderer2D/Line.glsl";
-    lineShaderSettings.configs.push_back({RenderMode::Shaded});
-    lineShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
-    lineShaderSettings.depthTesting = false;
+    lineShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Line.glsl";
+    auto& profileSettings = lineShaderSettings.profileSettings;
+    profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    profileSettings.SetDepthStencil(false);
     
     
     data.lineShader = Shader::Create(lineShaderSettings);
@@ -247,13 +301,13 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings textShaderSettings{};
-    textShaderSettings.filepath = "assets/shaders/renderer2D/Text.glsl";
-    textShaderSettings.configs.push_back({RenderMode::Shaded});
-    textShaderSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
-    textShaderSettings.depthTesting = false;
-    textShaderSettings.alphaColorBlending = true;
+    textShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Text.glsl";
+    auto& profileSettings = textShaderSettings.profileSettings;
+    profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
+    profileSettings.SetDepthStencil(false);
+    profileSettings.AddBlendAttachment(true);
     SpecializationConstantInput input("pxRange", Font::GetAtlasGeneratorSettings().pixelRange);
-    textShaderSettings.constantInputs.push_back(input);
+    profileSettings.constantInputs.push_back(input);
     
     
     data.textShader = Shader::Create(textShaderSettings);
@@ -270,24 +324,21 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionQuadSettings{};
-    selectionQuadSettings.filepath = "assets/shaders/renderer2D/SelectionQuad.glsl";
-    selectionQuadSettings.configs.push_back({RenderMode::Shaded});
-    selectionQuadSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
-    selectionQuadSettings.depthTesting = false;
+    selectionQuadSettings.sourceFilePath = "assets/shaders/renderer2D/SelectionQuad.glsl";
+    selectionQuadSettings.profileSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionQuadSettings.profileSettings.SetDepthStencil(false);
     data.selectionQuadShader = Shader::Create(selectionQuadSettings);
     
     ShaderSettings selectionCircleSettings{};
-    selectionCircleSettings.filepath = "assets/shaders/renderer2D/SelectionCircle.glsl";
-    selectionCircleSettings.configs.push_back({RenderMode::Shaded});
-    selectionCircleSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
-    selectionCircleSettings.depthTesting = false;
+    selectionCircleSettings.sourceFilePath = "assets/shaders/renderer2D/SelectionCircle.glsl";
+    selectionCircleSettings.profileSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionCircleSettings.profileSettings.SetDepthStencil(false);
     data.selectionCircleShader = Shader::Create(selectionCircleSettings);
     
     ShaderSettings selectionLineSettings{};
-    selectionLineSettings.filepath = "assets/shaders/renderer2D/SelectionLine.glsl";
-    selectionLineSettings.configs.push_back({RenderMode::Shaded});
-    selectionLineSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
-    selectionLineSettings.depthTesting = false;
+    selectionLineSettings.sourceFilePath = "assets/shaders/renderer2D/SelectionLine.glsl";
+    selectionLineSettings.profileSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
+    selectionLineSettings.profileSettings.SetDepthStencil(false);
     data.selectionLineShader = Shader::Create(selectionLineSettings);
   }
   void Renderer2D::InitTextures()
@@ -340,7 +391,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     if (data.quadIndexCount)
     {
-      data.quadShader->Bind();
+      //data.quadShader->Bind();
       
       uint32_t dataSize = (uint32_t)((uint8_t*)data.quadVertexBufferPtr - (uint8_t*)data.quadVertexBufferBase);
       data.quadVertexBuffer->SetData(data.quadVertexBufferBase, dataSize);
@@ -369,7 +420,8 @@ namespace Candy::Graphics
         builder.AddImageWrite(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MATERIAL_SET);
       }
       builder.Write();
-      data.quadShader->Commit();
+      //data.quadShader->Commit();
+      data.quadShader->Bind();
       data.quadVertexArray->Bind();
       
       RenderCommand::DrawIndexed(data.quadVertexArray);
@@ -422,19 +474,19 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     data.selectionQuadShader->Bind();
-    data.selectionQuadShader->Commit();
+    //data.selectionQuadShader->Commit();
     
     data.quadVertexArray->Bind();
     RenderCommand::DrawIndexed(data.quadVertexArray);
     
     data.selectionCircleShader->Bind();
-    data.selectionCircleShader->Commit();
+    //data.selectionCircleShader->Commit();
     
     data.circleVertexArray->Bind();
     RenderCommand::DrawIndexed(data.circleVertexArray);
     
     data.selectionLineShader->Bind();
-    data.selectionLineShader->Commit();
+    //data.selectionLineShader->Commit();
     
     data.lineVertexArray->Bind();
     RenderCommand::DrawIndexed(data.lineVertexArray);
@@ -443,7 +495,7 @@ namespace Candy::Graphics
   void Renderer2D::BeginScene()
   {
     CANDY_PROFILE_FUNCTION();
-    Renderer::BeginOverlayPass();
+    //Renderer::BeginOverlayPass();
     
     
     StartBatch();

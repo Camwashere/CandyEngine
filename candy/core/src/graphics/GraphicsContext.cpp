@@ -2,64 +2,67 @@
 #include <CandyPch.hpp>
 #include <GLFW/glfw3.h>
 #include <set>
-#include <candy/graphics/vulkan/VulkanBuffer.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <candy/graphics/Renderer.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 #include "imgui/backends/imgui_impl_vulkan.h"
+#include <candy/graphics/FrameResources.hpp>
+#include <candy/graphics/vulkan/RenderPass.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
   
-  VkDescriptorSet& FrameData::GetDescriptorSet(uint32_t index)
-  {
-    return GetDescriptorSet(index, Renderer::GetCurrentPassIndex());
-  }
   
-  VkDescriptorSet& FrameData::GetDescriptorSet(uint32_t index, uint8_t renderPassIndex)
-  {
-    if (index == MATERIAL_SET)
-    {
-      if (renderPassIndex == Renderer::overlayPassIndex)
-      {
-        return overlayDescriptorSet;
-      }
-    }
-    return descriptorSets[index];
-  }
-  VkDescriptorSet& FrameData::GlobalDescriptor(){return descriptorSets[GLOBAL_SET];}
-  VkDescriptorSet& FrameData::ObjectDescriptor(){return descriptorSets[OBJECT_SET];}
-  VkDescriptorSet& FrameData::MaterialDescriptor()
-  {
-    return GetDescriptorSet(MATERIAL_SET);
-  }
-    GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)
+    GraphicsContext::GraphicsContext(GLFWwindow* window, VkSurfaceKHR windowSurface) : handle(window), surface(windowSurface)
     {
       CANDY_PROFILE_FUNCTION();
-      handle = windowHandle;
-      CANDY_VULKAN_CHECK(glfwCreateWindowSurface(Vulkan::Instance(), windowHandle, nullptr, &surface));
-      //CANDY_CORE_ASSERT(result == VK_SUCCESS, "Failed to create vulkan window surface!");
-      Vulkan::InitDeviceManager(surface);
       InitSyncStructures();
-      Vulkan::RegisterContext(this);
       swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetUIPass());
       CreateViewport();
-      CANDY_CORE_INFO("INITIALIZED GRAPHICS CONTEXT");
       
     }
+  
+  void GraphicsContext::InitSyncStructures()
+  {
+    CANDY_PROFILE_FUNCTION();
+    
+    VkSemaphoreCreateInfo semaphoreCreateInfo{};
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    
+    
+    frames.resize(Vulkan::GetFramesInFlight());
+    
+    for (int i = 0; i<Vulkan::GetFramesInFlight(); i++)
+    {
+      frames[i].descriptorSets.resize(4);
+      frames[i].commandPool.Init(surface, CommandPoolType::LongLived, 1, !(bool)i);
+      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore));
+      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore));
+      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].computeSemaphore));
+      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].transferSemaphore));
+      frames[i].uniformBuffer = UniformBuffer::Create();
+      frames[i].storageBuffer = StorageBuffer::Create(sizeof(Matrix4), MAX_OBJECTS);
+      frames[i].materialBuffer = UniformBuffer::Create();
+      Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
+      Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
+      Vulkan::DeletionQueue().Push(frames[i].computeSemaphore);
+      Vulkan::DeletionQueue().Push(frames[i].transferSemaphore);
+    }
+    
+  }
   void GraphicsContext::RecreateViewport()
   {
     CANDY_PROFILE_FUNCTION();
       CleanViewport();
       CreateViewport();
       
-      for (int i=0; i<FRAMES_IN_FLIGHT; i++)
+      for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
       {
         ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportDescriptor);
         ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportDepthDescriptor);
-        //ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportSelectionDescriptor);
         
         frames[i].viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(frames[i].viewportData.viewportImageView.GetSampler(), frames[i].viewportData.viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        //frames[i].viewportData.viewportSelectionDescriptor = ImGui_ImplVulkan_AddTexture(frames[i].viewportData.selectionImageView.GetSampler(), Renderer::GetFrame(i).viewportData.selectionImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         frames[i].viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(frames[i].viewportData.depthImageView.GetSampler(), frames[i].viewportData.depthImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       }
   }
@@ -67,7 +70,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     Vector2u size = {swapChain->extent.width, swapChain->extent.height};
-      for (int i=0; i<FRAMES_IN_FLIGHT; i++)
+      for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
       {
         CreateDepthResources(i, size);
         frames[i].viewportData.viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
@@ -78,30 +81,18 @@ namespace Candy::Graphics
         
         frames[i].viewportData.viewportFrameBuffer.Set(Renderer::GetViewportPass(), size, {frames[i].viewportData.viewportImageView, frames[i].viewportData.depthImageView});
         frames[i].viewportData.selectionFrameBuffer.Set(Renderer::GetSelectionPass(), size, {frames[i].viewportData.selectionImageView, frames[i].viewportData.depthImageView});
-        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        /*frames[i].viewportData.viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-        frames[i].viewportData.viewportImageView.Set(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB);
         
-        frames[i].viewportData.selectionImage.Create(size, VK_FORMAT_R32_SINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-        frames[i].viewportData.selectionImageView.Set(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT);
-        
-        frames[i].viewportData.viewportFrameBuffer.Set(Renderer::GetViewportPass(), size, {frames[i].viewportData.viewportImageView, frames[i].viewportData.depthImageView});
-        frames[i].viewportData.selectionFrameBuffer.Set(Renderer::GetSelectionPass(), size, {frames[i].viewportData.selectionImageView, frames[i].viewportData.depthImageView});
-        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        frames[i].commandBuffer.TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);*/
+        RenderCommand::TransitionImageLayout(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        RenderCommand::TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         
         frames[i].viewportData.selectionPixelBuffer = new PixelBuffer(size);
-        
-        
-        
       }
   }
   
   void GraphicsContext::CleanViewport()
   {
     CANDY_PROFILE_FUNCTION();
-    for (int i=0; i<FRAMES_IN_FLIGHT; i++)
+    for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
     {
       Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImage);
       Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImageView);
@@ -117,31 +108,7 @@ namespace Candy::Graphics
     }
    
   }
-  void GraphicsContext::InitSyncStructures()
-  {
-    CANDY_PROFILE_FUNCTION();
-    VkFenceCreateInfo fenceCreateInfo{};
-    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-    
-    
-    VkSemaphoreCreateInfo semaphoreCreateInfo{};
-    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    
-    for (int i = 0; i < FRAMES_IN_FLIGHT; i++) {
-      frames[i].commandBuffer.Init(surface);
-      CANDY_VULKAN_CHECK(vkCreateFence(Vulkan::LogicalDevice(), &fenceCreateInfo, nullptr, &frames[i].renderFence));
-      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].presentSemaphore));
-      CANDY_VULKAN_CHECK(vkCreateSemaphore(Vulkan::LogicalDevice(), &semaphoreCreateInfo, nullptr, &frames[i].renderSemaphore));
-      frames[i].uniformBuffer = UniformBuffer::Create();
-      frames[i].storageBuffer = StorageBuffer::Create(sizeof(Matrix4), MAX_OBJECTS);
-      frames[i].materialBuffer = UniformBuffer::Create();
-      Vulkan::DeletionQueue().Push(frames[i].renderFence);
-      Vulkan::DeletionQueue().Push(frames[i].presentSemaphore);
-      Vulkan::DeletionQueue().Push(frames[i].renderSemaphore);
-    }
-    
-  }
+  
   
 
   
@@ -191,10 +158,13 @@ namespace Candy::Graphics
     
   }
   
-    void GraphicsContext::SwapBuffers()
+    void GraphicsContext::NextSwapChainImage()
     {
       CANDY_PROFILE_FUNCTION();
-      CANDY_VULKAN_CHECK(vkWaitForFences(Vulkan::LogicalDevice(), 1, &GetCurrentFrame().renderFence, true, UINT64_MAX));
+      
+      CANDY_VULKAN_CHECK(frames[currentFrameIndex].commandPool.WaitFence());
+      CANDY_VULKAN_CHECK(frames[currentFrameIndex].commandPool.ResetPool());
+      UpdateFrameIndex();
       VkResult result = swapChain->AcquireNextImage(GetCurrentFrame().presentSemaphore, UINT64_MAX);
       
       if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -209,7 +179,29 @@ namespace Candy::Graphics
       }
      
     }
+  void GraphicsContext::Submit()
+  {
+    CANDY_PROFILE_FUNCTION();
+    GetCurrentFrame().commandPool.EndRecording();
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = GetCurrentFrame().commandPool.buffers.size();
+    submitInfo.pCommandBuffers = GetCurrentFrame().commandPool.buffers.data();
     
+    
+    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    
+    submitInfo.pWaitDstStageMask = &waitStage;
+    
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = &GetCurrentFrame().presentSemaphore;
+    
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &GetCurrentFrame().renderSemaphore;
+    
+    
+    CANDY_VULKAN_CHECK(vkQueueSubmit(Vulkan::LogicalDevice().graphicsQueue, 1, &submitInfo, GetCurrentFrame().commandPool.fence));
+  }
     void GraphicsContext::Present()
     {
       CANDY_PROFILE_FUNCTION();
@@ -223,7 +215,7 @@ namespace Candy::Graphics
       
       presentInfo.pImageIndices = &swapChain->imageIndex;
       VkResult result = vkQueuePresentKHR(Vulkan::LogicalDevice().graphicsQueue, &presentInfo);
-      if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || frameBufferResized)
+      if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR) || frameBufferResized)
       {
         frameBufferResized = false;
         swapChain->Rebuild(Renderer::GetUIPass());
@@ -233,15 +225,13 @@ namespace Candy::Graphics
       {
         CANDY_CORE_ASSERT(result == VK_SUCCESS, "failed to present swap chain image!");
       }
-      
-      UpdateFrameIndex();
     }
 
-    void GraphicsContext::RebuildSwapChain(VkRenderPass renderPass)
+    /*void GraphicsContext::RebuildSwapChain(VkRenderPass renderPass)
     {
       CANDY_PROFILE_FUNCTION();
       swapChain->Rebuild(renderPass);
-    }
+    }*/
     
   
   void GraphicsContext::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
@@ -249,15 +239,14 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     
     Vector2u size = {(uint32_t)event.GetWidth(), (uint32_t)event.GetHeight()};
-    //RecreateTarget(size);
-      frameBufferResized = true;
+    frameBufferResized = true;
   }
   
-  void GraphicsContext::CleanSwapChain()
+  /*void GraphicsContext::CleanSwapChain()
   {
     CANDY_PROFILE_FUNCTION();
       swapChain->Clean();
-  }
+  }*/
   
   SwapChain& GraphicsContext::GetSwapChain()
   {
@@ -272,15 +261,15 @@ namespace Candy::Graphics
   {
       return previousFrameIndex;
   }
-  FrameData& GraphicsContext::GetCurrentFrame()
+  FrameResources& GraphicsContext::GetCurrentFrame()
   {
       return frames[currentFrameIndex];
   }
-  FrameData& GraphicsContext::GetPreviousFrame()
+  FrameResources& GraphicsContext::GetPreviousFrame()
   {
       return frames[previousFrameIndex];
   }
-  FrameData& GraphicsContext::GetFrame(uint32_t index)
+  FrameResources& GraphicsContext::GetFrame(uint32_t index)
   {
       return frames[index];
   }
@@ -302,15 +291,14 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     VkFormat depthFormat = GraphicsContext::FindDepthFormat();
     GetFrame(frameIndex).viewportData.depthImage.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-    //GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
     GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
-    GetFrame(frameIndex).commandBuffer.TransitionImageLayout(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    RenderCommand::TransitionImageLayout(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
   }
   void GraphicsContext::UpdateFrameIndex()
   {
     CANDY_PROFILE_FUNCTION();
       previousFrameIndex = currentFrameIndex;
-      currentFrameIndex = (currentFrameIndex + 1) % FRAMES_IN_FLIGHT;
+      currentFrameIndex = (currentFrameIndex + 1) % Vulkan::GetFramesInFlight();
   }
     
 }

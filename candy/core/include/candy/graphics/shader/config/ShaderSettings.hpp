@@ -3,13 +3,13 @@
 #include <vulkan/vulkan.h>
 #include <utility>
 #include <vector>
-#include "ShaderProperty.hpp"
-#include <candy/collections/GenericBuffer.hpp>
-#include <candy/graphics/RenderCommand.hpp>
-
+#include "candy/graphics/shader/ShaderProperty.hpp"
+#include "candy/collections/GenericBuffer.hpp"
+#include "candy/graphics/RenderCommand.hpp"
+#include <candy/graphics/shader/config/ShaderProfile.hpp>
 namespace Candy::Graphics
 {
-  class SpecializationConstantInput
+  /*class SpecializationConstantInput
   {
   private:
     std::string name;
@@ -58,27 +58,48 @@ namespace Candy::Graphics
     BACK,
     BOTH,
   };
+  struct DepthBiasSettings
+  {
+    bool enable=false;
+    float constantFactor=0.0f;
+    float slopeFactor=0.0f;
+  };
   struct PipelineConfigSettings
   {
-    RenderMode renderMode;
-  };
-  struct ShaderSettings
-  {
-    
-    std::filesystem::path filepath;
-    
-    std::vector<PipelineConfigSettings> configs;
-    uint8_t renderPassIndex=0;
-    PipelineType pipelineType=PipelineType::Graphics;
+    RenderMode renderMode=RenderMode::Shaded;
     TopologyType topologyType=TopologyType::TRIANGLE;
-    //PolygonType polygonType = PolygonType::FILL;
     CullMode cullMode = CullMode::BACK;
-    float lineWidth=1.0f;
+    DepthBiasSettings depthBiasSettings{};
+    std::vector<SpecializationConstantInput> constantInputs{};
+    
+  };
+  struct ShaderConfigSettings
+  {
+    PipelineType pipelineType=PipelineType::Graphics;
     
     bool depthTesting=true;
     bool alphaColorBlending=false;
     std::vector<VkDynamicState> dynamicStates{};
-    std::vector<SpecializationConstantInput> constantInputs{};
+  };*/
+  
+  struct ShaderSettings
+  {
+    std::filesystem::path sourceFilePath;
+    ShaderProfileSettings profileSettings;
+    std::vector<ShaderConfigurationSettings> configs;
+    
+    
+    
+  };
+  /*struct ShaderSettings
+  {
+    
+    std::filesystem::path filepath;
+    ShaderConfigSettings profileSettings;
+    std::vector<PipelineConfigSettings> configs;
+    uint8_t renderPassIndex=0;
+    
+    
     
     
     
@@ -87,5 +108,5 @@ namespace Candy::Graphics
     static VkPolygonMode RenderModeToVulkan(RenderMode value);
     static VkCullModeFlags CullModeToVulkan(CullMode value);
     
-  };
+  };*/
 }

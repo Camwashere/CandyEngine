@@ -5,15 +5,11 @@
 #include "candy/graphics/Color.hpp"
 #include "ShaderData.hpp"
 #include "vulkan/vulkan.h"
-//#include "ShaderSettings.hpp"
-//#include "processing/ShaderPreProcessor.hpp"
-//#include "processing/ShaderPostProcessor.hpp"
-#include "../vulkan/pipeline/Pipeline.hpp"
+#include <candy/graphics/shader/ShaderLayout.hpp>
+#include <candy/graphics/shader/config/ShaderProfile.hpp>
 namespace Candy::Graphics
 {
   
-  class ShaderLayout;
-  class ShaderPreProcessor;
   class ShaderPostProcessor;
   
     class Shader
@@ -21,22 +17,23 @@ namespace Candy::Graphics
     private:
       std::string shaderName;
       uint32_t id;
-        
-      UniquePtr<ShaderPreProcessor> preProcessor;
-      UniquePtr<ShaderPostProcessor> postProcessor;
-    
+      ShaderSettings settings;
+      ShaderProfile profile;
+      ShaderLayout layout;
+      std::unordered_map<ShaderData::Stage, std::vector<uint32_t>> spirvBinaries{};
+      
     private:
-      VkShaderModule CreateShaderModule(ShaderData::Stage stage);
-      std::vector<VkPipelineShaderStageCreateInfo> CreateShaderStageCreateInfos();
       std::vector<VkPushConstantRange> GetPushConstantRanges();
+      void BakeConfiguration(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
     public:
-      explicit Shader(const ShaderSettings&  settings);
+      explicit Shader(ShaderSettings   settings);
       
     public:
+      void Reload();
       void Bake();
       void Bind();
-      void Commit();
+      
       
     public:
       // Push constant functions
@@ -49,6 +46,7 @@ namespace Candy::Graphics
       uint32_t PushVector3(const std::string& name, const Math::Vector3& vector);
       uint32_t PushVector4(const std::string& name, const Math::Vector4& vector);
       uint32_t PushMatrix(const std::string& name, const Math::Matrix4& matrix);
+      
       
       void PushInt(uint32_t id, int value);
       void PushFloat(uint32_t id, float value);
@@ -76,12 +74,9 @@ namespace Candy::Graphics
     public:
       [[nodiscard]] const std::string& GetName()const;
       [[nodiscard]] const std::filesystem::path& GetFilepath()const;
-      [[nodiscard]] const ShaderSettings& GetSettings()const;
-      [[nodiscard]] VkPipeline GetPipeline()const;
-      [[nodiscard]] VkPipelineLayout GetPipelineLayout()const;
+      
         
       
-      ShaderPostProcessor& GetPostProcessor();
       ShaderLayout& GetLayout();
       [[nodiscard]] const ShaderLayout& GetLayout()const;
       [[nodiscard]] BufferLayout GetBufferLayout()const;
@@ -95,15 +90,5 @@ namespace Candy::Graphics
         
     private:
         friend class GraphicsContext;
-        friend class GraphicsPipeline;
-        friend class Pipeline;
-        
-       
-    
-    
-   
-        
-        
-        
     };
 }

@@ -22,6 +22,7 @@ namespace Candy::Graphics
   {
   private:
     GraphicsContext *context;
+    std::vector<VkFence> imageAvailableFences;
     VkSwapchainKHR swapChain;
     std::vector<VkImage> images;
     std::vector<SwapChainBuffer> buffers;
@@ -49,7 +50,7 @@ namespace Candy::Graphics
   public:
     void Rebuild(VkRenderPass renderPass);
     void Clean();
-    VkResult AcquireNextImage(VkSemaphore semaphore, uint64_t timeout = UINT64_MAX, VkFence fence = nullptr);
+    VkResult AcquireNextImage(VkSemaphore semaphore, uint64_t timeout = UINT64_MAX);
     void SetPreferredPresentMode(VkPresentModeKHR mode);
     VkPresentModeKHR GetPreferredPresentMode()const;
     FrameBuffer &GetCurrentFrameBuffer();

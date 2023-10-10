@@ -1,6 +1,6 @@
 #include <candy/graphics/vulkan/descriptor/DescriptorAllocatorPool.hpp>
-#include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/Vulkan.hpp>
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
   bool IsMemoryError(VkResult errorResult) {
@@ -11,21 +11,13 @@ namespace Candy::Graphics
     }
     return false;
   }
-  /*DescriptorAllocatorPool* DescriptorAllocatorPool::Create()
-  {
-    DescriptorAllocatorPool* impl = new DescriptorAllocatorPool();
-    
-    for (int i = 0; i < FRAME_OVERLAP; i++) {
-      impl->descriptorPools.push_back(std::make_unique<PoolStorage>());
-    }
-    return impl;
-  }*/
+  
   UniquePtr<DescriptorAllocatorPool> DescriptorAllocatorPool::Create()
   {
     CANDY_PROFILE_FUNCTION();
     UniquePtr<DescriptorAllocatorPool> impl = CreateUniquePtr<DescriptorAllocatorPool>();
     
-    for (int i = 0; i < GraphicsContext::FRAMES_IN_FLIGHT; i++) {
+    for (int i = 0; i < Vulkan::GetFramesInFlight(); i++) {
       impl->descriptorPools.push_back(std::make_unique<PoolStorage>());
     }
     return impl;
@@ -163,10 +155,12 @@ namespace Candy::Graphics
       }
     }
   }
+  
+  
   void DescriptorAllocatorPool::Reset()
   {
     CANDY_PROFILE_FUNCTION();
-    for (uint32_t i=0; i<GraphicsContext::FRAMES_IN_FLIGHT; i++)
+    for (uint32_t i=0; i<Vulkan::GetFramesInFlight(); i++)
     {
       for (auto al :  descriptorPools[i]->fullAllocators ) {
         

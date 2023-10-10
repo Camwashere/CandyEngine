@@ -2,20 +2,25 @@
 #include <CandyPch.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <GLFW/glfw3.h>
+#include <candy/graphics/vulkan/VulkanPch.hpp>
 const std::vector<const char*> validationLayers= {
         "VK_LAYER_KHRONOS_validation"
 };
 
 
 #ifdef CANDY_DEBUG
-const bool enableValidationLayers = true;
-#else
-const bool enableValidationLayers = true;
+  #define CANDY_ENABLE_VALIDATION_LAYERS
 #endif
 
 
 namespace Candy::Graphics
 {
+  struct DebugManagerData
+  {
+    VkDebugUtilsMessengerEXT debugMessenger;
+  };
+  
+  static DebugManagerData data;
     
     static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -96,26 +101,31 @@ namespace Candy::Graphics
         return true;
     }
     
-    VulkanDebugManager::VulkanDebugManager(VkInstance instance)
+    
+    
+    VkResult VulkanDebugManager::Init(VkInstance instance)
     {
       CANDY_PROFILE_FUNCTION();
-      if (enableValidationLayers)
-      {
+      
+      #ifdef CANDY_ENABLE_VALIDATION_LAYERS
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         PopulateDebugMessengerCreateInfo(createInfo);
-        
-        CANDY_VULKAN_CHECK(CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger));
-      }
+      
+        return CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &data.debugMessenger);
+      #endif
+      return VK_SUCCESS;
       
     }
     
-    VulkanDebugManager::~VulkanDebugManager()
+    
+    
+    void VulkanDebugManager::Destroy()
     {
       CANDY_PROFILE_FUNCTION();
-      if (enableValidationLayers)
-      {
-        DestroyDebugUtilsMessengerEXT(Vulkan::Instance(), debugMessenger, nullptr);
-      }
+      #ifdef CANDY_ENABLE_VALIDATION_LAYERS
+        DestroyDebugUtilsMessengerEXT(Vulkan::Instance(), data.debugMessenger, nullptr);
+      #endif
+      
     }
   
   std::vector<const char*> VulkanDebugManager::GetRequiredExtensions()
@@ -126,10 +136,10 @@ namespace Candy::Graphics
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
     
     std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-    if (VulkanDebugManager::ValidationLayersEnabled())
-    {
+    #ifdef CANDY_ENABLE_VALIDATION_LAYERS
       extensions.push_back("VK_EXT_debug_utils");
-    }
+    #endif
+    
     return extensions;
   }
   
@@ -191,7 +201,12 @@ namespace Candy::Graphics
     
     bool VulkanDebugManager::ValidationLayersEnabled()
     {
-        return enableValidationLayers;
+      #ifdef CANDY_ENABLE_VALIDATION_LAYERS
+        return true;
+      #else
+      return false;
+      #endif
+      
     }
     
     bool VulkanDebugManager::ValidationLayersSupported()

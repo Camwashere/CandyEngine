@@ -2,22 +2,18 @@
 #include "CandyPch.hpp"
 #include <candy/graphics/shader/Shader.hpp>
 #include <candy/graphics/shader/ShaderLayout.hpp>
-#include <utility>
 #include <filesystem>
 #include <candy/graphics/Vulkan.hpp>
 #include "candy/utils/IDManager.hpp"
+#include <candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp>
+#include <candy/graphics/GraphicsContext.hpp>
+#include <candy/graphics/FrameResources.hpp>
 namespace Candy::Graphics
 {
   using namespace Utils;
   
   struct ShaderLibraryData
   {
-    /*std::filesystem::path internalCacheDirectory;
-    std::filesystem::path internalSourceDirectory;
-    std::filesystem::path projectCacheDirectory;
-    std::filesystem::path projectSourceDirectory;
-    
-    ShaderCompilationSettings compilationSettings{};*/
     ShaderLibrarySettings settings;
     bool initialized=false;
     bool logInitialization=true;
@@ -141,17 +137,22 @@ namespace Candy::Graphics
       }
       data.shaders.push_back(shader);
   }
+  void ShaderLibrary::Bake()
+  {
+    CANDY_PROFILE_FUNCTION();
+    for (auto& shader : data.shaders)
+    {
+      shader->Bake();
+    }
+  }
   void ShaderLibrary::Reload()
   {
     CANDY_PROFILE_FUNCTION();
-      for (const auto& set : data.shaderSets)
-      {
-        CANDY_CORE_INFO("Set: {0}, bindings: {1}", set.GetSet(), set.blocks.size() + set.textures.size());
-      }
       
+    
       for (auto& shader : data.shaders)
       {
-        shader->Bake();
+        shader->Reload();
       }
       
       
@@ -175,14 +176,14 @@ namespace Candy::Graphics
   std::vector<VkDescriptorSetLayout> ShaderLibrary::BakeDescriptorSetLayouts(uint8_t renderPassIndex)
   {
     CANDY_PROFILE_FUNCTION();
-    const int FRAME_OVERLAP = 2;
+    
     std::vector<VkDescriptorSetLayout> layouts;
     
-    size_t LAYOUT_NUM = data.shaderSets.size();
-    layouts.resize(LAYOUT_NUM);
+    //size_t LAYOUT_NUM = data.shaderSets.size();
+    layouts.resize(data.shaderSets.size());
     //bool skipObject=renderPassIndex == Renderer::GetOverlayPassIndex();
     
-    for (size_t i = 0; i<LAYOUT_NUM; i++)
+    for (size_t i = 0; i<data.shaderSets.size(); i++)
     {
       DescriptorBuilder builder = DescriptorBuilder::Begin();
       
@@ -198,7 +199,7 @@ namespace Candy::Graphics
         builder.AddBinding(tex.binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, ShaderData::StageToVulkan(tex.stage), tex.arraySize);
       }
       layouts[i] = builder.BuildLayout();
-      for (int f = 0; f<FRAME_OVERLAP; f++)
+      for (int f = 0; f<Vulkan::GetFramesInFlight(); f++)
       {
         bool alloc = builder.AllocateDescriptorSet(&Vulkan::GetCurrentContext().GetFrame(f).GetDescriptorSet(i, renderPassIndex), layouts[i]);
         CANDY_CORE_ASSERT(alloc, "Failed to allocate descriptor set!");

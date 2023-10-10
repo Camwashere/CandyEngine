@@ -32,6 +32,7 @@ namespace Candy::Graphics
         
     private:
         friend class CommandBuffer;
+        friend class RenderCommand;
         friend class GraphicsContext;
     };
 

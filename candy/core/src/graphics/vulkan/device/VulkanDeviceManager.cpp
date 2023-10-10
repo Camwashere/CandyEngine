@@ -6,11 +6,11 @@ namespace Candy::Graphics
   
   
   
-    VulkanDeviceManager::VulkanDeviceManager(VkSurfaceKHR surface) : physicalDevice(surface)
+    VulkanDeviceManager::VulkanDeviceManager(VkSurfaceKHR surface) : physicalDevice(surface), logicalDevice(&physicalDevice, surface)
     {
       CANDY_PROFILE_FUNCTION();
       CANDY_CORE_ASSERT(physicalDevice.IsValid(), "Failed to find a suitable GPU!");
-      logicalDevice = LogicalDevice(physicalDevice, physicalDevice.FindQueueFamilies(surface));
+      //logicalDevice = LogicalDevice(physicalDevice, surface);
     }
   
   void VulkanDeviceManager::Destroy()

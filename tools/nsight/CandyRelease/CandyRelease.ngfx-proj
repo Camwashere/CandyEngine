@@ -65,7 +65,7 @@
         "activity/fd/forcerepaint": false,
         "activity/fd/hudposition": "Top Left",
         "activity/fd/opengl/allowprogrambinaries": true,
-        "activity/fd/opengl/delimiter": "SwapBuffers",
+        "activity/fd/opengl/delimiter": "NextSwapChainImage",
         "activity/fd/opengl/noerror": "Application Controlled",
         "activity/fd/opengl/reportnullclientsidebuffer": true,
         "activity/fd/raytracing/acceleration_structure_collect_refits": "Auto",

@@ -26,13 +26,14 @@ namespace Candy
         }
         
         mainWindow = CreateUniquePtr<Window>(WindowData(appData.name, 3000, 1500));
-        
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
+        //Vulkan::Init(mainWindow->handle);
         
-        RenderCommand::Init();
+        //RenderCommand::Init();
+      
       uiLayer = new UILayer();
       PushOverlay(uiLayer);
-      
+     
       //mainWindow->GetGraphicsContext().RecreateTarget();
       
     }
@@ -100,31 +101,48 @@ namespace Candy
     void Application::Run()
     {
         isRunning=true;
-        Renderer::Start();
+        
         instance->mainWindow->Show();
+        
         CANDY_PROFILE_END_SESSION();
         CANDY_PROFILE_BEGIN_SESSION("Candy Runtime", "profiling/Runtime.json");
         while(isRunning)
         {
-          frameTime.Update();
-          for (Layer* layer : layerStack)
-          {
-            layer->OnUpdate();
-          }
+          Update();
           
-          uiLayer->Begin();
-          for (Layer* layer : layerStack)
-          {
-            layer->OnRenderUI();
-          }
-          uiLayer->End();
-          mainWindow->OnUpdate();
         }
         CANDY_PROFILE_END_SESSION();
         CANDY_PROFILE_BEGIN_SESSION("Candy Shutdown", "profiling/Shutdown.json");
         CleanUp();
         CANDY_PROFILE_END_SESSION();
         
+    }
+  
+  void Application::Update()
+  {
+      CANDY_PROFILE_FUNCTION();
+    PollEvents();
+    mainWindow->StartFrame();
+    
+    for (Layer* layer: layerStack)
+    {
+      layer->OnUpdate();
+    }
+    
+    uiLayer->Begin();
+    for (Layer* layer: layerStack)
+    {
+      layer->OnRenderUI();
+    }
+    uiLayer->End();
+    
+    mainWindow->EndFrame();
+  }
+    
+    void Application::PollEvents()
+    {
+      frameTime.Update();
+      glfwPollEvents();
     }
     
     void Application::CleanUp()
@@ -138,9 +156,6 @@ namespace Candy
       Vulkan::Shutdown();
       
       glfwTerminate();
-      CANDY_CORE_INFO("TERMINATED GLFW");
-      
-      
     }
     
     void Application::Close()
