@@ -48,15 +48,11 @@ namespace Candy::Graphics
     
 
     static void SetTarget(GraphicsContext* target);
-    static void BeginPass(RenderPass& renderPass);
-    static void BeginPass(RenderPass& renderPass, VkFramebuffer frameBuffer);
-    static bool NextPass();
     static void BeginViewportChain();
-    //static void BeginSelectionPass();
-    //static void BeginOverlayPass();
+  
     static void BeginEditorChain();
     static void EndChains();
-    static void EndViewportPass();
+    
    
     
     static void UpdateCameraData(const CameraBase& camera3D, const CameraBase& camera2D);
@@ -74,7 +70,6 @@ namespace Candy::Graphics
     static const RenderPass& GetOverlayPass();
     static const RenderPass& GetSelectionPass();
     static const RenderPass& GetUIPass();
-    //static const CameraData& GetCameraData();
     
     
     

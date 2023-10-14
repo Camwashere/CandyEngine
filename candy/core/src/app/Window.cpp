@@ -192,7 +192,6 @@ namespace Candy
     {
       CANDY_PROFILE_FUNCTION();
       Renderer::EndChains();
-      RenderCommand::EndRenderPass();
       RenderCommand::Submit();
       graphicsContext->Present();
     }

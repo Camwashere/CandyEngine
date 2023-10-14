@@ -18,11 +18,14 @@ namespace Candy::Graphics
     bool needsReset=true;
     bool needsActivePassUpdate=false;
     bool running=false;
-    
+    Math::Vector2i renderAreaOffset = Math::Vector2i::zero;
+    Math::Vector2u renderAreaSize = Math::Vector2u::zero;
   private:
     void UpdateActivePasses();
     bool IncrementActivePassIndex();
     void ResetPassIndex();
+    void BeginCurrentPass();
+    void EndCurrentPass();
     
   public:
     explicit RenderChain(std::string name);
@@ -32,6 +35,7 @@ namespace Candy::Graphics
   public:
     bool NeedsReset()const;
     std::string GetName()const;
+    void Refresh();
     void Begin();
     void End();
     bool IsRunning()const;
@@ -41,6 +45,8 @@ namespace Candy::Graphics
     void SetActivePass(uint32_t index, bool active=true);
     void ActivatePass(uint32_t index);
     void DisablePass(uint32_t index);
+    RenderPass& GetFirstActivePass();
+    RenderPass& GetLastActivePass();
     RenderPass& GetCurrentPass();
     uint32_t GetCurrentPassIndex()const;
     RenderPass& GetPassAt(uint32_t index);
@@ -51,6 +57,8 @@ namespace Candy::Graphics
     [[nodiscard]] size_t GetActivePassCount()const;
     [[nodiscard]] bool IsPassActive(uint32_t index)const;
     uint32_t AddPass(const std::string& name, const RenderPassConfig& config, bool startActive=true);
+    
+    friend class RenderChainScheduler;
     
     
   };

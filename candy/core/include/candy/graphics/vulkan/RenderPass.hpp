@@ -7,6 +7,7 @@
 #include <array>
 #include <candy/graphics/vulkan/RenderPassConfig.hpp>
 #include "RenderTarget.hpp"
+#include <candy/math/Vector.hpp>
 namespace Candy::Graphics
 {
   
@@ -29,6 +30,8 @@ namespace Candy::Graphics
     std::vector<VkClearValue> clearValues{};
     RenderPassConfig config;
     RenderTarget* currentTarget=nullptr;
+    Math::Vector2i renderAreaOffset=Math::Vector2i::zero;
+    Math::Vector2u renderAreaSize=Math::Vector2u::zero;
   
   public:
     RenderPass(std::string passName, RenderPassConfig configuration);
@@ -50,6 +53,6 @@ namespace Candy::Graphics
     [[nodiscard]] std::string GetName() const;
     [[nodiscard]] bool NeedsUniqueFrameBuffer() const;
     
-    
+    friend class RenderChain;
   };
 }

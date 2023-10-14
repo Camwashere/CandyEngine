@@ -39,24 +39,16 @@ namespace Candy::Graphics
     RenderCommand::BindDescriptorSets(pipelineLayout, set, {Renderer::GetCurrentFrame().GetDescriptorSet(set, renderPassIndex)}, sets[set].offsets);
    
   }
- /* void ShaderLayout::BakePipeline(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos)
-  {
-    CANDY_PROFILE_FUNCTION();
-    VkPipelineLayout pipelineLayout = BakePipelineLayout();
-    
-    pipeline.Bake(Renderer::GetRenderPass(settings.renderPassIndex), GetVertexBindingDescriptions(), GetVertexAttributeDescriptions(), createInfos, pipelineLayout);
-  }*/
+ 
   
   void ShaderLayout::BakePipelineLayout(uint32_t renderPassIndex)
   {
     CANDY_PROFILE_FUNCTION();
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-    //VkPipelineLayout pipelineLayout;
     
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     
     
-    //auto descriptorSetLayouts = BakeDescriptorSetLayouts();
     auto descriptorSetLayouts = ShaderLibrary::BakeDescriptorSetLayouts(renderPassIndex);
     
     
@@ -70,7 +62,6 @@ namespace Candy::Graphics
     
     CANDY_VULKAN_CHECK(vkCreatePipelineLayout(Vulkan::LogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout));
     Vulkan::DeletionQueue().Push(pipelineLayout);
-    //return pipelineLayout;
   }
   
   
@@ -266,9 +257,6 @@ namespace Candy::Graphics
     
     RenderCommand::SetUniform(prop.GlobalOffset(), prop.size, data);
   }
-  
-  
-  //VkPipeline ShaderLayout::GetPipeline()const{return pipeline;}
-  //VkPipelineLayout ShaderLayout::GetPipelineLayout()const{return pipeline.GetLayout();}
+
 
 }

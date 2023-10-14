@@ -98,45 +98,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     data.target = target;
   }
-  bool Renderer::NextPass()
-  {
-    if (data.chains.NextPass())
-    {
-      RenderCommand::EndRenderPass();
-      BeginPass(data.chains.GetCurrentRenderPass());
-      return true;
-    }
-    return false;
-  }
-  void Renderer::BeginPass(RenderPass& renderPass)
-  {
-    RenderTarget* target = renderPass.GetCurrentTarget();
-    CANDY_CORE_ASSERT(target != nullptr, "Render pass cannot begin with a null render target!");
-    BeginPass(renderPass, target->frameBuffer);
-  }
-  void Renderer::BeginPass(RenderPass& renderPass, VkFramebuffer frameBuffer)
-  {
-    data.currentChainKey = data.chains.GetCurrentKey();
-    Vector2u size = {data.target->swapChain->extent.width, data.target->swapChain->extent.height};
-    VkRenderPassBeginInfo beginPassInfo{};
-    beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    beginPassInfo.renderPass = renderPass;
-    beginPassInfo.framebuffer = frameBuffer;
-    beginPassInfo.renderArea.offset.x = 0;
-    beginPassInfo.renderArea.offset.y = 0;
-    beginPassInfo.renderArea.extent.width = size.width;
-    beginPassInfo.renderArea.extent.height = size.height;
-    
-    beginPassInfo.clearValueCount = renderPass.GetClearValues().size();
-    beginPassInfo.pClearValues = renderPass.GetClearValues().data();
-    
-    
-    RenderCommand::BeginRenderPass(&beginPassInfo);
-    
-    Math::Vector2u position = {0, 0};
-    RenderCommand::SetViewport(position, size);
-    
-  }
+
   void Renderer:: BeginViewportChain()
   {
     CANDY_PROFILE_FUNCTION();
@@ -145,18 +107,16 @@ namespace Candy::Graphics
     data.chains[viewportChainIndex, viewportPassIndex].SetRenderTarget(viewportTarget);
     data.chains[viewportChainIndex, overlayPassIndex].SetRenderTarget(viewportTarget);
     data.chains[viewportChainIndex, selectionPassIndex].SetRenderTarget(selectionTarget);
-    data.chains.Begin();
-    BeginPass(data.chains.GetCurrentRenderPass());
+    
+    data.chains.Begin({data.target->swapChain->extent.width, data.target->swapChain->extent.height});
     
   }
   void Renderer::BeginEditorChain()
   {
     CANDY_PROFILE_FUNCTION();
+    data.chains.SetSwapChainTarget(data.target->swapChain->GetCurrentFrameBuffer());
     bool success = data.chains.NextChain();
     CANDY_CORE_ASSERT(success, "Failed to begin editor chain");
-    RenderCommand::EndRenderPass();
-    VkFramebuffer framebuffer = data.target->swapChain->GetCurrentFrameBuffer();
-    BeginPass(data.chains.GetCurrentRenderPass(), framebuffer);
   }
   
   void Renderer::EndChains()
@@ -177,7 +137,7 @@ namespace Candy::Graphics
       RenderChainPassKey key = data.chains.GetCurrentKey();
       RenderScenePass(scene, key.passIndex);
     }
-    while(NextPass());
+    while(data.chains.NextPass());
     
     scene->ClearUpdateFlags();
   }
@@ -240,11 +200,6 @@ namespace Candy::Graphics
     
   }
   
-  
-  void Renderer::EndViewportPass()
-  {
-  
-  }
   
   VkRenderPass Renderer::GetCurrentPass()
   {

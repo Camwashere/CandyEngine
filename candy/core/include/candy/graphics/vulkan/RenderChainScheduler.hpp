@@ -13,8 +13,9 @@ namespace Candy::Graphics
     std::vector<RenderChain> renderChains;
     std::unordered_map<std::string, uint32_t> chainNameMap;
     uint32_t chainIndex=0;
-    
     bool needsReset=true;
+    RenderTarget swapChainTarget;
+    //VkFramebuffer currentFrameBuffer=nullptr;
     
   public:
     RenderChainScheduler();
@@ -26,7 +27,8 @@ namespace Candy::Graphics
   public:
     uint32_t AddChain(const std::string& name);
     RenderChainPassKey AddPass(const std::string& chainName, const std::string& passName, const RenderPassConfig& config, bool startActive=true);
-    void Begin();
+    void SetSwapChainTarget(FrameBuffer& swapChainFrameBuffer);
+    void Begin(const Math::Vector2u& renderAreaSize);
     void End();
     bool Next();
     bool NextChain();

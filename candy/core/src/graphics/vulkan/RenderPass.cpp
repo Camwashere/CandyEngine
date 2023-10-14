@@ -4,6 +4,8 @@
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/vulkan/DeletionQueue.hpp>
 #include <utility>
+#include "candy/graphics/RenderCommand.hpp"
+
 namespace Candy::Graphics
 {
   RenderPass::RenderPass(std::string  passName, RenderPassConfig  configuration) : name(std::move(passName)), config(std::move(configuration))
@@ -63,6 +65,7 @@ namespace Candy::Graphics
   void RenderPass::End()
   {
     state = RenderPassState::Stopped;
+    
   }
   
   bool RenderPass::IsRunning()const

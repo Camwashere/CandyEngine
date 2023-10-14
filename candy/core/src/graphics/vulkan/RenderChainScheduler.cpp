@@ -53,19 +53,37 @@ namespace Candy::Graphics
     key.passIndex = renderChains[it->second].AddPass(passName, config, startActive);
     return key;
   }
-  void RenderChainScheduler::Begin()
+  
+  void RenderChainScheduler::SetSwapChainTarget(FrameBuffer& swapChainFrameBuffer)
   {
+    swapChainTarget.frameBuffer = swapChainFrameBuffer;
+  }
+  void RenderChainScheduler::Begin(const Math::Vector2u& renderAreaSize)
+  {
+    //CANDY_CORE_ASSERT(frameBuffer != nullptr, "Cannot begin render chain scheduler with nullptr framebuffer!");
+    //swapChainTarget.frameBuffer = currentSwapChainFrameBuffer;
+    
+    for (auto& chain : renderChains)
+    {
+      chain.renderAreaSize = renderAreaSize;
+      chain.Refresh();
+    }
     needsReset=false;
     chainIndex=0;
+    renderChains.back().GetLastActivePass().SetRenderTarget(swapChainTarget);
     renderChains[chainIndex].Begin();
+    
   }
   void RenderChainScheduler::End()
   {
+    
     if (renderChains[chainIndex].IsRunning())
     {
+      //renderChains[chainIndex].GetLastActivePass().SetRenderTarget(swapChainTarget);
       renderChains[chainIndex].End();
     }
     needsReset=true;
+    //currentFrameBuffer=nullptr;
   }
   bool RenderChainScheduler::Next()
   {
@@ -93,13 +111,17 @@ namespace Candy::Graphics
     chainIndex++;
     if (chainIndex < renderChains.size())
     {
-      renderChains[previousChainIndex].End();
+      if (renderChains[previousChainIndex].IsRunning())
+      {
+        renderChains[previousChainIndex].End();
+      }
       renderChains[chainIndex].Begin();
       return true;
     }
     else if (chainIndex == renderChains.size())
     {
-      End();
+      CANDY_CORE_ERROR("Called next chain when there are no more chains left");
+      //End();
     }
     
     return false;
@@ -107,7 +129,12 @@ namespace Candy::Graphics
   }
   bool RenderChainScheduler::NextPass()
   {
+    if (needsReset)
+    {
+      return false;
+    }
     return renderChains[chainIndex].NextPass();
+   
     //currentKey.passIndex = renderChains[chainIndex].GetCurrentPassIndex();
     
     

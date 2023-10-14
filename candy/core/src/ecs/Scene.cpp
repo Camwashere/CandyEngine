@@ -211,27 +211,6 @@ namespace Candy::ECS
     viewportHeight = height;
   }
   
-  
-  void Scene::OnUpdateEditor()
-  {
-    CANDY_PROFILE_FUNCTION();
-    //systemScheduler.Update((void*)&camera);
-    //RenderScene();
-    
-  }
-  /*void Scene::RenderScene()
-  {
-    CANDY_PROFILE_FUNCTION();
-    RenderScene3D();
-    Renderer::BeginOverlayPass();
-    RenderScene2D();
-    Renderer::BeginSelectionPass();
-    Renderer3D::RenderSelectionBuffer();
-    Renderer2D::RenderSelectionBuffer();
-    
-    ClearUpdateFlags();
-    //updateFlag = SceneUpdateFlag::None;
-  }*/
   void Scene::RenderScene3D()
   {
     CANDY_PROFILE_FUNCTION();
@@ -324,21 +303,6 @@ namespace Candy::ECS
   }
   
   
-  
-  /*template<>
-  void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
-  {
-  }
-  
-  template<>
-  void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
-  {
-  }
-  
-  template<>
-  void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
-  {
-  }*/
   
   
   

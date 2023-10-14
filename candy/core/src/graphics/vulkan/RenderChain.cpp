@@ -1,5 +1,6 @@
 #include <candy/graphics/vulkan/RenderChain.hpp>
 #include "CandyPch.hpp"
+#include "candy/graphics/RenderCommand.hpp"
 #include <candy/graphics/vulkan/RenderPassConfig.hpp>
 #include <utility>
 namespace Candy::Graphics
@@ -17,19 +18,24 @@ namespace Candy::Graphics
   void RenderChain::Begin()
   {
     
+    running=true;
+    BeginCurrentPass();
+  }
+  
+  void RenderChain::Refresh()
+  {
     if (needsActivePassUpdate)
     {
       UpdateActivePasses();
     }
     ResetPassIndex();
     CANDY_CORE_ASSERT(! activePassIndices.empty());
-    running=true;
-    renderPasses[currentPassIndex].Begin();
   }
+  
   void RenderChain::End()
   {
     CANDY_CORE_ASSERT_MSG(activePassIndex == activePassIndices.size()-1, "RenderChain::End: activePassIndex != activePassIndices.size()-1, current active index: {0}", activePassIndex);
-    renderPasses[currentPassIndex].End();
+    EndCurrentPass();
     running = false;
   }
   bool RenderChain::IsRunning()const
@@ -52,6 +58,37 @@ namespace Candy::Graphics
     needsReset=false;
     activePassIndex=0;
     currentPassIndex=activePassIndices[activePassIndex];
+  }
+  
+  void RenderChain::BeginCurrentPass()
+  {
+    CANDY_CORE_ASSERT(running, "RenderChain::BeginCurrentPass: RenderChain is not running");
+    RenderPass& currentPass = renderPasses[currentPassIndex];
+    currentPass.Begin();
+    
+    CANDY_CORE_ASSERT(currentPass.currentTarget != nullptr, "RenderPass::Begin: currentTarget is nullptr");
+    
+    VkRenderPassBeginInfo beginPassInfo{};
+    beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    beginPassInfo.renderPass = currentPass;
+    beginPassInfo.framebuffer = currentPass.currentTarget->frameBuffer;
+    beginPassInfo.renderArea.offset.x = renderAreaOffset.x;
+    beginPassInfo.renderArea.offset.y = renderAreaOffset.y;
+    beginPassInfo.renderArea.extent.width = renderAreaSize.width;
+    beginPassInfo.renderArea.extent.height = renderAreaSize.height;
+    
+    beginPassInfo.clearValueCount = currentPass.clearValues.size();
+    beginPassInfo.pClearValues = currentPass.clearValues.data();
+    
+    RenderCommand::BeginRenderPass(&beginPassInfo);
+    
+    Math::Vector2u position = {0, 0};
+    RenderCommand::SetViewport(position, renderAreaSize);
+  }
+  void RenderChain::EndCurrentPass()
+  {
+    renderPasses[currentPassIndex].End();
+    RenderCommand::EndRenderPass();
   }
   bool RenderChain::IncrementActivePassIndex()
   {
@@ -106,6 +143,17 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     return renderPasses[currentPassIndex];
   }
+  
+  RenderPass& RenderChain::GetFirstActivePass()
+  {
+    CANDY_PROFILE_FUNCTION();
+    return renderPasses[activePassIndices[0]];
+  }
+  RenderPass& RenderChain::GetLastActivePass()
+  {
+    return renderPasses[activePassIndices.back()];
+  }
+  
   const RenderPass& RenderChain::GetPassAt(uint32_t index)const
   {
     CANDY_PROFILE_FUNCTION();
@@ -134,7 +182,26 @@ namespace Candy::Graphics
   bool RenderChain::NextPass()
   {
     CANDY_PROFILE_FUNCTION();
-    return IncrementActivePassIndex();
+    if (needsReset)
+    {
+      return false;
+    }
+    if (activePassIndex+1 >= activePassIndices.size())
+    {
+      End();
+      needsReset=true;
+      running=false;
+      return false;
+    }
+    else
+    {
+      EndCurrentPass();
+      activePassIndex++;
+      currentPassIndex = activePassIndices[activePassIndex];
+      BeginCurrentPass();
+      return true;
+    }
+    
   }
   void RenderChain::SetActivePass(uint32_t index, bool active)
   {
