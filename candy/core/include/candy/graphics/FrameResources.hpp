@@ -7,6 +7,7 @@
 #include <candy/graphics/vulkan/ImageView.hpp>
 #include <candy/graphics/FrameBuffer.hpp>
 #include <candy/graphics/PixelBuffer.hpp>
+#include <candy/graphics/vulkan/RenderTarget.hpp>
 namespace Candy::Graphics
 {
   
@@ -19,15 +20,18 @@ namespace Candy::Graphics
   {
     VkDescriptorSet viewportDescriptor = VK_NULL_HANDLE;
     VkDescriptorSet viewportDepthDescriptor = VK_NULL_HANDLE;
-    Image viewportImage;
-    Image selectionImage;
-    Image depthImage;
-    ImageView viewportImageView;
-    ImageView selectionImageView;
-    ImageView depthImageView;
-    FrameBuffer viewportFrameBuffer;
-    FrameBuffer selectionFrameBuffer;
-    PixelBuffer* selectionPixelBuffer;
+    //RenderTarget viewportTarget;
+    //RenderTarget selectionTarget;
+    //Image viewportImage;
+    //Image selectionImage;
+    //Image depthImage;
+    //ImageView viewportImageView;
+    //ImageView selectionImageView;
+    //ImageView depthImageView;
+    //FrameBuffer viewportFrameBuffer;
+    
+    //FrameBuffer selectionFrameBuffer;
+    //PixelBuffer* selectionPixelBuffer;
   };
   struct FrameResources
   {

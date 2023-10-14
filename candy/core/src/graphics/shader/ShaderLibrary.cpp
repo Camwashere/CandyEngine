@@ -5,9 +5,11 @@
 #include <filesystem>
 #include <candy/graphics/Vulkan.hpp>
 #include "candy/utils/IDManager.hpp"
+#include "CandyEngine.hpp"
 #include <candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/FrameResources.hpp>
+#include <candy/project/ProjectManager.hpp>
 namespace Candy::Graphics
 {
   using namespace Utils;
@@ -18,6 +20,12 @@ namespace Candy::Graphics
     bool initialized=false;
     bool logInitialization=true;
     
+    std::filesystem::path internalShaderDirectory;
+    std::filesystem::path internalSourceDirectory;
+    std::filesystem::path internalProfileDirectory;
+    std::filesystem::path internalCacheDirectory;
+    
+    
     IDManager<uint32_t> idManager;
     std::unordered_map<std::string, uint32_t> nameToIDMap;
     std::vector<SharedPtr<Shader>> shaders;
@@ -26,81 +34,23 @@ namespace Candy::Graphics
   
   static ShaderLibraryData data;
   
-  std::string ShaderLibrary::DirectoryTypeToString(DirectoryType type)
-  {
-    switch (type)
-    {
-      case InternalCache:
-        return "InternalCache";
-      case InternalSource:
-        return "InternalSource";
-      case ProjectCache:
-        return "ProjectCache";
-      case ProjectSource:
-        return "ProjectSource";
-      case InternalDirs:
-        return "InternalDirectories";
-      case ProjectDirs:
-        return "ProjectDirectories";
-      case CacheDirs:
-        return "CacheDirectories";
-      case SourceDirs:
-        return "SourceDirectories";
-      case AllDirs:
-        return "AllDirectories";
-      default:
-        return "Unknown";
-    }
-  }
   
-  static bool CheckOrInitDirectory(const std::filesystem::path& path, bool createIfNeeded, ShaderLibrary::DirectoryType type)
+  
+  
+  
+  bool ShaderLibrary::Init()
   {
     CANDY_PROFILE_FUNCTION();
-    if (std::filesystem::exists(path))
-    {
-      if (data.logInitialization)
-      {
-        CANDY_CORE_INFO("{0} with path: {1} exists!", ShaderLibrary::DirectoryTypeToString(type), path.string());
-      }
-      
-      return true;
-    }
-    else
-    {
-      if (createIfNeeded)
-      {
-        if (std::filesystem::create_directories(path))
-        {
-          if (data.logInitialization)
-          {
-            CANDY_CORE_INFO("{0} with path {1} created!", ShaderLibrary::DirectoryTypeToString(type), path.string());
-          }
-          return true;
-        }
-        else
-        {
-          CANDY_CORE_ERROR("Failed to create {0} with path {1}!", ShaderLibrary::DirectoryTypeToString(type), path.string());
-          return false;
-        }
-        
-      }
-      else
-      {
-        CANDY_CORE_ERROR("{0} with path {1} does not exist and create directories has been set to false", ShaderLibrary::DirectoryTypeToString(type), path.string());
-        return false;
-      }
-    }
-  }
-  
-  bool ShaderLibrary::Init(const ShaderLibrarySettings& libSettings, bool createDirectoriesIfNeeded)
-  {
-    CANDY_PROFILE_FUNCTION();
-    data.settings = libSettings;
+    data.settings = ShaderLibrarySettings::Load();
+    data.internalShaderDirectory = CandyEngine::GetInternalAssetsDirectory() / "shaders";
+    data.internalSourceDirectory = data.internalShaderDirectory / "sources";
+    data.internalProfileDirectory = data.internalShaderDirectory / "profiles";
+    data.internalCacheDirectory = data.internalShaderDirectory / "cache";
     
-    data.initialized = CheckOrInitDirectory(data.settings.internalCacheDirectory, createDirectoriesIfNeeded, DirectoryType::InternalCache) &&
-    CheckOrInitDirectory(data.settings.internalSourceDirectory, createDirectoriesIfNeeded, DirectoryType::InternalSource) &&
-    CheckOrInitDirectory(data.settings.projectCacheDirectory, createDirectoriesIfNeeded, DirectoryType::ProjectCache) &&
-    CheckOrInitDirectory(data.settings.projectSourceDirectory, createDirectoriesIfNeeded, DirectoryType::ProjectSource);
+   
+    
+    
+    data.initialized = std::filesystem::exists(data.internalShaderDirectory);
     
     if (data.initialized)
     {
@@ -210,20 +160,17 @@ namespace Candy::Graphics
   
   const std::filesystem::path& ShaderLibrary::GetInternalCacheDirectory()
   {
-    return data.settings.internalCacheDirectory;
+    return data.internalCacheDirectory;
   }
   const std::filesystem::path& ShaderLibrary::GetInternalSourceDirectory()
   {
-    return data.settings.internalSourceDirectory;
+    return data.internalSourceDirectory;
   }
-  const std::filesystem::path& ShaderLibrary::GetProjectCacheDirectory()
+  const std::filesystem::path& ShaderLibrary::GetInternalProfileDirectory()
   {
-    return data.settings.projectCacheDirectory;
+    return data.internalProfileDirectory;
   }
-  const std::filesystem::path& ShaderLibrary::GetProjectSourceDirectory()
-  {
-    return data.settings.projectSourceDirectory;
-  }
+  
   
   const ShaderCompilationSettings& ShaderLibrary::GetCompilationSettings()
   {

@@ -7,8 +7,8 @@
 #include <c4/format.hpp>
 #include <candy/app/Application.hpp>
 #include <candy/graphics/model/MeshData.hpp>
-
-
+#include <CandyEngine.hpp>
+#include <candy/project/ProjectManager.hpp>
 namespace Candy
 {
   size_t to_chars(c4::substr buf, const Color& v)
@@ -354,11 +354,13 @@ namespace Candy::ECS
       auto textureValueNode = meshRendererComponent["Texture"];
       
       CANDY_CORE_ASSERT(textureValueNode.is_keyval() || textureValueNode.is_val());
-      std::string texturePath;
-      textureValueNode >> texturePath;
-      CANDY_CORE_INFO("Texture path: {}", texturePath);
-      if (!texturePath.empty())
+      std::string texturePathStr;
+      textureValueNode >> texturePathStr;
+      if (!texturePathStr.empty())
       {
+        std::filesystem::path assetsPath = ProjectManager::GetAssetsDirectory();
+        std::filesystem::path texturePath = assetsPath / texturePathStr;
+        CANDY_CORE_INFO("Texture path: {0}, Assets Path {1}, Texture string: {2}", texturePath.string(), assetsPath.string(), texturePathStr);
         auto& texComp = deserializedEntity.AddComponent<MeshRendererComponent>();
         texComp.texture = Texture::Create(texturePath);
       }
@@ -373,8 +375,9 @@ namespace Candy::ECS
     if (spriteRendererComponent.has_key())
     {
       auto& spriteRendererComp = deserializedEntity.AddComponent<SpriteRendererComponent>();
-      std::string texturePath;
-      spriteRendererComponent["Texture"] >> texturePath;
+      std::string texturePathStr;
+      spriteRendererComponent["Texture"] >> texturePathStr;
+      std::filesystem::path texturePath = ProjectManager::GetAssetsDirectory() / texturePathStr;
       if (!texturePath.empty())
       {
         

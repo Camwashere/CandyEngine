@@ -129,6 +129,20 @@ namespace Candy::Graphics
     config.attachments.push_back(attachment);
     return *this;
   }
+  RenderPassBuilder& RenderPassBuilder::AddClearValue(VkClearValue value)
+  {
+    config.defaultClearValues.push_back(value);
+    return *this;
+  }
+  RenderPassBuilder& RenderPassBuilder::AddStandardClearValues()
+  {
+    std::vector<VkClearValue> clearValues(2);
+    clearValues[0].color = {0.1f, 0.1f, 0.1f, 0.1f};
+    clearValues[1].depthStencil = {1.0f, 0};
+    config.defaultClearValues.push_back(clearValues[0]);
+    config.defaultClearValues.push_back(clearValues[1]);
+    return *this;
+  }
   /*SubpassBuilder& RenderPassBuilder::AddSubpass(VkPipelineBindPoint bindPoint)
   {
     subpasses.emplace_back(bindPoint);
@@ -200,7 +214,9 @@ namespace Candy::Graphics
   RenderPassConfig RenderPassBuilder::FastBuild(VkFormat colorAttachmentFormat, VkImageLayout finalLayout)
   {
     CANDY_PROFILE_FUNCTION();
-    
+    std::vector<VkClearValue> clearValues(2);
+    clearValues[0].color = {0.1f, 0.1f, 0.1f, 0.1f};
+    clearValues[1].depthStencil = {1.0f, 0};
     return RenderPassBuilder().AddAttachment
     (
       PassAttachmentBuilder(colorAttachmentFormat, VK_IMAGE_LAYOUT_UNDEFINED, finalLayout)
@@ -222,6 +238,8 @@ namespace Candy::Graphics
       .SetDepthAttachment(1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
     )
     .AddDefaultDependency()
+    .AddClearValue(clearValues[0])
+    .AddClearValue(clearValues[1])
     .GetConfig();
   }
 }

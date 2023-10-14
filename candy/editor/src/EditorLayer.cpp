@@ -6,12 +6,13 @@
 #include <candy/event/Events.hpp>
 #include <imgui/imgui.h>
 #include <imguizmo/ImGuizmo.h>
-#include <candy/app/ProjectSerializer.hpp>
+#include "candy/project/ProjectSerializer.hpp"
 #include <candy/ecs/SceneSerializer.hpp>
 #include <candy/utils/FileUtils.hpp>
 #include <utility>
 #include <candy/graphics/model/ModelLoader.hpp>
 #include <candy/graphics/model/MeshPrimitive.hpp>
+#include <candy/project/ProjectManager.hpp>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
 using namespace Candy::ECS;
@@ -25,9 +26,10 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     gizmo = CreateSharedPtr<Gizmo>();
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
-    OpenScene(Project::GetActive()->GetConfiguration().startScene);
+    OpenScene(ProjectManager::GetActiveProject()->GetStartScenePath());
+    //OpenScene(Project::GetActive()->GetConfiguration().startScene);
     
-    contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>("assets");
+    contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(ProjectManager::GetAssetsDirectory());
     
     
     
@@ -237,7 +239,8 @@ namespace Candy
   void EditorLayer::SaveProject()
   {
     CANDY_PROFILE_FUNCTION();
-    Project::SaveActive();
+    //Project::SaveActive();
+    ProjectManager::SaveProject();
     SaveScene();
     CANDY_CORE_INFO("Saved project");
   }
@@ -257,13 +260,13 @@ namespace Candy
       OpenScene(filepath);
     }
   }
-  void EditorLayer::OpenScene(const std::filesystem::path& path)
+  bool EditorLayer::OpenScene(const std::filesystem::path& path)
   {
     CANDY_PROFILE_FUNCTION();
-    if (path.extension().string() != ".scene")
+    if (path.extension().string() != ".scene" || !std::filesystem::exists(path))
     {
       CANDY_WARN("Could not load {0} - not a scene file", path.filename().string());
-      return;
+      return false;
     }
     
     SharedPtr<Scene> newScene = Scene::Create();
@@ -272,7 +275,13 @@ namespace Candy
     {
       activeScene = newScene;
       scenePanel->SetContext(activeScene);
+      return true;
       
+    }
+    else
+    {
+      CANDY_CORE_ERROR("Could not load scene file {0}", path.filename().string());
+      return false;
     }
   }
   void EditorLayer::SaveScene()

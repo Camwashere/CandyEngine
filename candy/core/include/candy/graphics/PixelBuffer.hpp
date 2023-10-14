@@ -10,7 +10,7 @@ namespace Candy::Graphics
     void* data;
     Math::Vector2u imageSize;
   public:
-    PixelBuffer(const Math::Vector2u& imageSize);
+    explicit PixelBuffer(const Math::Vector2u& imageSize);
     ~PixelBuffer();
     
   public:

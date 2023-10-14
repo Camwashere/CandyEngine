@@ -29,25 +29,33 @@ namespace Candy::Graphics
   {
 
   public:
+    static constexpr uint8_t viewportChainIndex=0;
+    
     static constexpr uint8_t viewportPassIndex=0;
     static constexpr uint8_t overlayPassIndex=1;
     static constexpr uint8_t selectionPassIndex=2;
-    static constexpr uint8_t uiPassIndex=3;
+    
+    
+    static constexpr uint8_t editorChainIndex=1;
+    static constexpr uint8_t uiPassIndex=0;
     
     static void BeginScene(const PerspectiveCamera& camera);
     static void RenderScene(const SharedPtr<ECS::Scene>& scene);
+    static void RenderScenePass(const SharedPtr<ECS::Scene>& scene, uint8_t passIndex);
     static void EndScene();
-    //static void Start();
     static void Init(VkSurfaceFormatKHR surfaceFormat);
     
     
 
     static void SetTarget(GraphicsContext* target);
-    static void BeginPass();
-    static void BeginViewportPass();
-    static void BeginSelectionPass();
-    static void BeginOverlayPass();
-    static void BeginUIPass();
+    static void BeginPass(RenderPass& renderPass);
+    static void BeginPass(RenderPass& renderPass, VkFramebuffer frameBuffer);
+    static bool NextPass();
+    static void BeginViewportChain();
+    //static void BeginSelectionPass();
+    //static void BeginOverlayPass();
+    static void BeginEditorChain();
+    static void EndChains();
     static void EndViewportPass();
    
     

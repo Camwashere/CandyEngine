@@ -8,6 +8,7 @@ namespace Candy
     private:
       VkDescriptorPool uiPool;
       bool blockEvents=false;
+      std::string iniPath;
     
     public:
       UILayer();

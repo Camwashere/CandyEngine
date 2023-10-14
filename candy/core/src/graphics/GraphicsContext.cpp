@@ -59,53 +59,58 @@ namespace Candy::Graphics
       
       for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
       {
-        ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportDescriptor);
-        ImGui_ImplVulkan_RemoveTexture(frames[i].viewportData.viewportDepthDescriptor);
-        
-        frames[i].viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(frames[i].viewportData.viewportImageView.GetSampler(), frames[i].viewportData.viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        frames[i].viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(frames[i].viewportData.depthImageView.GetSampler(), frames[i].viewportData.depthImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        frames[i].viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(viewportTarget.imageResources[0].imageView.GetSampler(), viewportTarget.imageResources[0].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        frames[i].viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(viewportTarget.imageResources[1].imageView.GetSampler(), viewportTarget.imageResources[1].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       }
   }
   void GraphicsContext::CreateViewport()
   {
     CANDY_PROFILE_FUNCTION();
     Vector2u size = {swapChain->extent.width, swapChain->extent.height};
-      for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
-      {
-        CreateDepthResources(i, size);
-        frames[i].viewportData.viewportImage.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-        frames[i].viewportData.viewportImageView.Set(frames[i].viewportData.viewportImage);
-        
-        frames[i].viewportData.selectionImage.Create(size, VK_FORMAT_R32_SINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-        frames[i].viewportData.selectionImageView.Set(frames[i].viewportData.selectionImage);
-        
-        frames[i].viewportData.viewportFrameBuffer.Set(Renderer::GetViewportPass(), size, {frames[i].viewportData.viewportImageView, frames[i].viewportData.depthImageView});
-        frames[i].viewportData.selectionFrameBuffer.Set(Renderer::GetSelectionPass(), size, {frames[i].viewportData.selectionImageView, frames[i].viewportData.depthImageView});
-        
-        RenderCommand::TransitionImageLayout(frames[i].viewportData.viewportImage, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        RenderCommand::TransitionImageLayout(frames[i].viewportData.selectionImage, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        
-        frames[i].viewportData.selectionPixelBuffer = new PixelBuffer(size);
-      }
+    VkFormat depthFormat = GraphicsContext::FindDepthFormat();
+    
+    
+    viewportTarget.imageResources.resize(2);
+    selectionTarget.imageResources.resize(1);
+    
+    viewportTarget.imageResources[0].image.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    viewportTarget.imageResources[0].imageView.Set(viewportTarget.imageResources[0].image);
+    
+    viewportTarget.imageResources[1].image.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    viewportTarget.imageResources[1].imageView.Set(viewportTarget.imageResources[1].image, VK_IMAGE_ASPECT_DEPTH_BIT);
+    
+    
+    
+    selectionTarget.imageResources[0].image.Create(size, VK_FORMAT_R32_SINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    selectionTarget.imageResources[0].imageView.Set(selectionTarget.imageResources[0].image);
+    
+    viewportTarget.frameBuffer.Set(Renderer::GetViewportPass(), size, {viewportTarget.imageResources[0].imageView, viewportTarget.imageResources[1].imageView});
+    selectionTarget.frameBuffer.Set(Renderer::GetSelectionPass(), size, {selectionTarget.imageResources[0].imageView, viewportTarget.imageResources[1].imageView});
+    
+    RenderCommand::TransitionImageLayout(viewportTarget.imageResources[0].image, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    RenderCommand::TransitionImageLayout(selectionTarget.imageResources[0].image, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    RenderCommand::TransitionImageLayout(viewportTarget.imageResources[1].image, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    
+    
+    selectionPixelBuffer = new PixelBuffer(size);
   }
   
   void GraphicsContext::CleanViewport()
   {
     CANDY_PROFILE_FUNCTION();
-    for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
-    {
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImage);
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.depthImageView);
-      
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.selectionFrameBuffer);
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.selectionImage);
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.selectionImageView);
-      Vulkan::DeletionQueue().Delete(frames[i].viewportData.selectionPixelBuffer);
-      delete frames[i].viewportData.selectionPixelBuffer;
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.viewportFrameBuffer);
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.viewportImage);
-      Vulkan::DeletionQueue().Delete(&frames[i].viewportData.viewportImageView);
-    }
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[1].image);
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[1].imageView);
+    
+    Vulkan::DeletionQueue().Delete(&selectionTarget.frameBuffer);
+    Vulkan::DeletionQueue().Delete(&selectionTarget.imageResources[0].image);
+    Vulkan::DeletionQueue().Delete(&selectionTarget.imageResources[0].imageView);
+    
+    Vulkan::DeletionQueue().Delete(selectionPixelBuffer);
+    delete selectionPixelBuffer;
+    
+    Vulkan::DeletionQueue().Delete(&viewportTarget.frameBuffer);
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[0].image);
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[0].imageView);
    
   }
   
@@ -227,11 +232,6 @@ namespace Candy::Graphics
       }
     }
 
-    /*void GraphicsContext::RebuildSwapChain(VkRenderPass renderPass)
-    {
-      CANDY_PROFILE_FUNCTION();
-      swapChain->Rebuild(renderPass);
-    }*/
     
   
   void GraphicsContext::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
@@ -242,11 +242,6 @@ namespace Candy::Graphics
     frameBufferResized = true;
   }
   
-  /*void GraphicsContext::CleanSwapChain()
-  {
-    CANDY_PROFILE_FUNCTION();
-      swapChain->Clean();
-  }*/
   
   SwapChain& GraphicsContext::GetSwapChain()
   {
@@ -285,15 +280,7 @@ namespace Candy::Graphics
     SwapChainSupportDetails swapChainSupport = Vulkan::PhysicalDevice().QuerySwapChainSupport(surface);
     return Vulkan::ChooseSwapSurfaceFormat(swapChainSupport.formats);
   }
- 
-  void GraphicsContext::CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size)
-  {
-    CANDY_PROFILE_FUNCTION();
-    VkFormat depthFormat = GraphicsContext::FindDepthFormat();
-    GetFrame(frameIndex).viewportData.depthImage.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
-    GetFrame(frameIndex).viewportData.depthImageView.Set(GetFrame(frameIndex).viewportData.depthImage, VK_IMAGE_ASPECT_DEPTH_BIT);
-    RenderCommand::TransitionImageLayout(GetFrame(frameIndex).viewportData.depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-  }
+  
   void GraphicsContext::UpdateFrameIndex()
   {
     CANDY_PROFILE_FUNCTION();

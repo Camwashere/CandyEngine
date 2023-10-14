@@ -19,6 +19,8 @@ namespace Candy::Graphics
     std::vector<SubpassConfig> subpasses;
     std::vector<VkSubpassDependency> dependencies;
     
+    std::vector<VkClearValue> defaultClearValues;
+    
     bool needsUniqueFrameBuffer=false;
   };
   class RenderPassBuilder;
@@ -27,11 +29,7 @@ namespace Candy::Graphics
   {
   private:
     SubpassConfig config;
-    /*VkPipelineBindPoint pipelineBindPoint;
-    std::vector<VkAttachmentReference> colorAttachments;
-    std::optional<VkAttachmentReference> depthAttachment;
-    std::vector<VkAttachmentReference> inputAttachments;
-    std::vector<uint32_t> preserveAttachments;*/
+    
     
   public:
     explicit SubpassBuilder(VkPipelineBindPoint bindPoint);
@@ -86,7 +84,9 @@ namespace Candy::Graphics
     
     RenderPassBuilder& AddAttachment(const VkAttachmentDescription& attachment);
     
-    //SubpassBuilder& AddSubpass(VkPipelineBindPoint bindPoint);
+    RenderPassBuilder& AddClearValue(VkClearValue value);
+    
+    RenderPassBuilder& AddStandardClearValues();
     
     RenderPassBuilder& AddSubpass(const SubpassBuilder& subpass);
     

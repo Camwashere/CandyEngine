@@ -47,7 +47,8 @@ namespace Candy
     mousePos.y -= bounds.min.y;
     Math::Vector2 viewSize = bounds.max - bounds.min;
     mousePos.y = viewSize.y - mousePos.y;
-    Math::Vector2u imageSize = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->GetImageSize();
+    //Math::Vector2u imageSize = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->GetImageSize();
+    Math::Vector2u imageSize = Vulkan::GetCurrentContext().selectionPixelBuffer->GetImageSize();
     float scaleX = (float)imageSize.width / viewSize.x;      // original image width / displayed width
     float scaleY = (float)imageSize.height / viewSize.y;      // original image height / displayed height
     
@@ -57,7 +58,8 @@ namespace Candy
     if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)imageSize.width && mouseY < (int)imageSize.height)
     {
 
-      int pixelData = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->ReadPixel(mouseX, mouseY);
+      //int pixelData = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->ReadPixel(mouseX, mouseY);
+      int pixelData = Vulkan::GetCurrentContext().selectionPixelBuffer->ReadPixel(mouseX, mouseY);
       
       hoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, parent->activeScene.get());
     }

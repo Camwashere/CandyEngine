@@ -6,7 +6,7 @@
 #include "../FrameBuffer.hpp"
 #include <array>
 #include <candy/graphics/vulkan/RenderPassConfig.hpp>
-
+#include "RenderTarget.hpp"
 namespace Candy::Graphics
 {
   
@@ -26,8 +26,9 @@ namespace Candy::Graphics
     VkRenderPass renderPass = VK_NULL_HANDLE;
     std::string name;
     RenderPassState state = RenderPassState::None;
-    
+    std::vector<VkClearValue> clearValues{};
     RenderPassConfig config;
+    RenderTarget* currentTarget=nullptr;
   
   public:
     RenderPass(std::string passName, RenderPassConfig configuration);
@@ -36,6 +37,10 @@ namespace Candy::Graphics
     operator VkRenderPass() const; //NOLINT
   
   public:
+    [[nodiscard]] const std::vector<VkClearValue>& GetClearValues()const;
+    void SetClearValues(const std::vector<VkClearValue>& values);
+    void SetRenderTarget(RenderTarget& target);
+    RenderTarget* GetCurrentTarget();
     void Begin();
     void End();
     [[nodiscard]] bool IsRunning()const;

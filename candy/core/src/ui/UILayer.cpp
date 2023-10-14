@@ -8,7 +8,8 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <candy/graphics/vulkan/RenderPass.hpp>
 #include <imguizmo/ImGuizmo.h>
-
+#include <CandyEngine.hpp>
+#include <candy/project/ProjectManager.hpp>
 namespace Candy
 {
   using namespace Graphics;
@@ -53,22 +54,25 @@ namespace Candy
     
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    io.IniFilename = "config/ui/imgui.ini";
+    
+    std::filesystem::path projectConfigPath = ProjectManager::GetConfigDirectory() / "ui/imgui.ini";
+    iniPath = projectConfigPath.string();
+    io.IniFilename = iniPath.c_str();
+    io.IniSavingRate = 5.0f;
     
     float fontSize = 18.0f;
-    io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", fontSize);
-    io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", fontSize);
+    io.Fonts->AddFontFromFileTTF(std::filesystem::path(CandyEngine::GetInternalAssetsDirectory() / "fonts/opensans/OpenSans-Bold.ttf").string().c_str(), fontSize);
+    io.FontDefault = io.Fonts->AddFontFromFileTTF(std::filesystem::path(CandyEngine::GetInternalAssetsDirectory() / "fonts/opensans/OpenSans-Regular.ttf").string().c_str(), fontSize);
     
     //this initializes imgui for glfw
     
     GLFWwindow* window = Application::GetMainWindowReference().handle;
     ImGui_ImplGlfw_InitForVulkan(window, true);
-    
-    //ImGui_ImplSDL2_InitForVulkan(_window);
     
     //this initializes imgui for Vulkan
     ImGui_ImplVulkan_InitInfo init_info = {};
@@ -98,12 +102,13 @@ namespace Candy
     
     // Clear font texture from cpu memory
     ImGui_ImplVulkan_DestroyFontUploadObjects();
-    
+    RenderTarget& viewportTarget = Vulkan::GetCurrentContext().viewportTarget;
+    ImageResource& viewportResource = viewportTarget.imageResources[0];
+    ImageResource& depthResource = viewportTarget.imageResources[1];
     for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
     {
-      Renderer::GetFrame(i).viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.viewportImageView.GetSampler(), Renderer::GetFrame(i).viewportData.viewportImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-      //Renderer::GetFrame(i).viewportData.viewportSelectionDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.selectionImageView.GetSampler(), Renderer::GetFrame(i).viewportData.selectionImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-      Renderer::GetFrame(i).viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(Renderer::GetFrame(i).viewportData.depthImageView.GetSampler(), Renderer::GetFrame(i).viewportData.depthImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      Renderer::GetFrame(i).viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(viewportResource.imageView.GetSampler(), viewportResource.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      Renderer::GetFrame(i).viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(depthResource.imageView.GetSampler(), depthResource.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
     
   }
@@ -115,8 +120,6 @@ namespace Candy
     
     vkDestroyDescriptorPool(Vulkan::LogicalDevice(), uiPool, nullptr);
     ImGui_ImplVulkan_Shutdown();
-    //ImGui::DestroyContext();
-    
   }
   
   void UILayer::OnEvent(Events::Event &e)
@@ -140,7 +143,7 @@ namespace Candy
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
-    Renderer::BeginUIPass();
+    Renderer::BeginEditorChain();
     //Renderer::BeginGumPass();
     
   

@@ -185,12 +185,13 @@ namespace Candy
       CANDY_PROFILE_FUNCTION();
       graphicsContext->NextSwapChainImage();
       graphicsContext->GetCurrentFrame().commandPool.BeginCommandBuffer(0);
-      Renderer::BeginViewportPass();
+      Renderer::BeginViewportChain();
     }
     
     void Window::EndFrame()
     {
       CANDY_PROFILE_FUNCTION();
+      Renderer::EndChains();
       RenderCommand::EndRenderPass();
       RenderCommand::Submit();
       graphicsContext->Present();

@@ -53,7 +53,6 @@ namespace Candy
         ~Window();
         void StartFrame();
         void EndFrame();
-        void OnUpdate();
         void SetVSync(bool enabled);
         void OnWindowResize(Events::WindowResizeEvent& event);
         void OnFrameBufferResize(Events::FrameBufferResizeEvent& event);

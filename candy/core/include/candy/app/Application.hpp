@@ -6,7 +6,7 @@
 #include "LayerStack.hpp"
 #include <candy/ui/UILayer.hpp>
 #include <candy/utils/Version.hpp>
-#include "Project.hpp"
+#include "candy/project/Project.hpp"
 int main(int argc, char **argv);
 
 namespace Candy
@@ -31,7 +31,6 @@ namespace Candy
   {
   private:
     ApplicationData appData;
-    SharedPtr<Project> project;
     UniquePtr<Window> mainWindow;
     bool isRunning;
     bool minimized;

@@ -19,17 +19,24 @@ namespace Candy::Graphics
   
   struct ShaderLibrarySettings
   {
+  private:
+    static ShaderLibrarySettings Load();
+    
+  public:
     ShaderCompilationSettings compilationSettings;
     
-    std::filesystem::path internalCacheDirectory;
-    std::filesystem::path internalSourceDirectory;
-    std::filesystem::path projectCacheDirectory;
-    std::filesystem::path projectSourceDirectory;
+    //std::filesystem::path internalCacheDirectory;
+    //std::filesystem::path internalSourceDirectory;
+    //std::filesystem::path projectCacheDirectory;
+    //std::filesystem::path projectSourceDirectory;
     
     
-    static ShaderLibrarySettings Default();
-    static ShaderLibrarySettings Load(const std::filesystem::path& filepath);
-    static void Save(const std::filesystem::path& filepath, const ShaderLibrarySettings& settings);
+    //static ShaderLibrarySettings Default();
+    //static ShaderLibrarySettings Load();
+    //static void Save(const std::filesystem::path& filepath, const ShaderLibrarySettings& settings);
+    
+  private:
+    friend class ShaderLibrary;
     
   };
 }

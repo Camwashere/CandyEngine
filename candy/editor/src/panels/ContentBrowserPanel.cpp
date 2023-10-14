@@ -4,6 +4,7 @@
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_vulkan.h"
 #include <candy/graphics/Vulkan.hpp>
+#include <CandyEngine.hpp>
 namespace Candy
 {
   using namespace Graphics;
@@ -12,8 +13,8 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     //directoryImage = new Texture("assets/icons/DirectoryIcon.png");
     //fileImage = new Texture("assets/icons/FileIcon.png");
-    directoryIcon = Texture::Create("assets/icons/DirectoryIcon.png");
-    fileIcon = Texture::Create("assets/icons/FileIcon.png");
+    directoryIcon = Texture::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/DirectoryIcon.png");
+    fileIcon = Texture::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/FileIcon.png");
     descriptorSets.resize(2);
     
     //directoryIcon = CreateSharedPtr<ImageView>();

@@ -14,7 +14,6 @@ int main(int argc, char** argv)
   ApplicationCommandLineArgs commandLineArgs{argc, argv};
   appData.commandLineArgs = commandLineArgs;
   Application app(appData);
-  SharedPtr<Project> proj = Project::Load("projects/TestProject/testProject.candy");
   
   EditorLayer editorLayer;
   app.PushLayer(&editorLayer);

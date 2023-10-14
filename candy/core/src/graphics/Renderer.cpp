@@ -1,5 +1,4 @@
 #include <candy/graphics/Renderer.hpp>
-#include "candy/graphics/shader/Shader.hpp"
 #include <candy/graphics/vulkan/RenderPass.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
 #include "candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp"
@@ -13,9 +12,10 @@
 #include <candy/graphics/Renderer3D.hpp>
 #include "candy/graphics/font/Font.hpp"
 #include "candy/graphics/Renderer2D.hpp"
+#include "CandyEngine.hpp"
 #include <candy/graphics/vulkan/RenderPassConfig.hpp>
-#include <candy/graphics/vulkan/RenderPassScheduler.hpp>
-
+#include <candy/graphics/vulkan/RenderChainScheduler.hpp>
+#include <CandyPch.hpp>
 namespace Candy::Graphics
 {
   using namespace Math;
@@ -47,9 +47,9 @@ namespace Candy::Graphics
     GraphicsContext* target=nullptr;
     CameraData cameraData;
     
-    RenderPassScheduler renderPasses;
+    RenderChainScheduler chains;
     
-    uint8_t currentPassIndex = 0;
+    RenderChainPassKey currentChainKey{0, 0};
     Color clearColor = Color::black;
   };
   
@@ -61,13 +61,11 @@ namespace Candy::Graphics
   void Renderer::Init(VkSurfaceFormatKHR surfaceFormat)
   {
     CANDY_PROFILE_FUNCTION();
-    Font::Init("config/font/atlasGeneratorSettings.yml", "assets/fonts");
+    Font::Init(CandyEngine::GetInternalConfigDirectory() / "font/atlasGeneratorSettings.yml", CandyEngine::GetInternalAssetsDirectory() / "fonts");
     SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
     
     
-    //const VkFormat requestSurfaceImageFormat[] = {VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM};
-    
-    data.renderPasses.AddPass("Viewport3D", RenderPassBuilder::FastBuild(surfaceFormat.format, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
+    data.chains.AddPass("Viewport", "3D", RenderPassBuilder::FastBuild(surfaceFormat.format, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
     
     RenderPassBuilder builder;
     builder.AddAttachment(PassAttachmentBuilder(surfaceFormat.format, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
@@ -79,13 +77,19 @@ namespace Candy::Graphics
       .SetStencilOps(VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE)
       .SetSamples(VK_SAMPLE_COUNT_1_BIT).Build())
       .AddSubpass(SubpassBuilder(VK_PIPELINE_BIND_POINT_GRAPHICS).AddColorAttachment(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL).SetDepthAttachment(1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL))
-    .AddDefaultDependency();
+    .AddDefaultDependency()
+    .AddStandardClearValues();
     
     
-    data.renderPasses.AddPass("Overlay2D", builder.GetConfig());
-    data.renderPasses.AddPass("Color Picking", RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
-    data.renderPasses.AddPass("UI", RenderPassBuilder::FastBuild(surfaceFormat.format, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR));
+    data.chains.AddPass("Viewport", "2D", builder.GetConfig());
+    RenderPassConfig selectionConfig = RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     
+    selectionConfig.defaultClearValues.resize(2);
+    selectionConfig.defaultClearValues[0].color.int32[0]=-1;
+    selectionConfig.defaultClearValues[1].depthStencil = {1.0f, 0};
+    data.chains.AddPass("Viewport", "Selection", RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
+    
+    data.chains.AddPass("Editor", "UI", RenderPassBuilder::FastBuild(surfaceFormat.format, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR));
   }
   
 
@@ -94,131 +98,71 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     data.target = target;
   }
-  
-  void Renderer::BeginPass()
+  bool Renderer::NextPass()
   {
-  
+    if (data.chains.NextPass())
+    {
+      RenderCommand::EndRenderPass();
+      BeginPass(data.chains.GetCurrentRenderPass());
+      return true;
+    }
+    return false;
   }
-  void Renderer:: BeginViewportPass()
+  void Renderer::BeginPass(RenderPass& renderPass)
   {
-    CANDY_PROFILE_FUNCTION();
-    data.currentPassIndex = viewportPassIndex;
-    
-    
-    std::array<VkClearValue, 2> clearValues{};
-    
-    
-    clearValues[0].color = {data.clearColor.r, data.clearColor.g, data.clearColor.b, data.clearColor.a};
-    clearValues[1].depthStencil = {1.0f, 0};
+    RenderTarget* target = renderPass.GetCurrentTarget();
+    CANDY_CORE_ASSERT(target != nullptr, "Render pass cannot begin with a null render target!");
+    BeginPass(renderPass, target->frameBuffer);
+  }
+  void Renderer::BeginPass(RenderPass& renderPass, VkFramebuffer frameBuffer)
+  {
+    data.currentChainKey = data.chains.GetCurrentKey();
     Vector2u size = {data.target->swapChain->extent.width, data.target->swapChain->extent.height};
-    
     VkRenderPassBeginInfo beginPassInfo{};
     beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    beginPassInfo.renderPass = data.renderPasses[viewportPassIndex];
-    beginPassInfo.framebuffer = GetCurrentFrame().viewportData.viewportFrameBuffer;
+    beginPassInfo.renderPass = renderPass;
+    beginPassInfo.framebuffer = frameBuffer;
     beginPassInfo.renderArea.offset.x = 0;
     beginPassInfo.renderArea.offset.y = 0;
     beginPassInfo.renderArea.extent.width = size.width;
     beginPassInfo.renderArea.extent.height = size.height;
     
-    beginPassInfo.clearValueCount = clearValues.size();
-    beginPassInfo.pClearValues = clearValues.data();
+    beginPassInfo.clearValueCount = renderPass.GetClearValues().size();
+    beginPassInfo.pClearValues = renderPass.GetClearValues().data();
     
     
     RenderCommand::BeginRenderPass(&beginPassInfo);
     
     Math::Vector2u position = {0, 0};
     RenderCommand::SetViewport(position, size);
+    
   }
-  void Renderer::BeginOverlayPass()
+  void Renderer:: BeginViewportChain()
   {
     CANDY_PROFILE_FUNCTION();
-    data.currentPassIndex = overlayPassIndex;
+    RenderTarget& viewportTarget = data.target->viewportTarget;
+    RenderTarget& selectionTarget = data.target->selectionTarget;
+    data.chains[viewportChainIndex, viewportPassIndex].SetRenderTarget(viewportTarget);
+    data.chains[viewportChainIndex, overlayPassIndex].SetRenderTarget(viewportTarget);
+    data.chains[viewportChainIndex, selectionPassIndex].SetRenderTarget(selectionTarget);
+    data.chains.Begin();
+    BeginPass(data.chains.GetCurrentRenderPass());
     
-    std::array<VkClearValue, 2> clearValues{};
-    
-    
-    clearValues[0].color = {data.clearColor.r, data.clearColor.g, data.clearColor.b, data.clearColor.a};
-    clearValues[1].depthStencil = {1.0f, 0};
-
-    Vector2u size = {data.target->swapChain->extent.width, data.target->swapChain->extent.height};
-    VkRenderPassBeginInfo beginPassInfo{};
-    beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    beginPassInfo.renderPass = data.renderPasses[overlayPassIndex];
-    beginPassInfo.framebuffer = GetCurrentFrame().viewportData.viewportFrameBuffer;
-    beginPassInfo.renderArea.offset.x = 0;
-    beginPassInfo.renderArea.offset.y = 0;
-    beginPassInfo.renderArea.extent.width = size.width;
-    beginPassInfo.renderArea.extent.height = size.height;
-    
-    beginPassInfo.clearValueCount = clearValues.size();
-    beginPassInfo.pClearValues = clearValues.data();
-    
-    
-    RenderCommand::NextRenderPass(&beginPassInfo);
+  }
+  void Renderer::BeginEditorChain()
+  {
+    CANDY_PROFILE_FUNCTION();
+    bool success = data.chains.NextChain();
+    CANDY_CORE_ASSERT(success, "Failed to begin editor chain");
+    RenderCommand::EndRenderPass();
+    VkFramebuffer framebuffer = data.target->swapChain->GetCurrentFrameBuffer();
+    BeginPass(data.chains.GetCurrentRenderPass(), framebuffer);
   }
   
-  void Renderer::BeginSelectionPass()
+  void Renderer::EndChains()
   {
-    CANDY_PROFILE_FUNCTION();
-    data.currentPassIndex = selectionPassIndex;
-    
-    
-    std::array<VkClearValue, 2> clearValues{};
-    
-    clearValues[0].color.int32[0]=-1;
-    clearValues[1].depthStencil = {1.0f, 0};
-    Vector2u size = {data.target->swapChain->extent.width, data.target->swapChain->extent.height};
-    
-    VkRenderPassBeginInfo beginPassInfo{};
-    beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    beginPassInfo.renderPass = data.renderPasses[selectionPassIndex];
-    beginPassInfo.framebuffer = GetCurrentFrame().viewportData.selectionFrameBuffer;
-    beginPassInfo.renderArea.offset.x = 0;
-    beginPassInfo.renderArea.offset.y = 0;
-    beginPassInfo.renderArea.extent.width = size.width;
-    beginPassInfo.renderArea.extent.height = size.height;
-    
-    beginPassInfo.clearValueCount = clearValues.size();
-    beginPassInfo.pClearValues = clearValues.data();
-    
-    
-    RenderCommand::NextRenderPass(&beginPassInfo);
-    
-    
-    
-    
+    data.chains.End();
   }
-  void Renderer::BeginUIPass()
-  {
-    CANDY_PROFILE_FUNCTION();
-    data.currentPassIndex = uiPassIndex;
-    
-    std::array<VkClearValue, 2> clearValues{};
-    
-    clearValues[0].color = {data.clearColor.r, data.clearColor.g, data.clearColor.b, data.clearColor.a};
-    clearValues[1].depthStencil = {1.0f, 0};
-    Vector2u size = {data.target->swapChain->extent.width, data.target->swapChain->extent.height};
-    VkRenderPassBeginInfo beginPassInfo{};
-    beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    beginPassInfo.renderPass = data.renderPasses[uiPassIndex];
-    beginPassInfo.framebuffer = data.target->swapChain->GetCurrentFrameBuffer();
-    beginPassInfo.renderArea.offset.x = 0;
-    beginPassInfo.renderArea.offset.y = 0;
-    beginPassInfo.renderArea.extent.width = size.width;
-    beginPassInfo.renderArea.extent.height = size.height;
-    
-    beginPassInfo.clearValueCount = clearValues.size();
-    beginPassInfo.pClearValues = clearValues.data();
-    
-    
-    RenderCommand::NextRenderPass(&beginPassInfo);
-    
-    Math::Vector2u position = {0, 0};
-    RenderCommand::SetViewport(position, size);
-  }
-
-  
   void Renderer::BeginScene(const PerspectiveCamera& camera)
   {
     CANDY_PROFILE_FUNCTION();
@@ -228,14 +172,33 @@ namespace Candy::Graphics
   
   void Renderer::RenderScene(const SharedPtr<ECS::Scene>& scene)
   {
-    scene->RenderScene3D();
-    BeginOverlayPass();
-    scene->RenderScene2D();
-    Renderer::BeginSelectionPass();
-    Renderer3D::RenderSelectionBuffer();
-    Renderer2D::RenderSelectionBuffer();
+    do
+    {
+      RenderChainPassKey key = data.chains.GetCurrentKey();
+      RenderScenePass(scene, key.passIndex);
+    }
+    while(NextPass());
     
     scene->ClearUpdateFlags();
+  }
+  
+  void Renderer::RenderScenePass(const SharedPtr<ECS::Scene>& scene, uint8_t passIndex)
+  {
+    switch(passIndex)
+    {
+      case viewportPassIndex:
+        scene->RenderScene3D();
+        break;
+      case overlayPassIndex:
+        scene->RenderScene2D();
+        break;
+      case selectionPassIndex:
+        Renderer3D::RenderSelectionBuffer();
+        Renderer2D::RenderSelectionBuffer();
+        break;
+      default:
+        CANDY_CORE_ASSERT(false, "Invalid pass index");
+    }
   }
   void Renderer::EndScene()
   {
@@ -285,11 +248,11 @@ namespace Candy::Graphics
   
   VkRenderPass Renderer::GetCurrentPass()
   {
-    return data.renderPasses[data.currentPassIndex];
+    return data.chains.GetCurrentRenderPass();
   }
   uint8_t Renderer::GetCurrentPassIndex()
   {
-    return data.currentPassIndex;
+    return data.chains.GetCurrentPassIndex();
   }
   uint8_t Renderer::GetViewportPassIndex()
   {
@@ -309,34 +272,28 @@ namespace Candy::Graphics
   }
   const RenderPass& Renderer::GetUIPass()
   {
-    //return data.editorPasses[0];
-    return data.renderPasses[uiPassIndex];
+    return data.chains[editorChainIndex, uiPassIndex];
   }
-  /*const CameraData& Renderer::GetCameraData()
-  {
-    return data.cameraData;
-  }*/
+
   const RenderPass& Renderer::GetRenderPass(uint32_t index)
   {
-    CANDY_CORE_ASSERT(index < data.renderPasses.GetTotalPassCount());
-    //return data.renderPasses[index];
-    return data.renderPasses[index];
+    return data.chains[viewportChainIndex, index];
   }
   VkRenderPass Renderer::GetRenderPassHandle(uint32_t index)
   {
-    return data.renderPasses[index];
+    return data.chains[viewportChainIndex, index];
   }
   const RenderPass& Renderer::GetViewportPass()
   {
-    return data.renderPasses[viewportPassIndex];
+    return data.chains[viewportChainIndex, viewportPassIndex];
   }
   const RenderPass& Renderer::GetOverlayPass()
   {
-    return data.renderPasses[overlayPassIndex];
+    return data.chains[viewportChainIndex, overlayPassIndex];
   }
   const RenderPass& Renderer::GetSelectionPass()
   {
-    return data.renderPasses[selectionPassIndex];
+    return data.chains[viewportChainIndex, selectionPassIndex];
   }
   
   void Renderer::SetClearColor(const Color& value)

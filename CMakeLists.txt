@@ -21,18 +21,24 @@ else()
     message(STATUS "assimp package not found.")
 endif()
 
+set(INTERNAL_SOURCE_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources/internal)
+set(INTERNAL_BINARY_RESOURCES_DIR ${CMAKE_BINARY_DIR}/resources/internal)
+
+set(TEST_PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/projects/TestProject)
+set(TEST_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR}/projects/TestProject)
+
 add_custom_target(
-        CopyAssets ALL
+        CopyInternal ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources/assets
-        ${CMAKE_BINARY_DIR}/assets
+        ${INTERNAL_SOURCE_RESOURCES_DIR}
+        ${INTERNAL_BINARY_RESOURCES_DIR}
         COMMENT "Copying internal asset files...")
 
 add_custom_target(
-        CopyConfig ALL
+        CopyTestProject ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources/config
-        $<$<NOT:$<STREQUAL:${CMAKE_SOURCE_DIR}/resources/config,${CMAKE_BINARY_DIR}/config>>:${CMAKE_BINARY_DIR}/config>
+        ${TEST_PROJECT_SOURCE_DIR}
+        $<$<NOT:$<STREQUAL:${TEST_PROJECT_SOURCE_DIR},${TEST_PROJECT_BINARY_DIR}>>:${TEST_PROJECT_BINARY_DIR}>
         COMMENT "Copying internal config files if they don't exist..."
 )
 
@@ -226,12 +232,14 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/shader/ShaderBufferManager.hpp
         candy/core/include/candy/graphics/vulkan/VulkanQueueManager.hpp
         candy/core/include/candy/graphics/FrameResources.hpp
-        candy/core/include/candy/graphics/vulkan/RenderPassScheduler.hpp
+        candy/core/include/candy/graphics/vulkan/RenderChain.hpp
         candy/core/include/candy/graphics/vulkan/RenderPassConfig.hpp
         candy/core/include/candy/graphics/shader/config/ShaderProfile.hpp
         candy/core/include/candy/graphics/shader/config/ShaderEnums.hpp
         candy/core/include/candy/graphics/shader/config/ShaderDynamicState.hpp
-        candy/core/include/candy/graphics/shader/config/ShaderProfileSettings.hpp)
+        candy/core/include/candy/graphics/shader/config/ShaderProfileSettings.hpp
+        candy/core/include/candy/graphics/vulkan/RenderChainScheduler.hpp
+        candy/core/include/candy/graphics/vulkan/RenderTarget.hpp)
 
 set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/texture/ImageFormat.cpp
@@ -299,11 +307,12 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/vulkan/CommandPool.cpp
         candy/core/src/graphics/FrameResources.cpp
         candy/core/src/graphics/vulkan/VulkanQueueManager.cpp
-        candy/core/src/graphics/vulkan/RenderPassScheduler.cpp
+        candy/core/src/graphics/vulkan/RenderChain.cpp
         candy/core/src/graphics/vulkan/RenderPassConfig.cpp
         candy/core/src/graphics/shader/config/ShaderProfile.cpp
         candy/core/src/graphics/shader/config/ShaderDynamicState.cpp
-        candy/core/src/graphics/shader/config/ShaderEnums.cpp)
+        candy/core/src/graphics/shader/config/ShaderEnums.cpp
+        candy/core/src/graphics/vulkan/RenderChainScheduler.cpp)
 
 set(CANDY_GRAPHICS_FILES ${CANDY_GRAPHICS_HEADERS} ${CANDY_GRAPHICS_SOURCES})
 
@@ -338,23 +347,30 @@ set(CANDY_ECS_FILES ${CANDY_ECS_HEADERS} ${CANDY_ECS_SOURCES})
 set(CANDY_APP_HEADERS candy/core/include/candy/app/Application.hpp
         candy/core/include/candy/app/Layer.hpp
         candy/core/include/candy/app/LayerStack.hpp
-        candy/core/include/candy/app/Project.hpp
-        candy/core/include/candy/app/ProjectSerializer.hpp
         candy/core/include/candy/app/Window.hpp)
 
 set(CANDY_APP_SOURCES candy/core/src/app/Application.cpp
         candy/core/src/app/LayerStack.cpp
-        candy/core/src/app/Project.cpp
-        candy/core/src/app/ProjectSerializer.cpp
+        candy/core/src/project/Project.cpp
+        candy/core/src/project/ProjectSerializer.cpp
         candy/core/src/app/Window.cpp)
 
 set(CANDY_APP_FILES ${CANDY_APP_HEADERS} ${CANDY_APP_SOURCES})
 
-set(CANDY_LAYER_HEADERS candy/core/include/candy/layer/InputLayer.hpp)
+set(CANDY_PROJECT_HEADERS candy/core/include/candy/project/Project.hpp
+        candy/core/include/candy/project/ProjectSerializer.hpp
+        candy/core/include/candy/project/ProjectManager.hpp)
 
-set(CANDY_LAYER_FILES ${CANDY_LAYER_HEADERS})
+set(CANDY_PROJECT_SOURCES candy/core/src/project/Project.cpp
+        candy/core/src/project/ProjectSerializer.cpp
+        candy/core/src/project/ProjectManager.cpp)
 
-set(CANDY_CORE_FILES ${CANDY_BASE_FILES} ${CANDY_COLLECTIONS_FILES} ${CANDY_MATH_FILES} ${CANDY_NOISE_FILES} ${CANDY_UTILS_FILES} ${CANDY_EVENT_FILES} ${CANDY_GRAPHICS_FILES} ${CANDY_UI_FILES} ${CANDY_ECS_FILES} ${CANDY_APP_FILES} ${CANDY_LAYER_FILES} candy/core/include/CandyPch.hpp candy/core/include/CandyPch.cpp)
+set(CANDY_PROJECT_FILES ${CANDY_PROJECT_HEADERS} ${CANDY_PROJECT_SOURCES})
+
+
+
+set(CANDY_CORE_FILES ${CANDY_BASE_FILES} ${CANDY_COLLECTIONS_FILES} ${CANDY_MATH_FILES} ${CANDY_NOISE_FILES} ${CANDY_UTILS_FILES} ${CANDY_EVENT_FILES} ${CANDY_GRAPHICS_FILES} ${CANDY_UI_FILES} ${CANDY_ECS_FILES} ${CANDY_APP_FILES} ${CANDY_PROJECT_FILES} candy/core/include/CandyPch.hpp candy/core/include/CandyPch.cpp)
+
 
 set(CANDY_EDITOR_FILES candy/editor/include/editor/panels/ContentBrowserPanel.hpp
         candy/editor/include/editor/EditorLayer.hpp
@@ -410,7 +426,9 @@ set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 
 set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
-        candy/gum/include/gum/GumInstance.hpp
+        candy/gum/include/gum/GumInstance.hpp candy/core/include/CandyEngine.hpp
+        candy/core/include/CandyEngine.cpp
+        candy/core/include/candy/engine/FileStructureValidator.hpp
 )
 
 
@@ -452,6 +470,8 @@ if(CANDY_ENABLE_LOGGING)
     target_compile_definitions(CandyEngine PRIVATE CANDY_ENABLE_LOGGING)
 endif()
 
+target_compile_definitions(CandyEngine PRIVATE CANDY_DIRECTORY_INTERNALS="${INTERNAL_BINARY_RESOURCES_DIR}")
+target_compile_definitions(CandyEngine PRIVATE CANDY_DIRECTORY_PROJECTS="${CMAKE_BINARY_DIR}/projects")
 
 target_include_directories(CandyEngine PUBLIC candy/core/include)
 target_include_directories(CandyEngine PUBLIC candy/editor/include)
@@ -477,7 +497,7 @@ set(VCPKG_ROOT "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
         ${VCPKG_ROOT}
         $<TARGET_FILE_DIR:CandyEngineTest>)]]
 
-add_dependencies(CandyEngineTest CopyAssets CopyConfig)
+add_dependencies(CandyEngineTest CopyInternal CopyTestProject)
 
 target_link_libraries(CandyEngineTest PRIVATE CandyEngine)
 

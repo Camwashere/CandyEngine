@@ -15,6 +15,7 @@
 #include <candy/graphics/Renderer3D.hpp>
 #include <candy/graphics/texture/TextureManager.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <CandyEngine.hpp>
 namespace Candy::Graphics
 {
   static int MAX_FRAMES_IN_FLIGHT = 3;
@@ -103,7 +104,7 @@ namespace Candy::Graphics
   GraphicsContext* Vulkan::Init(GLFWwindow* mainWindow)
   {
     CANDY_PROFILE_FUNCTION();
-    data.vulkanFeaturesPath = "config/vulkan/enabledVulkanFeatures.csv";
+    data.vulkanFeaturesPath = CandyEngine::GetInternalConfigDirectory()/"vulkan/enabledVulkanFeatures.csv";
     data.deviceManager = nullptr;
     data.deletionQueue.Push(&data.descriptorLayoutCache);
     InitInstance("Candy App", Version(1, 0, 0));
@@ -122,9 +123,9 @@ namespace Candy::Graphics
     RenderCommand::SetTarget(data.currentContext);
     
     TextureManager::Init();
-    ShaderLibrarySettings settings = ShaderLibrarySettings::Load("config/shader/librarySettings.yml");
     
-    bool shaderLibraryInitialized = ShaderLibrary::Init(settings);
+    
+    bool shaderLibraryInitialized = ShaderLibrary::Init();
     CANDY_CORE_ASSERT(shaderLibraryInitialized, "Failed to initialize shader library");
     Renderer2D::Init();
     Renderer3D::Init();

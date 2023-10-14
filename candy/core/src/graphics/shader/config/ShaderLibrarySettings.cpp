@@ -2,17 +2,13 @@
 #include "CandyPch.hpp"
 #include "rapidyaml/src/ryml_std.hpp"
 #include "rapidyaml/src/ryml.hpp"
-
+#include <CandyEngine.hpp>
 
 namespace Candy::Graphics
 {
-  ShaderLibrarySettings ShaderLibrarySettings::Default()
+  /*ShaderLibrarySettings ShaderLibrarySettings::Default()
   {
     ShaderLibrarySettings settings{};
-    settings.internalCacheDirectory = "assets/cache/shader";
-    settings.internalSourceDirectory = "assets/shaders";
-    settings.projectCacheDirectory = "projects/TestProject/cache/shaders";
-    settings.projectSourceDirectory = "projects/TestProject/assets/shaders";
     settings.compilationSettings.optimize=true;
     settings.compilationSettings.recompileOnLoad=true;
     settings.compilationSettings.glslVersion=460;
@@ -20,9 +16,9 @@ namespace Candy::Graphics
     settings.compilationSettings.preserveBindings=false;
     
     return settings;
-  }
+  }*/
   
-  void ShaderLibrarySettings::Save(const std::filesystem::path& filepath, const ShaderLibrarySettings& settings)
+ /* void ShaderLibrarySettings::Save(const std::filesystem::path& filepath, const ShaderLibrarySettings& settings)
   {
     c4::yml::Tree tree;
     c4::yml::NodeRef root = tree.rootref();
@@ -30,10 +26,10 @@ namespace Candy::Graphics
     auto libNode = root["ShaderLibrarySettings"];
     libNode |= c4::yml::MAP;
     
-    libNode["InternalCacheDirectory"] << settings.internalCacheDirectory.string();
-    libNode["InternalSourceDirectory"] << settings.internalSourceDirectory.string();
-    libNode["ProjectCacheDirectory"] << settings.projectCacheDirectory.string();
-    libNode["ProjectSourceDirectory"] << settings.projectSourceDirectory.string();
+    //libNode["InternalCacheDirectory"] << settings.internalCacheDirectory.string();
+    //libNode["InternalSourceDirectory"] << settings.internalSourceDirectory.string();
+    //libNode["ProjectCacheDirectory"] << settings.projectCacheDirectory.string();
+    //libNode["ProjectSourceDirectory"] << settings.projectSourceDirectory.string();
     
     auto compilationNode = libNode["CompilationSettings"];
     auto comp = settings.compilationSettings;
@@ -59,14 +55,14 @@ namespace Candy::Graphics
     }
     c4::yml::emit_yaml(tree, out);
     fclose(out);
-  }
+  }*/
   
   
-  ShaderLibrarySettings ShaderLibrarySettings::Load(const std::filesystem::path& filepath)
+  ShaderLibrarySettings ShaderLibrarySettings::Load()
   {
     CANDY_CORE_INFO("DESERIALIZING PROJECT");
     ShaderLibrarySettings settings{};
-    
+    std::filesystem::path filepath = CandyEngine::GetInternalConfigDirectory() / "shader" / "librarySettings.yml";
     // read the file into a string
     std::ifstream fin(filepath);
     std::stringstream buffer;
@@ -89,16 +85,16 @@ namespace Candy::Graphics
     }
     
     
-    std::string internalCache, internalSource, projectCache, projectSource;
+    /*std::string internalCache, internalSource, projectCache, projectSource;
     libNode["InternalCacheDirectory"] >> internalCache;
     libNode["InternalSourceDirectory"] >> internalSource;
     libNode["ProjectCacheDirectory"] >> projectCache;
-    libNode["ProjectSourceDirectory"] >> projectSource;
+    libNode["ProjectSourceDirectory"] >> projectSource;*/
     
-    settings.internalCacheDirectory = internalCache;
-    settings.internalSourceDirectory = internalSource;
-    settings.projectCacheDirectory = projectCache;
-    settings.projectSourceDirectory = projectSource;
+    //settings.internalCacheDirectory = internalCache;
+    //settings.internalSourceDirectory = internalSource;
+    //settings.projectCacheDirectory = projectCache;
+    //settings.projectSourceDirectory = projectSource;
     
     auto compilationNode = libNode["CompilationSettings"];
     

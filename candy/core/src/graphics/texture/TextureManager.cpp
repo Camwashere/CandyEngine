@@ -119,13 +119,13 @@ namespace Candy::Graphics
   uint32_t TextureManager::AssignTextureID(const std::filesystem::path& path)
   {
     CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_ASSERT(std::filesystem::exists(path));
+    CANDY_CORE_ASSERT_MSG(std::filesystem::exists(path), "Cannot assign texture id, path: {0} does not exist!", path.string());
     
     auto itPath = data.fileToIDMap.find(path.string());
     if(itPath != data.fileToIDMap.end())
     {
       auto it = data.textures.find(itPath->second);
-      CANDY_CORE_ASSERT(it != data.textures.end(), fmt::format("Texture id is not valid for path: {}. Cannot assign texture id!", path.string()));
+      CANDY_CORE_ASSERT_MSG(it != data.textures.end(), "Texture id is not valid for path: {}. Cannot assign texture id!", path.string());
       it->second.AddRef();
       return it->first;
     }

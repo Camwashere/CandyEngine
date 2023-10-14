@@ -23,15 +23,15 @@ namespace Candy::Graphics
     void Bind();
     void Set(VkRenderPass renderPass, Math::Vector2u size, const std::vector<VkImageView>& attachments, uint32_t layers=1);
     
-    bool IsValid()const{return buffer !=VK_NULL_HANDLE;}
+    [[nodiscard]] bool IsValid()const{return buffer !=VK_NULL_HANDLE;}
     void SetSize(Math::Vector2u size);
     void SetOffset(Math::Vector2u offset);
-    uint32_t GetWidth()const;
-    uint32_t GetHeight()const;
-    uint32_t GetOffsetX()const;
-    uint32_t GetOffsetY()const;
-    Math::Vector2u GetOffset()const;
-    Math::Vector2u GetSize()const;
+    [[nodiscard]] uint32_t GetWidth()const;
+    [[nodiscard]] uint32_t GetHeight()const;
+    [[nodiscard]] uint32_t GetOffsetX()const;
+    [[nodiscard]] uint32_t GetOffsetY()const;
+    [[nodiscard]] Math::Vector2u GetOffset()const;
+    [[nodiscard]] Math::Vector2u GetSize()const;
   
     
   public:

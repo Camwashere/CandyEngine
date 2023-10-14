@@ -1,6 +1,6 @@
 #pragma once
 #include <candy/app/Layer.hpp>
-#include <candy/app/Project.hpp>
+#include "candy/project/Project.hpp"
 #include "candy/graphics/material/Material.hpp"
 #include <candy/ecs/Scene.hpp>
 #include <candy/graphics/camera/CameraController.hpp>
@@ -37,14 +37,14 @@ namespace Candy
     
     void NewScene();
     void OpenScene();
-    void OpenScene(const std::filesystem::path& path);
+    bool OpenScene(const std::filesystem::path& path);
     void SaveScene();
     void SaveSceneAs();
     
     void SerializeScene(SharedPtr<ECS::Scene> scene, const std::filesystem::path& path);
 
   public:
-    explicit EditorLayer();
+    EditorLayer();
     
     
     void OnAttach() override;

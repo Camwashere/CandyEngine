@@ -28,6 +28,11 @@ namespace Candy::Graphics
         
         bool frameBufferResized=false;
         
+    public:
+      RenderTarget viewportTarget;
+      RenderTarget selectionTarget;
+      PixelBuffer* selectionPixelBuffer;
+        
         
     private:
         void InitSyncStructures();
@@ -36,7 +41,9 @@ namespace Candy::Graphics
         void RecreateViewport();
         void UpdateFrameIndex();
         
-        void CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size);
+        //void CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size);
+        
+        
     public:
         explicit GraphicsContext(GLFWwindow* window, VkSurfaceKHR windowSurface);
         

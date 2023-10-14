@@ -119,7 +119,8 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings gridSettings{};
-    gridSettings.sourceFilePath = "assets/shaders/renderer3D/Grid.glsl";
+    
+    gridSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer3D/Grid.glsl";
     auto& profileSettings = gridSettings.profileSettings;
     
     profileSettings.renderPassIndex = Renderer::GetViewportPassIndex();
@@ -132,7 +133,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings meshSettings{};
-    meshSettings.sourceFilePath = "assets/shaders/renderer3D/Mesh.glsl";
+    meshSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer3D/Mesh.glsl";
     
     auto& profileSettings = meshSettings.profileSettings;
     profileSettings.renderPassIndex = Renderer::GetViewportPassIndex();
@@ -164,7 +165,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionSettings{};
     auto& configSettings = selectionSettings.profileSettings;
-    selectionSettings.sourceFilePath = "assets/shaders/renderer3D/SelectionMesh.glsl";
+    selectionSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer3D/SelectionMesh.glsl";
     configSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     configSettings.renderMode = PolygonRenderMode::Shaded;
     data.selectionShader = Shader::Create(selectionSettings);

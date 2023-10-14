@@ -366,7 +366,7 @@ Scene:
           - 21
           - 23
       MeshRendererComponent:
-        Texture: assets/textures/statue.jpg
+        Texture: textures/statue.jpg
     - Entity: 11166903778336033570
       TagComponent:
         Tag: Parent
@@ -510,7 +510,7 @@ Scene:
           - 21
           - 23
       MeshRendererComponent:
-        Texture: assets/textures/wall.jpg
+        Texture: textures/wall.jpg
       Children:
         - Entity: 7246193867516664195
           TagComponent:
@@ -655,7 +655,7 @@ Scene:
               - 21
               - 23
           MeshRendererComponent:
-            Texture: assets/textures/wall.jpg
+            Texture: textures/wall.jpg
     - Entity: 13348355899262220846
       TagComponent:
         Tag: Prism
@@ -763,4 +763,4 @@ Scene:
           - 16
           - 17
       MeshRendererComponent:
-        Texture: assets/textures/statue.jpg
+        Texture: textures/statue.jpg

@@ -33,12 +33,29 @@ namespace Candy::Graphics
     renderPassInfo.pSubpasses = subs.data();
     CANDY_VULKAN_CHECK(vkCreateRenderPass(Vulkan::LogicalDevice(), &renderPassInfo, nullptr, &renderPass));
     Vulkan::DeletionQueue().Push(renderPass);
+    
+    clearValues = config.defaultClearValues;
   }
   
   RenderPass::operator VkRenderPass(){return renderPass;}
   RenderPass::operator VkRenderPass()const{return renderPass;}
   
-  
+  const std::vector<VkClearValue>& RenderPass::GetClearValues()const
+  {
+    return clearValues;
+  }
+  void RenderPass::SetRenderTarget(RenderTarget& target)
+  {
+    currentTarget = &target;
+  }
+  RenderTarget* RenderPass::GetCurrentTarget()
+  {
+    return currentTarget;
+  }
+  void RenderPass::SetClearValues(const std::vector<VkClearValue>& values)
+  {
+    clearValues = values;
+  }
   void RenderPass::Begin()
   {
     state = RenderPassState::Running;

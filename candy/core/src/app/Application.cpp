@@ -4,7 +4,8 @@
 #include <candy/graphics/Vulkan.hpp>
 #include <GLFW/glfw3.h>
 #include <candy/graphics/RenderCommand.hpp>
-
+#include <CandyEngine.hpp>
+#include <candy/project/ProjectManager.hpp>
 
 namespace Candy
 {
@@ -13,19 +14,20 @@ namespace Candy
     using namespace Math;
     Application* Application::instance = nullptr;
     
-    Application::Application(ApplicationData  applicationData) : appData(std::move(applicationData)), isRunning(false), minimized(false)//, uiLayer(nullptr)
+    Application::Application(ApplicationData  applicationData) : appData(std::move(applicationData)), isRunning(false), minimized(false)
     {
       CANDY_PROFILE_BEGIN_SESSION("Candy Startup", "profiling/Startup.json");
         CANDY_PROFILE_FUNCTION();
         Log::Init();
+        CandyEngine::Init();
         CANDY_CORE_ASSERT(!instance, "Application already exists");
         instance=this;
-        if (!appData.workingDirectory.empty())
+        /*if (!appData.workingDirectory.empty())
         {
             std::filesystem::current_path(appData.workingDirectory);
-        }
+        }*/
         
-        mainWindow = CreateUniquePtr<Window>(WindowData(appData.name, 3000, 1500));
+        mainWindow = CreateUniquePtr<Window>(WindowData(ProjectManager::ProjectName(), 3000, 1500));
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
         //Vulkan::Init(mainWindow->handle);
         

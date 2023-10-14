@@ -24,7 +24,7 @@ namespace Candy::Graphics
   int PixelBuffer::ReadPixel(int x, int y)
   {
     CANDY_PROFILE_FUNCTION();
-    CopyImage(Renderer::GetCurrentFrame().viewportData.selectionImage, x, y);
+    CopyImage(Vulkan::GetCurrentContext().selectionTarget.imageResources[0].image, x, y);
     int pixel = pixels[0];
     vmaUnmapMemory(Vulkan::Allocator(), allocation); // Unmap memory after reading pixel value from it
     return pixel;

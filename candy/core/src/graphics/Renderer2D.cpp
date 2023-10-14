@@ -197,7 +197,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings quadShaderSettings{};
-    quadShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Quad.glsl";
+    quadShaderSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/Quad.glsl";
     auto& profileSettings = quadShaderSettings.profileSettings;
     profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     profileSettings.SetDepthStencil(false);
@@ -247,7 +247,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     // Circles
     ShaderSettings circleShaderSettings{};
-    circleShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Circle.glsl";
+    circleShaderSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/Circle.glsl";
     auto& profileSettings = circleShaderSettings.profileSettings;
     profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     profileSettings.SetDepthStencil(false);
@@ -280,7 +280,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     // Lines
     ShaderSettings lineShaderSettings{};
-    lineShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Line.glsl";
+    lineShaderSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/Line.glsl";
     auto& profileSettings = lineShaderSettings.profileSettings;
     profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     profileSettings.SetDepthStencil(false);
@@ -301,7 +301,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings textShaderSettings{};
-    textShaderSettings.sourceFilePath = "assets/shaders/renderer2D/Text.glsl";
+    textShaderSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/Text.glsl";
     auto& profileSettings = textShaderSettings.profileSettings;
     profileSettings.renderPassIndex = Renderer::GetOverlayPassIndex();
     profileSettings.SetDepthStencil(false);
@@ -324,19 +324,19 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     ShaderSettings selectionQuadSettings{};
-    selectionQuadSettings.sourceFilePath = "assets/shaders/renderer2D/SelectionQuad.glsl";
+    selectionQuadSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/SelectionQuad.glsl";
     selectionQuadSettings.profileSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionQuadSettings.profileSettings.SetDepthStencil(false);
     data.selectionQuadShader = Shader::Create(selectionQuadSettings);
     
     ShaderSettings selectionCircleSettings{};
-    selectionCircleSettings.sourceFilePath = "assets/shaders/renderer2D/SelectionCircle.glsl";
+    selectionCircleSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/SelectionCircle.glsl";
     selectionCircleSettings.profileSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionCircleSettings.profileSettings.SetDepthStencil(false);
     data.selectionCircleShader = Shader::Create(selectionCircleSettings);
     
     ShaderSettings selectionLineSettings{};
-    selectionLineSettings.sourceFilePath = "assets/shaders/renderer2D/SelectionLine.glsl";
+    selectionLineSettings.sourceFilePath = ShaderLibrary::GetInternalSourceDirectory() / "renderer2D/SelectionLine.glsl";
     selectionLineSettings.profileSettings.renderPassIndex = Renderer::GetSelectionPassIndex();
     selectionLineSettings.profileSettings.SetDepthStencil(false);
     data.selectionLineShader = Shader::Create(selectionLineSettings);
