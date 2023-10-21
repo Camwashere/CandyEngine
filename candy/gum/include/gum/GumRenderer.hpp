@@ -1,7 +1,8 @@
 #pragma once
 #include <candy/math/Matrix.hpp>
 #include <candy/graphics/Color.hpp>
-#include "shape/GumShape.hpp"
+#include "gum/shape/Shape.hpp"
+#include <gum/shape/Rectangle.hpp>
 namespace Candy::Gum
 {
   class GumRenderer
@@ -9,9 +10,11 @@ namespace Candy::Gum
   public:
     static void Init();
     static void Flush();
-    static void BeginScene();
+    static void BeginScene(SceneGraph& sceneGraph);
     static void EndScene();
     
-    static void SubmitShape(const Math::Matrix3& transform, const GumShape* shape, int depthIndex=0);
+    
+    static void SubmitRectangle(const Math::Matrix3& transform, const Rectangle& rectangle, int depthIndex=0);
+    
   };
 }

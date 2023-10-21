@@ -15,6 +15,8 @@
 #include "CandyEngine.hpp"
 #include <candy/graphics/vulkan/RenderPassConfig.hpp>
 #include <candy/graphics/vulkan/RenderChainScheduler.hpp>
+#include "imgui/backends/imgui_impl_vulkan.h"
+#include <candy/graphics/vulkan/DeletionQueue.hpp>
 #include <CandyPch.hpp>
 namespace Candy::Graphics
 {
@@ -46,10 +48,11 @@ namespace Candy::Graphics
   {
     GraphicsContext* target=nullptr;
     CameraData cameraData;
-    
+    std::vector<RenderTarget> renderTargets;
+    PixelBuffer* selectionPixelBuffer=nullptr;
     RenderChainScheduler chains;
+    Math::Vector2u viewportImageSize;
     
-    RenderChainPassKey currentChainKey{0, 0};
     Color clearColor = Color::black;
   };
   
@@ -82,17 +85,105 @@ namespace Candy::Graphics
     
     
     data.chains.AddPass("Viewport", "2D", builder.GetConfig());
-    RenderPassConfig selectionConfig = RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    data.chains.AddPass("Viewport", "Gum", builder.GetConfig());
     
+    RenderPassConfig selectionConfig = RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     selectionConfig.defaultClearValues.resize(2);
     selectionConfig.defaultClearValues[0].color.int32[0]=-1;
     selectionConfig.defaultClearValues[1].depthStencil = {1.0f, 0};
     data.chains.AddPass("Viewport", "Selection", RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
     
+    
+    
+    
     data.chains.AddPass("Editor", "UI", RenderPassBuilder::FastBuild(surfaceFormat.format, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR));
+    
+    data.chains[0].SetActivePass("Selection", false);
+    
+    data.renderTargets.resize(2);
   }
   
-
+  Math::Vector2u Renderer::GetViewportImageSize()
+  {
+    return data.viewportImageSize;
+  }
+  int Renderer::ReadViewportPixelData(int x, int y)
+  {
+    if (data.selectionPixelBuffer != nullptr)
+    {
+      if (data.chains[0].IsPassActive(selectionPassIndex))
+      {
+        return data.selectionPixelBuffer->ReadPixel(x, y);
+      }
+      
+    }
+    return -1;
+  }
+  void Renderer::CreateViewport(Math::Vector2u size)
+  {
+    data.viewportImageSize = size;
+    VkFormat depthFormat = GraphicsContext::FindDepthFormat();
+    RenderTarget& viewportTarget = GetViewportTarget();
+    //RenderTarget& selectionTarget = GetSelectionTarget();
+    
+    viewportTarget.imageResources.resize(2);
+    //selectionTarget.imageResources.resize(1);
+    
+    viewportTarget.imageResources[0].image.Create(size, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    viewportTarget.imageResources[0].imageView.Set(viewportTarget.imageResources[0].image);
+    
+    viewportTarget.imageResources[1].image.Create(Math::Vector2u(size.width, size.height), depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    viewportTarget.imageResources[1].imageView.Set(viewportTarget.imageResources[1].image, VK_IMAGE_ASPECT_DEPTH_BIT);
+    
+    
+    
+    //selectionTarget.imageResources[0].image.Create(size, VK_FORMAT_R32_SINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
+    //selectionTarget.imageResources[0].imageView.Set(selectionTarget.imageResources[0].image);
+    
+    viewportTarget.frameBuffer.Set(Renderer::GetViewportPass(), size, {viewportTarget.imageResources[0].imageView, viewportTarget.imageResources[1].imageView});
+    //selectionTarget.frameBuffer.Set(Renderer::GetSelectionPass(), size, {selectionTarget.imageResources[0].imageView, viewportTarget.imageResources[1].imageView});
+    
+    RenderCommand::TransitionImageLayout(viewportTarget.imageResources[0].image, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    //RenderCommand::TransitionImageLayout(selectionTarget.imageResources[0].image, VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    RenderCommand::TransitionImageLayout(viewportTarget.imageResources[1].image, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    
+    
+    data.selectionPixelBuffer = new PixelBuffer(size);
+  }
+  
+  void Renderer::CleanViewport()
+  {
+    CANDY_PROFILE_FUNCTION();
+    RenderTarget& viewportTarget = GetViewportTarget();
+    //RenderTarget& selectionTarget = GetSelectionTarget();
+    
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[1].image);
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[1].imageView);
+    
+    //Vulkan::DeletionQueue().Delete(&selectionTarget.frameBuffer);
+    //Vulkan::DeletionQueue().Delete(&selectionTarget.imageResources[0].image);
+    //Vulkan::DeletionQueue().Delete(&selectionTarget.imageResources[0].imageView);
+    
+    Vulkan::DeletionQueue().Delete(data.selectionPixelBuffer);
+    delete data.selectionPixelBuffer;
+    
+    Vulkan::DeletionQueue().Delete(&viewportTarget.frameBuffer);
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[0].image);
+    Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[0].imageView);
+  }
+  VkDescriptorSet Renderer::UpdateImGuiViewportTexture()
+  {
+    return ImGui_ImplVulkan_AddTexture(GetViewportTarget().imageResources[0].imageView.GetSampler(), GetViewportTarget().imageResources[0].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+  }
+  
+  RenderTarget& Renderer::GetViewportTarget()
+  {
+    return data.renderTargets[0];
+  }
+  RenderTarget& Renderer::GetSelectionTarget()
+  {
+    return data.renderTargets[1];
+  }
   void Renderer::SetTarget(GraphicsContext* target)
   {
     CANDY_PROFILE_FUNCTION();
@@ -102,11 +193,11 @@ namespace Candy::Graphics
   void Renderer:: BeginViewportChain()
   {
     CANDY_PROFILE_FUNCTION();
-    RenderTarget& viewportTarget = data.target->viewportTarget;
-    RenderTarget& selectionTarget = data.target->selectionTarget;
-    data.chains[viewportChainIndex, viewportPassIndex].SetRenderTarget(viewportTarget);
-    data.chains[viewportChainIndex, overlayPassIndex].SetRenderTarget(viewportTarget);
-    data.chains[viewportChainIndex, selectionPassIndex].SetRenderTarget(selectionTarget);
+    
+    data.chains[viewportChainIndex, viewportPassIndex].SetRenderTarget(GetViewportTarget());
+    data.chains[viewportChainIndex, overlayPassIndex].SetRenderTarget(GetViewportTarget());
+    data.chains[viewportChainIndex, gumPassIndex].SetRenderTarget(GetViewportTarget());
+    //data.chains[viewportChainIndex, selectionPassIndex].SetRenderTarget(GetSelectionTarget());
     
     data.chains.Begin({data.target->swapChain->extent.width, data.target->swapChain->extent.height});
     
@@ -118,7 +209,17 @@ namespace Candy::Graphics
     bool success = data.chains.NextChain();
     CANDY_CORE_ASSERT(success, "Failed to begin editor chain");
   }
-  
+  void Renderer::BeginGumPass()
+  {
+    bool beganGum = data.chains.NextPass();
+    CANDY_CORE_ASSERT(beganGum, "Failed to begin gum pass");
+  }
+  void Renderer::EndGumPass()
+  {
+    CANDY_PROFILE_FUNCTION();
+    //CANDY_CORE_ASSERT(data.chains.NextPass());
+    
+  }
   void Renderer::EndChains()
   {
     data.chains.End();
@@ -135,29 +236,36 @@ namespace Candy::Graphics
     do
     {
       RenderChainPassKey key = data.chains.GetCurrentKey();
-      RenderScenePass(scene, key.passIndex);
+      if (!RenderScenePass(scene, key.passIndex))
+      {
+        break;
+      }
     }
     while(data.chains.NextPass());
     
     scene->ClearUpdateFlags();
   }
   
-  void Renderer::RenderScenePass(const SharedPtr<ECS::Scene>& scene, uint8_t passIndex)
+  bool Renderer::RenderScenePass(const SharedPtr<ECS::Scene>& scene, uint8_t passIndex)
   {
     switch(passIndex)
     {
       case viewportPassIndex:
         scene->RenderScene3D();
+        return true;
         break;
       case overlayPassIndex:
         scene->RenderScene2D();
+        return false;
         break;
       case selectionPassIndex:
         Renderer3D::RenderSelectionBuffer();
         Renderer2D::RenderSelectionBuffer();
+        return false;
         break;
       default:
         CANDY_CORE_ASSERT(false, "Invalid pass index");
+        return false;
     }
   }
   void Renderer::EndScene()
@@ -216,6 +324,10 @@ namespace Candy::Graphics
   uint8_t Renderer::GetOverlayPassIndex()
   {
     return overlayPassIndex;
+  }
+  uint8_t Renderer::GetGumPassIndex()
+  {
+    return gumPassIndex;
   }
   uint8_t Renderer::GetSelectionPassIndex()
   {

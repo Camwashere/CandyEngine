@@ -46,6 +46,7 @@ namespace Candy::Graphics
       uint32_t PushVector3(const std::string& name, const Math::Vector3& vector);
       uint32_t PushVector4(const std::string& name, const Math::Vector4& vector);
       uint32_t PushMatrix(const std::string& name, const Math::Matrix4& matrix);
+      uint32_t PushMatrix3(const std::string& name, const Math::Matrix3& matrix);
       
       
       void PushInt(uint32_t id, int value);
@@ -54,6 +55,7 @@ namespace Candy::Graphics
       void PushVector3(uint32_t id, const Math::Vector3& vector);
       void PushVector4(uint32_t id, const Math::Vector4& vector);
       void PushMatrix(uint32_t id, const Math::Matrix4& matrix);
+      void PushMatrix3(uint32_t id, const Math::Matrix3& matrix);
       
       // Set uniform functions
       uint32_t SetFloat(const std::string& name, float value);

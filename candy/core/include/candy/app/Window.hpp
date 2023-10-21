@@ -8,7 +8,10 @@
 
 
 struct GLFWwindow;
-
+namespace Candy::Gum
+{
+  class GumContext;
+}
 namespace Candy
 {
     using EventCallbackFunction = std::function<void(Events::Event&)>;
@@ -39,7 +42,7 @@ namespace Candy
         WindowData windowData;
         bool fullscreen;
         Graphics::GraphicsContext* graphicsContext;
-        //UniquePtr<Graphics::GraphicsContext> graphicsContext;
+        Gum::GumContext* gumContext;
         
     public:
         GLFWwindow* handle;
@@ -64,6 +67,7 @@ namespace Candy
         [[nodiscard]] inline int GetWidth()const{return windowData.GetWindowWidth();}
         [[nodiscard]] inline int GetHeight()const{return windowData.GetWindowHeight();}
         [[nodiscard]] inline bool IsVSyncEnabled()const{return windowData.vsync;}
+        Gum::GumContext* GetGumContext();
         //Graphics::GraphicsContext& GetGraphicsContext(){return *graphicsContext;}
     
     };

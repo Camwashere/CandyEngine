@@ -1,16 +1,20 @@
 #pragma once
 #include <candy/app/Layer.hpp>
 
+namespace Candy::Gum
+{
+  class GumContext;
+}
 namespace Candy
 {
   class GumLayer : public Layer
   {
   private:
-    
+    Gum::GumContext* context;
     bool blockEvents=false;
   
   public:
-    GumLayer();
+    GumLayer(Gum::GumContext* gumContext);
     
     virtual void OnAttach() override;
     virtual void OnDetach() override;

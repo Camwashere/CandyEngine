@@ -34,7 +34,6 @@ namespace Candy::Graphics
   {
   private:
     std::unordered_map<ShaderData::Stage, std::vector<uint32_t>> spirvBinaries{};
-    //ShaderLayout shaderLayout;
     
     
   private:

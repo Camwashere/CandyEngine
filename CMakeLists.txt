@@ -196,7 +196,6 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/shader/processing/ShaderPostProcessor.hpp
         candy/core/include/candy/graphics/font/FontAtlasSettingsSerializer.hpp
         candy/core/include/candy/graphics/texture/Texture.hpp
-        candy/core/include/candy/graphics/shader/config/ShaderLibrarySettings.hpp
         candy/core/include/candy/graphics/shader/ShaderLibrary.hpp
         candy/core/include/candy/graphics/shader/processing/ShaderPreProcessor.hpp
         candy/core/include/candy/graphics/font/MSDFSerializer.hpp
@@ -253,7 +252,6 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/model/MeshData.cpp
         candy/core/src/graphics/VertexBuffer.cpp
         candy/core/src/graphics/texture/InternalTexture.cpp
-        candy/core/src/graphics/shader/config/ShaderLibrarySettings.cpp
         candy/core/src/graphics/shader/processing/ShaderPreProcessor.cpp
         candy/core/src/graphics/model/Mesh.cpp
         candy/core/src/graphics/Renderer2D.cpp
@@ -402,25 +400,36 @@ set(CANDY_BUNDLED_LIB_FILES ${IM_GUI_SOURCES} ${IM_GUIZMO_SOURCES} ${STB_LIB_FIL
 
 set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/GumInstance.hpp
-        candy/gum/include/gum/GumGraph.hpp
-        candy/gum/include/gum/GumObject.hpp
         candy/gum/include/gum/GumTransform.hpp
-        candy/gum/include/gum/shape/GumPolygon.hpp
-        candy/gum/include/gum/shape/GumShapeData.hpp
-        candy/gum/include/gum/shape/GumShape.hpp
         candy/gum/include/gum/GumTypes.hpp
         candy/gum/include/gum/GumRenderer.hpp
-        candy/gum/include/gum/GumCommand.hpp
+        candy/gum/include/gum/event/GumEvent.hpp
+        candy/gum/include/gum/event/GumMouseEvent.hpp
+        candy/gum/include/gum/event/GumKeyEvent.hpp
+        candy/gum/include/gum/event/GumContextEvent.hpp
+        candy/gum/include/gum/event/GumEventHandler.hpp
+        candy/gum/include/gum/base/Node.hpp
+        candy/gum/include/gum/shape/Shape.hpp
+        candy/gum/include/gum/base/Root.hpp
+        candy/gum/include/gum/shape/Rectangle.hpp
+        candy/gum/include/gum/base/SceneGraph.hpp
+        candy/gum/include/gum/base/Layout.hpp
 )
 
 set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
-        candy/gum/src/GumObject.cpp
-        candy/gum/src/GumGraph.cpp
         candy/gum/src/GumTransform.cpp
-        candy/gum/src/shape/GumPolygon.cpp
-        candy/gum/src/shape/GumShape.cpp
-        candy/gum/src/shape/GumShapeData.cpp
         candy/gum/src/GumRenderer.cpp
+        candy/gum/src/GumContext.cpp
+        candy/gum/src/event/GumEvent.cpp
+        candy/gum/src/event/GumMouseEvent.cpp
+        candy/gum/src/event/GumKeyEvent.cpp
+        candy/gum/src/event/GumContextEvent.cpp
+        candy/gum/src/event/GumEventHandler.cpp
+        candy/gum/src/base/Node.cpp
+        candy/gum/src/base/Shape.cpp
+        candy/gum/src/shape/Rectangle.cpp
+        candy/gum/src/base/Root.cpp
+        candy/gum/src/base/SceneGraph.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})

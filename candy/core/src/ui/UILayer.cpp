@@ -102,13 +102,13 @@ namespace Candy
     
     // Clear font texture from cpu memory
     ImGui_ImplVulkan_DestroyFontUploadObjects();
-    RenderTarget& viewportTarget = Vulkan::GetCurrentContext().viewportTarget;
+    RenderTarget& viewportTarget = Renderer::GetViewportTarget();
     ImageResource& viewportResource = viewportTarget.imageResources[0];
     ImageResource& depthResource = viewportTarget.imageResources[1];
     for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
     {
-      Renderer::GetFrame(i).viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(viewportResource.imageView.GetSampler(), viewportResource.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-      Renderer::GetFrame(i).viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(depthResource.imageView.GetSampler(), depthResource.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      Renderer::GetFrame(i).viewportDescriptor = ImGui_ImplVulkan_AddTexture(viewportResource.imageView.GetSampler(), viewportResource.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      //Renderer::GetFrame(i).viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(depthResource.imageView.GetSampler(), depthResource.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
     
   }

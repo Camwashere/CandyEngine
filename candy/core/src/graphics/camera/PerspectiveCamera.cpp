@@ -26,7 +26,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     projectionMatrix = Matrix4::Perspective(Math::ToRadians(fov), GetAspectRatio(), nearClip, farClip);
-    projectionMatrix[1,1] *= -1;
+    //projectionMatrix[1,1] *= -1;
     
   }
   

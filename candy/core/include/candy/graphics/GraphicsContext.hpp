@@ -29,19 +29,17 @@ namespace Candy::Graphics
         bool frameBufferResized=false;
         
     public:
-      RenderTarget viewportTarget;
-      RenderTarget selectionTarget;
-      PixelBuffer* selectionPixelBuffer;
+      //RenderTarget viewportTarget;
+      //RenderTarget selectionTarget;
+      //PixelBuffer* selectionPixelBuffer;
         
         
     private:
         void InitSyncStructures();
-        void CleanViewport();
-        void CreateViewport();
+        //void CleanViewport();
+        //void CreateViewport();
         void RecreateViewport();
         void UpdateFrameIndex();
-        
-        //void CreateDepthResources(uint32_t frameIndex, const Math::Vector2u& size);
         
         
     public:

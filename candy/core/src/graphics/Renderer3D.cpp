@@ -86,34 +86,7 @@ namespace Candy::Graphics
     return colorBlendAttachment;
   }
   
-  static ShaderDepthStencilSettings QuickDepthStencil(bool depthTestEnabled)
-  {
-    ShaderDepthStencilSettings depthStencil{};
-    
-    if (depthTestEnabled)
-    {
-      // Depth and stencil state
-      
-      depthStencil.depthBufferReading = true;
-      depthStencil.depthBufferWriting = true;
-      depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-      depthStencil.stencilTest = false;
-      depthStencil.front = {}; // Optional
-      depthStencil.back = {}; // Optional
-    }
-    else
-    {
-      // Depth and stencil state
-      depthStencil.depthBufferReading = true;
-      depthStencil.depthBufferWriting = false;
-      depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
-      depthStencil.stencilTest = false;
-      depthStencil.front = {}; // Optional
-      depthStencil.back = {}; // Optional
-    }
-    
-    return depthStencil;
-  }
+  
   
   void Renderer3D::InitGrid()
   {
@@ -290,7 +263,7 @@ namespace Candy::Graphics
     InitMesh();
     InitSelection();
     InitMaterial();
-    ShaderLibrary::Bake();
+    //ShaderLibrary::Bake();
     
   }
   void Renderer3D::ResetStats()

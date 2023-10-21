@@ -126,8 +126,8 @@ namespace Candy::Math
   {
     Matrix3 result = matrix;
     
-    float cosTheta = cos(rotation);
-    float sinTheta = sin(rotation);
+    float cosTheta = Math::Cos(rotation);
+    float sinTheta = Math::Sin(rotation);
     
     result.data[0] = cosTheta;
     result.data[1] = -sinTheta;

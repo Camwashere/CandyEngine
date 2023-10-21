@@ -29,7 +29,10 @@ namespace Candy::Math
   }
   
   
-  
+  void Bounds2D::SetPosition(const Vector2& pos)
+  {
+    position = pos;
+  }
   void Bounds2D::SetCenter(const Vector2& center)
   {
     SetCenter(center.x, center.y);

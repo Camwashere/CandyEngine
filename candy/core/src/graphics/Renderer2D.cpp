@@ -111,7 +111,7 @@ namespace Candy::Graphics
     SharedPtr<Texture> fontAtlasTexture;
     uint32_t textureSlotIndex = 1; // 0 = white texture
     
-    //ShaderLibrary shaderLibrary;
+   
     
     Vector3 quadVertexPositions[4];
     Vector2 circleTexCoords[4];
@@ -120,56 +120,7 @@ namespace Candy::Graphics
   static RenderData2D data;
   
   
-  /*static ShaderBlendAttachmentConfig QuickBlendAttachment(bool alphaColorBlending)
-  {
-    ShaderBlendAttachmentConfig colorBlendAttachment{};
-    if (alphaColorBlending)
-    {
-      colorBlendAttachment.enabledChannels = ColorChannels::RGBA;
-      colorBlendAttachment.enableBlending = true;
-      colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-      colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-      colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-      colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-      colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-      colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-    }
-    else
-    {
-      colorBlendAttachment.enabledChannels = ColorChannels::RGBA;
-      colorBlendAttachment.enableBlending = false;
-    }
-    return colorBlendAttachment;
-  }
-  
-  static ShaderDepthStencilSettings QuickDepthStencil(bool depthTestEnabled)
-  {
-    ShaderDepthStencilSettings depthStencil{};
-    
-    if (depthTestEnabled)
-    {
-      // Depth and stencil state
-      
-      depthStencil.depthBufferReading = true;
-      depthStencil.depthBufferWriting = true;
-      depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-      depthStencil.stencilTest = false;
-      depthStencil.front = {}; // Optional
-      depthStencil.back = {}; // Optional
-    }
-    else
-    {
-      // Depth and stencil state
-      depthStencil.depthBufferReading = true;
-      depthStencil.depthBufferWriting = false;
-      depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
-      depthStencil.stencilTest = false;
-      depthStencil.front = {}; // Optional
-      depthStencil.back = {}; // Optional
-    }
-    
-    return depthStencil;
-  }*/
+ 
   void Renderer2D::Init()
   {
     CANDY_PROFILE_FUNCTION();

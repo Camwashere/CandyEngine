@@ -3,6 +3,10 @@
 #include <candy/app/Application.hpp>
 #include <candy/graphics/Renderer3D.hpp>
 #include <candy/graphics/Renderer2D.hpp>
+#include <gum/base/Node.hpp>
+#include <gum/GumContext.hpp>
+#include <gum/GumInstance.hpp>
+#include <gum/shape/Rectangle.hpp>
 namespace Candy
 {
   using namespace Graphics;
@@ -23,7 +27,19 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     if (enabled)
     {
+      SharedPtr<Gum::Rectangle> rect = Gum::GumInstance::GetCurrentContext().testObject;
+      Math::Vector2 shapePos = rect->GetPosition();
+      Math::Vector2 shapeSize = rect->GetSize();
+      Color fillColor = rect->GetFillColor();
+      Color strokeColor = rect->GetStrokeColor();
+      
       ImGui::Begin("Debug");
+      ImGui::DragFloat2("Shape Position", &shapePos.x, 0.5f);
+      ImGui::DragFloat2("Shape Size", &shapeSize.x, 0.5f);
+      ImGui::ColorEdit4("Fill Color", &fillColor.r);
+      ImGui::ColorEdit4("Stroke Color", &strokeColor.r);
+      
+      ImGui::SeparatorText("Application Stats");
       
       ImGui::Text("FPS: %d", (int)Application::AverageFPS());
       
@@ -40,6 +56,12 @@ namespace Candy
       ImGui::Text("Triangles: %d", stats.triangleCount);
       
       ImGui::End();
+      
+      rect->SetPosition(shapePos);
+      rect->SetSize(shapeSize);
+      rect->SetFillColor(fillColor);
+      rect->SetStrokeColor(strokeColor);
+      
     }
     
   }

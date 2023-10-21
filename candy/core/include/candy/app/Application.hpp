@@ -5,6 +5,7 @@
 #include <candy/utils/FrameTime.hpp>
 #include "LayerStack.hpp"
 #include <candy/ui/UILayer.hpp>
+#include <candy/ui/GumLayer.hpp>
 #include <candy/utils/Version.hpp>
 #include "candy/project/Project.hpp"
 int main(int argc, char **argv);
@@ -36,6 +37,7 @@ namespace Candy
     bool minimized;
     FrameTime frameTime;
     UILayer* uiLayer;
+    GumLayer* gumLayer;
     LayerStack layerStack;
   
   private:
@@ -62,6 +64,7 @@ namespace Candy
   public:
     static void RunTests();
     static UILayer& GetUILayer();
+    static GumLayer& GetGumLayer();
     static inline Window &GetMainWindowReference() {return *instance->mainWindow;}
     static Application &Instance() {return *instance;}
     static float DeltaTime();

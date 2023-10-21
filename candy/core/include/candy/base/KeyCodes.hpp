@@ -3,9 +3,9 @@
 namespace Candy
 {
   using KeyCode = std::uint16_t;
-  
   namespace Key
   {
+    
     enum : KeyCode{
       // From glfw3.h
       Space = 32,

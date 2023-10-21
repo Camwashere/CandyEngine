@@ -33,24 +33,32 @@ namespace Candy::Graphics
     
     static constexpr uint8_t viewportPassIndex=0;
     static constexpr uint8_t overlayPassIndex=1;
-    static constexpr uint8_t selectionPassIndex=2;
-    
+    static constexpr uint8_t gumPassIndex=2;
+    static constexpr uint8_t selectionPassIndex=3;
     
     static constexpr uint8_t editorChainIndex=1;
     static constexpr uint8_t uiPassIndex=0;
     
     static void BeginScene(const PerspectiveCamera& camera);
     static void RenderScene(const SharedPtr<ECS::Scene>& scene);
-    static void RenderScenePass(const SharedPtr<ECS::Scene>& scene, uint8_t passIndex);
+    static bool RenderScenePass(const SharedPtr<ECS::Scene>& scene, uint8_t passIndex);
     static void EndScene();
     static void Init(VkSurfaceFormatKHR surfaceFormat);
     
-    
+    static VkDescriptorSet UpdateImGuiViewportTexture();
+    static void CreateViewport(Math::Vector2u size);
+    static Math::Vector2u GetViewportImageSize();
+    static void CleanViewport();
+    static RenderTarget& GetViewportTarget();
+    static RenderTarget& GetSelectionTarget();
+    static int ReadViewportPixelData(int x, int y);
 
     static void SetTarget(GraphicsContext* target);
     static void BeginViewportChain();
   
     static void BeginEditorChain();
+    static void BeginGumPass();
+    static void EndGumPass();
     static void EndChains();
     
    
@@ -62,6 +70,7 @@ namespace Candy::Graphics
     static uint8_t GetCurrentPassIndex();
     static uint8_t GetViewportPassIndex();
     static uint8_t GetOverlayPassIndex();
+    static uint8_t GetGumPassIndex();
     static uint8_t GetSelectionPassIndex();
     static uint8_t GetUIPassIndex();
     static const RenderPass& GetRenderPass(uint32_t index);

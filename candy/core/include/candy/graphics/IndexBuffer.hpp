@@ -23,6 +23,7 @@ namespace Candy::Graphics
         
     public:
       void SetData(uint32_t* indices, uint64_t indexCount);
+      void SetData(const uint32_t* indices, uint64_t indexCount);
     
     public:
         using VulkanBuffer::operator VkBuffer;

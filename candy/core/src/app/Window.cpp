@@ -4,6 +4,8 @@
 #include <candy/app/Application.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
+#include <gum/GumContext.hpp>
+#include <gum/GumInstance.hpp>
 namespace Candy
 {
     using namespace Graphics;
@@ -22,52 +24,45 @@ namespace Candy
       CANDY_PROFILE_FUNCTION();
         if (GLFW_WINDOW_COUNT==0)
         {
+          {
+            CANDY_PROFILE_SCOPE("GLFW Init");
             int success = glfwInit();
             CANDY_CORE_ASSERT(success, "FAILED TO INITIALIZE GLFW");
             glfwSetErrorCallback(GLFWErrorCallback);
-            //Vulkan::Init();
-          
-          glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-          glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-          glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-          
-          handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
-          
-          //VulkanInstance::Init(handle);
-          
-          ++GLFW_WINDOW_COUNT;
-          //graphicsContext = CreateUniquePtr<GraphicsContext>(handle);
-          
-          //renderer = new Renderer(graphicsContext);
-          
-          glfwSetWindowUserPointer(handle, &windowData);
-          SetVSync(true);
+            
+          }
+          {
+            CANDY_PROFILE_SCOPE("GLFW Window Creation");
+            
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+            
+            handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
+            
+            ++GLFW_WINDOW_COUNT;
+            
+            
+            glfwSetWindowUserPointer(handle, &windowData);
+            SetVSync(true);
+          }
           EventCallbackInit();
           
           graphicsContext = Vulkan::Init(handle);
+          
+          
+          
+          gumContext = new Gum::GumContext(handle);
+          Gum::GumInstance::SetCurrentContext(gumContext);
         }
-        /*glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         
-        handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
-        
-        //VulkanInstance::Init(handle);
-        
-        ++GLFW_WINDOW_COUNT;
-        //graphicsContext = CreateUniquePtr<GraphicsContext>(handle);
-       
-        //renderer = new Renderer(graphicsContext);
-        
-        glfwSetWindowUserPointer(handle, &windowData);
-        SetVSync(true);
-        EventCallbackInit();*/
       
     }
     
     void Window::EventCallbackInit() const
     {
       CANDY_PROFILE_FUNCTION();
+      
         // Window Resize
         glfwSetWindowSizeCallback(handle, [](GLFWwindow* window, int width, int height)
         {
@@ -241,6 +236,10 @@ namespace Candy
   {
     CANDY_PROFILE_FUNCTION();
       glfwHideWindow(handle);
+  }
+  Gum::GumContext* Window::GetGumContext()
+  {
+      return gumContext;
   }
   
   

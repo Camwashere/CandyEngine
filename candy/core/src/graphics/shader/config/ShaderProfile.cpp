@@ -115,6 +115,7 @@ namespace Candy::Graphics
       VkPipelineDynamicStateCreateInfo dynamicStates{};
       
     };
+    
     ShaderProfileBakeData sharedData{};
     sharedData.inputAssembly = GetInputAssembly();
     sharedData.viewportState = GetViewportState();
@@ -355,6 +356,7 @@ namespace Candy::Graphics
     rasterizer.polygonMode = ShaderEnums::RenderModeToVulkan(settings.renderMode);
     rasterizer.lineWidth = 1.0f;
     rasterizer.cullMode = ShaderEnums::CullModeToVulkan(settings.cullMode);
+    //rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
     rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizer.depthBiasEnable = settings.depthBias.enable;
     rasterizer.depthBiasClamp = settings.depthBias.clamp;

@@ -296,16 +296,21 @@ namespace Candy
   }
   bool ProjectManager::LoadProject(const std::filesystem::path& projectPath)
   {
+    CANDY_CORE_INFO("Loading project: {0}", projectPath.string());
     if (std::filesystem::is_directory(projectPath))
     {
-      return LoadProjectDirectory(projectPath);
+      bool loaded = LoadProjectDirectory(projectPath);
+      CANDY_CORE_INFO("Loaded project: {0}", projectPath.string());
+      return loaded;
     }
     else if (std::filesystem::is_regular_file(projectPath))
     {
       std::filesystem::path projectDirectory = projectPath.parent_path();
       if (std::filesystem::exists(projectDirectory))
       {
-        return LoadProjectDirectory(projectDirectory);
+        bool loaded = LoadProjectDirectory(projectDirectory);
+        CANDY_CORE_INFO("Loaded project: {0}", projectPath.string());
+        return loaded;
       }
       else
       {

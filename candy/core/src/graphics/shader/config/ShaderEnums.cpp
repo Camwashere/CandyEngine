@@ -54,6 +54,8 @@ namespace Candy::Graphics
   {
     switch (value)
     {
+      case CullMode::None:
+        return VK_CULL_MODE_NONE;
       case CullMode::Back:
         return VK_CULL_MODE_BACK_BIT;
       case CullMode::Front:

@@ -8,7 +8,6 @@ namespace Candy::Graphics
 {
  
   class GraphicsContext;
-  class VulkanInstance;
   class DeletionQueue;
   class PhysicalDevice;
   class LogicalDevice;

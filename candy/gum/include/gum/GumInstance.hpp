@@ -17,12 +17,18 @@ namespace Candy::Gum
   };
   class GumInstance
   {
+  private:
+    static void GLFWCallbackInit();
   public:
-    static void Init(const std::filesystem::path& iniConfigPath);
+    static void SetCurrentContext(GumContext* context);
+    static GumContext& GetCurrentContext();
+    static void Init();
+    static bool IsInitialized();
     static void Shutdown();
     static void BeginPass();
     static void EndPass();
     static void Render();
+    
     //static GumContext& GetContext();
     static Version GetVersion();
   };

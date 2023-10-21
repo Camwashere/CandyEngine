@@ -1,9 +1,9 @@
 ShaderLibrarySettings:
   CompilationSettings:
-    AutoMapping: 1
+    AutoMapping: 0
     PreserveBindings: 0
     SuppressWarnings: 0
-    WarningsAsErrors: 0
+    WarningsAsErrors: 1
     InvertY: 0
     GenerateDebugInfo: 1
     Optimize: 1

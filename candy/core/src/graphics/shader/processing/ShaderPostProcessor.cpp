@@ -48,7 +48,7 @@ namespace Candy::Graphics
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
     
-    //auto settings = ShaderLibrary::GetCompilationSettings();
+    
     options.SetOptimizationLevel(settings.optimize? shaderc_optimization_level_performance : shaderc_optimization_level_zero);
     if (settings.generateDebugInfo)
     {
@@ -56,7 +56,7 @@ namespace Candy::Graphics
     }
     options.SetPreserveBindings(settings.preserveBindings);
     
-    options.SetForcedVersionProfile(settings.glslVersion, shaderc_profile_core);
+    //options.SetForcedVersionProfile(settings.glslVersion, shaderc_profile_core);
     
     options.SetTargetSpirv(shaderc_spirv_version_1_3);
     if (settings.vulkanVersion.GetMajor() == 1)
@@ -91,6 +91,7 @@ namespace Candy::Graphics
     options.SetAutoBindUniforms(settings.autoMapping);
     options.SetAutoMapLocations(settings.autoMapping);
     options.SetInvertY(settings.invertY);
+    //CANDY_CORE_ASSERT(settings.invertY == true, "Settings invert y is still false");
     if (settings.suppressWarnings)
     {
       options.SetSuppressWarnings();
@@ -126,16 +127,16 @@ namespace Candy::Graphics
       }
       else
       {
-        //CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
+        CANDY_CORE_INFO("NO SHADER CACHED, COMPILING BINARIES");
         
-        shaderc::SpvCompilationResult mod = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
-        if (mod.GetCompilationStatus() != shaderc_compilation_status_success)
-        {
-          CANDY_CORE_ERROR(mod.GetErrorMessage());
-          CANDY_CORE_ASSERT(false);
-        }
+        /*shaderc::PreprocessedSourceCompilationResult preResult = compiler.PreprocessGlsl(source, StageToShaderC(stage), filepath.string().c_str(), options);
+        CANDY_CORE_ASSERT_MSG(preResult.GetCompilationStatus() == shaderc_compilation_status_success, "Preprocess failed for file: {0}, with error message: {1}", filepath.string(), preResult.GetErrorMessage());
+        std::string prePassedSource(preResult.begin());*/
+        shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(source, StageToShaderC(stage), filepath.string().c_str(), options);
+        CANDY_CORE_ASSERT_MSG(result.GetCompilationStatus() == shaderc_compilation_status_success, "Compilation failed for file: {0}, with error message: {1}", filepath.string(), result.GetErrorMessage());
         
-        shaderData[stage] = std::vector<uint32_t>(mod.cbegin(), mod.cend());
+        
+        shaderData[stage] = std::vector<uint32_t>(result.cbegin(), result.cend());
         
         std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
         if (out.is_open())
@@ -150,10 +151,6 @@ namespace Candy::Graphics
     
     
     
-    /*for (auto&& [stage, data] : shaderData)
-    {
-      Reflect(stage, data);
-    }*/
     
   }
   
@@ -162,7 +159,9 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
-    
+    //spirv_cross::CompilerGLSL::Options options = compiler.get_common_options();
+    //std::string decompiledGLSL = compiler.compile();
+    //CANDY_CORE_INFO("Decompiled GLSL: \n\n\n{0}\n\n\n", decompiledGLSL);
     auto resources = compiler.get_shader_resources();
     auto specConstants = compiler.get_specialization_constants();
     
@@ -178,7 +177,7 @@ namespace Candy::Graphics
     ReflectStageUniformBuffers(shaderLayout, compiler, stage, resources.uniform_buffers);
     ReflectStageSampledImages(shaderLayout, compiler, stage, resources.sampled_images);
     ReflectStagePushConstants(shaderLayout, compiler, stage);
-    spirv_cross::SmallVector<spirv_cross::Resource> stageInputs;
+    //spirv_cross::SmallVector<spirv_cross::Resource> stageInputs;
   }
   void ShaderPostProcessor::ReflectSpecializationConstants(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& specConstants)
   {

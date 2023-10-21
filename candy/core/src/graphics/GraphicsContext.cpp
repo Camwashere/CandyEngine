@@ -19,7 +19,7 @@ namespace Candy::Graphics
       CANDY_PROFILE_FUNCTION();
       InitSyncStructures();
       swapChain = CreateUniquePtr<SwapChain>(this, Renderer::GetUIPass());
-      CreateViewport();
+      Renderer::CreateViewport({swapChain->extent.width, swapChain->extent.height});
       
     }
   
@@ -54,16 +54,16 @@ namespace Candy::Graphics
   void GraphicsContext::RecreateViewport()
   {
     CANDY_PROFILE_FUNCTION();
-      CleanViewport();
-      CreateViewport();
+      Renderer::CleanViewport();
+      Renderer::CreateViewport({swapChain->extent.width, swapChain->extent.height});
       
       for (int i=0; i<Vulkan::GetFramesInFlight(); i++)
       {
-        frames[i].viewportData.viewportDescriptor = ImGui_ImplVulkan_AddTexture(viewportTarget.imageResources[0].imageView.GetSampler(), viewportTarget.imageResources[0].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        frames[i].viewportData.viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(viewportTarget.imageResources[1].imageView.GetSampler(), viewportTarget.imageResources[1].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        frames[i].viewportDescriptor = Renderer::UpdateImGuiViewportTexture();
+        //frames[i].viewportDepthDescriptor = ImGui_ImplVulkan_AddTexture(viewportTarget.imageResources[1].imageView.GetSampler(), viewportTarget.imageResources[1].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       }
   }
-  void GraphicsContext::CreateViewport()
+  /*void GraphicsContext::CreateViewport()
   {
     CANDY_PROFILE_FUNCTION();
     Vector2u size = {swapChain->extent.width, swapChain->extent.height};
@@ -112,7 +112,7 @@ namespace Candy::Graphics
     Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[0].image);
     Vulkan::DeletionQueue().Delete(&viewportTarget.imageResources[0].imageView);
    
-  }
+  }*/
   
   
 

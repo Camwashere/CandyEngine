@@ -66,7 +66,7 @@ namespace Candy::Graphics
     RenderPass& currentPass = renderPasses[currentPassIndex];
     currentPass.Begin();
     
-    CANDY_CORE_ASSERT(currentPass.currentTarget != nullptr, "RenderPass::Begin: currentTarget is nullptr");
+    CANDY_CORE_ASSERT_MSG(currentPass.currentTarget != nullptr, "RenderPass::Begin: Pass name: {0}, currentTarget is nullptr", currentPass.GetName());
     
     VkRenderPassBeginInfo beginPassInfo{};
     beginPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

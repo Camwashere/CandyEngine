@@ -70,7 +70,11 @@ namespace Candy::Graphics
     }
     needsReset=false;
     chainIndex=0;
-    renderChains.back().GetLastActivePass().SetRenderTarget(swapChainTarget);
+    for (RenderPass& pass : renderChains.back().renderPasses)
+    {
+      pass.SetRenderTarget(swapChainTarget);
+    }
+    //renderChains.back().GetLastActivePass().SetRenderTarget(swapChainTarget);
     renderChains[chainIndex].Begin();
     
   }

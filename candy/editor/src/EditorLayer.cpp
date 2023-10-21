@@ -36,6 +36,11 @@ namespace Candy
     viewport = CreateSharedPtr<Viewport>(this);
     
     Gizmo meshGizmo;
+    Entity circle = activeScene->CreateEntity("Circle");
+    CircleRendererComponent circ{};
+    circ.color = Color::teal;
+    circle.AddComponent<CircleRendererComponent>(circ);
+    
     
     
 
@@ -64,7 +69,11 @@ namespace Candy
     viewport->OnUpdate();
    
   }
-  
+  void EditorLayer::OnRenderGum()
+  {
+    CANDY_PROFILE_FUNCTION();
+    //viewport->OnRenderGum();
+  }
   void EditorLayer::OnRenderUI()
   {
     CANDY_PROFILE_FUNCTION();

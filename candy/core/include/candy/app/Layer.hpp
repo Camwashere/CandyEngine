@@ -21,6 +21,7 @@ namespace Candy
     virtual void OnDetach() {}
     virtual void OnEvent(Events::Event& event){}
     virtual void OnUpdate(){}
+    virtual void OnRenderGum(){}
     virtual void OnRenderUI(){}
     
     [[nodiscard]] const std::string& GetName()const{return name;}

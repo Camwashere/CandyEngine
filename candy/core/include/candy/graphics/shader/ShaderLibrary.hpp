@@ -3,15 +3,21 @@
 #include <filesystem>
 #include <candy/utils/Version.hpp>
 #include <candy/base/Base.hpp>
-#include "candy/graphics/shader/config/ShaderLibrarySettings.hpp"
 #include <vulkan/vulkan.h>
+
 namespace Candy::Graphics
 {
   
   class Shader;
   
+  struct ShaderLibrarySettings;
+  struct ShaderCompilationSettings;
+  
     class ShaderLibrary
     {
+    
+    private:
+      static bool LoadLibrarySettings(ShaderLibrarySettings& shaderLibSettings, const std::filesystem::path& filepath);
     
     public:
       /// Initialize the shader library. Must be called before any shader creation/loading

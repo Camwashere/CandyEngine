@@ -6,7 +6,7 @@
 #include <candy/graphics/RenderCommand.hpp>
 #include <CandyEngine.hpp>
 #include <candy/project/ProjectManager.hpp>
-
+#include <gum/GumContext.hpp>
 namespace Candy
 {
     using namespace Events;
@@ -19,87 +19,28 @@ namespace Candy
       CANDY_PROFILE_BEGIN_SESSION("Candy Startup", "profiling/Startup.json");
         CANDY_PROFILE_FUNCTION();
         Log::Init();
+        CANDY_CORE_INFO("Initializing Candy Engine");
         CandyEngine::Init();
+        CANDY_CORE_INFO("Initialized Candy Engine");
         CANDY_CORE_ASSERT(!instance, "Application already exists");
         instance=this;
-        /*if (!appData.workingDirectory.empty())
-        {
-            std::filesystem::current_path(appData.workingDirectory);
-        }*/
         
         mainWindow = CreateUniquePtr<Window>(WindowData(ProjectManager::ProjectName(), 3000, 1500));
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
-        //Vulkan::Init(mainWindow->handle);
         
-        //RenderCommand::Init();
-      
+        
+        
       uiLayer = new UILayer();
       PushOverlay(uiLayer);
+      
+      gumLayer = new GumLayer(mainWindow->GetGumContext());
+      PushOverlay(gumLayer);
      
-      //mainWindow->GetGraphicsContext().RecreateTarget();
+      
       
     }
     
     
-    
-    void Application::OnEvent(Events::Event &event)
-    {
-        CANDY_PROFILE_FUNCTION();
-        EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<WindowCloseEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowClose));
-        dispatcher.Dispatch<WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowResize));
-        dispatcher.Dispatch<FrameBufferResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnFrameBufferResize));
-      
-      for (auto& it : std::ranges::reverse_view(layerStack))
-      {
-        if (event.IsHandled())
-        {
-          break;
-        }
-        it->OnEvent(event);
-      }
-    }
-  
-  
-  void Application::PushLayer(Layer* layer)
-  {
-      CANDY_PROFILE_FUNCTION();
-      layerStack.PushLayer(layer);
-      layer->OnAttach();
-  }
-  void Application::PushOverlay(Layer* layer)
-  {
-      CANDY_PROFILE_FUNCTION();
-      layerStack.PushOverlay(layer);
-      layer->OnAttach();
-  }
-  
-  
-  UILayer& Application::GetUILayer()
-  {
-      return *instance->uiLayer;
-  }
-  float Application::DeltaTime()
-  {
-      return instance->frameTime.GetDeltaTime();
-  }
-  
-  float Application::CurrentTime()
-  {
-      return instance->frameTime.GetCurrentTime();
-  }
-  float Application::FPS()
-  {
-      return instance->frameTime.GetFPS();
-  }
-  float Application::AverageFPS()
-  {
-      return instance->frameTime.GetAverageFPS();
-  }
-    void Application::Shutdown()
-    {
-        instance->Close();
-    }
     void Application::Run()
     {
         isRunning=true;
@@ -130,6 +71,13 @@ namespace Candy
     {
       layer->OnUpdate();
     }
+    
+    gumLayer->Begin();
+    for (Layer* layer : layerStack)
+    {
+      layer->OnRenderGum();
+    }
+    gumLayer->End();
     
     uiLayer->Begin();
     for (Layer* layer: layerStack)
@@ -165,7 +113,68 @@ namespace Candy
         isRunning=false;
         
     }
+  void Application::OnEvent(Events::Event &event)
+  {
+    CANDY_PROFILE_FUNCTION();
+    EventDispatcher dispatcher(event);
+    dispatcher.Dispatch<WindowCloseEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowClose));
+    dispatcher.Dispatch<WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnWindowResize));
+    dispatcher.Dispatch<FrameBufferResizeEvent>(CANDY_BIND_EVENT_FUNCTION(Application::OnFrameBufferResize));
+    
+    for (auto& it : std::ranges::reverse_view(layerStack))
+    {
+      if (event.IsHandled())
+      {
+        break;
+      }
+      it->OnEvent(event);
+    }
+  }
   
+  
+  void Application::PushLayer(Layer* layer)
+  {
+    CANDY_PROFILE_FUNCTION();
+    layerStack.PushLayer(layer);
+    layer->OnAttach();
+  }
+  void Application::PushOverlay(Layer* layer)
+  {
+    CANDY_PROFILE_FUNCTION();
+    layerStack.PushOverlay(layer);
+    layer->OnAttach();
+  }
+  
+  
+  UILayer& Application::GetUILayer()
+  {
+    return *instance->uiLayer;
+  }
+  GumLayer& Application::GetGumLayer()
+  {
+    return *instance->gumLayer;
+  }
+  float Application::DeltaTime()
+  {
+    return instance->frameTime.GetDeltaTime();
+  }
+  
+  float Application::CurrentTime()
+  {
+    return instance->frameTime.GetCurrentTime();
+  }
+  float Application::FPS()
+  {
+    return instance->frameTime.GetFPS();
+  }
+  float Application::AverageFPS()
+  {
+    return instance->frameTime.GetAverageFPS();
+  }
+  void Application::Shutdown()
+  {
+    instance->Close();
+  }
     bool Application::OnWindowClose(Events::WindowCloseEvent& event)
     {
         isRunning=false;

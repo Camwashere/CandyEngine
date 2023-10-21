@@ -48,7 +48,7 @@ namespace Candy
     Math::Vector2 viewSize = bounds.max - bounds.min;
     mousePos.y = viewSize.y - mousePos.y;
     //Math::Vector2u imageSize = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->GetImageSize();
-    Math::Vector2u imageSize = Vulkan::GetCurrentContext().selectionPixelBuffer->GetImageSize();
+    Math::Vector2u imageSize = Renderer::GetViewportImageSize();
     float scaleX = (float)imageSize.width / viewSize.x;      // original image width / displayed width
     float scaleY = (float)imageSize.height / viewSize.y;      // original image height / displayed height
     
@@ -57,9 +57,7 @@ namespace Candy
     
     if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)imageSize.width && mouseY < (int)imageSize.height)
     {
-
-      //int pixelData = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->ReadPixel(mouseX, mouseY);
-      int pixelData = Vulkan::GetCurrentContext().selectionPixelBuffer->ReadPixel(mouseX, mouseY);
+      int pixelData = Renderer::ReadViewportPixelData(mouseX, mouseY);
       
       hoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, parent->activeScene.get());
     }
@@ -93,7 +91,7 @@ namespace Candy
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     size = { viewportPanelSize.x, viewportPanelSize.y };
     
-    ImGui::Image(Renderer::GetCurrentFrame().viewportData.viewportDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
+    ImGui::Image(Renderer::GetCurrentFrame().viewportDescriptor, ImVec2{size.x, size.y}, ImVec2{0, 0}, ImVec2{1, 1});
     
     if (ImGui::BeginDragDropTarget())
     {
@@ -105,7 +103,7 @@ namespace Candy
       ImGui::EndDragDropTarget();
     }
     
-    OnImGuizmo();
+    //OnImGuizmo();
     ImGui::End();
     ImGui::PopStyleVar();
   }
@@ -146,7 +144,7 @@ namespace Candy
       
       float snapValues[3] = { snapValue, snapValue, snapValue };
       //cameraProjection[1, 1] *= -1;
-      cameraProjection[1, 1] *= -1;
+      //cameraProjection[1, 1] *= -1;
       //cameraProjection[2, 2] *= 0.5f;
       //cameraProjection[2, 3] = cameraProjection[2, 2]+0.5f;
       
@@ -182,67 +180,7 @@ namespace Candy
   void Viewport::OnOverlayRender()
   {
     CANDY_PROFILE_FUNCTION();
-    // Show colliders/debug rays etc
-    /*if (m_SceneState == SceneState::Play)
-    {
-      Entity camera = parent->activeScene->GetPrimaryCameraEntity();
-      if (!camera)
-        return;
-      
-      Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
-    }
-    else
-    {
-      Renderer2D::BeginScene(m_EditorCamera);
-    }*/
     
-   /* if (m_ShowPhysicsColliders)
-    {
-      // Box Colliders
-      {
-        auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-        for (auto entity : view)
-        {
-          auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
-          
-          glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
-          glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
-          
-          glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
-                                * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-                                * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
-                                * glm::scale(glm::mat4(1.0f), scale);
-          
-          Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
-        }
-      }
-      
-      // Circle Colliders
-      {
-        auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
-        for (auto entity : view)
-        {
-          auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
-          
-          glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
-          glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
-          
-          glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-                                * glm::scale(glm::mat4(1.0f), scale);
-          
-          Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
-        }
-      }
-    }
-    
-    // Draw selected entity outline
-    if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
-    {
-      const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-      Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-    }
-    
-    Renderer2D::EndScene();*/
   }
   
   bool Viewport::IsHovered()const

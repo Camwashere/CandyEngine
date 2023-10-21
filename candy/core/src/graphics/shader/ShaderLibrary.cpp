@@ -10,6 +10,9 @@
 #include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/FrameResources.hpp>
 #include <candy/project/ProjectManager.hpp>
+#include <candy/graphics/shader/config/ShaderSettings.hpp>
+#include "rapidyaml/src/ryml_std.hpp"
+#include "rapidyaml/src/ryml.hpp"
 namespace Candy::Graphics
 {
   using namespace Utils;
@@ -25,6 +28,7 @@ namespace Candy::Graphics
     std::filesystem::path internalProfileDirectory;
     std::filesystem::path internalCacheDirectory;
     
+    std::filesystem::path defaultLibSettingsPath;
     
     IDManager<uint32_t> idManager;
     std::unordered_map<std::string, uint32_t> nameToIDMap;
@@ -36,12 +40,57 @@ namespace Candy::Graphics
   
   
   
-  
+  bool ShaderLibrary::LoadLibrarySettings(ShaderLibrarySettings& settings, const std::filesystem::path& filepath)
+  {
+    CANDY_CORE_INFO("DESERIALIZING PROJECT");
+    
+    // read the file into a string
+    std::ifstream fin(filepath);
+    std::stringstream buffer;
+    buffer << fin.rdbuf();
+    std::string yaml_str = buffer.str();
+    if (yaml_str.empty())
+    {
+      CANDY_CORE_ERROR("EMPTY YAML STRING WITH PATH: {}", filepath.string());
+      CANDY_CORE_ASSERT(false);
+      return false;
+    }
+    // parse the YAML string
+    ryml::Tree tree = ryml::parse_in_arena(ryml::to_csubstr(yaml_str));
+    ryml::NodeRef root = tree.rootref();
+    
+    auto libNode = root["ShaderLibrarySettings"];
+    if (libNode.empty())
+    {
+      CANDY_CORE_ERROR("Failed to deserialize project file {0}. Empty Project Root Node", filepath.string());
+      CANDY_CORE_ASSERT(false);
+      return false;
+    }
+    
+    
+    auto compilationNode = libNode["CompilationSettings"];
+    
+    compilationNode["AutoMapping"] >> settings.compilationSettings.autoMapping;
+    compilationNode["PreserveBindings"] >> settings.compilationSettings.preserveBindings;
+    compilationNode["SuppressWarnings"] >> settings.compilationSettings.suppressWarnings;
+    compilationNode["WarningsAsErrors"] >> settings.compilationSettings.warningsAsErrors;
+    compilationNode["InvertY"] >> settings.compilationSettings.invertY;
+    compilationNode["GenerateDebugInfo"] >> settings.compilationSettings.generateDebugInfo;
+    compilationNode["Optimize"] >> settings.compilationSettings.optimize;
+    compilationNode["RecompileOnLoad"] >> settings.compilationSettings.recompileOnLoad;
+    compilationNode["GLSLVersion"] >> settings.compilationSettings.glslVersion;
+    compilationNode["VulkanVersion"] >> settings.compilationSettings.vulkanVersion;
+    
+    //CANDY_CORE_ASSERT(settings.compilationSettings.invertY == true, "INVERT Y IS STILL FALSE");
+    return true;
+  }
   
   bool ShaderLibrary::Init()
   {
     CANDY_PROFILE_FUNCTION();
-    data.settings = ShaderLibrarySettings::Load();
+    data.defaultLibSettingsPath = CandyEngine::GetInternalConfigDirectory() / "shader" / "librarySettings.yml";
+    bool loadedSettings = LoadLibrarySettings(data.settings, data.defaultLibSettingsPath);
+    CANDY_CORE_ASSERT(loadedSettings);
     data.internalShaderDirectory = CandyEngine::GetInternalAssetsDirectory() / "shaders";
     data.internalSourceDirectory = data.internalShaderDirectory / "sources";
     data.internalProfileDirectory = data.internalShaderDirectory / "profiles";
@@ -90,10 +139,12 @@ namespace Candy::Graphics
   void ShaderLibrary::Bake()
   {
     CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_INFO("Baking shaders");
     for (auto& shader : data.shaders)
     {
       shader->Bake();
     }
+    CANDY_CORE_INFO("Baked shaders");
   }
   void ShaderLibrary::Reload()
   {

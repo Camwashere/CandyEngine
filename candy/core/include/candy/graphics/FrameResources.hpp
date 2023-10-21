@@ -16,23 +16,7 @@ namespace Candy::Graphics
   static constexpr int OBJECT_SET = 1;
   static constexpr int MATERIAL_SET = 2;
   
-  struct FrameViewportResources
-  {
-    VkDescriptorSet viewportDescriptor = VK_NULL_HANDLE;
-    VkDescriptorSet viewportDepthDescriptor = VK_NULL_HANDLE;
-    //RenderTarget viewportTarget;
-    //RenderTarget selectionTarget;
-    //Image viewportImage;
-    //Image selectionImage;
-    //Image depthImage;
-    //ImageView viewportImageView;
-    //ImageView selectionImageView;
-    //ImageView depthImageView;
-    //FrameBuffer viewportFrameBuffer;
-    
-    //FrameBuffer selectionFrameBuffer;
-    //PixelBuffer* selectionPixelBuffer;
-  };
+  
   struct FrameResources
   {
     VkSemaphore renderSemaphore = VK_NULL_HANDLE;
@@ -41,8 +25,8 @@ namespace Candy::Graphics
     VkSemaphore transferSemaphore = VK_NULL_HANDLE;
     CommandPool commandPool;
     std::vector<VkDescriptorSet> descriptorSets;
+    VkDescriptorSet viewportDescriptor = VK_NULL_HANDLE;
     VkDescriptorSet overlayDescriptorSet;
-    FrameViewportResources viewportData;
     SharedPtr <UniformBuffer> uniformBuffer;
     SharedPtr <StorageBuffer> storageBuffer;
     SharedPtr <UniformBuffer> materialBuffer;

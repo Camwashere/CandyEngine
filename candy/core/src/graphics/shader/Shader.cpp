@@ -179,6 +179,16 @@ namespace Candy::Graphics
     return layout.PushConstant(name, &matrix);
   }
   
+  uint32_t Shader::PushMatrix3(const std::string& name, const Math::Matrix3& matrix)
+  {
+    Math::Matrix4 padded;
+    padded[0] = Math::Vector4(matrix[0], 0.0f);
+    padded[1] = Math::Vector4(matrix[1], 0.0f);
+    padded[2] = Math::Vector4(matrix[2], 0.0f);
+    
+    return layout.PushConstant(name, &padded);
+  }
+  
   void Shader::PushInt(uint32_t valueID, int value)
   {
     layout.PushConstant(valueID, &value);
@@ -205,6 +215,11 @@ namespace Candy::Graphics
   }
   
   void Shader::PushMatrix(uint32_t valueID, const Math::Matrix4 &matrix)
+  {
+    layout.PushConstant(valueID, &matrix);
+  }
+  
+  void Shader::PushMatrix3(uint32_t valueID, const Math::Matrix3& matrix)
   {
     layout.PushConstant(valueID, &matrix);
   }

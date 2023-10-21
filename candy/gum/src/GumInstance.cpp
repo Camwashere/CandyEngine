@@ -1,6 +1,7 @@
 #include <gum/GumInstance.hpp>
 #include "CandyPch.hpp"
 #include <candy/graphics/Renderer.hpp>
+#include <gum/GumRenderer.hpp>
 namespace Candy::Gum
 {
   using namespace Graphics;
@@ -8,16 +9,41 @@ namespace Candy::Gum
   {
     Version version=Version(0,0,1);
     GumConfig config;
-    //GumContext context;
+    GumContext* currentContext=nullptr;
+    
+    bool initialized=false;
     
   };
   
   static GumData data;
-  void GumInstance::Init(const std::filesystem::path& iniConfigPath)
+  
+  void GumInstance::GLFWCallbackInit()
   {
-    //bool loadedConfig = data.config.Load(iniConfigPath);
-   // CANDY_CORE_ASSERT(loadedConfig, "Failed to load Gum config");
-    
+  
+  }
+  
+  void GumInstance::Init()
+  {
+    CANDY_PROFILE_FUNCTION();
+   CANDY_CORE_INFO("Initializing Gum");
+   GumRenderer::Init();
+   data.initialized=true;
+   CANDY_CORE_INFO("Initialized Gum");
+  }
+  
+  bool GumInstance::IsInitialized()
+  {
+    return data.initialized;
+  }
+  
+  void GumInstance::SetCurrentContext(GumContext* context)
+  {
+    data.currentContext = context;
+  }
+  GumContext& GumInstance::GetCurrentContext()
+  {
+    CANDY_CORE_ASSERT(data.currentContext, "GumInstance::GetCurrentContext: currentContext is nullptr");
+    return *data.currentContext;
   }
   void GumInstance::Shutdown()
   {
@@ -26,28 +52,12 @@ namespace Candy::Gum
   void GumInstance::BeginPass()
   {
     CANDY_PROFILE_FUNCTION();
-    /*instance->currentPassIndex = uiPassIndex;
-    GetCurrentFrame().commandBuffer.SetCurrentBuffer(uiPassIndex);
-    RenderCommand::Reset();
-    
-    std::array<VkClearValue, 2> clearValues{};
-    
-    clearValues[0].color = {instance->clearColor.r, instance->clearColor.g, instance->clearColor.b, instance->clearColor.a};
-    clearValues[1].depthStencil = {1.0f, 0};
-    Vector2u size = {instance->target->swapChain->extent.width, instance->target->swapChain->extent.height};
-    VkRenderPassBeginInfo rpInfo = GetUIPass().BeginPass(instance->target->swapChain->GetCurrentFrameBuffer(), size);
-    rpInfo.clearValueCount = clearValues.size();
-    rpInfo.pClearValues = clearValues.data();
-    
-    
-    GetCurrentFrame().commandBuffer.StartRenderPass(&rpInfo);
-    
-    Math::Vector2u position = {0, 0};
-    RenderCommand::SetViewport(position, size);*/
+    Renderer::BeginGumPass();
+    //Renderer::BeginEditorChain();
   }
   void GumInstance::EndPass()
   {
-  
+    Renderer::EndGumPass();
   }
   void GumInstance::Render()
   {

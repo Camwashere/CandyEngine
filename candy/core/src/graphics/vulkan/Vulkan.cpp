@@ -16,6 +16,7 @@
 #include <candy/graphics/texture/TextureManager.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
 #include <CandyEngine.hpp>
+#include <gum/GumInstance.hpp>
 namespace Candy::Graphics
 {
   static int MAX_FRAMES_IN_FLIGHT = 3;
@@ -104,6 +105,7 @@ namespace Candy::Graphics
   GraphicsContext* Vulkan::Init(GLFWwindow* mainWindow)
   {
     CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_INFO("Initializing Vulkan");
     data.vulkanFeaturesPath = CandyEngine::GetInternalConfigDirectory()/"vulkan/enabledVulkanFeatures.csv";
     data.deviceManager = nullptr;
     data.deletionQueue.Push(&data.descriptorLayoutCache);
@@ -129,7 +131,10 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(shaderLibraryInitialized, "Failed to initialize shader library");
     Renderer2D::Init();
     Renderer3D::Init();
+    Gum::GumInstance::Init();
+    ShaderLibrary::Bake();
     
+    CANDY_CORE_INFO("Initialized Vulkan");
     return data.currentContext;
     
   }

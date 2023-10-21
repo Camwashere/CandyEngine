@@ -9,6 +9,7 @@
 #include "panels/SceneHierarchyPanel.hpp"
 #include "panels/Viewport.hpp"
 #include "panels/DebugPanel.hpp"
+#include <gum/base/SceneGraph.hpp>
 namespace Candy
 {
   struct Object
@@ -25,6 +26,7 @@ namespace Candy
     UniquePtr<ContentBrowserPanel> contentBrowserPanel;
     SharedPtr<Viewport> viewport;
     DebugPanel debugPanel;
+    SharedPtr<Gum::SceneGraph> gumGraph;
     
     
   private:
@@ -50,6 +52,7 @@ namespace Candy
     void OnAttach() override;
     void OnDetach() override;
     void OnUpdate() override;
+    void OnRenderGum() override;
     void OnRenderUI() override;
     void OnEvent(Events::Event& event) override;
     [[nodiscard]] bool IsSelectedEntity2D()const;

@@ -56,7 +56,13 @@ namespace Candy::Graphics
     SetDataInternal(indices);
     
   }
-  
+  void IndexBuffer::SetData(const uint32_t* indices, uint64_t indexCount)
+  {
+    CANDY_PROFILE_FUNCTION();
+    count = indexCount;
+    size = sizeof(uint32_t)*count;
+    SetDataInternal(indices);
+  }
   void IndexBuffer::SetDataInternal(const void* indices)
   {
     CANDY_PROFILE_FUNCTION();

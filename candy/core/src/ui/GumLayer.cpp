@@ -8,7 +8,7 @@ namespace Candy
 {
   using namespace Graphics;
   using namespace Gum;
-  GumLayer::GumLayer()
+  GumLayer::GumLayer(Gum::GumContext* gumContext) : context(gumContext)
   {
     
   }
@@ -32,6 +32,7 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     if (blockEvents)
     {
+      
       e.SetHandled(e.IsHandled() | (e.GetClass()==Events::EventClass::MOUSE));
       e.SetHandled(e.IsHandled() | (e.GetClass()==Events::EventClass::KEYBOARD));
     }
@@ -43,18 +44,17 @@ namespace Candy
   void GumLayer::Begin()
   {
     CANDY_PROFILE_FUNCTION();
+    //Renderer::BeginEditorChain();
     GumInstance::BeginPass();
+    context->BeginScene();
+    
     //Renderer::BeginUIPass();
   }
   
   void GumLayer::End()
   {
     CANDY_PROFILE_FUNCTION();
-    
-    
-    
-    
-    
-    
+    context->EndScene();
+    GumInstance::EndPass();
   }
 }

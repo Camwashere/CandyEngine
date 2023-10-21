@@ -246,12 +246,7 @@ namespace Candy::Graphics
     viewport.maxDepth = 1.0f;
     
     
-    VkRect2D scissor{};
-    scissor.offset = {0, 0};
-    scissor.extent = extent;
-    
-    vkCmdSetViewport(GetRenderCommandBuffer(), 0, 1, &viewport);
-    vkCmdSetScissor(GetRenderCommandBuffer(), 0, 1, &scissor);
+    SetViewport(viewport);
   }
   void RenderCommand::SetViewport(const Math::Vector2u& size)
   {
@@ -279,12 +274,24 @@ namespace Candy::Graphics
   void RenderCommand::SetViewport(VkViewport viewport)
   {
     CANDY_PROFILE_FUNCTION();
+    CANDY_PROFILE_FUNCTION();
+    
+    //viewport.y += viewport.height; // Shift y by the original viewport height
+    //viewport.height = -viewport.height; // Flip the viewport height
+    
+    
+    viewport.y = viewport.height;
+    viewport.height = -viewport.height;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
+    
+    // Scissor configuration
     VkRect2D scissor{};
-    scissor.offset.x = viewport.x;
-    scissor.offset.y = viewport.y;
-    scissor.extent = VkExtent2D(static_cast<uint32_t>(viewport.width), static_cast<uint32_t>(viewport.height));
+    scissor.offset.x = 0;
+    scissor.offset.y = 0;
+    
+    // Make sure to convert the negative height back to positive for scissor extent
+    scissor.extent = VkExtent2D(static_cast<uint32_t>(viewport.width), static_cast<uint32_t>(-viewport.height));
     
     vkCmdSetViewport(GetRenderCommandBuffer(), 0, 1, &viewport);
     vkCmdSetScissor(GetRenderCommandBuffer(), 0, 1, &scissor);

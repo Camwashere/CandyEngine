@@ -44,7 +44,7 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     projectionMatrix = Matrix4::Orthographic(left, right, bottom, top, 0.0f, 1.0f);
-    projectionMatrix[1,1] *= -1;
+    //projectionMatrix[1,1] *= -1;
   }
   
   void OrthographicCamera::SetZoomLevel(float value)

@@ -35,7 +35,7 @@ namespace Candy::Events
         
     protected:
         const EventClass eventClass;
-        EventType type;
+        const EventType type;
         bool handled;
         
     protected:
