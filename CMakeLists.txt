@@ -414,6 +414,7 @@ set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/shape/Rectangle.hpp
         candy/gum/include/gum/base/SceneGraph.hpp
         candy/gum/include/gum/base/Layout.hpp
+        candy/gum/include/gum/render/RectRenderer.hpp
 )
 
 set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
@@ -430,6 +431,7 @@ set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
         candy/gum/src/shape/Rectangle.cpp
         candy/gum/src/base/Root.cpp
         candy/gum/src/base/SceneGraph.cpp
+        candy/gum/src/render/RectRenderer.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})

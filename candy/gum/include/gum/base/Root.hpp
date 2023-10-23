@@ -6,7 +6,7 @@ namespace Candy::Gum
   class Root : public Node
   {
   protected:
-    void CalculateBounds() override;
+    //void CalculateBounds() override;
     void LayoutChildren() override;
     
   public:

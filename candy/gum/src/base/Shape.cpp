@@ -6,9 +6,19 @@ namespace Candy::Gum
   Shape::Shape(ShapeType shapeType, Math::Vector2 shapePos, Math::Vector2 shapeSize,  const Color& fillColor, const Color& strokeColor, float strokeWidth)
   : Node(GumInstance::GetCurrentContext().sceneGraph), type(shapeType), fillColor(fillColor), strokeColor(strokeColor), strokeWidth(strokeWidth)
   {
-    position = shapePos;
-    size = shapeSize;
+    layoutPosition = shapePos;
+    SetSize(shapeSize);
   }
+  
+  bool Shape::Contains(Math::Vector2 localPoint) const
+  {
+    if (GetBoundsInParent().Contains(localPoint))
+    {
+      return ShapeContains(localPoint);
+    }
+    return false;
+  }
+  
   float Shape::GetStrokeWidth() const
   {
     return strokeWidth;

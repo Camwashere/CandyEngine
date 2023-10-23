@@ -28,9 +28,9 @@ namespace Candy::Gum
     contextMap[handle] = this;
     WindowCallbackInit();
     
-    testObject = CreateSharedPtr<Rectangle>(100.0f, 100.0f);
+    testObject = CreateSharedPtr<Rectangle>(1000, 235, 1000, 1000);
     testObject->SetFillColor(Color::red);
-    testObject->SetPosition({0, 0});
+    
     
     sceneGraph.Root().AddChild(testObject);
     //testObject->Disable();
@@ -218,6 +218,9 @@ namespace Candy::Gum
       float yScaleFactor = static_cast<float>(context->contextSize.height) / static_cast<float>(context->windowSize.height);
       context->mousePositionWindow = {static_cast<float>(xPos), static_cast<float>(context->windowSize.height) - static_cast<float>(yPos)};
       context->mousePositionContext = {context->mousePositionWindow.x * xScaleFactor, context->mousePositionWindow.y * yScaleFactor};
+      
+      
+      
       SharedPtr<Events::MouseMovedEvent> event = CreateSharedPtr<Events::MouseMovedEvent>(context->mousePositionContext.x, context->mousePositionContext.y);
       
       context->captureEventQueue.push(event);

@@ -31,7 +31,7 @@ namespace Candy::Gum
     void CalculateTransforms();
     void CalculateBounds();
     
-    void CalculateBoundsPostOrder(Node& node);
+    void CalculateBoundsPostOrder(Node& node, Math::Vector2 parentPositionInScene);
     
     bool OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
     bool OnWindowResize(Events::WindowResizeEvent& event);

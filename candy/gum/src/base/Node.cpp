@@ -1,5 +1,6 @@
 #include <gum/base/Node.hpp>
 #include <CandyPch.hpp>
+#include <gum/base/SceneGraph.hpp>
 namespace Candy::Gum
 {
   using namespace Math;
@@ -12,26 +13,26 @@ namespace Candy::Gum
   void Node::Layout()
   {
     LayoutChildren();
+    needsLayout = false;
   }
   void Node::OnRender()
   {
   
   }
-  void Node::CalculateTransforms()
+  void Node::CalculateTransform(Math::Vector2 sceneSize)
   {
-    //Matrix3 scaleMatrix = Matrix3::Scale(Matrix3::IDENTITY, sizeInSceneCoordinates);
-    Matrix3 translationMatrix = Matrix3::Translate(Matrix3::IDENTITY, position);
-    localTransform = Matrix3::Translate(Matrix3::IDENTITY, position) * Matrix3::Scale(Matrix3::IDENTITY, size);
-    if (parent)
-    {
-      localToParentTransform = parent->localTransform * localTransform;
-      localToRootTransform = parent->localToRootTransform * localTransform;
-    }
-    else
-    {
-      localToParentTransform = localTransform;
-      localToRootTransform = localToParentTransform;
-    }
+    // Convert rect size from framebuffer coordinates to shader coordinates
+    Vector2 sizeInShaderCoordinates = ((GetSize()/sceneSize));
+    
+    // Adjust the position so that an object's lower left corner corresponds to positionInParent
+    Vector2 positionInSceneOffset = boundsInScene.GetCenter();
+    Vector2 positionInShaderCoordinates = ((positionInSceneOffset/sceneSize)*2.0f)-Vector2(1.0f);
+    
+    Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
+    Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
+    transform = translate * scale;
+    
+    needsTransform=false;
     
   }
   void Node::AddChild(SharedPtr<Node> child)
@@ -41,14 +42,7 @@ namespace Candy::Gum
     child->parent = this;
     children.push_back(child);
   }
-  /*void Node::SetLayoutSize(Math::Vector2 size)
-  {
-    layoutSize = size;
-  }
-  void Node::SetLayoutTranslation(Math::Vector2 value)
-  {
-    layoutTranslation = value;
-  }*/
+  
   bool Node::Contains(float localX, float localY)const
   {
     return Contains({localX, localY});
@@ -84,11 +78,11 @@ namespace Candy::Gum
   
   bool Node::OnCaptureMousePressedEvent(Events::MousePressedEvent& event)
   {
-    Math::Vector2 position = event.GetPosition();
+    Math::Vector2 pos = event.GetPosition();
     
-    if (Contains(position))
+    if (Contains(pos))
     {
-      CANDY_CORE_INFO("Captured mouse press on: {0}, at: {1}", name, position);
+      CANDY_CORE_INFO("Captured mouse press on: {0}, at: {1}", name, pos);
       if (IsLeaf())
       {
         GumMouseButtonPressedEvent gumEvent(this, event.GetPosition(), event.GetButton());
@@ -97,6 +91,7 @@ namespace Candy::Gum
         return true;
         
       }
+      
       for (auto& it : children)
       {
         bool captured = it->OnCaptureMousePressedEvent(event);
@@ -137,7 +132,16 @@ namespace Candy::Gum
     event.Consume();
   }
   
-  
+  void Node::CalculateBounds(Math::Vector2 parentPositionInScene)
+  {
+    boundsInSelf.SetSize(size);
+    boundsInParent.SetSize(size);
+    boundsInScene.SetSize(size);
+    
+    boundsInSelf.SetPosition({0, 0});
+    boundsInParent.SetPosition(layoutPosition);
+    boundsInScene.SetPosition(parentPositionInScene + layoutPosition);
+  }
   void Node::SetEnabled(bool value)
   {
     enabled=value;
@@ -150,19 +154,34 @@ namespace Candy::Gum
   {
     SetEnabled(false);
   }
+  
+  void Node::SetLayoutPosition(Math::Vector2 position)
+  {
+    layoutPosition = position;
+  }
   void Node::SetSize(Math::Vector2 value)
   {
     size=value;
-    boundsInParent.SetSize(size);
-    boundsInScene.SetSize(size);
   }
   void Node::SetSize(float width, float height)
   {
     SetSize({width, height});
   }
+  void Node::SetWidth(float width)
+  {
+    size.width = width;
+  }
+  void Node::SetHeight(float height)
+  {
+    size.height = height;
+  }
   Math::Vector2 Node::GetSize()const
   {
     return size;
+  }
+  Math::Vector2 Node::GetLayoutPosition()const
+  {
+    return layoutPosition;
   }
   void Node::SetNeedsLayout(bool value)
   {
@@ -200,17 +219,11 @@ namespace Candy::Gum
   {
     return children.empty();
   }
-  Bounds2D Node::GetLocalBounds()const
+  Bounds2D Node::GetBoundsInSelf()const
   {
-    Math::Bounds2D localBounds{};
-    localBounds.SetPosition({0, 0});
-    localBounds.SetSize(size);
-    return localBounds;
+    return boundsInSelf;
   }
-  /*const Bounds2D& Node::GetLayoutBounds()const
-  {
-    return layoutBounds;
-  }*/
+  
   const Bounds2D& Node::GetBoundsInParent()const
   {
     return boundsInParent;
@@ -219,42 +232,15 @@ namespace Candy::Gum
   {
     return boundsInScene;
   }
-  /*const Vector2& Node::GetTranslation()const
-  {
-    return translation;
-  }
-  const Vector2& Node::GetScale()const
-  {
-    return scale;
-  }
-  float Node::GetRotation()const
-  {
-    return rotation;
-  }
   
-  const Vector2& Node::GetLayoutTranslation()const
-  {
-    return layoutTranslation;
-  }
-  const Math::Vector2& Node::GetLayoutSize()const
-  {
-    return layoutSize;
-  }*/
   
   const LayoutGuide& Node::GetLayoutGuide()const
   {
     return layoutGuide;
   }
-  const Math::Matrix3& Node::GetLocalTransform()const
+  const Math::Matrix3& Node::GetTransform()const
   {
-    return localTransform;
+    return transform;
   }
-  const Matrix3& Node::GetLocalToParentTransform()const
-  {
-    return localToParentTransform;
-  }
-  const Matrix3& Node::GetLocalToRootTransform()const
-  {
-    return localToRootTransform;
-  }
+  
 }

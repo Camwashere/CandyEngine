@@ -4,12 +4,6 @@
 #include "gum/base/Layout.hpp"
 namespace Candy::Gum
 {
-  struct ShapeVertex
-  {
-    Math::Vector2 position=Math::Vector2::zero;
-    Color color=Color::black;
-  };
-  
   
   
   class Shape : public Node
@@ -28,10 +22,11 @@ namespace Candy::Gum
     float strokeWidth;
     
   protected:
-    explicit Shape(ShapeType type, Math::Vector2 shapePos=Math::Vector2::zero, Math::Vector2 shapeSize=Math::Vector2::zero, const Color& fillColor=Color::clear, const Color& strokeColor=Color::black, float strokeWidth=1.0f);
-    
+    explicit Shape(ShapeType type, Math::Vector2 shapePos=Math::Vector2::zero, Math::Vector2 shapeSize=Math::Vector2::zero, const Color& fillColor=Color::clear, const Color& strokeColor=Color::black, float strokeWidth=0.01f);
+    virtual bool ShapeContains(Math::Vector2 localPoint) const=0;
     
   public:
+    [[nodiscard]] bool Contains(Math::Vector2 localPoint) const override;
     [[nodiscard]] float GetStrokeWidth() const;
     void SetStrokeWidth(float value);
     [[nodiscard]] const Color& GetStrokeColor() const;

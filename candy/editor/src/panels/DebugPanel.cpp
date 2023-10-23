@@ -30,12 +30,16 @@ namespace Candy
       SharedPtr<Gum::Rectangle> rect = Gum::GumInstance::GetCurrentContext().testObject;
       Math::Vector2 shapePos = rect->GetPosition();
       Math::Vector2 shapeSize = rect->GetSize();
+      Math::Vector2 arcSize = rect->GetArcSize();
+      float strokeWidth = rect->GetStrokeWidth();
       Color fillColor = rect->GetFillColor();
       Color strokeColor = rect->GetStrokeColor();
       
       ImGui::Begin("Debug");
-      ImGui::DragFloat2("Shape Position", &shapePos.x, 0.5f);
-      ImGui::DragFloat2("Shape Size", &shapeSize.x, 0.5f);
+      ImGui::DragFloat2("Shape Position", &shapePos.x, 1.f);
+      ImGui::DragFloat2("Shape Size", &shapeSize.x, 1.f, 0.0f, FLT_MAX);
+      ImGui::DragFloat2("Arc size", &arcSize.x, 0.5f, 0.0f, FLT_MAX);
+      ImGui::DragFloat("Stroke Width", &strokeWidth, 0.05f, 0.0f, FLT_MAX);
       ImGui::ColorEdit4("Fill Color", &fillColor.r);
       ImGui::ColorEdit4("Stroke Color", &strokeColor.r);
       
@@ -59,6 +63,8 @@ namespace Candy
       
       rect->SetPosition(shapePos);
       rect->SetSize(shapeSize);
+      rect->SetArcSize(arcSize);
+      rect->SetStrokeWidth(strokeWidth);
       rect->SetFillColor(fillColor);
       rect->SetStrokeColor(strokeColor);
       

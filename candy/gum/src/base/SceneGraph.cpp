@@ -62,7 +62,7 @@ namespace Candy::Gum
         object->Layout();
         
         // Store the parent's prior dirty flags to update children if necessary
-        object->SetNeedsLayout(false);
+        //object->SetNeedsLayout(false);
         
         // Enqueue the children if they are not already dirty
         for (const auto& child : object->children)
@@ -88,7 +88,7 @@ namespace Candy::Gum
       {
         // Object still exists, proceed to process it
         // Process the dirty object here
-        object->CalculateTransforms();
+        object->CalculateTransform(sceneSize);
         
         // Store the parent's prior dirty flags to update children if necessary
         object->SetNeedsTransform(false);
@@ -108,23 +108,24 @@ namespace Candy::Gum
   void SceneGraph::CalculateBounds()
   {
     CANDY_PROFILE_FUNCTION();
-    CalculateBoundsPostOrder(root);
+    CalculateBoundsPostOrder(root, {0, 0});
   }
   
-  void SceneGraph::CalculateBoundsPostOrder(Node& node)
+  void SceneGraph::CalculateBoundsPostOrder(Node& node, Math::Vector2 parentPositionInScene)
   {
     CANDY_PROFILE_FUNCTION();
     if (node.IsLeaf())
     {
-      node.CalculateBounds();
+      node.CalculateBounds(parentPositionInScene);
       return;
     }
+    Math::Vector2 posOffset = node.GetLayoutPosition() + parentPositionInScene;
     for (const auto& child : node.children)
     {
-      CalculateBoundsPostOrder(*child);
+      CalculateBoundsPostOrder(*child, posOffset);
     }
     
-    node.CalculateBounds();
+    node.CalculateBounds(parentPositionInScene);
   }
   Root& SceneGraph::Root()
   {

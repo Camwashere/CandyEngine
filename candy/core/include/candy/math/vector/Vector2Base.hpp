@@ -12,6 +12,7 @@ namespace Candy::Math
     public:
         static constexpr bool isLeaf = true;
     public: // Static Methods
+        static VectorBase<T, 2> Clamp(const VectorBase<T, 2> &value, const VectorBase<T, 2> &min, const VectorBase<T, 2> &max);
         static T Length(const VectorBase<T, 2>& vec);
         static T SqrLength(const VectorBase<T, 2>& vec);
         static T Magnitude(const VectorBase<T, 2>& vec);

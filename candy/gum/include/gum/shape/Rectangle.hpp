@@ -16,18 +16,15 @@ namespace Candy::Gum
     Rectangle(float x, float y, float width, float height);
     Rectangle(float x, float y, Math::Vector2 size);
     
-  private:
-    void UpdateLayoutGuide();
     
-  
-  
   protected:
     void LayoutChildren() override;
-    void CalculateBounds() override;
+    //void CalculateBounds() override;
     void OnRender() override;
     
   public:
-    [[nodiscard]] bool Contains(Math::Vector2 localPoint) const override;
+    [[nodiscard]] bool ShapeContains(Math::Vector2 localPoint) const override;
+    
     [[nodiscard]] float GetX()const;
     [[nodiscard]] float GetY()const;
     void SetX(float value);
@@ -38,8 +35,7 @@ namespace Candy::Gum
     
     [[nodiscard]] float GetWidth()const;
     [[nodiscard]] float GetHeight()const;
-    void SetWidth(float value);
-    void SetHeight(float value);
+   
     
     
     

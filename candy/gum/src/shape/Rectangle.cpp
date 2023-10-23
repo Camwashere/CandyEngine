@@ -7,119 +7,111 @@ namespace Candy::Gum
   
   Rectangle::Rectangle() : Shape(ShapeType::Rectangle)
   {
-    UpdateLayoutGuide();
     name = "Rectangle";
   }
   Rectangle::Rectangle(float width, float height) : Shape(ShapeType::Rectangle, {0, 0}, {width, height})
   {
-    UpdateLayoutGuide();
+    name = "Rectangle";
   }
   Rectangle::Rectangle(Math::Vector2 size) : Shape(ShapeType::Rectangle, size)
   {
-    UpdateLayoutGuide();
+    name = "Rectangle";
   }
   Rectangle::Rectangle(Math::Vector2 position, Math::Vector2 size) : Shape(ShapeType::Rectangle , position, size)
   {
-    UpdateLayoutGuide();
+    name = "Rectangle";
   }
   Rectangle::Rectangle(float x, float y, float width, float height) : Shape(ShapeType::Rectangle, {x, y}, {width, height})
   {
-    UpdateLayoutGuide();
+    name = "Rectangle";
   }
   Rectangle::Rectangle(float x, float y, Math::Vector2 size) : Shape(ShapeType::Rectangle, {x, y}, size)
   {
-    UpdateLayoutGuide();
+    name = "Rectangle";
   }
-  void Rectangle::UpdateLayoutGuide()
+  float EllipseDist(Math::Vector2 mousePos, Math::Vector2 ellipseCenter, Math::Vector2 radii)
   {
-    layoutGuide.minSize = size;
-    layoutGuide.minPosition = position;
+    float p = (Math::Pow2(mousePos.x - ellipseCenter.x) / Math::Pow2(radii.width))
+              + (Math::Pow2((mousePos.y - ellipseCenter.y)) / Math::Pow2(radii.height));
+    return p;
     
-    layoutGuide.prefPosition = position;
-    layoutGuide.prefSize = size;
-    
-    layoutGuide.maxPosition = position;
-    layoutGuide.maxSize = size;
+    /*Math::Vector2 r = (Math::Vector2::Max((mousePos - ellipseCenter+radii), Math::Vector2::zero) / radii);
+    return (r.x*r.x + r.y*r.y);*/
     
   }
-  bool Rectangle::Contains(Math::Vector2 localPoint) const
+  bool Rectangle::ShapeContains(Math::Vector2 localPoint) const
   {
-    return GetLocalBounds().Contains(localPoint);
-    //return localBounds.Contains(localPoint);
+    if (arcSize.x < Math::Epsilon<float>() || arcSize.y < Math::Epsilon<float>())
+    {
+      return true;
+    }
+    else
+    {
+      float dist = EllipseDist(localPoint, GetBoundsInParent().GetCenter(), arcSize);
+      CANDY_CORE_INFO("Ellipse dist: {0}, at local point: {1}", dist, localPoint);
+      return dist <= 1.0f;
+    }
   }
   
   void Rectangle::SetX(float value)
   {
-    position.x = value;
-    UpdateLayoutGuide();
+    layoutPosition.x = value;
   }
   void Rectangle::SetY(float value)
   {
-    position.y = value;
-    UpdateLayoutGuide();
+    layoutPosition.y = value;
   }
   void Rectangle::SetPosition(Math::Vector2 value)
   {
-    position = value;
-    UpdateLayoutGuide();
+    layoutPosition = value;
   }
   void Rectangle::SetPosition(float x, float y)
   {
-    position.x = x;
-    position.y = y;
-    UpdateLayoutGuide();
+    layoutPosition.x = x;
+    layoutPosition.y = y;
   }
-  void Rectangle::SetWidth(float value)
-  {
-    size.width = value;
-    UpdateLayoutGuide();
-  }
-  void Rectangle::SetHeight(float value)
-  {
-    size.height = value;
-    UpdateLayoutGuide();
-  }
+  
   
   void Rectangle::SetArcWidth(float value)
   {
     arcSize.width = value;
-    UpdateLayoutGuide();
+    
   }
   void Rectangle::SetArcHeight(float value)
   {
     arcSize.height = value;
-    UpdateLayoutGuide();
+    
   }
   void Rectangle::SetArcSize(Math::Vector2 value)
   {
     arcSize = value;
-    UpdateLayoutGuide();
+    
   }
   void Rectangle::SetArcSize(float arcWidth, float arcHeight)
   {
     arcSize.width = arcWidth;
     arcSize.height = arcHeight;
-    UpdateLayoutGuide();
+    
   }
   float Rectangle::GetX() const
   {
-    return position.x;
+    return GetLayoutPosition().x;
   }
   float Rectangle::GetY() const
   {
-    return position.y;
+    return GetLayoutPosition().y;
   }
   Math::Vector2 Rectangle::GetPosition() const
   {
-    return position;
+    return GetLayoutPosition();
   }
   float Rectangle::GetWidth() const
   {
-    return size.width;
+    return GetSize().width;
   }
   float Rectangle::GetHeight() const
   {
-    return size.height;
+    return GetSize().height;
   }
   
   Math::Vector2 Rectangle::GetArcSize() const
@@ -172,15 +164,20 @@ namespace Candy::Gum
     bounds.SetMax(maxCorner);
     return bounds;
   }
-  void Rectangle::CalculateBounds()
+  /*void Rectangle::CalculateBounds()
   {
     //localBounds = CalcBoundsHelper(layoutSize, localTransform);
-    boundsInParent = CalcBoundsHelper(size, localToParentTransform);
-  }
+    //boundsInParent = CalcBoundsHelper(size, localToParentTransform);
+    
+    boundsInParent.SetPosition(position);
+    boundsInParent.SetSize(size);
+    boundsInScene.SetPosition(parent->GetBoundsInScene().GetMin() + position);
+    boundsInScene.SetSize(size);
+  }*/
   
   void Rectangle::OnRender()
   {
     //CANDY_CORE_INFO("Rendering rectangle");
-    GumRenderer::SubmitRectangle(localTransform, *this);
+    GumRenderer::SubmitRectangle(transform, *this);
   }
 }
