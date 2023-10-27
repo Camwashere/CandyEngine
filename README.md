@@ -32,5 +32,10 @@ A Vulkan based cross-platform rendering engine for 2D and 3D applications.
   * Highly customizable. Feel free to abandon the premade/helper functionality entirely and submit your own completely custom vertex data, collision handling, events, and more for 100% control whenever you need it.
   * 3D functionality for gizmos, debug tools, animations and unique UI designs
 
-* 
+* Utility everywhere
+  * Supports the latest features of c++23
+  * Collections library including generic data buffers, multidimensional arrays, dualmaps, etc
+  * Powerful debuging and logging tools, easy to use timers/stopwatches, versioning, etc
+  * Fast, easy to use serialization and file management
+  * Way too many other utilities to name
 
