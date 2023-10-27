@@ -1,18 +1,30 @@
 #pragma once
 #include <candy/math/Vector.hpp>
+#include <gum/base/Region.hpp>
 namespace Candy::Gum
 {
-  struct LayoutGuide
+  struct SizeGuide
   {
-    Math::Vector2 minPosition;
-    Math::Vector2 minSize;
+    Math::Vector2 min;
+    Math::Vector2 pref;
+    Math::Vector2 max;
+  };
+  class Layout : public Region
+  {
+  protected:
+    float spacing=0.0f;
     
-    Math::Vector2 prefPosition;
-    Math::Vector2 prefSize;
     
+  protected:
+    virtual void OnLayout() override;
+    virtual void LayoutChildren()=0;
     
-    Math::Vector2 maxPosition;
-    Math::Vector2 maxSize;
+  public:
+    float GetSpacing()const;
+    void SetSpacing(float value);
+    SizeGuide CalculateSizeGuide()const;
     
+  
+  
   };
 }

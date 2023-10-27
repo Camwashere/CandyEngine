@@ -4,7 +4,7 @@ namespace Candy::Gum
 {
   
   Shape::Shape(ShapeType shapeType, Math::Vector2 shapePos, Math::Vector2 shapeSize,  const Color& fillColor, const Color& strokeColor, float strokeWidth)
-  : Node(GumInstance::GetCurrentContext().sceneGraph), type(shapeType), fillColor(fillColor), strokeColor(strokeColor), strokeWidth(strokeWidth)
+  : Node(), type(shapeType), fillColor(fillColor), strokeColor(strokeColor), strokeWidth(strokeWidth)
   {
     layoutPosition = shapePos;
     SetSize(shapeSize);

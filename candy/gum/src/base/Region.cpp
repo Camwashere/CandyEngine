@@ -1,50 +1,74 @@
 #include <gum/base/Region.hpp>
 #include <utility>
-
+#include <CandyPch.hpp>
 namespace Candy::Gum
 {
   
-  Region::Region(SceneGraph& sceneGraph) : Node(sceneGraph), baseShape(Math::Vector2(10, 10))
+  Region::Region()
   {
-  
+    
+    name = "Region";
+    transform = Math::Matrix3::IDENTITY;
+    shape = CreateSharedPtr<Rectangle>(0, 0, 500, 500);
+    shape->SetName("RegionShape");
+    SetLayoutPosition({0, 0});
+    AddChild(shape);
+    SetBackgroundColor(Color::clear);
   }
   
-  
-  
-  void Region::SetShape(SharedPtr<Shape> shape)
+  void Region::OnLayout()
   {
-    customShape = std::move(shape);
+    //CANDY_CORE_INFO("Region::OnLayout");
+    shape->SetLayoutPosition({0, 0});
+    shape->SetSize(GetSize());
   }
-  Rectangle& Region::GetBaseShape()
+  
+  void Region::OnRender()
   {
-    return baseShape;
+    shape->OnRender();
   }
-  Shape& Region::GetShape()
+  
+  void Region::OnSetSize(Math::Vector2 oldValue, Math::Vector2 newValue)
   {
-    if (customShape)
+    shape->SetSize(newValue);
+  }
+  void Region::OnSetLayoutPosition(Math::Vector2 oldValue, Math::Vector2 newValue)
+  {
+    shape->SetLayoutPosition({0, 0});
+  }
+  
+  bool Region::Contains(Math::Vector2 localPoint)const
+  {
+    if (GetBoundsInParent().Contains(localPoint))
     {
-      return *customShape;
+      return shape->Contains(localPoint);
     }
-    else
-    {
-      return baseShape;
-    }
+    return false;
     
   }
-  const Rectangle& Region::GetBaseShape()const
+  Color Region::GetBackgroundColor()const
   {
-    return baseShape;
+    return backgroundColor;
   }
+  void Region::SetBackgroundColor(Color value)
+  {
+    backgroundColor = value;
+    shape->SetFillColor(backgroundColor);
+  }
+  void Region::SetShape(SharedPtr<Shape> value)
+  {
+    shape = std::move(value);
+  }
+  
+  Shape& Region::GetShape()
+  {
+    return *shape;
+    
+  }
+  
   const Shape& Region::GetShape()const
   {
-    if (customShape)
-    {
-      return *customShape;
-    }
-    else
-    {
-      return baseShape;
-    }
+    return *shape;
   }
   
  

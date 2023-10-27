@@ -6,6 +6,7 @@ namespace Candy
   {
   public:
     bool enabled = true;
+    float step=100.f;
   public:
     void OnRenderUI();
   };

@@ -3,7 +3,7 @@
 #include <gum/base/SceneGraph.hpp>
 namespace Candy::Gum
 {
-  Root::Root(SceneGraph& graph) : Node(graph)
+  Root::Root()
   {
     CANDY_PROFILE_FUNCTION();
     name = "Root";
@@ -19,25 +19,7 @@ namespace Candy::Gum
     return GetBoundsInScene().Contains(scenePoint);
     
   }
-  /*void Root::CalculateBounds()
-  {
-    CANDY_PROFILE_FUNCTION();
-    SetSize(sceneGraph->GetSceneSize());
-  }*/
-  void Root::LayoutChildren()
-  {
-    CANDY_PROFILE_FUNCTION();
-    for (auto& child : children)
-    {
-      LayoutGuide guide = child->GetLayoutGuide();
-      //child->SetLayoutTranslation(guide.prefPosition);
-      //child->SetLayoutTranslation({0, 0});
-      //child->SetLayoutSize(guide.prefSize);
-      //child->SetLayoutSize(layoutSize);
-      
-      child->Layout();
-    }
-  }
+ 
   
   
   

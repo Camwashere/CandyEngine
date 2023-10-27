@@ -415,6 +415,12 @@ set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/base/SceneGraph.hpp
         candy/gum/include/gum/base/Layout.hpp
         candy/gum/include/gum/render/RectRenderer.hpp
+        candy/gum/include/gum/widget/Widget.hpp
+        candy/gum/include/gum/layout/BoxLayout.hpp
+        candy/gum/include/gum/event/Event.hpp
+        candy/gum/include/gum/event/EventTarget.hpp
+        candy/gum/include/gum/event/EventDispatcher.hpp
+        candy/gum/include/gum/event/EventType.hpp
 )
 
 set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
@@ -432,6 +438,9 @@ set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
         candy/gum/src/base/Root.cpp
         candy/gum/src/base/SceneGraph.cpp
         candy/gum/src/render/RectRenderer.cpp
+        candy/gum/src/base/Region.cpp
+        candy/gum/src/base/Layout.cpp
+        candy/gum/src/layout/BoxLayout.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})

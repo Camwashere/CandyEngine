@@ -10,6 +10,11 @@ namespace Candy::Math
     return {Math::Clamp(value.x, min.x, max.x), Math::Clamp(value.y, min.y, max.y)};
   }
   template<typename T>
+  VectorBase<T, 2> VectorBase<T, 2>::Abs(const VectorBase<T, 2> &vec)
+  {
+    return {Math::Abs(vec.x), Math::Abs(vec.y)};
+  }
+  template<typename T>
     T VectorBase<T, 2>::Length(const VectorBase<T, 2>& vec)
   {
     return vec.Magnitude();

@@ -5,7 +5,7 @@
 #include <gum/GumInstance.hpp>
 namespace Candy::Gum
 {
-  SceneGraph::SceneGraph(GumContext* gumContext) : context(gumContext), root(*this)
+  SceneGraph::SceneGraph(GumContext* gumContext) : context(gumContext)
   {
     CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(context != nullptr);
@@ -17,23 +17,23 @@ namespace Candy::Gum
   void SceneGraph::Render()
   {
     CANDY_PROFILE_FUNCTION();
-    //GumRenderer::BeginScene();
     RenderNode(root);
-    //GumRenderer::EndScene();
   }
   
   void SceneGraph::RenderNode(Node& node)
   {
     CANDY_PROFILE_FUNCTION();
-    if (node.IsEnabled())
+    if (node.IsLeaf())
     {
       node.OnRender();
-      
-      for (const auto& child : node.children)
-      {
-        RenderNode(*child);
-      }
+      return;
     }
+    node.OnRender();
+    for (const auto& child : node.children)
+    {
+      RenderNode(*child);
+    }
+    
   }
   void SceneGraph::Update()
   {
@@ -49,8 +49,9 @@ namespace Candy::Gum
   void SceneGraph::CalculateLayouts()
   {
     CANDY_PROFILE_FUNCTION();
+    CalculateLayoutsPostOrder(root);
     // Loop while there are dirty objects in the queue
-    while (!layoutQueue.empty())
+    /*while (!layoutQueue.empty())
     {
       // Get the dirty object from the front of the queue
       auto object = layoutQueue.front();
@@ -74,7 +75,7 @@ namespace Candy::Gum
           }
         }
       }
-    }
+    }*/
   }
   void SceneGraph::CalculateTransforms()
   {
@@ -110,7 +111,20 @@ namespace Candy::Gum
     CANDY_PROFILE_FUNCTION();
     CalculateBoundsPostOrder(root, {0, 0});
   }
-  
+  void SceneGraph::CalculateLayoutsPostOrder(Node& node)
+  {
+    CANDY_PROFILE_FUNCTION();
+    if (node.IsLeaf())
+    {
+      node.Layout();
+      return;
+    }
+    for (const auto& child : node.children)
+    {
+      CalculateLayoutsPostOrder(*child);
+    }
+    node.Layout();
+  }
   void SceneGraph::CalculateBoundsPostOrder(Node& node, Math::Vector2 parentPositionInScene)
   {
     CANDY_PROFILE_FUNCTION();

@@ -28,12 +28,42 @@ namespace Candy::Gum
     contextMap[handle] = this;
     WindowCallbackInit();
     
-    testObject = CreateSharedPtr<Rectangle>(1000, 235, 1000, 1000);
+    testObject = CreateSharedPtr<Rectangle>();
     testObject->SetFillColor(Color::red);
+    testObject->SetArcSize({0.5f, 0.5f});
+    testObject->SetPrefSize({200, 200});
+    
+    testObject->SetName("Test Rect");
+    
+    testObject2 = CreateSharedPtr<Rectangle>();
+    testObject2->SetFillColor(Color::blue);
+    testObject2->SetArcSize({0.2f, 0.8f});
+    testObject2->SetPrefSize({250, 200});
+    testObject2->SetName("Test Rect 2");
+    
+    testObject3 = CreateSharedPtr<Rectangle>();
+    testObject3->SetFillColor(Color::yellow);
+    testObject3->SetArcSize({0.8f, 0.2f});
+    testObject3->SetPrefSize({300, 200});
+    testObject3->SetName("Test Rect 3");
+    
+    testObject4 = CreateSharedPtr<Rectangle>();
+    testObject4->SetFillColor(Color::magenta);
+    testObject4->SetArcSize({0.4f, 0.7f});
+    testObject4->SetPrefSize({150, 200});
+    testObject4->SetName("Test Rect 4");
     
     
-    sceneGraph.Root().AddChild(testObject);
-    //testObject->Disable();
+    testLayout = CreateSharedPtr<BoxLayout>();
+    testLayout->AddChild(testObject);
+    testLayout->AddChild(testObject2);
+    testLayout->AddChild(testObject3);
+    testLayout->AddChild(testObject4);
+    testLayout->SetPrefSize({1000, 200});
+    //testLayout->SetMaxSize({1500, 1500});
+    testLayout->SetBackgroundColor(Color::green);
+    testLayout->SetName("Test Layout");
+    sceneGraph.Root().AddChild(testLayout);
     CANDY_CORE_INFO("Initialized Gum Context");
   }
   void GumContext::BeginScene()

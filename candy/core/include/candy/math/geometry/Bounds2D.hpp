@@ -23,6 +23,7 @@ namespace Candy::Math
     
     
   public:
+    [[nodiscard]] std::vector<Vector2> GetCorners()const;
     void SetPosition(const Vector2& position);
     void SetCenter(const Vector2& center);
     void SetCenter(float centerX, float centerY);
@@ -34,7 +35,15 @@ namespace Candy::Math
     void SetMin(float x, float y);
     void SetMax(float x, float y);
     
-    
+    [[nodiscard]] std::vector<Bounds2D> Split()const;
+    [[nodiscard]] Bounds2D GetBottomLeftQuad()const;
+    [[nodiscard]] Bounds2D GetBottomRightQuad()const;
+    [[nodiscard]] Bounds2D GetTopLeftQuad()const;
+    [[nodiscard]] Bounds2D GetTopRightQuad()const;
+    [[nodiscard]] Vector2 GetBottomLeft()const;
+    [[nodiscard]] Vector2 GetBottomRight()const;
+    [[nodiscard]] Vector2 GetTopLeft()const;
+    [[nodiscard]] Vector2 GetTopRight()const;
     
     [[nodiscard]] Vector2 GetCenter()const;
     [[nodiscard]] float GetWidth()const;

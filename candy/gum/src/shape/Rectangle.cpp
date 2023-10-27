@@ -3,7 +3,7 @@
 #include "CandyPch.hpp"
 namespace Candy::Gum
 {
-  
+  using namespace Math;
   
   Rectangle::Rectangle() : Shape(ShapeType::Rectangle)
   {
@@ -29,15 +29,41 @@ namespace Candy::Gum
   {
     name = "Rectangle";
   }
-  float EllipseDist(Math::Vector2 mousePos, Math::Vector2 ellipseCenter, Math::Vector2 radii)
+  float EllipseDist(Math::Vector2 mousePos, Math::Vector2 cornerCenter, Math::Vector2 arcSize)
   {
-    float p = (Math::Pow2(mousePos.x - ellipseCenter.x) / Math::Pow2(radii.width))
-              + (Math::Pow2((mousePos.y - ellipseCenter.y)) / Math::Pow2(radii.height));
-    return p;
+    float dx = mousePos.x - cornerCenter.x;
+    float dy = mousePos.y - cornerCenter.y;
     
-    /*Math::Vector2 r = (Math::Vector2::Max((mousePos - ellipseCenter+radii), Math::Vector2::zero) / radii);
-    return (r.x*r.x + r.y*r.y);*/
+    // ArcSize is diameter (2r), so divide by ArcSize/2 (=r)
+    float normalizedX = dx / (arcSize.x);
+    float normalizedY = dy / (arcSize.y);
     
+    return Math::Sqrt(Math::Pow2(normalizedX) + Math::Pow2(normalizedY));
+  }
+  
+  
+  
+  bool Rectangle::Contains(Math::Vector2 localPoint) const
+  {
+    Math::Vector2 nonRoundSize = GetSize() - GetSize()*arcSize;
+    Math::Vector2 nonRoundPos = GetLayoutPosition() + GetSize()*arcSize*0.5f;
+    
+    Math::Bounds2D nonRoundBounds;
+    nonRoundBounds.SetPosition(nonRoundPos);
+    nonRoundBounds.SetSize(nonRoundSize);
+    if (nonRoundBounds.Contains(localPoint))
+    {
+      return true;
+    }
+    
+    
+    if (GetBoundsInParent().Contains(localPoint)) // If the point is in the round section of the bounds
+    {
+      //CANDY_CORE_INFO("IN ROUND SECTION");
+      return ShapeContains(localPoint);
+    }
+    
+    return false;
   }
   bool Rectangle::ShapeContains(Math::Vector2 localPoint) const
   {
@@ -47,21 +73,42 @@ namespace Candy::Gum
     }
     else
     {
-      float dist = EllipseDist(localPoint, GetBoundsInParent().GetCenter(), arcSize);
-      CANDY_CORE_INFO("Ellipse dist: {0}, at local point: {1}", dist, localPoint);
-      return dist <= 1.0f;
+      Math::Vector2 relativePoint = localPoint-GetLayoutPosition();
+      // normalize relative point
+      Math::Vector2 size = GetSize();
+      Math::Vector2 normalizedPoint = { relativePoint.x / size.x, relativePoint.y / size.y };
+      normalizedPoint =  normalizedPoint * 2.0f - Vector2(1.0f);
+      
+      std::vector<Vector2> corners = {{-1.0f, -1.0f}, {-1.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, -1.0f}};
+      
+      bool inEllipse=true;
+      for (Vector2 corner : corners)
+      {
+        float dist = EllipseDist(normalizedPoint, corner, arcSize);
+        //CANDY_CORE_INFO("Dist: {0}, at corner: {1}", dist, corner);
+        if (dist <= 0.5f)
+        {
+          inEllipse=false;
+          break;
+        }
+      }
+      
+      
+      //CANDY_CORE_INFO("Mouse Pos: {0}, Relative Mouse: {1}, Normalized Mouse: {2}, Contained: {3}", localPoint, relativePoint, normalizedPoint, inEllipse ? "true" : "false");
+      
+      return inEllipse;
     }
   }
   
-  void Rectangle::SetX(float value)
+  /*void Rectangle::SetX(float value)
   {
     layoutPosition.x = value;
   }
   void Rectangle::SetY(float value)
   {
     layoutPosition.y = value;
-  }
-  void Rectangle::SetPosition(Math::Vector2 value)
+  }*/
+  /*void Rectangle::SetPosition(Math::Vector2 value)
   {
     layoutPosition = value;
   }
@@ -69,7 +116,7 @@ namespace Candy::Gum
   {
     layoutPosition.x = x;
     layoutPosition.y = y;
-  }
+  }*/
   
   
   void Rectangle::SetArcWidth(float value)
@@ -101,10 +148,10 @@ namespace Candy::Gum
   {
     return GetLayoutPosition().y;
   }
-  Math::Vector2 Rectangle::GetPosition() const
+  /*Math::Vector2 Rectangle::GetPosition() const
   {
     return GetLayoutPosition();
-  }
+  }*/
   float Rectangle::GetWidth() const
   {
     return GetSize().width;
@@ -128,56 +175,9 @@ namespace Candy::Gum
   }
   
   
-  void Rectangle::LayoutChildren()
-  {
-  
-  }
-  
-  Math::Bounds2D CalcBoundsHelper(Math::Vector2 size, const Math::Matrix3& transform)
-  {
-    Math::Vector2 corners[4];
-    corners[0] = Math::Vector2(0, 0);
-    corners[1] = Math::Vector2(size.x, 0);
-    corners[2] = Math::Vector2(0, size.y);
-    corners[3] = Math::Vector2(size.x, size.y);
-    
-    // Transform the corner points
-    for(int i = 0; i < 4; ++i)
-    {
-      corners[i] = transform * corners[i];
-    }
-    
-    // Set initial min and max corners
-    Math::Vector2 minCorner = corners[0];
-    Math::Vector2 maxCorner = corners[0];
-    
-    // Compute the bounding box
-    for(int i = 1; i < 4; ++i)
-    {
-      minCorner = Math::Min(minCorner, corners[i]);
-      maxCorner = Math::Max(maxCorner, corners[i]);
-    }
-    
-    // Return the computed bounding box
-    Math::Bounds2D bounds;
-    bounds.SetMin(minCorner);
-    bounds.SetMax(maxCorner);
-    return bounds;
-  }
-  /*void Rectangle::CalculateBounds()
-  {
-    //localBounds = CalcBoundsHelper(layoutSize, localTransform);
-    //boundsInParent = CalcBoundsHelper(size, localToParentTransform);
-    
-    boundsInParent.SetPosition(position);
-    boundsInParent.SetSize(size);
-    boundsInScene.SetPosition(parent->GetBoundsInScene().GetMin() + position);
-    boundsInScene.SetSize(size);
-  }*/
   
   void Rectangle::OnRender()
   {
-    //CANDY_CORE_INFO("Rendering rectangle");
     GumRenderer::SubmitRectangle(transform, *this);
   }
 }

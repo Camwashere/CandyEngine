@@ -44,11 +44,7 @@ namespace Candy::Gum
   
   struct RectRenderer::RectData
   {
-    //RectVertex outerVertices[4];
-    //RectVertex innerVertices[4];
     RectVertex vertices[4];
-    //int32_t vertexOffsetOuter=0;
-    //int32_t vertexOffsetInner=0;
     int32_t vertexOffset=0;
     Math::Vector2 positionInScene;
     Math::Vector2 size;
@@ -62,11 +58,11 @@ namespace Candy::Gum
       transform = rect.GetTransform();
       vertexOffset = currentVertexOffset;
       
-      positionInScene = rect.GetPosition();
+      positionInScene = rect.GetBoundsInScene().GetBottomLeft();
       size = rect.GetSize();
       strokeWidth = rect.GetStrokeWidth()/(Math::Min(size.x, size.y));
       arcSize = rect.GetArcSize();
-      arcSize = arcSize / size;
+      //arcSize = arcSize / size;
       arcSize = Vector2::Clamp(arcSize, Vector2(Epsilon<float>()), Vector2(1.0f));
       strokeColor = rect.GetStrokeColor();
       

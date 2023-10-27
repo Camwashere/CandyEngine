@@ -1,7 +1,6 @@
 #pragma once
 #include "gum/base/Node.hpp"
 #include "candy/graphics/Color.hpp"
-#include "gum/base/Layout.hpp"
 namespace Candy::Gum
 {
   
@@ -34,5 +33,7 @@ namespace Candy::Gum
     [[nodiscard]] const Color& GetFillColor() const;
     void SetFillColor(const Color& value);
     [[nodiscard]] ShapeType GetType()const;
+    
+    friend class Region;
   };
 }

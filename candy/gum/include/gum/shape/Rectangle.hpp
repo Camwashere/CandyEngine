@@ -18,20 +18,19 @@ namespace Candy::Gum
     
     
   protected:
-    void LayoutChildren() override;
-    //void CalculateBounds() override;
     void OnRender() override;
     
   public:
+    [[nodiscard]] bool Contains(Math::Vector2 localPoint) const override;
     [[nodiscard]] bool ShapeContains(Math::Vector2 localPoint) const override;
     
     [[nodiscard]] float GetX()const;
     [[nodiscard]] float GetY()const;
-    void SetX(float value);
-    void SetY(float value);
-    [[nodiscard]] Math::Vector2 GetPosition()const;
-    void SetPosition(Math::Vector2 value);
-    void SetPosition(float x, float y);
+    //void SetX(float value);
+    //void SetY(float value);
+    //[[nodiscard]] Math::Vector2 GetPosition()const;
+    //void SetPosition(Math::Vector2 value);
+    //void SetPosition(float x, float y);
     
     [[nodiscard]] float GetWidth()const;
     [[nodiscard]] float GetHeight()const;

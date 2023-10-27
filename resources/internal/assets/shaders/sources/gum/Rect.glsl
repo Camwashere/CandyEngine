@@ -69,6 +69,11 @@ void main()
     vec4 finalColor = mix(inFragColor, inStrokeColor, innerEdge);
     finalColor.a *= 1.0 - outerEdge;
 
+    // DEBUG, don't remove yet
+    /*if (finalColor.a < 0.001f)
+    {
+        finalColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    }*/
     outFragColor = finalColor;
 
 

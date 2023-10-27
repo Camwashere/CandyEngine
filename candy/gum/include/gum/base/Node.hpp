@@ -5,9 +5,9 @@
 #include <gum/event/GumEvent.hpp>
 #include <gum/event/GumMouseEvent.hpp>
 #include <gum/event/GumKeyEvent.hpp>
-#include <gum/base/Layout.hpp>
 namespace Candy::Gum
 {
+  
   class SceneGraph;
   class Node
   {
@@ -18,38 +18,36 @@ namespace Candy::Gum
     Math::Bounds2D boundsInSelf;
     Math::Bounds2D boundsInParent;
     Math::Bounds2D boundsInScene;
+    Math::Vector2 minSize={0,0};
+    Math::Vector2 prefSize;
+    Math::Vector2 maxSize = {Math::Limit<float>::Max(), Math::Limit<float>::Max()};
     
   protected:
     std::string name;
     Node* parent=nullptr;
-    const SceneGraph* sceneGraph=nullptr;
+    //const SceneGraph* sceneGraph=nullptr;
     bool enabled=true;
     bool blockEvents=false;
     Math::Vector2 layoutPosition;
     
-    
-    
-    
-    LayoutGuide layoutGuide;
     Math::Matrix3 transform;
     std::vector<SharedPtr<Node>> children;
     
   protected:
-    explicit Node(SceneGraph& scene);
+    //explicit Node(SceneGraph& scene);
     
   // Virtual functions
   protected:
     void CalculateBounds(Math::Vector2 parentPositionInScene);
-    virtual void LayoutChildren()=0;
+    virtual void OnLayout();
     virtual void OnRender();
+    
+    virtual void OnSetSize(Math::Vector2 oldValue, Math::Vector2 newValue);
+    virtual void OnSetLayoutPosition(Math::Vector2 oldValue, Math::Vector2 newValue);
     
   public:
     [[nodiscard]]virtual bool Contains(Math::Vector2 localPoint)const=0;
     
-    
-    
-    
-  
   private:
     void CalculateTransform(Math::Vector2 sceneSize);
     void SetNeedsLayout(bool value);
@@ -65,7 +63,8 @@ namespace Candy::Gum
     void AddChild(SharedPtr<Node> child);
     void Layout();
     [[nodiscard]]bool Contains(float localX, float localY)const;
-    
+    void SetName(const std::string& value);
+    std::string GetName()const;
     void SetEnabled(bool enabled);
     void Enable();
     void Disable();
@@ -89,8 +88,12 @@ namespace Candy::Gum
     [[nodiscard]] const Math::Bounds2D& GetBoundsInScene()const;
     
     
-    
-    [[nodiscard]] const LayoutGuide& GetLayoutGuide()const;
+    void SetMinSize(const Math::Vector2& value);
+    void SetPrefSize(const Math::Vector2& value);
+    void SetMaxSize(const Math::Vector2& value);
+    [[nodiscard]] const Math::Vector2& GetMinSize()const;
+    [[nodiscard]] const Math::Vector2& GetPrefSize()const;
+    [[nodiscard]] const Math::Vector2& GetMaxSize()const;
     [[nodiscard]] const Math::Matrix3& GetTransform()const;
     
     

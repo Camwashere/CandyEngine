@@ -5,17 +5,27 @@ namespace Candy::Gum
 {
   using namespace Math;
   
-  Node::Node(SceneGraph& scene) : sceneGraph(&scene)
+  /*Node::Node(SceneGraph& scene) : sceneGraph(&scene)
   {
   
-  }
+  }*/
   
   void Node::Layout()
   {
-    LayoutChildren();
+    OnLayout();
     needsLayout = false;
   }
+  
   void Node::OnRender()
+  {
+  
+  }
+  
+  void Node::OnSetSize(Math::Vector2 oldValue, Math::Vector2 newValue)
+  {
+  
+  }
+  void Node::OnSetLayoutPosition(Math::Vector2 oldValue, Math::Vector2 newValue)
   {
   
   }
@@ -142,6 +152,18 @@ namespace Candy::Gum
     boundsInParent.SetPosition(layoutPosition);
     boundsInScene.SetPosition(parentPositionInScene + layoutPosition);
   }
+  void Node::OnLayout()
+  {
+  
+  }
+  void Node::SetName(const std::string& value)
+  {
+    name = value;
+  }
+  std::string Node::GetName()const
+  {
+    return name;
+  }
   void Node::SetEnabled(bool value)
   {
     enabled=value;
@@ -157,11 +179,15 @@ namespace Candy::Gum
   
   void Node::SetLayoutPosition(Math::Vector2 position)
   {
+    OnSetLayoutPosition(layoutPosition, position);
     layoutPosition = position;
+    needsLayout=true;
   }
   void Node::SetSize(Math::Vector2 value)
   {
+    OnSetSize(size, value);
     size=value;
+    
   }
   void Node::SetSize(float width, float height)
   {
@@ -169,11 +195,11 @@ namespace Candy::Gum
   }
   void Node::SetWidth(float width)
   {
-    size.width = width;
+    SetSize({width, size.height});
   }
   void Node::SetHeight(float height)
   {
-    size.height = height;
+    SetSize({size.width, height});
   }
   Math::Vector2 Node::GetSize()const
   {
@@ -233,11 +259,35 @@ namespace Candy::Gum
     return boundsInScene;
   }
   
-  
-  const LayoutGuide& Node::GetLayoutGuide()const
+  void Node::SetMinSize(const Math::Vector2& value)
   {
-    return layoutGuide;
+    minSize = value;
+    SetNeedsLayout(true);
   }
+  void Node::SetPrefSize(const Math::Vector2& value)
+  {
+    prefSize = value;
+    SetNeedsLayout(true);
+  }
+  void Node::SetMaxSize(const Math::Vector2& value)
+  {
+    maxSize = value;
+    SetNeedsLayout(true);
+  }
+  const Math::Vector2& Node::GetMinSize()const
+  {
+    return minSize;
+  }
+  const Math::Vector2& Node::GetPrefSize()const
+  {
+    return prefSize;
+  }
+  const Math::Vector2& Node::GetMaxSize()const
+  {
+    return maxSize;
+  }
+  
+  
   const Math::Matrix3& Node::GetTransform()const
   {
     return transform;

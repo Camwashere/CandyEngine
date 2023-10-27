@@ -28,7 +28,16 @@ namespace Candy::Math
     return Contains(other.position) || Contains(other.GetMax());
   }
   
-  
+  std::vector<Vector2> Bounds2D::GetCorners()const
+  {
+    std::vector<Vector2> corners;
+    corners.push_back(GetBottomLeft());
+    corners.push_back(GetBottomRight());
+    corners.push_back(GetTopLeft());
+    corners.push_back(GetTopRight());
+    return corners;
+    
+  }
   void Bounds2D::SetPosition(const Vector2& pos)
   {
     position = pos;
@@ -71,8 +80,47 @@ namespace Candy::Math
     size.Set(x - position.x, y - position.y);
   }
   
-  
-  
+  std::vector<Bounds2D> Bounds2D::Split()const
+  {
+    std::vector<Bounds2D> result;
+    result.push_back(GetBottomLeftQuad());
+    result.push_back(GetBottomRightQuad());
+    result.push_back(GetTopLeftQuad());
+    result.push_back(GetTopRightQuad());
+    return result;
+  }
+  Bounds2D Bounds2D::GetBottomLeftQuad()const
+  {
+    return Bounds2D(position, size * 0.5f);
+  }
+  Bounds2D Bounds2D::GetBottomRightQuad()const
+  {
+    return Bounds2D(position + Vector2(size.width * 0.5f, 0), size * 0.5f);
+  }
+  Bounds2D Bounds2D::GetTopLeftQuad()const
+  {
+    return Bounds2D(position + Vector2(0, size.height * 0.5f), size * 0.5f);
+  }
+  Bounds2D Bounds2D::GetTopRightQuad()const
+  {
+    return Bounds2D(position + size * 0.5f, size * 0.5f);
+  }
+  Vector2 Bounds2D::GetBottomLeft()const
+  {
+    return position;
+  }
+  Vector2 Bounds2D::GetBottomRight()const
+  {
+    return position + Vector2(size.width, 0);
+  }
+  Vector2 Bounds2D::GetTopLeft()const
+  {
+    return position + Vector2(0, size.height);
+  }
+  Vector2 Bounds2D::GetTopRight()const
+  {
+    return position + size;
+  }
   Vector2 Bounds2D::GetCenter()const
   {
      return position + size * 0.5f;

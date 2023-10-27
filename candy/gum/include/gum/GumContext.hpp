@@ -1,6 +1,7 @@
 #pragma once
 #include <candy/event/Events.hpp>
 #include <gum/base/SceneGraph.hpp>
+#include <gum/layout/BoxLayout.hpp>
 #include <queue>
 struct GLFWwindow;
 namespace Candy::Gum
@@ -11,9 +12,11 @@ namespace Candy::Gum
     GLFWwindow* windowHandle=nullptr;
     bool blockEvents=false;
     SceneGraph sceneGraph;
-    //GumGraph graph;
     SharedPtr<Rectangle> testObject;
-    //SharedPtr<GumObject> testObject=nullptr;
+    SharedPtr<Rectangle> testObject2;
+    SharedPtr<Rectangle> testObject3;
+    SharedPtr<Rectangle> testObject4;
+    SharedPtr<BoxLayout> testLayout;
     std::queue<SharedPtr<Events::Event>> captureEventQueue;
     
     
