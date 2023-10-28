@@ -2,6 +2,7 @@
 #include "CandyPch.hpp"
 #include <candy/graphics/Renderer.hpp>
 #include <gum/GumRenderer.hpp>
+#include <gum/event/EventType.hpp>
 namespace Candy::Gum
 {
   using namespace Graphics;
@@ -27,6 +28,7 @@ namespace Candy::Gum
     CANDY_PROFILE_FUNCTION();
    CANDY_CORE_INFO("Initializing Gum");
    GumRenderer::Init();
+   EventType::Init();
    data.initialized=true;
    CANDY_CORE_INFO("Initialized Gum");
   }

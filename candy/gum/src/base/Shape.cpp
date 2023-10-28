@@ -10,14 +10,7 @@ namespace Candy::Gum
     SetSize(shapeSize);
   }
   
-  bool Shape::Contains(Math::Vector2 localPoint) const
-  {
-    if (GetBoundsInParent().Contains(localPoint))
-    {
-      return ShapeContains(localPoint);
-    }
-    return false;
-  }
+  
   
   float Shape::GetStrokeWidth() const
   {

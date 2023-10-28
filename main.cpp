@@ -1,5 +1,4 @@
 #include <candy/app/Application.hpp>
-
 #include <editor/EditorLayer.hpp>
 
 using namespace Candy;
@@ -15,8 +14,12 @@ int main(int argc, char** argv)
   appData.commandLineArgs = commandLineArgs;
   Application app(appData);
   
+  
+  
   EditorLayer editorLayer;
   app.PushLayer(&editorLayer);
+  
+  
   
  
   app.Run();

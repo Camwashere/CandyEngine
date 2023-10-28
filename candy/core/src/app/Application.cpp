@@ -7,6 +7,8 @@
 #include <CandyEngine.hpp>
 #include <candy/project/ProjectManager.hpp>
 #include <gum/GumContext.hpp>
+#include <gum/event/EventType.hpp>
+#include <gum/event/EventDispatcher.hpp>
 namespace Candy
 {
     using namespace Events;
@@ -21,13 +23,33 @@ namespace Candy
         Log::Init();
         CANDY_CORE_INFO("Initializing Candy Engine");
         CandyEngine::Init();
+        //Gum::EventType::Init();
+        
         CANDY_CORE_INFO("Initialized Candy Engine");
         CANDY_CORE_ASSERT(!instance, "Application already exists");
         instance=this;
         
         mainWindow = CreateUniquePtr<Window>(WindowData(ProjectManager::ProjectName(), 3000, 1500));
         mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
-        
+      //Gum::EventDispatcher<void, int> dispatcher;
+      
+      Gum::EventDispatcher<Gum::MousePressedEvent> dispatch;
+      
+      dispatch.AppendListener([](Gum::MouseEvent& event){CANDY_CORE_INFO("MouseAt: {0}", event.GetLocalPosition());});
+      dispatch.AppendListener([](Gum::MousePressedEvent& event){CANDY_CORE_INFO("MousePressed: {0}", event.GetLocalPosition());});
+      Gum::MouseEvent mouseEvent(Math::Vector2(3, 4));
+      Gum::MousePressedEvent mousePressedEvent(Mouse::ButtonLeft, Math::Vector2(3, 4));
+      dispatch.Dispatch(mousePressedEvent);
+      //dispatch.AppendListener()
+      
+      /*dispatcher.AppendListener(Gum::EventType::MousePressed, [](int x){CANDY_CORE_INFO("MousePressed: {0}", x);});
+      dispatcher.AppendListener(Gum::EventType::MouseReleased, [](int x){CANDY_CORE_INFO("MouseReleased: {0}", x);});
+      
+      dispatcher.AppendListener(Gum::EventType::MousePressed, [](int x){CANDY_CORE_INFO("MousePressed AGAIN BITCH!: {0}", x);});
+      
+      
+      dispatcher.Dispatch(Gum::EventType::MousePressed, 3);
+      dispatcher.Dispatch(Gum::EventType::MouseReleased, 69);*/
         
         
       uiLayer = new UILayer();

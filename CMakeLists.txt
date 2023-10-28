@@ -421,6 +421,7 @@ set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/event/EventTarget.hpp
         candy/gum/include/gum/event/EventDispatcher.hpp
         candy/gum/include/gum/event/EventType.hpp
+        candy/gum/include/gum/event/internal/CallbackList.hpp
 )
 
 set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
@@ -441,6 +442,7 @@ set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
         candy/gum/src/base/Region.cpp
         candy/gum/src/base/Layout.cpp
         candy/gum/src/layout/BoxLayout.cpp
+        candy/gum/src/event/EventType.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
