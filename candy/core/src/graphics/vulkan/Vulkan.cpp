@@ -16,7 +16,7 @@
 #include <candy/graphics/texture/TextureManager.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
 #include <CandyEngine.hpp>
-#include <gum/GumInstance.hpp>
+#include <gum/GumSystem.hpp>
 namespace Candy::Graphics
 {
   static int MAX_FRAMES_IN_FLIGHT = 3;
@@ -131,7 +131,7 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(shaderLibraryInitialized, "Failed to initialize shader library");
     Renderer2D::Init();
     Renderer3D::Init();
-    Gum::GumInstance::Init();
+    Gum::GumSystem::Init();
     ShaderLibrary::Bake();
     
     CANDY_CORE_INFO("Initialized Vulkan");

@@ -1,5 +1,5 @@
 #include <gum/shape/Rectangle.hpp>
-#include <gum/GumRenderer.hpp>
+#include <gum/render/Renderer.hpp>
 #include "CandyPch.hpp"
 namespace Candy::Gum
 {
@@ -85,38 +85,17 @@ namespace Candy::Gum
       for (Vector2 corner : corners)
       {
         float dist = EllipseDist(normalizedPoint, corner, arcSize);
-        //CANDY_CORE_INFO("Dist: {0}, at corner: {1}", dist, corner);
         if (dist <= 0.5f)
         {
           inEllipse=false;
           break;
         }
       }
-      
-      
-      //CANDY_CORE_INFO("Mouse Pos: {0}, Relative Mouse: {1}, Normalized Mouse: {2}, Contained: {3}", localPoint, relativePoint, normalizedPoint, inEllipse ? "true" : "false");
-      
       return inEllipse;
     }
   }
   
-  /*void Rectangle::SetX(float value)
-  {
-    layoutPosition.x = value;
-  }
-  void Rectangle::SetY(float value)
-  {
-    layoutPosition.y = value;
-  }*/
-  /*void Rectangle::SetPosition(Math::Vector2 value)
-  {
-    layoutPosition = value;
-  }
-  void Rectangle::SetPosition(float x, float y)
-  {
-    layoutPosition.x = x;
-    layoutPosition.y = y;
-  }*/
+ 
   
   
   void Rectangle::SetArcWidth(float value)
@@ -178,6 +157,6 @@ namespace Candy::Gum
   
   void Rectangle::OnRender()
   {
-    GumRenderer::SubmitRectangle(transform, *this);
+    Renderer::SubmitRectangle(transform, *this);
   }
 }

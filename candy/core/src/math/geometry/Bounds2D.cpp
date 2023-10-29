@@ -12,11 +12,15 @@ namespace Candy::Math
   
   bool Bounds2D::Contains(const Vector2& point)const
   {
-    return Contains(point.x, point.y);
+    bool xWithin = point.x >= GetMin().x && point.x <= GetMax().x;
+    bool yWithin = point.y >= GetMin().y && point.y <= GetMax().y;
+    return xWithin && yWithin;
+    //return Contains(point.x, point.y);
   }
   bool Bounds2D::Contains(float x, float y)const
   {
-    return x >= position.x && x <= (position.x + size.width) && y >= position.y && y <= (position.y + size.width);
+    return Contains({x, y});
+    //return x >= position.x && x <= (position.x + size.width) && y >= position.y && y <= (position.y + size.width);
   }
   bool Bounds2D::Contains(const Bounds2D& other)const
   {
@@ -120,6 +124,10 @@ namespace Candy::Math
   Vector2 Bounds2D::GetTopRight()const
   {
     return position + size;
+  }
+  Vector2 Bounds2D::GetPosition()const
+  {
+    return position;
   }
   Vector2 Bounds2D::GetCenter()const
   {

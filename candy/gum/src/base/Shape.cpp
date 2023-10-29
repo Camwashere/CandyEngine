@@ -1,10 +1,10 @@
 #include "gum/shape/Shape.hpp"
-#include <gum/GumInstance.hpp>
+#include "gum/GumSystem.hpp"
 namespace Candy::Gum
 {
   
   Shape::Shape(ShapeType shapeType, Math::Vector2 shapePos, Math::Vector2 shapeSize,  const Color& fillColor, const Color& strokeColor, float strokeWidth)
-  : Node(), type(shapeType), fillColor(fillColor), strokeColor(strokeColor), strokeWidth(strokeWidth)
+  : type(shapeType), fillColor(fillColor), strokeColor(strokeColor), strokeWidth(strokeWidth)
   {
     layoutPosition = shapePos;
     SetSize(shapeSize);

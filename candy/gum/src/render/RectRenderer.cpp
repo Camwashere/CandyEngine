@@ -49,13 +49,14 @@ namespace Candy::Gum
     Math::Vector2 positionInScene;
     Math::Vector2 size;
     float strokeWidth;
+    Color fillColor;
     Color strokeColor;
     Math::Vector2 arcSize;
-    Matrix3 transform;
+    //Matrix3 transform;
     
     RectData(const Rectangle& rect, int32_t& currentVertexOffset)
     {
-      transform = rect.GetTransform();
+      //transform = rect.GetTransform();
       vertexOffset = currentVertexOffset;
       
       positionInScene = rect.GetBoundsInScene().GetBottomLeft();
@@ -65,13 +66,31 @@ namespace Candy::Gum
       //arcSize = arcSize / size;
       arcSize = Vector2::Clamp(arcSize, Vector2(Epsilon<float>()), Vector2(1.0f));
       strokeColor = rect.GetStrokeColor();
+      fillColor = rect.GetFillColor();
       
       for (int i=0; i<4; i++)
       {
         
         vertices[i].position = rectVertPositions[i];
         vertices[i].uv = rectVertUvs[i];
-        vertices[i].color = rect.GetFillColor();
+        vertices[i].color = fillColor;
+      }
+      
+      currentVertexOffset += 4;
+    }
+    
+    RectData(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, Color strokeColor, Color fillColor, Math::Vector2 arcSize, int32_t& currentVertexOffset)
+    : positionInScene(positionInScene), size(size), strokeWidth(strokeWidth/(Math::Min(size.x, size.y))), strokeColor(strokeColor), fillColor(fillColor), arcSize(Vector2::Clamp(arcSize, Vector2(Epsilon<float>()), Vector2(1.0f)))
+    {
+      //transform = rect.GetTransform();
+      vertexOffset = currentVertexOffset;
+      
+      for (int i=0; i<4; i++)
+      {
+        
+        vertices[i].position = rectVertPositions[i];
+        vertices[i].uv = rectVertUvs[i];
+        vertices[i].color = fillColor;
       }
       
       currentVertexOffset += 4;
@@ -107,6 +126,14 @@ namespace Candy::Gum
   {
     RectData rect(rectangle, currentVertexOffset);
     
+    verts.insert(verts.end(), rect.vertices, rect.vertices+4);
+    
+    rectData.push_back(rect);
+  }
+  
+  void RectRenderer::Submit(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, Color strokeColor, Color fillColor, Math::Vector2 arcSize)
+  {
+    RectData rect(positionInScene, size, strokeWidth, strokeColor, fillColor, arcSize, currentVertexOffset);
     verts.insert(verts.end(), rect.vertices, rect.vertices+4);
     
     rectData.push_back(rect);

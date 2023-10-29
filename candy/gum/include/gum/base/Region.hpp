@@ -10,7 +10,9 @@ namespace Candy::Gum
     SharedPtr<Shape> shape;
     Color backgroundColor;
     
+    
   protected:
+    virtual void OnBoundsCalculated()override;
     virtual void OnLayout()override;
     virtual void OnRender()override;
     virtual void OnSetSize(Math::Vector2 oldValue, Math::Vector2 newValue)override;
@@ -21,7 +23,7 @@ namespace Candy::Gum
     
   public:
     Color GetBackgroundColor()const;
-    void SetBackgroundColor(Color value);
+    void SetBackgroundColor(const Color& value);
     void SetShape(SharedPtr<Shape> shape);
     Shape& GetShape();
     [[nodiscard]] const Shape& GetShape()const;

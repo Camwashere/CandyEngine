@@ -17,5 +17,8 @@ namespace Candy::Gum
     LayoutType layoutType = LayoutType::Horizontal;
   protected:
     virtual void LayoutChildren()override;
+    
+  public:
+    BoxLayout();
   };
 }

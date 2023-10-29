@@ -5,57 +5,33 @@
 #include "EventTarget.hpp"
 namespace Candy::Gum
 {
-  
+  class Node;
   class Event
   {
   private:
     bool consumed=false;
-    //EventType type;
-    EventTarget target;
-    EventTarget source;
+    EventType type=EventType::None;
+    Node* source;
     
   protected:
-    Event()=default;
+    explicit Event(EventType type);
     
   public:
-    [[nodiscard]] EventTarget GetTarget()const{return target;}
-    [[nodiscard]] EventTarget GetSource()const{return source;}
-    [[nodiscard]] EventType GetType()const{return Type();}
+    
+    void SetSource(Node* value){source=value;}
+    [[nodiscard]] bool HasSource()const{return source != nullptr;}
+    [[nodiscard]] Node* GetSource()const{return source;}
+    [[nodiscard]] EventType GetType()const{return type;}
     void Consume(){consumed=true;}
     [[nodiscard]] bool IsConsumed()const{return consumed;}
-    
-    
-  public:
-    static EventType Type(){return EventType::None;}
-    
   };
   
   
-  class MouseEvent : public Event
-  {
-  protected:
-    Math::Vector2 position;
-    
-  public:
-    explicit MouseEvent(const Math::Vector2& pos) :  position(pos){}
-    
-  public:
-    [[nodiscard]] Math::Vector2 GetLocalPosition() const{return position;}
-    
-  public:
-    static EventType Type(){return EventType::Mouse;}
-  };
   
-  class MousePressedEvent : public MouseEvent
-  {
-  protected:
-    MouseCode button;
-  public:
-    explicit MousePressedEvent(MouseCode code, const Math::Vector2& pos) : MouseEvent(pos), button(code){}
-    
-  public:
-    static EventType Type(){return EventType::MousePressed;}
-  };
+  
+  
+  
+  
   
   
   

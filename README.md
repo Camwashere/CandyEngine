@@ -23,12 +23,12 @@ A Vulkan based cross-platform rendering engine for 2D and 3D applications.
   * Powerful highly optimized rendering api for batch rendering static meshes, 2D shapes, sprites, and more with full support for dynamic vertex data and custom types
   * Loads of easily overriden convience features from abstracting descriptor sets with ids, automatic gpu memory management, easy to use vertex/index buffers, render command recording, object deletion, debugging, multiple frames in flight handling, pipeline management, and more.
 
-* Gum UI Library
+* GumSystem UI Library
   * An expansive, customizable, graphics api based ui library that allows for limitless possibilities
   * Doesn't rely on OS calls, so you can render any graphic or effect you can possibly imagine while mainting a consistent look across platforms.
   * Supports both retained mode and immediate mode. Use immediate mode for quick, single state ui tasks like debugging and prototyping and retained mode for more fleshed out, finalized work. Or ignore one entirely, they can be used together however you wish!
   * Create your own custom events, handlers, filters, listeners, etc. Event capturing and bubbling can be completely controlled by the user
-  * Effortless integration with Candy Engine. Since the editor/ui of Candy Engine is built using Gum, you can easily change, extend and customize everything in both your application's ui, and the CandyEngine itself to create the perfect enviorment for you.
+  * Effortless integration with Candy Engine. Since the editor/ui of Candy Engine is built using GumSystem, you can easily change, extend and customize everything in both your application's ui, and the CandyEngine itself to create the perfect enviorment for you.
   * Highly customizable. Feel free to abandon the premade/helper functionality entirely and submit your own completely custom vertex data, collision handling, events, and more for 100% control whenever you need it.
   * 3D functionality for gizmos, debug tools, animations and unique UI designs
 

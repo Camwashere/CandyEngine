@@ -5,7 +5,7 @@
 namespace Candy::Gum
 {
   
-  struct EventType
+  class EventType
   {
     uint32_t type=0;
     uint32_t root=0;
@@ -20,12 +20,20 @@ namespace Candy::Gum
     static void InitKeyEvents();
     static void InitWindowEvents();
     
+  private:
+    EventType()=default;
+    
   public:
     static void Init();
     static EventType GetType(uint32_t type);
     static bool IsDerived(const EventType& type, const EventType& parent);
     
   public:
+    EventType(uint32_t type, uint32_t root, std::string  name);
+    
+  public:
+    [[nodiscard]] uint32_t GetTypeIndex()const;
+    [[nodiscard]] std::string GetName()const;
     [[nodiscard]] EventType GetRoot()const;
     [[nodiscard]] bool IsDerived(const EventType& other)const;
     
@@ -45,6 +53,7 @@ namespace Candy::Gum
     static EventType Key;
     static EventType Window;
     
+    static EventType MouseButton;
     static EventType MousePressed;
     static EventType MouseReleased;
     static EventType MouseMoved;
@@ -52,10 +61,14 @@ namespace Candy::Gum
     static EventType MouseEntered;
     static EventType MouseExited;
     
+    static EventType KeyRaw;
     static EventType KeyPressed;
     static EventType KeyReleased;
-    static EventType KeyTyped;
     static EventType KeyRepeat;
+    static EventType KeyTyped;
+    
+    static EventType WindowResized;
+    static EventType ContextResized;
   };
   
 }
@@ -68,7 +81,7 @@ namespace std {
   {
     std::size_t operator()(const Candy::Gum::EventType& eventType) const
     {
-      return (std::uint64_t)eventType.type;
+      return (std::uint64_t)eventType.GetTypeIndex();
     }
   };
   

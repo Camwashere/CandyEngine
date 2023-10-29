@@ -10,7 +10,7 @@
 struct GLFWwindow;
 namespace Candy::Gum
 {
-  class GumContext;
+  class Context;
 }
 namespace Candy
 {
@@ -42,7 +42,7 @@ namespace Candy
         WindowData windowData;
         bool fullscreen;
         Graphics::GraphicsContext* graphicsContext;
-        Gum::GumContext* gumContext;
+        Gum::Context* gumContext;
         
     public:
         GLFWwindow* handle;
@@ -67,7 +67,7 @@ namespace Candy
         [[nodiscard]] inline int GetWidth()const{return windowData.GetWindowWidth();}
         [[nodiscard]] inline int GetHeight()const{return windowData.GetWindowHeight();}
         [[nodiscard]] inline bool IsVSyncEnabled()const{return windowData.vsync;}
-        Gum::GumContext* GetGumContext();
+        Gum::Context* GetGumContext();
         //Graphics::GraphicsContext& GetGraphicsContext(){return *graphicsContext;}
     
     };

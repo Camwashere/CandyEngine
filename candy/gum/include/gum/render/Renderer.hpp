@@ -5,7 +5,7 @@
 #include <gum/shape/Rectangle.hpp>
 namespace Candy::Gum
 {
-  class GumRenderer
+  class Renderer
   {
   public:
     static void Init();
@@ -15,6 +15,7 @@ namespace Candy::Gum
     
     
     static void SubmitRectangle(const Math::Matrix3& transform, const Rectangle& rectangle, int depthIndex=0);
+    
     
   };
 }

@@ -3,7 +3,17 @@
 namespace Candy::Gum
 {
   using namespace Math;
-  
+  BoxLayout::BoxLayout()
+  {
+    EventHandler<MouseReleasedEvent> mouseReleasedHandler([=, this](MouseReleasedEvent& event)
+    {
+      CANDY_CORE_INFO("Node::MouseReleasedEvent. Box Layout: {}, Position: {}, Local Position: {}.\n BoxPosition: {}, Box Size: {}\n ShapePosition: {}, Shape Size: {}",
+      name, event.GetPosition(), event.GetLocalPosition(), GetBoundsInScene().GetBottomLeft(), GetSize(), GetShape().GetBoundsInScene().GetBottomLeft(), GetShape().GetSize());
+      //event.Consume();
+    });
+    
+    AppendEventHandler(mouseReleasedHandler);
+  }
   void BoxLayout::LayoutChildren()
   {
     //CANDY_CORE_CRITICAL("LAYING OUT CHILDREN IN BOX LAYOUT");

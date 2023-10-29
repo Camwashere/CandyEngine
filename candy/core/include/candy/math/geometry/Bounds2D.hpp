@@ -45,6 +45,7 @@ namespace Candy::Math
     [[nodiscard]] Vector2 GetTopLeft()const;
     [[nodiscard]] Vector2 GetTopRight()const;
     
+    [[nodiscard]] Vector2 GetPosition()const;
     [[nodiscard]] Vector2 GetCenter()const;
     [[nodiscard]] float GetWidth()const;
     [[nodiscard]] float GetHeight()const;
@@ -57,3 +58,16 @@ namespace Candy::Math
     
   };
 }
+
+template<>
+struct fmt::formatter<Candy::Math::Bounds2D> {
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  
+  template <typename FormatContext>
+  auto format(const Candy::Math::Bounds2D& bounds, FormatContext& ctx) {
+    return format_to(ctx.out(), "Pos: {0}, Size: {1}, BottomLeft: {2}, BottomRight: {3}, TopLeft: {4}, TopRight: {5}",
+    bounds.GetPosition(), bounds.GetSize(), bounds.GetBottomLeft(), bounds.GetBottomRight(), bounds.GetTopLeft(), bounds.GetTopRight());
+  }
+};

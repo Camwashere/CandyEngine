@@ -398,16 +398,9 @@ set(VMA_LIB_FILES lib/vma/vk_mem_alloc.h)
 
 set(CANDY_BUNDLED_LIB_FILES ${IM_GUI_SOURCES} ${IM_GUIZMO_SOURCES} ${STB_LIB_FILES} ${VMA_LIB_FILES})
 
-set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
-        candy/gum/include/gum/GumInstance.hpp
+set(CANDY_GUM_HEADERS
         candy/gum/include/gum/GumTransform.hpp
         candy/gum/include/gum/GumTypes.hpp
-        candy/gum/include/gum/GumRenderer.hpp
-        candy/gum/include/gum/event/GumEvent.hpp
-        candy/gum/include/gum/event/GumMouseEvent.hpp
-        candy/gum/include/gum/event/GumKeyEvent.hpp
-        candy/gum/include/gum/event/GumContextEvent.hpp
-        candy/gum/include/gum/event/GumEventHandler.hpp
         candy/gum/include/gum/base/Node.hpp
         candy/gum/include/gum/shape/Shape.hpp
         candy/gum/include/gum/base/Root.hpp
@@ -422,17 +415,19 @@ set(CANDY_GUM_HEADERS candy/gum/include/gum/GumContext.hpp
         candy/gum/include/gum/event/EventDispatcher.hpp
         candy/gum/include/gum/event/EventType.hpp
         candy/gum/include/gum/event/internal/CallbackList.hpp
+        candy/gum/include/gum/event/MouseEvent.hpp
+        candy/gum/include/gum/event/EventHandler.hpp
+        candy/gum/include/gum/event/KeyEvent.hpp
+        candy/gum/include/gum/event/InputEvent.hpp
+        candy/gum/include/gum/event/WindowEvent.hpp
+        candy/gum/include/gum/GumSystem.hpp
+        candy/gum/include/gum/Context.hpp
+        candy/gum/include/gum/render/Renderer.hpp
+        candy/gum/include/gum/widget/Button.hpp
 )
 
-set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
+set(CANDY_GUM_SOURCES
         candy/gum/src/GumTransform.cpp
-        candy/gum/src/GumRenderer.cpp
-        candy/gum/src/GumContext.cpp
-        candy/gum/src/event/GumEvent.cpp
-        candy/gum/src/event/GumMouseEvent.cpp
-        candy/gum/src/event/GumKeyEvent.cpp
-        candy/gum/src/event/GumContextEvent.cpp
-        candy/gum/src/event/GumEventHandler.cpp
         candy/gum/src/base/Node.cpp
         candy/gum/src/base/Shape.cpp
         candy/gum/src/shape/Rectangle.cpp
@@ -443,12 +438,17 @@ set(CANDY_GUM_SOURCES candy/gum/src/GumInstance.cpp
         candy/gum/src/base/Layout.cpp
         candy/gum/src/layout/BoxLayout.cpp
         candy/gum/src/event/EventType.cpp
+        candy/gum/src/event/Event.cpp
+        candy/gum/src/GumSystem.cpp
+        candy/gum/src/Context.cpp
+        candy/gum/src/render/Renderer.cpp
+        candy/gum/src/widget/Button.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 
 set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
-        candy/gum/include/gum/GumInstance.hpp candy/core/include/CandyEngine.hpp
+        candy/core/include/CandyEngine.hpp
         candy/core/include/CandyEngine.cpp
         candy/core/include/candy/engine/FileStructureValidator.hpp
 )

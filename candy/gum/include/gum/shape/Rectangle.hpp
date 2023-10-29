@@ -20,6 +20,7 @@ namespace Candy::Gum
   protected:
     void OnRender() override;
     
+    
   public:
     [[nodiscard]] bool Contains(Math::Vector2 localPoint) const override;
     [[nodiscard]] bool ShapeContains(Math::Vector2 localPoint) const;

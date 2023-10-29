@@ -12,17 +12,23 @@ namespace Candy::Gum
     shape = CreateSharedPtr<Rectangle>(0, 0, 500, 500);
     shape->SetName("RegionShape");
     SetLayoutPosition({0, 0});
-    AddChild(shape);
     SetBackgroundColor(Color::clear);
+    
+    
   }
   
   void Region::OnLayout()
   {
     //CANDY_CORE_INFO("Region::OnLayout");
+    //shape->SetLayoutPosition(layoutPosition);
     shape->SetLayoutPosition({0, 0});
     shape->SetSize(GetSize());
   }
-  
+  void Region::OnBoundsCalculated()
+  {
+    
+    shape->CalculateBounds(GetBoundsInScene().GetBottomLeft());
+  }
   void Region::OnRender()
   {
     shape->OnRender();
@@ -41,7 +47,10 @@ namespace Candy::Gum
   {
     if (GetBoundsInParent().Contains(localPoint))
     {
-      return shape->Contains(localPoint);
+      //CANDY_CORE_INFO("Bounds in parent: {}, LocalPoint: {}", GetBoundsInParent(), localPoint);
+      //return true;
+      Math::Vector2 shapeLocalPoint = localPoint - GetLayoutPosition();
+      return shape->Contains(shapeLocalPoint);
     }
     return false;
     
@@ -50,7 +59,7 @@ namespace Candy::Gum
   {
     return backgroundColor;
   }
-  void Region::SetBackgroundColor(Color value)
+  void Region::SetBackgroundColor(const Color& value)
   {
     backgroundColor = value;
     shape->SetFillColor(backgroundColor);

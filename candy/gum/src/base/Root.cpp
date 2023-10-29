@@ -9,8 +9,13 @@ namespace Candy::Gum
     name = "Root";
     transform = Math::Matrix3::IDENTITY;
     SetLayoutPosition({0, 0});
-    //boundsInParent.SetPosition({0, 0});
-    //boundsInScene.SetPosition({0, 0});
+    
+    Gum::EventHandler<Gum::ContextResizedEvent> contextResizeHandler([=, this](Gum::ContextResizedEvent& event)
+    {
+      CANDY_CORE_INFO("Root::ContextResizedEvent. Size: {}", event.GetSize());
+      SetSize(event.GetSize());
+    });
+    AppendEventFilter(contextResizeHandler);
     
   }
   bool Root::Contains(Math::Vector2 scenePoint) const

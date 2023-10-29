@@ -1,27 +1,21 @@
 #pragma once
 #include <candy/utils/Version.hpp>
-#include <filesystem>
-#include "GumContext.hpp"
+#include <gum/Context.hpp>
 namespace Candy::Gum
 {
-  
   class GumConfig
   {
   private:
     std::filesystem::path filepath;
     size_t msaaSampleCount=1;
-    
-  public:
-    bool Load(const std::filesystem::path& path);
-    
   };
-  class GumInstance
+  class GumSystem
   {
   private:
     static void GLFWCallbackInit();
   public:
-    static void SetCurrentContext(GumContext* context);
-    static GumContext& GetCurrentContext();
+    static void SetCurrentContext(Context* context);
+    static Context& GetCurrentContext();
     static void Init();
     static bool IsInitialized();
     static void Shutdown();

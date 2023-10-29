@@ -85,7 +85,7 @@ namespace Candy::Graphics
     
     
     data.chains.AddPass("Viewport", "2D", builder.GetConfig());
-    data.chains.AddPass("Viewport", "Gum", builder.GetConfig());
+    data.chains.AddPass("Viewport", "GumSystem", builder.GetConfig());
     
     RenderPassConfig selectionConfig = RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     selectionConfig.defaultClearValues.resize(2);

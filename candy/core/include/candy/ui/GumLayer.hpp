@@ -3,18 +3,18 @@
 
 namespace Candy::Gum
 {
-  class GumContext;
+  class Context;
 }
 namespace Candy
 {
   class GumLayer : public Layer
   {
   private:
-    Gum::GumContext* context;
+    Gum::Context* context;
     bool blockEvents=false;
   
   public:
-    GumLayer(Gum::GumContext* gumContext);
+    GumLayer(Gum::Context* gumContext);
     
     virtual void OnAttach() override;
     virtual void OnDetach() override;

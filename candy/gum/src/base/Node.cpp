@@ -4,18 +4,79 @@
 namespace Candy::Gum
 {
   using namespace Math;
+  SceneGraph* Node::SCENE_GRAPH_PTR=nullptr;
   
-  /*Node::Node(SceneGraph& scene) : sceneGraph(&scene)
+  Node::Node()
   {
+    AppendEventFilter<MouseMovedEvent>([=, this](MouseMovedEvent& event)
+    {
+    
+    });
+  }
+  void Node::OnCaptureEvent(Event& event)
+  {
+    captureEventDispatcher.Dispatch(event);
+    
+    if (event.GetSource() == this || IsLeaf())
+    {
+      OnBubbleEvent(event);
+      return;
+    }
+    
+    for (auto& child : children)
+    {
+      child->OnCaptureEvent(event);
+      if (event.IsConsumed())
+      {
+        return;
+      }
+    }
+  }
   
-  }*/
-  
+  void Node::OnBubbleEvent(Event& event)
+  {
+    if (event.IsConsumed())
+    {
+      return;
+    }
+    bubbleEventDispatcher.Dispatch(event);
+    if (parent == nullptr)
+    {
+      event.Consume();
+      return;
+    }
+    parent->OnBubbleEvent(event);
+  }
   void Node::Layout()
   {
     OnLayout();
     needsLayout = false;
   }
-  
+  Node* Node::FindContainingNode(Math::Vector2 parentLocalPoint)
+  {
+    if (Contains(parentLocalPoint))
+    {
+      Vector2 localPoint = parentLocalPoint - layoutPosition;
+      CANDY_CORE_INFO("Node::Found:: Node: {}, Parent Position: {}, Local Point: {}", name, parentLocalPoint, localPoint);
+      
+      if (IsLeaf())
+      {
+        return this;
+      }
+      for (auto& child : children)
+      {
+        Node* result = child->FindContainingNode(localPoint);
+        if (result != nullptr)
+        {
+          //return result->FindContainingNode
+        }
+      }
+      //return this;
+    }
+    return nullptr;
+    
+    
+  }
   void Node::OnRender()
   {
   
@@ -60,87 +121,9 @@ namespace Candy::Gum
   
   
   
-  void Node::OnCaptureEvent(Events::Event& event)
-  {
-    if (blockEvents || !enabled)
-    {
-      return;
-    }
-    switch(event.GetType())
-    {
-      case Events::EventType::MOUSE_MOVE:
-      {
-        break;
-      }
-      case Events::EventType::MOUSE_PRESSED:
-      {
-        OnCaptureMousePressedEvent(static_cast<Events::MousePressedEvent&>(event));
-        break;
-      }
-      case Events::EventType::MOUSE_RELEASED:
-      {
-        break;
-      }
-      default:
-        break;
-    }
-  }
   
-  bool Node::OnCaptureMousePressedEvent(Events::MousePressedEvent& event)
-  {
-    Math::Vector2 pos = event.GetPosition();
-    
-    if (Contains(pos))
-    {
-      CANDY_CORE_INFO("Captured mouse press on: {0}, at: {1}", name, pos);
-      if (IsLeaf())
-      {
-        GumMouseButtonPressedEvent gumEvent(this, event.GetPosition(), event.GetButton());
-        
-        OnEvent(gumEvent);
-        return true;
-        
-      }
-      
-      for (auto& it : children)
-      {
-        bool captured = it->OnCaptureMousePressedEvent(event);
-        if (captured)
-        {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  void Node::OnEvent(GumEvent& event)
-  {
-    
-    if (! event.IsConsumed())
-    {
-      switch(event.GetType())
-      {
-        case GumEventType::MousePressed:
-        {
-          OnMouseButtonPressed(static_cast<GumMouseButtonPressedEvent&>(event));
-          break;
-        }
-        default:
-          break;
-      }
-    }
-    
-    if (HasParent())
-    {
-      parent->OnEvent(event);
-    }
-    
-  }
-  void Node::OnMouseButtonPressed(GumMouseButtonPressedEvent& event)
-  {
-    CANDY_CORE_INFO("Mouse button pressed on: {0}, at local pos: {1}", name, event.GetLocalPosition());
-    event.Consume();
-  }
+  
+  
   
   void Node::CalculateBounds(Math::Vector2 parentPositionInScene)
   {
@@ -151,6 +134,12 @@ namespace Candy::Gum
     boundsInSelf.SetPosition({0, 0});
     boundsInParent.SetPosition(layoutPosition);
     boundsInScene.SetPosition(parentPositionInScene + layoutPosition);
+    
+    OnBoundsCalculated();
+  }
+  void Node::OnBoundsCalculated()
+  {
+  
   }
   void Node::OnLayout()
   {
@@ -237,6 +226,10 @@ namespace Candy::Gum
   {
     return parent;
   }
+  bool Node::IsFocused()const
+  {
+    return focused;
+  }
   bool Node::IsEnabled()const
   {
     return enabled;
@@ -244,6 +237,10 @@ namespace Candy::Gum
   bool Node::IsLeaf()const
   {
     return children.empty();
+  }
+  SceneGraph* Node::GetSceneGraph()
+  {
+    return SCENE_GRAPH_PTR;
   }
   Bounds2D Node::GetBoundsInSelf()const
   {

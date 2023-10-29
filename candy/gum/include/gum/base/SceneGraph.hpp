@@ -1,32 +1,61 @@
 #pragma once
 #include "Root.hpp"
 #include <queue>
-#include "candy/event/Events.hpp"
 #include <candy/graphics/camera/OrthographicCamera.hpp>
+#include <gum/event/Event.hpp>
+
+#include <candy/base/KeyCodes.hpp>
+#include <candy/base/MouseCodes.hpp>
 namespace Candy::Gum
 {
-  class GumContext;
+  class Context;
   class SceneGraph
   {
   private:
-    GumContext* context;
+    Context* context;
     Root root;
     bool blockCaptureEvents=false;
     std::queue<Node*> layoutQueue;
     std::queue<Node*> transformQueue;
     std::queue<Node*> boundsQueue;
-    //Graphics::OrthographicCamera camera;
-    Math::Vector2 sceneSize;
+    Node* focusedNode=nullptr;
+    Math::Vector2 previousMousePosition;
     Math::Vector2 mousePosition;
-    Math::Vector2 windowSize;
+    Math::Vector2 sceneSize;
+    std::list<Node*> hoveredNodes;
+    
+    std::queue<SharedPtr<Event>> captureEventQueue;
     
   public:
-    explicit SceneGraph(GumContext* context);
+    explicit SceneGraph(Context* context);
     
   private:
+    void SetSceneSize(Math::Vector2 size);
+    void SetWindowSize(Math::Vector2i size);
+    void SetMousePosition(Math::Vector2 position);
+    void SetFocusedNode(Node* node);
+    
+    void UpdateHovered();
+    void UpdateHovered(Node& node, Math::Vector2 parentLocalPoint);
+    void QueueEvent(SharedPtr<Event> event);
+    void QueueMouseEntered(Node& node);
+    void QueueMouseExited(Node& node);
+    void QueueWindowResized(Math::Vector2i windowSize);
+    void QueueContextResized();
+    void QueueKeyPressed(KeyCode key, KeyCode mods);
+    void QueueKeyReleased(KeyCode key, KeyCode mods);
+    void QueueKeyRepeat(KeyCode key, KeyCode mods, int repeat);
+    void QueueKeyTyped(KeyCode key);
+    
+    void QueueMousePressed(MouseCode button);
+    void QueueMouseReleased(MouseCode button);
+    void QueueMouseMoved();
+    
+    
+    
+  private:
+    
     void RenderNode(Node& node);
-    
-    
     void CalculateLayouts();
     void CalculateTransforms();
     void CalculateBounds();
@@ -34,25 +63,18 @@ namespace Candy::Gum
     void CalculateLayoutsPostOrder(Node& node);
     void CalculateBoundsPostOrder(Node& node, Math::Vector2 parentPositionInScene);
     
-    bool OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
-    bool OnWindowResize(Events::WindowResizeEvent& event);
-    bool OnMouseMoved(Events::MouseMovedEvent& event);
-    bool OnMousePressed(Events::MousePressedEvent& event);
-    bool OnMouseReleased(Events::MouseReleasedEvent& event);
-    bool OnKeyPressed(Events::KeyPressedEvent& event);
-    bool OnKeyReleased(Events::KeyReleasedEvent& event);
-    bool OnKeyTyped(Events::KeyTypedEvent& event);
-    
   public:
-    void OnCaptureEvent(Events::Event& event);
+    void FlushCaptureEventQueue();
     void Update();
     void Render();
     
   public:
     Root& Root();
     [[nodiscard]] Math::Vector2 GetSceneSize()const;
-    void SetSceneSize(Math::Vector2i size);
-    void SetWindowSize(Math::Vector2i size);
+    //void SetSceneSize(Math::Vector2 size);
+    //void SetWindowSize(Math::Vector2i size);
+    
+    friend class Context;
     
     
   };

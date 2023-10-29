@@ -1,16 +1,20 @@
 #pragma once
 #include <candy/math/geometry/Bounds2D.hpp>
 #include <candy/math/Matrix.hpp>
-#include <candy/event/Events.hpp>
-#include <gum/event/GumEvent.hpp>
-#include <gum/event/GumMouseEvent.hpp>
-#include <gum/event/GumKeyEvent.hpp>
+#include <candy/base/Base.hpp>
+#include <gum/event/Event.hpp>
+#include <gum/event/EventDispatcher.hpp>
+#include <gum/event/WindowEvent.hpp>
+#include <gum/event/KeyEvent.hpp>
+#include <gum/event/MouseEvent.hpp>
 namespace Candy::Gum
 {
   
   class SceneGraph;
   class Node
   {
+  private:
+    static SceneGraph* SCENE_GRAPH_PTR;
   private:
     bool needsLayout=true;
     bool needsTransform=true;
@@ -21,50 +25,75 @@ namespace Candy::Gum
     Math::Vector2 minSize={0,0};
     Math::Vector2 prefSize;
     Math::Vector2 maxSize = {Math::Limit<float>::Max(), Math::Limit<float>::Max()};
+    EventDispatcher captureEventDispatcher;
+    EventDispatcher bubbleEventDispatcher;
+    bool focused=false;
+    bool hovered=false;
     
   protected:
     std::string name;
     Node* parent=nullptr;
-    //const SceneGraph* sceneGraph=nullptr;
+    
     bool enabled=true;
-    bool blockEvents=false;
     Math::Vector2 layoutPosition;
     
     Math::Matrix3 transform;
     std::vector<SharedPtr<Node>> children;
     
-  protected:
-    //explicit Node(SceneGraph& scene);
+  public:
+    Node();
+    virtual ~Node()=default;
+    
+  
     
   // Virtual functions
   protected:
-    void CalculateBounds(Math::Vector2 parentPositionInScene);
+    
     virtual void OnLayout();
     virtual void OnRender();
-    
+    virtual void OnBoundsCalculated();
     virtual void OnSetSize(Math::Vector2 oldValue, Math::Vector2 newValue);
     virtual void OnSetLayoutPosition(Math::Vector2 oldValue, Math::Vector2 newValue);
     
   public:
+    template<typename EVENT>
+    void AppendEventFilter(const std::function<void(EVENT&)>& functionHandle)
+    {
+      captureEventDispatcher.AppendHandler(EventHandler<EVENT>(functionHandle));
+    }
+    template<typename EVENT>
+    void AppendEventHandler(const std::function<void(EVENT&)>& functionHandle)
+    {
+      bubbleEventDispatcher.AppendHandler(EventHandler<EVENT>(functionHandle));
+    }
+    template<typename EVENT>
+    void AppendEventFilter(const EventHandler<EVENT>& handler)
+    {
+      captureEventDispatcher.AppendHandler(handler);
+    }
+    template<typename EVENT>
+    void AppendEventHandler(const EventHandler<EVENT>& handler)
+    {
+      bubbleEventDispatcher.AppendHandler(handler);
+    }
     [[nodiscard]]virtual bool Contains(Math::Vector2 localPoint)const=0;
+    Node* FindContainingNode(Math::Vector2 localPoint);
+    void OnCaptureEvent(Event& event);
+    void OnBubbleEvent(Event& event);
     
   private:
     void CalculateTransform(Math::Vector2 sceneSize);
     void SetNeedsLayout(bool value);
     void SetNeedsTransform(bool value);
-    void OnCaptureEvent(Events::Event& event);
-    bool OnCaptureMousePressedEvent(Events::MousePressedEvent& event);
     
-    
-    void OnEvent(GumEvent& event);
-    void OnMouseButtonPressed(GumMouseButtonPressedEvent& event);
 
   public:
+    void CalculateBounds(Math::Vector2 parentPositionInScene);
     void AddChild(SharedPtr<Node> child);
     void Layout();
     [[nodiscard]]bool Contains(float localX, float localY)const;
     void SetName(const std::string& value);
-    std::string GetName()const;
+    [[nodiscard]] std::string GetName()const;
     void SetEnabled(bool enabled);
     void Enable();
     void Disable();
@@ -80,9 +109,10 @@ namespace Candy::Gum
     [[nodiscard]] bool HasParent()const;
     Node* GetParent();
     [[nodiscard]] const Node* GetParent()const;
+    [[nodiscard]] bool IsFocused()const;
     [[nodiscard]] bool IsEnabled()const;
     [[nodiscard]] bool IsLeaf()const;
-    
+    SceneGraph* GetSceneGraph();
     [[nodiscard]] Math::Bounds2D GetBoundsInSelf()const;
     [[nodiscard]] const Math::Bounds2D& GetBoundsInParent()const;
     [[nodiscard]] const Math::Bounds2D& GetBoundsInScene()const;

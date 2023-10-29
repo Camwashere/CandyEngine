@@ -1,19 +1,35 @@
 #include <gum/base/SceneGraph.hpp>
-#include <gum/GumContext.hpp>
+#include <gum/Context.hpp>
 #include <CandyPch.hpp>
-#include <gum/GumRenderer.hpp>
-#include <gum/GumInstance.hpp>
+#include <gum/render/Renderer.hpp>
+#include "gum/GumSystem.hpp"
+#include <gum/event/WindowEvent.hpp>
+#include <gum/event/KeyEvent.hpp>
+#include <gum/event/MouseEvent.hpp>
 namespace Candy::Gum
 {
-  SceneGraph::SceneGraph(GumContext* gumContext) : context(gumContext)
+  SceneGraph::SceneGraph(Context* gumContext) : context(gumContext)
   {
     CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(context != nullptr);
-    GumInstance::SetCurrentContext(context);
-    
-    
+    GumSystem::SetCurrentContext(context);
+    Node::SCENE_GRAPH_PTR = this;
+    SetFocusedNode(&root);
   }
-  
+  void SceneGraph::FlushCaptureEventQueue()
+  {
+    CANDY_PROFILE_FUNCTION();
+    while (!captureEventQueue.empty())
+    {
+      auto event = captureEventQueue.front();
+      captureEventQueue.pop();
+      if (event)
+      {
+        root.OnCaptureEvent(*event);
+        
+      }
+    }
+  }
   void SceneGraph::Render()
   {
     CANDY_PROFILE_FUNCTION();
@@ -50,32 +66,6 @@ namespace Candy::Gum
   {
     CANDY_PROFILE_FUNCTION();
     CalculateLayoutsPostOrder(root);
-    // Loop while there are dirty objects in the queue
-    /*while (!layoutQueue.empty())
-    {
-      // Get the dirty object from the front of the queue
-      auto object = layoutQueue.front();
-      layoutQueue.pop();
-      if (object)
-      {
-        // Object still exists, proceed to process it
-        // Process the dirty object here
-        object->Layout();
-        
-        // Store the parent's prior dirty flags to update children if necessary
-        //object->SetNeedsLayout(false);
-        
-        // Enqueue the children if they are not already dirty
-        for (const auto& child : object->children)
-        {
-          if (! child->NeedsLayout())
-          {
-            child->SetNeedsLayout(true);
-            layoutQueue.push(child.get());
-          }
-        }
-      }
-    }*/
   }
   void SceneGraph::CalculateTransforms()
   {
@@ -89,7 +79,7 @@ namespace Candy::Gum
       {
         // Object still exists, proceed to process it
         // Process the dirty object here
-        object->CalculateTransform(sceneSize);
+        object->CalculateTransform(GetSceneSize());
         
         // Store the parent's prior dirty flags to update children if necessary
         object->SetNeedsTransform(false);
@@ -149,72 +139,135 @@ namespace Candy::Gum
   {
     return sceneSize;
   }
-  void SceneGraph::SetSceneSize(Math::Vector2i size)
+  void SceneGraph::SetSceneSize(Math::Vector2 size)
   {
-    sceneSize.width = (float)size.width;
-    sceneSize.height = (float)size.height;
-    
-    root.SetSize(sceneSize);
+    sceneSize = size;
+    QueueContextResized();
+    //root.SetSize(size);
   }
   void SceneGraph::SetWindowSize(Math::Vector2i size)
   {
-    windowSize.width = (float)size.width;
-    windowSize.height = (float)size.height;
+    //windowSize.width = (float)size.width;
+    //windowSize.height = (float)size.height;
+    QueueWindowResized(size);
   }
-  void SceneGraph::OnCaptureEvent(Events::Event& event)
+  void SceneGraph::SetMousePosition(Math::Vector2 position)
   {
-    CANDY_PROFILE_FUNCTION();
-    Events::EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<Events::FrameBufferResizeEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnFrameBufferResize));
-    dispatcher.Dispatch<Events::WindowResizeEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnWindowResize));
-    dispatcher.Dispatch<Events::MouseMovedEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnMouseMoved));
-    dispatcher.Dispatch<Events::MousePressedEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnMousePressed));
-    dispatcher.Dispatch<Events::MouseReleasedEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnMouseReleased));
-    dispatcher.Dispatch<Events::KeyPressedEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnKeyPressed));
-    dispatcher.Dispatch<Events::KeyReleasedEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnKeyReleased));
-    dispatcher.Dispatch<Events::KeyTypedEvent>(CANDY_BIND_EVENT_FUNCTION(SceneGraph::OnKeyTyped));
+    previousMousePosition = mousePosition;
+    mousePosition = position;
+    UpdateHovered();
+    QueueMouseMoved();
+  }
+  void SceneGraph::UpdateHovered()
+  {
+    hoveredNodes.clear();
+    UpdateHovered(root, mousePosition);
+  }
+  void SceneGraph::UpdateHovered(Node& node, Math::Vector2 parentLocalPoint)
+  {
+    if (node.Contains(parentLocalPoint))
+    {
+      hoveredNodes.push_back(&node);
+      if (!node.hovered)
+      {
+        node.hovered = true;
+        QueueMouseEntered(node);
+      }
+    }
+    else
+    {
+      if (node.hovered)
+      {
+        node.hovered = false;
+        QueueMouseExited(node);
+      }
+    }
+    Math::Vector2 localPoint = parentLocalPoint - node.GetLayoutPosition();
+    for (auto& child : node.children)
+    {
+      UpdateHovered(*child, localPoint);
+    }
+  }
+  void SceneGraph::QueueMouseEntered(Node& node)
+  {
+    SharedPtr<MouseEnteredEvent> event = CreateSharedPtr<MouseEnteredEvent>(mousePosition);
+    event->SetSource(&node);
     
-    root.OnCaptureEvent(event);
+    QueueEvent(event);
+    
+  }
+  void SceneGraph::QueueMouseExited(Node& node)
+  {
+    SharedPtr<MouseExitedEvent> event = CreateSharedPtr<MouseExitedEvent>(mousePosition);
+    event->SetSource(&node);
+    
+    QueueEvent(event);
+  }
+  void SceneGraph::SetFocusedNode(Node* node)
+  {
+    if (focusedNode)
+    {
+      focusedNode->focused = false;
+    }
+    focusedNode = node;
+    if (focusedNode)
+    {
+      focusedNode->focused = true;
+    }
+  }
+  void SceneGraph::QueueEvent(SharedPtr<Event> event)
+  {
+    //event->SetSource(focusedNode);
+    if (hoveredNodes.empty())
+    {
+      event->SetSource(&root);
+    }
+    else
+    {
+      event->SetSource(hoveredNodes.back());
+    }
+    captureEventQueue.push(std::move(event));
   }
   
+  void SceneGraph::QueueWindowResized(Math::Vector2i windowSize)
+  {
+    QueueEvent(CreateSharedPtr<WindowResizedEvent>(Math::Vector2u{static_cast<unsigned int>(windowSize.width), static_cast<unsigned int>(windowSize.height)}));
+  }
+  void SceneGraph::QueueContextResized()
+  {
+    QueueEvent(CreateSharedPtr<ContextResizedEvent>(sceneSize));
+  }
+  void SceneGraph::QueueKeyPressed(KeyCode key, KeyCode mods)
+  {
+    QueueEvent(CreateSharedPtr<KeyPressedEvent>(key, mods));
+  }
+  void SceneGraph::QueueKeyReleased(KeyCode key, KeyCode mods)
+  {
+    QueueEvent(CreateSharedPtr<KeyReleasedEvent>(key, mods));
+  }
+  void SceneGraph::QueueKeyRepeat(KeyCode key, KeyCode mods, int repeat)
+  {
+    QueueEvent(CreateSharedPtr<KeyRepeatEvent>(key, mods, repeat));
+  }
+  void SceneGraph::QueueKeyTyped(KeyCode key)
+  {
+    QueueEvent(CreateSharedPtr<KeyTypedEvent>(key));
+  }
+  void SceneGraph::QueueMousePressed(MouseCode button)
+  {
+    QueueEvent(CreateSharedPtr<MousePressedEvent>(button, mousePosition));
+  }
+  void SceneGraph::QueueMouseReleased(MouseCode button)
+  {
+    //Node* containingNode = root.FindContainingNode(mousePosition);
+    
+    //SetFocusedNode(containingNode);
+    QueueEvent(CreateSharedPtr<MouseReleasedEvent>(button, mousePosition));
+  }
+  void SceneGraph::QueueMouseMoved()
+  {
+    QueueEvent(CreateSharedPtr<MouseMovedEvent>(previousMousePosition, mousePosition));
+  }
   
-  
-  bool SceneGraph::OnMouseMoved(Events::MouseMovedEvent& event)
-  {
-    mousePosition = event.GetPosition();
-    return false;
-  }
-  bool SceneGraph::OnMousePressed(Events::MousePressedEvent& event)
-  {
-    mousePosition = event.GetPosition();
-    return false;
-  }
-  bool SceneGraph::OnMouseReleased(Events::MouseReleasedEvent& event)
-  {
-    mousePosition = event.GetPosition();
-    return false;
-  }
-  bool SceneGraph::OnKeyPressed(Events::KeyPressedEvent& event)
-  {
-    return false;
-  }
-  bool SceneGraph::OnKeyReleased(Events::KeyReleasedEvent& event)
-  {
-    return false;
-  }
-  bool SceneGraph::OnKeyTyped(Events::KeyTypedEvent& event)
-  {
-    return false;
-  }
-  bool SceneGraph::OnFrameBufferResize(Events::FrameBufferResizeEvent& event)
-  {
-    SetSceneSize(event.GetSize());
-    return true;
-  }
-  bool SceneGraph::OnWindowResize(Events::WindowResizeEvent& event)
-  {
-    //root.SetSize(event.GetWidth(), event.GetHeight());
-    SetWindowSize({(int)event.GetWidth(), (int)event.GetHeight()});
-    return true;
-  }
+
 }

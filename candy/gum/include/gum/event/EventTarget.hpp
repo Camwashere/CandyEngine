@@ -2,10 +2,17 @@
 
 namespace Candy::Gum
 {
+  enum class EventTargetPolicy
+  {
+    Normal=0,
+    PassThrough,
+    Block,
+  };
   class EventTarget
   {
   private:
-    bool ignoreEvents=false;
+    EventTargetPolicy capturePolicy = EventTargetPolicy::Normal;
+    EventTargetPolicy bubblePolicy = EventTargetPolicy::Normal;
     
   public:
   

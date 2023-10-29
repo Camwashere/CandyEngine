@@ -4,8 +4,8 @@
 #include <candy/app/Application.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/RenderCommand.hpp>
-#include <gum/GumContext.hpp>
-#include <gum/GumInstance.hpp>
+#include <gum/Context.hpp>
+#include <gum/GumSystem.hpp>
 namespace Candy
 {
     using namespace Graphics;
@@ -52,8 +52,8 @@ namespace Candy
           
           
           
-          gumContext = new Gum::GumContext(handle);
-          Gum::GumInstance::SetCurrentContext(gumContext);
+          gumContext = new Gum::Context(handle);
+          Gum::GumSystem::SetCurrentContext(gumContext);
         }
         
       
@@ -237,7 +237,7 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
       glfwHideWindow(handle);
   }
-  Gum::GumContext* Window::GetGumContext()
+  Gum::Context* Window::GetGumContext()
   {
       return gumContext;
   }

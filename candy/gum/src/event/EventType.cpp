@@ -1,4 +1,5 @@
 #include <gum/event/EventType.hpp>
+#include <utility>
 
 namespace Candy::Gum
 {
@@ -12,6 +13,7 @@ namespace Candy::Gum
   EventType EventType::Key;
   EventType EventType::Window;
   
+  EventType EventType::MouseButton;
   EventType EventType::MousePressed;
   EventType EventType::MouseReleased;
   EventType EventType::MouseMoved;
@@ -19,11 +21,19 @@ namespace Candy::Gum
   EventType EventType::MouseEntered;
   EventType EventType::MouseExited;
   
-  
+  EventType EventType::KeyRaw;
   EventType EventType::KeyPressed;
   EventType EventType::KeyReleased;
-  EventType EventType::KeyTyped;
   EventType EventType::KeyRepeat;
+  EventType EventType::KeyTyped;
+  
+  EventType EventType::WindowResized;
+  EventType EventType::ContextResized;
+  
+  EventType::EventType(uint32_t type, uint32_t root, std::string  name) : type(type), root(root), name(std::move(name))
+  {
+  
+  }
   
   void EventType::InitEvents()
   {
@@ -42,27 +52,31 @@ namespace Candy::Gum
   void EventType::InitMouseEvents()
   {
     EventType::Mouse = EventType::Input.RegisterChild("Mouse");
-    EventType::MousePressed = EventType::Mouse.RegisterChild("Pressed");
-    EventType::MouseReleased = EventType::Mouse.RegisterChild("Released");
-    EventType::MouseMoved = EventType::Mouse.RegisterChild("Moved");
-    EventType::MouseDragged = EventType::Mouse.RegisterChild("Dragged");
-    EventType::MouseEntered = EventType::Mouse.RegisterChild("Entered");
-    EventType::MouseExited = EventType::Mouse.RegisterChild("Exited");
+    EventType::MouseButton = EventType::Mouse.RegisterChild("Mouse Button");
+    EventType::MousePressed = EventType::MouseButton.RegisterChild("Mouse Pressed");
+    EventType::MouseReleased = EventType::MouseButton.RegisterChild("Mouse Released");
+    
+    EventType::MouseMoved = EventType::Mouse.RegisterChild("Mouse Moved");
+    EventType::MouseDragged = EventType::Mouse.RegisterChild("Mouse Dragged");
+    EventType::MouseEntered = EventType::Mouse.RegisterChild("Mouse Entered");
+    EventType::MouseExited = EventType::Mouse.RegisterChild("Mouse Exited");
   }
   
   void EventType::InitKeyEvents()
   {
     EventType::Key = EventType::Input.RegisterChild("Key");
-    
-    EventType::KeyPressed = EventType::Key.RegisterChild("Pressed");
-    EventType::KeyReleased = EventType::Key.RegisterChild("Released");
-    EventType::KeyTyped = EventType::Key.RegisterChild("Typed");
-    EventType::KeyRepeat = EventType::Key.RegisterChild("Repeat");
+    EventType::KeyRaw = EventType::Key.RegisterChild("Key Raw");
+    EventType::KeyPressed = EventType::KeyRaw.RegisterChild("Key Pressed");
+    EventType::KeyReleased = EventType::KeyRaw.RegisterChild("Key Released");
+    EventType::KeyRepeat = EventType::KeyRaw.RegisterChild("Key Repeat");
+    EventType::KeyTyped = EventType::Key.RegisterChild("Key Typed");
     
   }
   void EventType::InitWindowEvents()
   {
     EventType::Window = EventType::Any.RegisterChild("Window");
+    EventType::WindowResized = EventType::Window.RegisterChild("Window Resized");
+    EventType::ContextResized = EventType::Window.RegisterChild("Context Resized");
   }
   
   void EventType::Init()
@@ -102,7 +116,14 @@ namespace Candy::Gum
     }
     return IsDerived(GetType(type.root), parent);
   }
-  
+  uint32_t EventType::GetTypeIndex()const
+  {
+    return type;
+  }
+  std::string EventType::GetName()const
+  {
+    return name;
+  }
   EventType EventType::GetRoot()const
   {
     return GetType(root);

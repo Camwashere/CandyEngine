@@ -4,8 +4,8 @@
 #include <candy/graphics/Renderer3D.hpp>
 #include <candy/graphics/Renderer2D.hpp>
 #include <gum/base/Node.hpp>
-#include <gum/GumContext.hpp>
-#include <gum/GumInstance.hpp>
+#include <gum/Context.hpp>
+#include <gum/GumSystem.hpp>
 #include <gum/shape/Rectangle.hpp>
 namespace Candy
 {
@@ -96,15 +96,15 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     if (enabled)
     {
-      Gum::Root& root = Gum::GumInstance::GetCurrentContext().sceneGraph.Root();
+      Gum::Root& root = Gum::GumSystem::GetCurrentContext().sceneGraph.Root();
       Color backgroundColor = root.GetBackgroundColor();
       
-      SharedPtr<Gum::Rectangle> rect = Gum::GumInstance::GetCurrentContext().testObject;
-      SharedPtr<Gum::Rectangle> rect1 = Gum::GumInstance::GetCurrentContext().testObject2;
-      SharedPtr<Gum::Rectangle> rect2 = Gum::GumInstance::GetCurrentContext().testObject3;
-      SharedPtr<Gum::Rectangle> rect3 = Gum::GumInstance::GetCurrentContext().testObject4;
+      SharedPtr<Gum::Rectangle> rect = Gum::GumSystem::GetCurrentContext().testObject;
+      SharedPtr<Gum::Rectangle> rect1 = Gum::GumSystem::GetCurrentContext().testObject2;
+      SharedPtr<Gum::Rectangle> rect2 = Gum::GumSystem::GetCurrentContext().testObject3;
+      SharedPtr<Gum::Rectangle> rect3 = Gum::GumSystem::GetCurrentContext().testObject4;
       
-      SharedPtr<Gum::BoxLayout> layout = Gum::GumInstance::GetCurrentContext().testLayout;
+      SharedPtr<Gum::BoxLayout> layout = Gum::GumSystem::GetCurrentContext().testLayout;
      /* Math::Vector2 shapePos = rect->GetPosition();
       Math::Vector2 shapeSize = rect->GetSize();
       Math::Vector2 arcSize = rect->GetArcSize();

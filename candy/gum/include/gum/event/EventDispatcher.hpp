@@ -5,51 +5,38 @@
 #include "internal/CallbackList.hpp"
 #include "Event.hpp"
 #include <any>
+#include <gum/event/EventHandler.hpp>
 namespace Candy::Gum
 {
   
-  /*template<typename RETURN_TYPE, typename ...ARGS>
   class EventDispatcher
   {
   private:
-    typedef std::function<RETURN_TYPE (ARGS...)> FunctionType;
-    std::unordered_map<EventType, Internal::CallbackList<FunctionType>> callbackMap{};
-  public:
-    void AppendListener(EventType type, FunctionType func)
-    {
-      callbackMap[type].AppendCallback(func);
-    }
+    std::unordered_map<EventType, std::vector<SharedPtr<EventHandlerBase>>> handlers{};
     
-    void Dispatch(EventType type, ARGS&&... args)
-    {
-      auto& list = callbackMap[type];
-      list.Call(std::forward<ARGS>(args)...);
-    }
-  
-  
-  };*/
-  
-  template<typename EVENT>
-  requires std::is_base_of_v<Event, EVENT>
-  class EventDispatcher
-  {
-  private:
-    
-    typedef std::function<void (EVENT&)> FunctionType;
-    Internal::CallbackList<FunctionType> callbacks;
     
   public:
-    void AppendListener(FunctionType func)
+    template<typename EVENT>
+    void AppendHandler(const EventHandler<EVENT>& handler)
     {
-      callbacks.AppendCallback(func);
+      static_assert(std::is_base_of<Event, EVENT>::value, "EVENT must derive from Event. Cannot append handler");
+      handlers[EVENT::Type()].push_back(CreateSharedPtr<EventHandler<EVENT>>(handler));
     }
     
-    void Dispatch(EVENT& event)
-    {
-      callbacks.Call(event);
-    }
     
+    void Dispatch(Event& event)
+    {
+      //CANDY_CORE_INFO("DISPATCHING EVENT: {0}", event.GetType().GetName());
+      auto& handlerList = handlers[event.GetType()];
+      //CANDY_CORE_INFO("Handler count: {0}", handlerList.size());
+      for (auto& handler : handlerList)
+      {
+        handler->OnEvent(event);
+      }
+    }
   };
+  
+  
   
   
 }

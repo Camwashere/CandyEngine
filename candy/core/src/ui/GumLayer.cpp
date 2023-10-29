@@ -2,13 +2,14 @@
 #include "CandyPch.hpp"
 #include <candy/math/Vector.hpp>
 #include <candy/graphics/RenderCommand.hpp>
-#include <gum/GumInstance.hpp>
+#include "gum/GumSystem.hpp"
+#include <gum/Context.hpp>
 #include <candy/graphics/Vulkan.hpp>
 namespace Candy
 {
-  using namespace Graphics;
+  //using namespace Graphics;
   using namespace Gum;
-  GumLayer::GumLayer(Gum::GumContext* gumContext) : context(gumContext)
+  GumLayer::GumLayer(Gum::Context* gumContext) : context(gumContext)
   {
     
   }
@@ -16,7 +17,7 @@ namespace Candy
   void GumLayer::OnAttach()
   {
     CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_INFO("Gum Version: {}", GumInstance::GetVersion());
+    CANDY_CORE_INFO("GumSystem Version: {}", GumSystem::GetVersion());
     
     
   }
@@ -24,7 +25,7 @@ namespace Candy
   void GumLayer::OnDetach()
   {
     CANDY_PROFILE_FUNCTION();
-    GumInstance::Shutdown();
+    GumSystem::Shutdown();
   }
   
   void GumLayer::OnEvent(Events::Event &e)
@@ -45,7 +46,7 @@ namespace Candy
   {
     CANDY_PROFILE_FUNCTION();
     //Renderer::BeginEditorChain();
-    GumInstance::BeginPass();
+    GumSystem::BeginPass();
     context->BeginScene();
     
     //Renderer::BeginUIPass();
@@ -55,6 +56,6 @@ namespace Candy
   {
     CANDY_PROFILE_FUNCTION();
     context->EndScene();
-    GumInstance::EndPass();
+    GumSystem::EndPass();
   }
 }

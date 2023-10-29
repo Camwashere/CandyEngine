@@ -1,8 +1,8 @@
-#include <gum/GumContext.hpp>
+#include <gum/Context.hpp>
 #include <GLFW/glfw3.h>
 #include <unordered_map>
 #include "CandyPch.hpp"
-#include <gum/GumRenderer.hpp>
+#include <gum/render/Renderer.hpp>
 namespace Candy::Gum
 {
   static std::unordered_map<GLFWwindow*, GLFWwindowsizefun> prevUserWindowSizeCallbacks;
@@ -16,14 +16,16 @@ namespace Candy::Gum
   static std::unordered_map<GLFWwindow*, GLFWwindowfocusfun> prevUserWindowFocusCallbacks;
   
   
-  static std::unordered_map<GLFWwindow*, GumContext*> contextMap;
-  GumContext::GumContext(GLFWwindow* handle) : windowHandle(handle), sceneGraph(this)
+  static std::unordered_map<GLFWwindow*, Context*> contextMap;
+  Context::Context(GLFWwindow* handle) : windowHandle(handle), sceneGraph(this)
   {
     CANDY_PROFILE_FUNCTION();
-    CANDY_CORE_INFO("Initializing GumContext");
+    CANDY_CORE_INFO("Initializing Context");
     glfwGetWindowSize(windowHandle, &windowSize.x, &windowSize.y);
-    glfwGetFramebufferSize(windowHandle, &contextSize.x, &contextSize.y);
-    sceneGraph.SetSceneSize(contextSize);
+    Math::Vector2i frameBufferSize;
+    glfwGetFramebufferSize(windowHandle, &frameBufferSize.x, &frameBufferSize.y);
+    //contextSize.Set(static_cast<float>(frameBufferSize.x), static_cast<float>(frameBufferSize.y));
+    sceneGraph.SetSceneSize({static_cast<float>(frameBufferSize.x), static_cast<float>(frameBufferSize.y)});
     sceneGraph.SetWindowSize(windowSize);
     contextMap[handle] = this;
     WindowCallbackInit();
@@ -64,35 +66,23 @@ namespace Candy::Gum
     testLayout->SetBackgroundColor(Color::green);
     testLayout->SetName("Test Layout");
     sceneGraph.Root().AddChild(testLayout);
-    CANDY_CORE_INFO("Initialized Gum Context");
+    CANDY_CORE_INFO("Initialized GumSystem Context");
   }
-  void GumContext::BeginScene()
+  void Context::BeginScene()
   {
-    DispatchCaptureEvents();
-    
+    sceneGraph.FlushCaptureEventQueue();
   }
-  void GumContext::EndScene()
+  void Context::EndScene()
   {
     sceneGraph.Update();
-    GumRenderer::BeginScene(sceneGraph);
+    Renderer::BeginScene(sceneGraph);
     sceneGraph.Render();
-    GumRenderer::EndScene();
+    Renderer::EndScene();
   }
   
   
-  void GumContext::DispatchCaptureEvents()
-  {
-    CANDY_PROFILE_FUNCTION();
-    while (!captureEventQueue.empty())
-    {
-      Events::Event& event = *captureEventQueue.front();
-      sceneGraph.OnCaptureEvent(event);
-      //graph.PropagateCaptureEvent(event);
-      captureEventQueue.pop();
-    }
-  }
-  
-  void GumContext::WindowCallbackInit()
+  static int key_repeat_count[GLFW_KEY_LAST + 1] = { 0 };
+  void Context::WindowCallbackInit()
   {
     CANDY_PROFILE_FUNCTION();
     
@@ -105,8 +95,10 @@ namespace Candy::Gum
       }
       
       // Add your own processing code here...
-      GumContext* context = contextMap[window];
-      context->windowSize = {width, height};
+      Context* context = contextMap[window];
+      context->sceneGraph.SetWindowSize({width, height});
+      //context->windowSize = {width, height};
+      //context->sceneGraph.QueueWindowResized(width, height);
       
     });
     
@@ -119,11 +111,10 @@ namespace Candy::Gum
       }
       
       // Add your own processing code here...
-      GumContext* context = contextMap[window];
-      context->contextSize = {width, height};
-      //context->graph.OnFrameBufferResize(width, height);
-      SharedPtr<Events::FrameBufferResizeEvent> event = CreateSharedPtr<Events::FrameBufferResizeEvent>(width, height);
-      context->captureEventQueue.push(event);
+      Context* context = contextMap[window];
+      context->sceneGraph.SetSceneSize({static_cast<float>(width), static_cast<float>(height)});
+      //context->contextSize = {static_cast<float>(width), static_cast<float>(height)};
+      //context->sceneGraph.QueueContextResized(width, height);
     });
     // Window Close
     prevUserWindowCloseCallbacks[windowHandle] = glfwSetWindowCloseCallback(windowHandle, [](GLFWwindow* window)
@@ -133,11 +124,6 @@ namespace Candy::Gum
       {
         iter->second(window);
       }
-      
-      // Add your own processing code here...
-      GumContext* context = contextMap[window];
-      //Events::WindowCloseEvent event;
-      //context->captureEventQueue.push(event);
     });
     
     prevUserKeyCallbacks[windowHandle] = glfwSetKeyCallback(windowHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -148,26 +134,25 @@ namespace Candy::Gum
         iter->second(window, key, scancode, action, mods);
       }
       
-      // Add your own processing code here...
-      GumContext* context = contextMap[window];
+      Context* context = contextMap[window];
       switch (action)
       {
         case GLFW_PRESS:
         {
-          Events::KeyPressedEvent event(key, 0, mods);
-          //context->captureEventQueue.push(event);
+          key_repeat_count[key] = 1;
+          context->sceneGraph.QueueKeyPressed(key, mods);
           break;
         }
         case GLFW_RELEASE:
         {
-          Events::KeyReleasedEvent event(key);
-          //context->captureEventQueue.push(event);
+          key_repeat_count[key]=0;
+          context->sceneGraph.QueueKeyReleased(key, mods);
           break;
         }
         case GLFW_REPEAT:
         {
-          Events::KeyPressedEvent event(key, 1, mods);
-          //context->captureEventQueue.push(event);
+          key_repeat_count[key]++;
+          context->sceneGraph.QueueKeyRepeat(key, mods, key_repeat_count[key]);
           break;
         }
         default:
@@ -183,10 +168,8 @@ namespace Candy::Gum
         iter->second(window, keycode);
       }
       
-      // Add your own processing code here...
-      GumContext* context = contextMap[window];
-      Events::KeyTypedEvent event(keycode);
-      //context->captureEventQueue.push(event);
+      Context* context = contextMap[window];
+      context->sceneGraph.QueueKeyTyped(keycode);
     });
     
     prevUserMouseButtonCallbacks[windowHandle] = glfwSetMouseButtonCallback(windowHandle, [](GLFWwindow* window, int button, int action, int mods)
@@ -197,20 +180,17 @@ namespace Candy::Gum
         iter->second(window, button, action, mods);
       }
       
-      // Add your own processing code here...
-      GumContext* context = contextMap[window];
+      Context* context = contextMap[window];
       switch (action)
       {
         case GLFW_PRESS:
         {
-          SharedPtr<Events::MousePressedEvent> event = CreateSharedPtr<Events::MousePressedEvent>(button, context->mousePositionContext.x, context->mousePositionContext.y);
-          context->captureEventQueue.push(event);
+          context->sceneGraph.QueueMousePressed(button);
           break;
         }
         case GLFW_RELEASE:
         {
-          SharedPtr<Events::MouseReleasedEvent> event = CreateSharedPtr<Events::MouseReleasedEvent>(button, context->mousePositionContext.x, context->mousePositionContext.y);
-          context->captureEventQueue.push(event);
+          context->sceneGraph.QueueMouseReleased(button);
           break;
         }
         default:
@@ -240,26 +220,25 @@ namespace Candy::Gum
       }
       
       // Add your own processing code here...
-      GumContext* context = contextMap[window];
-      //glfwGetWindowSize(window, &context->windowSize.x, &context->windowSize.y);
-      //glfwGetFramebufferSize(window, &context->contextSize.x, &context->contextSize.y);
-      //CANDY_CORE_INFO("Context size: {0}, Window Size: {1}", context->contextSize, context->windowSize);
-      float xScaleFactor = static_cast<float>(context->contextSize.width) / static_cast<float>(context->windowSize.width);
-      float yScaleFactor = static_cast<float>(context->contextSize.height) / static_cast<float>(context->windowSize.height);
+      Context* context = contextMap[window];
+      //Math::Vector2 prevPos = context->mousePositionContext;
+      //context->sceneGraph.previousMousePosition = context->sceneGraph.mousePosition;
+      float xScaleFactor = static_cast<float>(context->sceneGraph.sceneSize.width) / static_cast<float>(context->windowSize.width);
+      float yScaleFactor = static_cast<float>(context->sceneGraph.sceneSize.height) / static_cast<float>(context->windowSize.height);
       context->mousePositionWindow = {static_cast<float>(xPos), static_cast<float>(context->windowSize.height) - static_cast<float>(yPos)};
-      context->mousePositionContext = {context->mousePositionWindow.x * xScaleFactor, context->mousePositionWindow.y * yScaleFactor};
+      Math::Vector2 contextMousePosition = {context->mousePositionWindow.x * xScaleFactor, context->mousePositionWindow.y * yScaleFactor};
+      context->sceneGraph.SetMousePosition(contextMousePosition);
+      //context->sceneGraph.mousePosition = context->mousePositionContext;
+      //context->sceneGraph.QueueMouseMoved();
       
       
+      //SharedPtr<Events::MouseMovedEvent> event = CreateSharedPtr<Events::MouseMovedEvent>(context->mousePositionContext.x, context->mousePositionContext.y);
       
-      SharedPtr<Events::MouseMovedEvent> event = CreateSharedPtr<Events::MouseMovedEvent>(context->mousePositionContext.x, context->mousePositionContext.y);
-      
-      context->captureEventQueue.push(event);
+      //context->captureEventQueue.push(event);
     });
   }
-  GumContext::~GumContext()
+  Context::~Context()
   {
   
   }
-  
-  
 }
