@@ -98,7 +98,7 @@ namespace Candy::Gum
  
   
   
-  void Rectangle::SetArcWidth(float value)
+  /*void Rectangle::SetArcWidth(float value)
   {
     arcSize.width = value;
     
@@ -118,7 +118,7 @@ namespace Candy::Gum
     arcSize.width = arcWidth;
     arcSize.height = arcHeight;
     
-  }
+  }*/
   float Rectangle::GetX() const
   {
     return GetLayoutPosition().x;
@@ -140,7 +140,7 @@ namespace Candy::Gum
     return GetSize().height;
   }
   
-  Math::Vector2 Rectangle::GetArcSize() const
+  /*Math::Vector2 Rectangle::GetArcSize() const
   {
     return arcSize;
   }
@@ -151,7 +151,7 @@ namespace Candy::Gum
   float Rectangle::GetArcHeight() const
   {
     return arcSize.height;
-  }
+  }*/
   
   
   

@@ -23,6 +23,7 @@ namespace Candy::Gum
     Math::Vector2 mousePosition;
     Math::Vector2 sceneSize;
     std::list<Node*> hoveredNodes;
+    Node* hoveredNode=nullptr;
     
     std::queue<SharedPtr<Event>> captureEventQueue;
     
@@ -71,9 +72,6 @@ namespace Candy::Gum
   public:
     Root& Root();
     [[nodiscard]] Math::Vector2 GetSceneSize()const;
-    //void SetSceneSize(Math::Vector2 size);
-    //void SetWindowSize(Math::Vector2i size);
-    
     friend class Context;
     
     

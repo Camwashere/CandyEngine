@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include "CandyPch.hpp"
 #include <gum/render/Renderer.hpp>
+#include <CandyEngine.hpp>
+#include <candy/project/ProjectManager.hpp>
 namespace Candy::Gum
 {
   static std::unordered_map<GLFWwindow*, GLFWwindowsizefun> prevUserWindowSizeCallbacks;
@@ -30,30 +32,34 @@ namespace Candy::Gum
     contextMap[handle] = this;
     WindowCallbackInit();
     
-    testObject = CreateSharedPtr<Rectangle>();
-    testObject->SetFillColor(Color::red);
-    testObject->SetArcSize({0.5f, 0.5f});
+    testObject = CreateSharedPtr<Button>();
+    //Paint paint(Color{0.4f, 0.2f, 0.7f, 1.0f}, Graphics::Texture::Create(ProjectManager::GetAssetsDirectory() / "textures" / "statue.jpg"));
+    testObject->SetNormalFill(Paint{Color{0.4f, 0.2f, 0.7f, 1.0f}, Graphics::Texture::Create(ProjectManager::GetAssetsDirectory() / "textures" / "statue.jpg")});
+    
     testObject->SetPrefSize({200, 200});
     
-    testObject->SetName("Test Rect");
+    testObject->SetName("Btn 1");
     
-    testObject2 = CreateSharedPtr<Rectangle>();
-    testObject2->SetFillColor(Color::blue);
-    testObject2->SetArcSize({0.2f, 0.8f});
+    testObject2 = CreateSharedPtr<Button>();
+    testObject2->SetNormalFill(Color{0.4f, 0.2f, 0.7f, 1.0f});
+    //testObject2->SetFillColor(Color::blue);
+    //testObject2->SetArcSize({0.2f, 0.8f});
     testObject2->SetPrefSize({250, 200});
-    testObject2->SetName("Test Rect 2");
+    testObject2->SetName("Btn 2");
     
-    testObject3 = CreateSharedPtr<Rectangle>();
-    testObject3->SetFillColor(Color::yellow);
-    testObject3->SetArcSize({0.8f, 0.2f});
+    testObject3 = CreateSharedPtr<Button>();
+    testObject3->SetNormalFill(Color{0.4f, 0.2f, 0.7f, 1.0f});
+    //testObject3->SetFillColor(Color::yellow);
+    //testObject3->SetArcSize({0.8f, 0.2f});
     testObject3->SetPrefSize({300, 200});
-    testObject3->SetName("Test Rect 3");
+    testObject3->SetName("Btn 3");
     
-    testObject4 = CreateSharedPtr<Rectangle>();
-    testObject4->SetFillColor(Color::magenta);
-    testObject4->SetArcSize({0.4f, 0.7f});
+    testObject4 = CreateSharedPtr<Button>();
+    testObject4->SetNormalFill(Color{0.4f, 0.2f, 0.7f, 1.0f});
+    //testObject4->SetFillColor(Color::magenta);
+    //testObject4->SetArcSize({0.4f, 0.7f});
     testObject4->SetPrefSize({150, 200});
-    testObject4->SetName("Test Rect 4");
+    testObject4->SetName("Btn 4");
     
     
     testLayout = CreateSharedPtr<BoxLayout>();
@@ -63,8 +69,9 @@ namespace Candy::Gum
     testLayout->AddChild(testObject4);
     testLayout->SetPrefSize({1000, 200});
     //testLayout->SetMaxSize({1500, 1500});
-    testLayout->SetBackgroundColor(Color::green);
-    testLayout->SetName("Test Layout");
+    testLayout->SetSpacing(100.0f);
+    testLayout->SetBackgroundFill(Color::green);
+    testLayout->SetName("Box Layout");
     sceneGraph.Root().AddChild(testLayout);
     CANDY_CORE_INFO("Initialized GumSystem Context");
   }

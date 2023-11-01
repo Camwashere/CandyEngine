@@ -31,7 +31,7 @@ namespace Candy::Gum
     bool hovered=false;
     
   protected:
-    std::string name;
+    std::string name="Node";
     Node* parent=nullptr;
     
     bool enabled=true;
@@ -48,7 +48,6 @@ namespace Candy::Gum
     
   // Virtual functions
   protected:
-    
     virtual void OnLayout();
     virtual void OnRender();
     virtual void OnBoundsCalculated();
@@ -116,7 +115,7 @@ namespace Candy::Gum
     [[nodiscard]] Math::Bounds2D GetBoundsInSelf()const;
     [[nodiscard]] const Math::Bounds2D& GetBoundsInParent()const;
     [[nodiscard]] const Math::Bounds2D& GetBoundsInScene()const;
-    
+    [[nodiscard]] bool IsHovered() const;
     
     void SetMinSize(const Math::Vector2& value);
     void SetPrefSize(const Math::Vector2& value);

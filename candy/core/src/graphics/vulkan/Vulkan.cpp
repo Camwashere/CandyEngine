@@ -53,6 +53,7 @@ namespace Candy::Graphics
     CANDY_VULKAN_CHECK(vmaCreateAllocator(&allocatorCreateInfo, &data.allocator));
     
     data.descriptorAllocator = new DescriptorAllocator();
+    
     Vulkan::DeletionQueue().Push(data.descriptorAllocator);
     
     

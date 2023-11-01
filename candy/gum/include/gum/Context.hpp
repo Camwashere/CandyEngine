@@ -2,6 +2,7 @@
 #include <gum/base/SceneGraph.hpp>
 #include <gum/layout/BoxLayout.hpp>
 #include <queue>
+#include <gum/widget/Button.hpp>
 
 struct GLFWwindow;
 namespace Candy::Gum
@@ -12,19 +13,16 @@ namespace Candy::Gum
     GLFWwindow* windowHandle=nullptr;
     bool blockEvents=false;
     SceneGraph sceneGraph;
-    SharedPtr<Rectangle> testObject;
-    SharedPtr<Rectangle> testObject2;
-    SharedPtr<Rectangle> testObject3;
-    SharedPtr<Rectangle> testObject4;
-    SharedPtr<BoxLayout> testLayout;
-    //std::queue<SharedPtr<Events::Event>> captureEventQueue;
     
+    SharedPtr<Button> testObject;
+    SharedPtr<Button> testObject2;
+    SharedPtr<Button> testObject3;
+    SharedPtr<Button> testObject4;
+    SharedPtr<BoxLayout> testLayout;
     
     Math::Vector2i windowSize;
     Math::Vector2 mousePositionWindow;
     
-    //Math::Vector2 contextSize;
-    //Math::Vector2 mousePositionContext;
   
   private:
     void WindowCallbackInit();

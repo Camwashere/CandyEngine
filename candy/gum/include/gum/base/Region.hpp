@@ -8,7 +8,7 @@ namespace Candy::Gum
   {
   private:
     SharedPtr<Shape> shape;
-    Color backgroundColor;
+    Paint backgroundColor;
     
     
   protected:
@@ -22,8 +22,8 @@ namespace Candy::Gum
     
     
   public:
-    Color GetBackgroundColor()const;
-    void SetBackgroundColor(const Color& value);
+    Paint GetBackgroundFill()const;
+    void SetBackgroundFill(const Paint& value);
     void SetShape(SharedPtr<Shape> shape);
     Shape& GetShape();
     [[nodiscard]] const Shape& GetShape()const;

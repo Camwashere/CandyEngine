@@ -12,6 +12,7 @@ namespace Candy::Graphics
   
   InternalTexture::InternalTexture(std::filesystem::path filepath) : path(std::move(filepath)), refCount(0)
   {
+    stbi_set_flip_vertically_on_load(true);
     if (!Load())
     {
       CANDY_CORE_ASSERT(false, "Failed to load texture from path!");
@@ -23,7 +24,7 @@ namespace Candy::Graphics
   
   InternalTexture::InternalTexture(const ImageFormat& imageFormat, const Math::Vector2u& imageSize) : format(imageFormat), size(imageSize), refCount(0)
   {
-    
+    stbi_set_flip_vertically_on_load(true);
     //TODO Reserve gpu memory on object creation, so that it doesn't need to be recreated during SetData()
     /*image.Create(size, format.GetVulkanFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT|VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT);
     imageView.Set(image);
@@ -37,6 +38,7 @@ namespace Candy::Graphics
   bool InternalTexture::Load()
   {
     CANDY_PROFILE_FUNCTION();
+    stbi_set_flip_vertically_on_load(true);
     int texWidth, texHeight, texChannels;
     
     stbi_uc* pixels = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);

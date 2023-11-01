@@ -15,6 +15,7 @@ namespace Candy::Gum
     GumSystem::SetCurrentContext(context);
     Node::SCENE_GRAPH_PTR = this;
     SetFocusedNode(&root);
+    hoveredNode = &root;
   }
   void SceneGraph::FlushCaptureEventQueue()
   {
@@ -26,7 +27,6 @@ namespace Candy::Gum
       if (event)
       {
         root.OnCaptureEvent(*event);
-        
       }
     }
   }
@@ -143,12 +143,9 @@ namespace Candy::Gum
   {
     sceneSize = size;
     QueueContextResized();
-    //root.SetSize(size);
   }
   void SceneGraph::SetWindowSize(Math::Vector2i size)
   {
-    //windowSize.width = (float)size.width;
-    //windowSize.height = (float)size.height;
     QueueWindowResized(size);
   }
   void SceneGraph::SetMousePosition(Math::Vector2 position)
@@ -162,6 +159,14 @@ namespace Candy::Gum
   {
     hoveredNodes.clear();
     UpdateHovered(root, mousePosition);
+    if (hoveredNodes.empty())
+    {
+      hoveredNode = &root;
+    }
+    else
+    {
+      hoveredNode = hoveredNodes.back();
+    }
   }
   void SceneGraph::UpdateHovered(Node& node, Math::Vector2 parentLocalPoint)
   {
@@ -171,6 +176,7 @@ namespace Candy::Gum
       if (!node.hovered)
       {
         node.hovered = true;
+        CANDY_CORE_INFO("Mouse entered {0}", node.GetName());
         QueueMouseEntered(node);
       }
     }
@@ -178,9 +184,10 @@ namespace Candy::Gum
     {
       if (node.hovered)
       {
-        node.hovered = false;
+        CANDY_CORE_INFO("Mouse exited: {0}", node.GetName());
         QueueMouseExited(node);
       }
+      node.hovered = false;
     }
     Math::Vector2 localPoint = parentLocalPoint - node.GetLayoutPosition();
     for (auto& child : node.children)
@@ -217,15 +224,6 @@ namespace Candy::Gum
   }
   void SceneGraph::QueueEvent(SharedPtr<Event> event)
   {
-    //event->SetSource(focusedNode);
-    if (hoveredNodes.empty())
-    {
-      event->SetSource(&root);
-    }
-    else
-    {
-      event->SetSource(hoveredNodes.back());
-    }
     captureEventQueue.push(std::move(event));
   }
   
@@ -255,18 +253,22 @@ namespace Candy::Gum
   }
   void SceneGraph::QueueMousePressed(MouseCode button)
   {
-    QueueEvent(CreateSharedPtr<MousePressedEvent>(button, mousePosition));
+    SharedPtr<MousePressedEvent> event = CreateSharedPtr<MousePressedEvent>(button, mousePosition);
+    event->SetSource(hoveredNode);
+    QueueEvent(event);
   }
   void SceneGraph::QueueMouseReleased(MouseCode button)
   {
-    //Node* containingNode = root.FindContainingNode(mousePosition);
+    SharedPtr<MouseReleasedEvent> event = CreateSharedPtr<MouseReleasedEvent>(button, mousePosition);
+    event->SetSource(hoveredNode);
     
-    //SetFocusedNode(containingNode);
-    QueueEvent(CreateSharedPtr<MouseReleasedEvent>(button, mousePosition));
+    QueueEvent(event);
   }
   void SceneGraph::QueueMouseMoved()
   {
-    QueueEvent(CreateSharedPtr<MouseMovedEvent>(previousMousePosition, mousePosition));
+    SharedPtr<MouseMovedEvent> event = CreateSharedPtr<MouseMovedEvent>(previousMousePosition, mousePosition);
+    event->SetSource(hoveredNode);
+    QueueEvent(event);
   }
   
 

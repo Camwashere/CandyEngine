@@ -12,12 +12,9 @@ namespace Candy::Graphics
   struct FontGeometryData;
   struct FontAtlasGeneratorSettings;
   struct FontManagerSettings;
+  
   class Font
   {
-    
-  public:
-    
-  
   private:
     std::string style;
     std::string family;
@@ -32,10 +29,10 @@ namespace Candy::Graphics
     void Initialize();
     void GenerateAtlas();
     void LoadAtlas();
+    
   public:
     Font();
-    explicit Font(std::filesystem::path  font);
-    //Font(std::filesystem::path font, const AtlasGeneratorSettings& settings);
+    explicit Font(std::filesystem::path font);
     ~Font();
     
   public:
@@ -49,11 +46,6 @@ namespace Candy::Graphics
     
     bool Load();
     
-    
-    
-    
-  
-    
   public:
     static void Init(const std::filesystem::path& atlasGenSettingsPath, const std::filesystem::path& fontFilesPath);
     static void Init(const FontManagerSettings& settings);
@@ -61,8 +53,6 @@ namespace Candy::Graphics
     static bool SaveAtlasGeneratorSettings(const std::filesystem::path& filepath);
     static bool LoadAtlasGeneratorSettings(const std::filesystem::path& filepath);
     static const FontAtlasGeneratorSettings& GetAtlasGeneratorSettings();
-    
-    
     
     static SharedPtr<Font> Default();
     

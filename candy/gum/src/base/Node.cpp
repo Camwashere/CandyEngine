@@ -8,21 +8,37 @@ namespace Candy::Gum
   
   Node::Node()
   {
-    AppendEventFilter<MouseMovedEvent>([=, this](MouseMovedEvent& event)
+    /*AppendEventFilter<MousePressedEvent>([=, this](MousePressedEvent& event)
     {
-    
+      CANDY_CORE_INFO("Node::MousePressedEvent (capture) on {}. Position: {}", name, event.GetPosition());
+      
     });
+    AppendEventHandler<MousePressedEvent>([=, this](MousePressedEvent& event)
+    {
+      CANDY_CORE_INFO("Node::MousePressedEvent on {}. Position: {}", name, event.GetPosition());
+      
+    });*/
   }
   void Node::OnCaptureEvent(Event& event)
   {
+    if (event.GetTarget() == nullptr)
+    {
+      return;
+    }
+    if (event.GetTarget() != this)
+    {
+      //CANDY_CORE_INFO("Target {} no equal on: {}, with event: {}", event.GetTarget()->name, name, event.GetName());
+      return;
+    }
     captureEventDispatcher.Dispatch(event);
     
-    if (event.GetSource() == this || IsLeaf())
+    if (event.GetSource() == this)
     {
       OnBubbleEvent(event);
       return;
     }
     
+    event.DecrementIter();
     for (auto& child : children)
     {
       child->OnCaptureEvent(event);
@@ -289,5 +305,8 @@ namespace Candy::Gum
   {
     return transform;
   }
-  
+  bool Node::IsHovered() const
+  {
+    return hovered;
+  }
 }

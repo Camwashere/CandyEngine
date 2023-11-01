@@ -25,7 +25,7 @@ namespace Candy::Gum
   public:
     RectRenderer(uint32_t gumRenderPassIndex, uint32_t maxQuads);
     void Submit(const Rectangle& rectangle);
-    void Submit(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, Color strokeColor, Color fillColor, Math::Vector2 arcSize);
+    void Submit(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, const Paint& stroke, const Paint& fill, Math::Vector2 arcSize, int textureIndex);
     void Flush(Math::Vector2 sceneSize);
     void Reset();
   };

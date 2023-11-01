@@ -232,7 +232,7 @@ namespace Candy::Graphics
       textureBuilder.Write();
       
       
-      //data.meshShader->Commit();
+      
       data.meshShader->Bind();
       data.meshVertexArray->Bind();
       for (int i=0; i<data.objects.size(); i++)

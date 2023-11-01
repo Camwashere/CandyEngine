@@ -22,7 +22,6 @@ namespace Candy::Gum
     
     float xPosition = 0;
     
-    //currentSize.height = maxHeight;
     
     SizeGuide sizeGuide = CalculateSizeGuide();
     

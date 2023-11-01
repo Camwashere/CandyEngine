@@ -1,5 +1,6 @@
 #include <gum/render/RectRenderer.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <utility>
 
 namespace Candy::Gum
 {
@@ -25,7 +26,6 @@ namespace Candy::Gum
   struct RectRenderer::RectVertex
   {
     Vector2 position;
-    Color color;
     Vector2 uv;
   };
   
@@ -45,44 +45,40 @@ namespace Candy::Gum
   struct RectRenderer::RectData
   {
     RectVertex vertices[4];
+    int textureIndex=0;
     int32_t vertexOffset=0;
     Math::Vector2 positionInScene;
     Math::Vector2 size;
     float strokeWidth;
-    Color fillColor;
-    Color strokeColor;
+    Paint fill;
+    Paint stroke;
     Math::Vector2 arcSize;
-    //Matrix3 transform;
     
     RectData(const Rectangle& rect, int32_t& currentVertexOffset)
     {
-      //transform = rect.GetTransform();
       vertexOffset = currentVertexOffset;
       
       positionInScene = rect.GetBoundsInScene().GetBottomLeft();
       size = rect.GetSize();
-      strokeWidth = rect.GetStrokeWidth()/(Math::Min(size.x, size.y));
-      arcSize = rect.GetArcSize();
-      //arcSize = arcSize / size;
+      strokeWidth = rect.strokeWidth/(Math::Min(size.x, size.y));
+      arcSize = rect.arcSize;
       arcSize = Vector2::Clamp(arcSize, Vector2(Epsilon<float>()), Vector2(1.0f));
-      strokeColor = rect.GetStrokeColor();
-      fillColor = rect.GetFillColor();
+      stroke = rect.stroke;
+      fill = rect.fill;
       
       for (int i=0; i<4; i++)
       {
         
         vertices[i].position = rectVertPositions[i];
         vertices[i].uv = rectVertUvs[i];
-        vertices[i].color = fillColor;
       }
       
       currentVertexOffset += 4;
     }
     
-    RectData(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, Color strokeColor, Color fillColor, Math::Vector2 arcSize, int32_t& currentVertexOffset)
-    : positionInScene(positionInScene), size(size), strokeWidth(strokeWidth/(Math::Min(size.x, size.y))), strokeColor(strokeColor), fillColor(fillColor), arcSize(Vector2::Clamp(arcSize, Vector2(Epsilon<float>()), Vector2(1.0f)))
+    RectData(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, Paint  strokeColor, Paint  fillColor, Math::Vector2 arcSize, int32_t& currentVertexOffset)
+    : positionInScene(positionInScene), size(size), strokeWidth(strokeWidth/(Math::Min(size.x, size.y))), stroke(std::move(strokeColor)), fill(std::move(fillColor)), arcSize(Vector2::Clamp(arcSize, Vector2(Epsilon<float>()), Vector2(1.0f)))
     {
-      //transform = rect.GetTransform();
       vertexOffset = currentVertexOffset;
       
       for (int i=0; i<4; i++)
@@ -90,7 +86,6 @@ namespace Candy::Gum
         
         vertices[i].position = rectVertPositions[i];
         vertices[i].uv = rectVertUvs[i];
-        vertices[i].color = fillColor;
       }
       
       currentVertexOffset += 4;
@@ -119,6 +114,13 @@ namespace Candy::Gum
     vertexArray->SetIndexBuffer(indexBuffer);
     
     indexBuffer->SetData(rectIndices.data(), rectIndices.size());
+    verts.resize(4);
+    for (int i=0; i<4; i++)
+    {
+      verts[i].position = rectVertPositions[i];
+      verts[i].uv = rectVertUvs[i];
+    }
+    vertexBuffer->SetData(verts.data(), sizeof(RectVertex)*verts.size());
     
   }
   
@@ -126,21 +128,17 @@ namespace Candy::Gum
   {
     RectData rect(rectangle, currentVertexOffset);
     
-    verts.insert(verts.end(), rect.vertices, rect.vertices+4);
-    
     rectData.push_back(rect);
   }
   
-  void RectRenderer::Submit(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, Color strokeColor, Color fillColor, Math::Vector2 arcSize)
+  void RectRenderer::Submit(const Math::Vector2& positionInScene, const Math::Vector2& size, float strokeWidth, const Paint& strokeColor, const Paint& fillColor, Math::Vector2 arcSize, int textureIndex)
   {
     RectData rect(positionInScene, size, strokeWidth, strokeColor, fillColor, arcSize, currentVertexOffset);
-    verts.insert(verts.end(), rect.vertices, rect.vertices+4);
-    
+    rect.textureIndex = textureIndex;
     rectData.push_back(rect);
   }
   void RectRenderer::Flush(Math::Vector2 sceneSize)
   {
-    vertexBuffer->SetData(verts.data(), sizeof(RectVertex)*verts.size());
     shader->Bind();
     vertexArray->Bind();
     
@@ -158,10 +156,6 @@ namespace Candy::Gum
       Vector2 positionInSceneOffset = rect.positionInScene + (rect.size*0.5f);
       Vector2 positionInShaderCoordinates = ((positionInSceneOffset/sceneSize)*2.0f)-Vector2(1.0f);
       
-    
-      //CANDY_CORE_INFO("\nSceneSize: {0}, RectSize: {1}, RectScenePos: {2}", sceneSize, rect.size, rect.positionInScene);
-      //CANDY_CORE_INFO("Size in ShaderCoords: {0}, Position in ShaderCoords: {1}\n", sizeInShaderCoordinates, positionInShaderCoordinates);
-      
       
       Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
       Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
@@ -169,17 +163,19 @@ namespace Candy::Gum
       
       Math::Matrix3 model = translate * scale;
       shader->PushFloat("strokeWidth", rect.strokeWidth);
+      shader->PushInt("textureIndex", rect.textureIndex);
       shader->PushVector2("arcSize", rect.arcSize);
-      shader->PushVector4("strokeColor", rect.strokeColor);
+      shader->PushVector4("fillColor", rect.fill.color);
+      shader->PushVector4("strokeColor", rect.stroke.color);
       shader->PushMatrix3("model", model);
-      RenderCommand::DrawIndexed(6, 1, 0, rect.vertexOffset, 0);
+      RenderCommand::DrawIndexed(6, 1, 0, 0, 0);
       
     }
   }
   
   void RectRenderer::Reset()
   {
-    verts.clear();
+    //verts.clear();
     rectData.clear();
     currentVertexOffset=0;
   }

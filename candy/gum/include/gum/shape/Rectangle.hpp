@@ -5,7 +5,7 @@ namespace Candy::Gum
 {
   class Rectangle : public Shape
   {
-  private:
+  public:
     Math::Vector2 arcSize;
     
   public:
@@ -36,12 +36,12 @@ namespace Candy::Gum
     
     
     
-    [[nodiscard]] Math::Vector2 GetArcSize()const;
+   /* [[nodiscard]] Math::Vector2 GetArcSize()const;
     [[nodiscard]] float GetArcWidth()const;
     [[nodiscard]] float GetArcHeight()const;
     void SetArcWidth(float value);
     void SetArcHeight(float value);
     void SetArcSize(Math::Vector2 value);
-    void SetArcSize(float arcWidth, float arcHeight);
+    void SetArcSize(float arcWidth, float arcHeight);*/
   };
 }
