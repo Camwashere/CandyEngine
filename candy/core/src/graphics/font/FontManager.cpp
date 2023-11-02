@@ -136,6 +136,7 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(std::filesystem::is_directory(directory));
     if (currentDepth >= data.maxRecursiveFontDirectorySearchDepth)
     {
+      CANDY_CORE_ERROR("Current depth exceeds max recursive font directory search depth");
       return;
     }
     std::vector<std::filesystem::path> invalidPaths{};
@@ -347,6 +348,7 @@ namespace Candy::Graphics
     }
     if (! defaultFont->IsLoaded())
     {
+      CANDY_CORE_INFO("Default font not loaded, attempting to load");
       if (defaultFont->Load())
       {
         CANDY_CORE_INFO("Successfully loaded default font");

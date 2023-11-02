@@ -427,6 +427,9 @@ set(CANDY_GUM_HEADERS
         candy/gum/include/gum/widget/AbstractButton.hpp
         candy/gum/include/gum/render/TextRenderer.hpp
         candy/gum/include/gum/style/Paint.hpp
+        candy/gum/include/gum/widget/Label.hpp
+        candy/gum/include/gum/text/Text.hpp
+        candy/gum/include/gum/text/CharData.hpp
 )
 
 set(CANDY_GUM_SOURCES
@@ -448,6 +451,9 @@ set(CANDY_GUM_SOURCES
         candy/gum/src/widget/Button.cpp
         candy/gum/src/widget/AbstractButton.cpp
         candy/gum/src/style/Paint.cpp
+        candy/gum/src/widget/Label.cpp
+        candy/gum/src/render/TextRenderer.cpp
+        candy/gum/src/text/Text.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})

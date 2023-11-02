@@ -124,14 +124,12 @@ namespace Candy::Graphics
     data.currentContext = data.contexts[0].get();
     Renderer::SetTarget(data.currentContext);
     RenderCommand::SetTarget(data.currentContext);
-    
     TextureManager::Init();
-    
-    
     bool shaderLibraryInitialized = ShaderLibrary::Init();
     CANDY_CORE_ASSERT(shaderLibraryInitialized, "Failed to initialize shader library");
     Renderer2D::Init();
     Renderer3D::Init();
+    
     Gum::GumSystem::Init();
     ShaderLibrary::Bake();
     

@@ -61,18 +61,24 @@ namespace Candy::Gum
     testObject4->SetPrefSize({150, 200});
     testObject4->SetName("Btn 4");
     
+    testLabel = CreateSharedPtr<Label>("LabelBoi");
+    testLabel->SetSize({500, 500});
+    testLabel->SetName("Test Label");
+    
     
     testLayout = CreateSharedPtr<BoxLayout>();
     testLayout->AddChild(testObject);
     testLayout->AddChild(testObject2);
     testLayout->AddChild(testObject3);
     testLayout->AddChild(testObject4);
+    //testLayout->AddChild(testLabel);
     testLayout->SetPrefSize({1000, 200});
     //testLayout->SetMaxSize({1500, 1500});
     testLayout->SetSpacing(100.0f);
     testLayout->SetBackgroundFill(Color::green);
     testLayout->SetName("Box Layout");
     sceneGraph.Root().AddChild(testLayout);
+    sceneGraph.Root().AddChild(testLabel);
     CANDY_CORE_INFO("Initialized GumSystem Context");
   }
   void Context::BeginScene()

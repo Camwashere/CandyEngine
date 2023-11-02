@@ -125,6 +125,7 @@ namespace Candy::Graphics
   }
   SharedPtr<Texture> Font::GetAtlasTexture()const
   {
+    CANDY_CORE_ASSERT(atlasTexture != nullptr);
     return atlasTexture;
   }
   const MSDFData* Font::GetMSDFData()const

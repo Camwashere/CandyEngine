@@ -7,6 +7,7 @@
 #include <gum/Context.hpp>
 #include <gum/GumSystem.hpp>
 #include <gum/shape/Rectangle.hpp>
+#include <gum/widget/Label.hpp>
 namespace Candy
 {
   using namespace Graphics;
@@ -23,6 +24,70 @@ namespace Candy
     ImGui::Text("Characters: %d", stats.textCount);
   }
   
+  
+  void RenderText(Gum::Text& text)
+  {
+    char str[text.GetText().size() + 10];
+    std::strcpy(str, text.GetText().c_str());
+    Gum::Paint fill = text.GetFill();
+    float kerning = text.GetKerning();
+    float lineSpacing = text.GetLineSpacing();
+    Math::Vector2 layoutPos = text.position;
+    float fontSize = text.GetFontSize();
+    
+    ImGui::Begin("Text");
+    ImGui::InputText("Text", str, text.GetText().size() + 10);
+    ImGui::DragFloat2("Layout Position", &layoutPos.x, 1.f, 0.0f, FLT_MAX);
+    ImGui::DragFloat("Font Size", &fontSize, 1.f, 0.0f, FLT_MAX);
+    ImGui::ColorEdit4("Fill", &fill.color.r);
+    ImGui::DragFloat("Kerning", &kerning, 0.05f);
+    ImGui::DragFloat("LineSpacing", &lineSpacing, 0.05f, 0.0f, FLT_MAX);
+    
+    
+    ImGui::End();
+    
+    text.position = layoutPos;
+    text.SetText(str);
+    text.SetFontSize(fontSize);
+    text.SetFill(fill);
+    text.SetKerning(kerning);
+    text.SetLineSpacing(lineSpacing);
+  }
+  void RenderLabel(const SharedPtr<Gum::Label>& label, float step = 1.f)
+  {
+    
+    Gum::Paint backgroundFill = label->GetBackgroundFill();
+   
+    
+    Math::Vector2 layoutPos = label->GetLayoutPosition();
+    Math::Vector2 size = label->GetSize();
+    Math::Vector2 minSize = label->GetMinSize();
+    Math::Vector2 maxSize = label->GetMaxSize();
+    Math::Vector2 prefSize = label->GetPrefSize();
+    
+    ImGui::Begin(label->GetName().c_str());
+    
+    ImGui::DragFloat2("Layout Position", &layoutPos.x, step, 0.0f, FLT_MAX);
+    ImGui::DragFloat2("Size", &size.x, step, 0.0f, FLT_MAX);
+    ImGui::DragFloat("Wrap", &label->wrap, .5f);
+    
+    
+    ImGui::ColorEdit4("Background Fill", &backgroundFill.color.r);
+    ImGui::DragFloat2("Min Size", &minSize.x, step, 0.0f, FLT_MAX);
+    ImGui::DragFloat2("Max Size", &maxSize.x, step, 0.0f, FLT_MAX);
+    ImGui::DragFloat2("Pref Size", &prefSize.x, step, 0.0f, FLT_MAX);
+    
+    RenderText(label->text);
+    
+    ImGui::End();
+    
+    label->SetLayoutPosition(layoutPos);
+    label->SetSize(size);
+    label->SetBackgroundFill(backgroundFill);
+    label->SetMinSize(minSize);
+    label->SetMaxSize(maxSize);
+    label->SetPrefSize(prefSize);
+  }
   void RenderButton(const SharedPtr<Gum::Button>& button, float step = 1.f)
   {
     
@@ -149,6 +214,9 @@ namespace Candy
       SharedPtr<Gum::Button> rect2 = Gum::GumSystem::GetCurrentContext().testObject3;
       SharedPtr<Gum::Button> rect3 = Gum::GumSystem::GetCurrentContext().testObject4;
       
+      
+      SharedPtr<Gum::Label> label = Gum::GumSystem::GetCurrentContext().testLabel;
+      
       SharedPtr<Gum::BoxLayout> layout = Gum::GumSystem::GetCurrentContext().testLayout;
      /* Math::Vector2 shapePos = rect->GetPosition();
       Math::Vector2 shapeSize = rect->GetSize();
@@ -166,6 +234,8 @@ namespace Candy
       RenderRect(rect1);
       RenderRect(rect2);
       RenderRect(rect3);*/
+      RenderLabel(label, step);
+      
       RenderButton(rect);
       RenderButton(rect1);
       RenderButton(rect2);

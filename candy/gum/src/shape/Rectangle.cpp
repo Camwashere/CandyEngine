@@ -157,6 +157,6 @@ namespace Candy::Gum
   
   void Rectangle::OnRender()
   {
-    Renderer::SubmitRectangle(transform, *this);
+    Renderer::SubmitShape(transform, *this);
   }
 }

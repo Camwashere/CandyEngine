@@ -26,8 +26,10 @@ namespace Candy::Graphics
   Texture::Texture(const TextureSpecification& textureSpecification) : id(TextureManager::AssignTextureID(textureSpecification.format, textureSpecification.size)), specification(textureSpecification)
   {
     CANDY_PROFILE_FUNCTION();
+    CANDY_CORE_ASSERT(specification.Valid(), "Invalid texture specification!");
     internal = TextureManager::GetInternalTexture(id);
-    imageView.Set(internal->GetImage());
+    
+    //imageView.Set(internal->GetImage());
     
     
     
