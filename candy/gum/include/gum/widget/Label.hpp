@@ -1,6 +1,6 @@
 #pragma once
 #include <gum/widget/Widget.hpp>
-#include <candy/graphics/font/Font.hpp>
+//#include <candy/graphics/font/Font.hpp>
 #include <gum/text/Text.hpp>
 namespace Candy::Gum
 {

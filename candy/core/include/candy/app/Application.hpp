@@ -33,6 +33,11 @@ namespace Candy
   private:
     ApplicationData appData;
     UniquePtr<Window> mainWindow;
+    float pixelsPerInch;
+    float pixelsPerPoint;
+    Math::Vector2 screenSizeInPoints;
+    Math::Vector2 screenSizeInPixels;
+    
     bool isRunning;
     bool minimized;
     FrameTime frameTime;
@@ -44,6 +49,8 @@ namespace Candy
     bool OnWindowClose(Events::WindowCloseEvent &event);
     bool OnWindowResize(Events::WindowResizeEvent &event);
     bool OnFrameBufferResize(Events::FrameBufferResizeEvent& event);
+    
+    void InitGLFW();
     
     void PollEvents();
     void Run();
@@ -72,6 +79,10 @@ namespace Candy
     static float FPS();
     static float AverageFPS();
     static void Shutdown();
+    static float PixelsPerInch();
+    static float PixelsPerPoint();
+    static Math::Vector2 ScreenSizeInPoints();
+    static Math::Vector2 ScreenSizeInPixels();
   
   private:
     static Application *instance;

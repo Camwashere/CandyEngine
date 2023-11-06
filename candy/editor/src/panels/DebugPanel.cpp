@@ -37,7 +37,7 @@ namespace Candy
     
     ImGui::Begin("Text");
     ImGui::InputText("Text", str, text.GetText().size() + 10);
-    ImGui::DragFloat2("Layout Position", &layoutPos.x, 1.f, 0.0f, FLT_MAX);
+    ImGui::DragFloat2("Layout Position", &layoutPos.x, 1.f);
     ImGui::DragFloat("Font Size", &fontSize, 1.f, 0.0f, FLT_MAX);
     ImGui::ColorEdit4("Fill", &fill.color.r);
     ImGui::DragFloat("Kerning", &kerning, 0.05f);
@@ -67,9 +67,9 @@ namespace Candy
     
     ImGui::Begin(label->GetName().c_str());
     
-    ImGui::DragFloat2("Layout Position", &layoutPos.x, step, 0.0f, FLT_MAX);
+    ImGui::DragFloat2("Layout Position", &layoutPos.x, step);
     ImGui::DragFloat2("Size", &size.x, step, 0.0f, FLT_MAX);
-    ImGui::DragFloat("Wrap", &label->wrap, .5f);
+    ImGui::DragFloat("Wrap", &label->wrap, .05f);
     
     
     ImGui::ColorEdit4("Background Fill", &backgroundFill.color.r);
@@ -142,11 +142,11 @@ namespace Candy
     Math::Vector2 prefSize = rect->GetPrefSize();
     
     ImGui::Begin(rect->GetName().c_str());
-    ImGui::DragFloat("Step", &step, 0.01f, 0.0f, FLT_MAX);
+    ImGui::DragFloat("Step", &step, 0.01f);
     //ImGui::DragFloat2("Shape Position", &shapePos.x, step, 0.0f, FLT_MAX);
     //ImGui::DragFloat2("Shape Size", &shapeSize.x, step, 0.0f, FLT_MAX);
-    ImGui::DragFloat2("Arc size", &rect->arcSize.x, 0.05f, 0.0f, 1.0f);
-    ImGui::DragFloat("Stroke Width", &rect->strokeWidth, step, 0.0f, FLT_MAX);
+    ImGui::DragFloat2("Arc size", &rect->arcSize.x);
+    ImGui::DragFloat("Stroke Width", &rect->strokeWidth, step);
     ImGui::ColorEdit4("Fill Color", &rect->fill.color.r);
     ImGui::ColorEdit4("Stroke Color", &rect->stroke.color.r);
     

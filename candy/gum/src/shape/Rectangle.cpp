@@ -49,8 +49,9 @@ namespace Candy::Gum
     Math::Vector2 nonRoundPos = GetLayoutPosition() + GetSize()*arcSize*0.5f;
     
     Math::Bounds2D nonRoundBounds;
-    nonRoundBounds.SetPosition(nonRoundPos);
-    nonRoundBounds.SetSize(nonRoundSize);
+    nonRoundBounds.SetFromOrigin(nonRoundPos, nonRoundSize);
+    //nonRoundBounds.SetPosition(nonRoundPos);
+    //nonRoundBounds.SetSize(nonRoundSize);
     if (nonRoundBounds.Contains(localPoint))
     {
       return true;

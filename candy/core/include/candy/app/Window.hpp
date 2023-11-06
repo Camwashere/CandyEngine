@@ -22,6 +22,7 @@ namespace Candy
         Math::Vector2i frameBufferSize;
         bool vsync;
         
+        
         EventCallbackFunction eventCallback;
         Math::Vector2 mousePos;
         

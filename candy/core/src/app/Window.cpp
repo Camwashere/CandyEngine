@@ -11,10 +11,10 @@ namespace Candy
     using namespace Graphics;
     using namespace Events;
     static std::uint8_t GLFW_WINDOW_COUNT=0;
-    static void GLFWErrorCallback(int error, const char* description)
+    /*static void GLFWErrorCallback(int error, const char* description)
     {
         CANDY_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
-    }
+    }*/
     
     
     
@@ -22,39 +22,21 @@ namespace Candy
     Window::Window(WindowData data) : windowData(std::move(data)), fullscreen(false)//, graphicsContext(nullptr)
     {
       CANDY_PROFILE_FUNCTION();
-        if (GLFW_WINDOW_COUNT==0)
-        {
-          {
-            CANDY_PROFILE_SCOPE("GLFW Init");
-            int success = glfwInit();
-            CANDY_CORE_ASSERT(success, "FAILED TO INITIALIZE GLFW");
-            glfwSetErrorCallback(GLFWErrorCallback);
-            
-          }
-          {
-            CANDY_PROFILE_SCOPE("GLFW Window Creation");
-            
-            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-            glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-            
-            handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
-            
-            ++GLFW_WINDOW_COUNT;
-            
-            
-            glfwSetWindowUserPointer(handle, &windowData);
-            SetVSync(true);
-          }
-          EventCallbackInit();
-          
-          graphicsContext = Vulkan::Init(handle);
-          
-          
-          
-          gumContext = new Gum::Context(handle);
-          Gum::GumSystem::SetCurrentContext(gumContext);
-        }
+      handle = glfwCreateWindow(windowData.GetWindowWidth(), windowData.GetWindowHeight(), windowData.title.c_str(), nullptr, nullptr);
+      
+      ++GLFW_WINDOW_COUNT;
+      
+      
+      glfwSetWindowUserPointer(handle, &windowData);
+      SetVSync(true);
+      EventCallbackInit();
+      
+      graphicsContext = Vulkan::Init(handle);
+      
+      
+      
+      gumContext = new Gum::Context(handle);
+      Gum::GumSystem::SetCurrentContext(gumContext);
         
       
     }

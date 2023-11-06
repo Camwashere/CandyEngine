@@ -4,6 +4,7 @@
 #include <queue>
 #include <gum/widget/Button.hpp>
 #include <gum/widget/Label.hpp>
+#include <gum/font/FontInternal.hpp>
 struct GLFWwindow;
 namespace Candy::Gum
 {
@@ -20,6 +21,7 @@ namespace Candy::Gum
     SharedPtr<Button> testObject4;
     SharedPtr<Label> testLabel;
     SharedPtr<BoxLayout> testLayout;
+    
     
     Math::Vector2i windowSize;
     Math::Vector2 mousePositionWindow;

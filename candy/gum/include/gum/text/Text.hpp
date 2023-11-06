@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <gum/style/Paint.hpp>
-#include <candy/graphics/font/Font.hpp>
+//#include <candy/graphics/font/Font.hpp>
 #include <candy/math/geometry/Bounds2D.hpp>
+#include <gum/font/FontInternal.hpp>
 namespace Candy::Gum
 {
   class Text
@@ -15,7 +16,8 @@ namespace Candy::Gum
     std::string text;
     Paint fill;
     float fontSize;
-    SharedPtr<Graphics::Font> font;
+    //SharedPtr<Graphics::Font> font;
+    SharedPtr<FontInternal> font;
     float kerning = 0.0f;
     float letterSpacing = 0.0f;
     float lineSpacing = 0.0f;
@@ -27,8 +29,10 @@ namespace Candy::Gum
     
   public:
     void Render(float wrap);
-    void SetFont(const SharedPtr<Graphics::Font>& font);
-    [[nodiscard]] SharedPtr<Graphics::Font> GetFont()const;
+    //void SetFont(const SharedPtr<Graphics::Font>& font);
+    //[[nodiscard]] SharedPtr<Graphics::Font> GetFont()const;
+    SharedPtr<FontInternal> GetFont()const;
+    void SetFont(const SharedPtr<FontInternal>& font);
     [[nodiscard]] float GetFontSize()const;
     void SetFontSize(float value){fontSize = value;}
     

@@ -674,6 +674,7 @@ namespace msdf_atlas
   
   bool FontAtlasLoader::GetFontMetrics(FontMetrics &metrics, FontHandle *font)
   {
+    
     metrics.emSize = F26DOT6_TO_DOUBLE(font->face->units_per_EM);
     metrics.ascenderY = F26DOT6_TO_DOUBLE(font->face->ascender);
     metrics.descenderY = F26DOT6_TO_DOUBLE(font->face->descender);

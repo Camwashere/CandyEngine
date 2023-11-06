@@ -18,7 +18,7 @@ namespace Candy::Gum
     static void EndScene();
     
     static TextRenderer& GetTextRenderer();
-    
+    static void SetFont(const SharedPtr<FontInternal>& font);
     static void SubmitShape(const Math::Matrix3& transform, const Shape& shape, int depthIndex=0);
     
     //static void SubmitLabel(const Label& label, int depthIndex=0);

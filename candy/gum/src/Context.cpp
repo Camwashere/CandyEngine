@@ -5,6 +5,7 @@
 #include <gum/render/Renderer.hpp>
 #include <CandyEngine.hpp>
 #include <candy/project/ProjectManager.hpp>
+#include <gum/font/FontInternal.hpp>
 namespace Candy::Gum
 {
   static std::unordered_map<GLFWwindow*, GLFWwindowsizefun> prevUserWindowSizeCallbacks;
@@ -31,7 +32,7 @@ namespace Candy::Gum
     sceneGraph.SetWindowSize(windowSize);
     contextMap[handle] = this;
     WindowCallbackInit();
-    
+    FontInternal::Init();
     testObject = CreateSharedPtr<Button>();
     //Paint paint(Color{0.4f, 0.2f, 0.7f, 1.0f}, Graphics::Texture::Create(ProjectManager::GetAssetsDirectory() / "textures" / "statue.jpg"));
     testObject->SetNormalFill(Paint{Color{0.4f, 0.2f, 0.7f, 1.0f}, Graphics::Texture::Create(ProjectManager::GetAssetsDirectory() / "textures" / "statue.jpg")});
@@ -62,6 +63,9 @@ namespace Candy::Gum
     testObject4->SetName("Btn 4");
     
     testLabel = CreateSharedPtr<Label>("LabelBoi");
+    SharedPtr<FontInternal> font = CreateSharedPtr<FontInternal>(CandyEngine::GetInternalAssetsDirectory() / "fonts" / "opensans" / "OpenSans-Regular.ttf");
+    testLabel->text.SetFont(font);
+    testLabel->text.SetFontSize(100);
     testLabel->SetSize({500, 500});
     testLabel->SetName("Test Label");
     

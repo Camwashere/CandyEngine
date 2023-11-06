@@ -19,6 +19,7 @@ namespace Candy::Gum
     int32_t quadCount=0;
     Paint fill;
   };
+  
   static const std::vector<uint32_t> rectIndices{0, 2, 1, 0, 3, 2};
   TextRenderer::TextRenderer(uint32_t gumRenderPassIndex, uint32_t maxQuads) : maxQuads(maxQuads), maxVertices(maxQuads*4), maxIndices(maxQuads * 6)
   {
@@ -57,14 +58,15 @@ namespace Candy::Gum
       
       // Adjust the position so that an object's lower left corner corresponds to positionInParent
       //Vector2 positionInSceneOffset = text.positionInScene + (text.size*0.5f);
-      Vector2 positionInSceneOffset = text.positionInScene;
-      Vector2 positionInShaderCoordinates = ((positionInSceneOffset/sceneSize)*2.0f)-Vector2(1.0f);
+      //Vector2 positionInSceneOffset = text.positionInScene/sceneSize;
+      Vector2 positionInShaderCoordinates = ((text.positionInScene/sceneSize)*2.0f)-Vector2(1.0f);
       
       
       Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
       Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
-      
+      //scale = Matrix3::IDENTITY;
       Math::Matrix3 model = translate * scale;
+      //model = translate;
       
       
       for (int i=0; i<text.quadCount; i++)
@@ -86,7 +88,7 @@ namespace Candy::Gum
   {
     CANDY_PROFILE_FUNCTION();
     Math::Vector2 positions[4] = {quad.GetMin(), quad.GetTopLeft(), quad.GetTopRight(), quad.GetBottomRight()};
-    
+    textData.back().size = quad.GetMax();
     Math::Vector2 texCoords[4] = {
     {uv.GetBottomLeft()}, // Bottom-left
     {uv.GetTopLeft()},  // Top-left
@@ -118,11 +120,12 @@ namespace Candy::Gum
     txtData.quadCount = 0;
     textData.push_back(txtData);
   }
-  void TextRenderer::EndText(Math::Vector2 size)
+  void TextRenderer::EndText(Vector2 size)
   {
+    //textData.back().size = textData.back().size - textData.back().positionInScene;
     textData.back().size = size;
+    //textData.back().size *= 0.5f;
     currentVertexOffset += textData.back().quadCount * 4;
-    
   }
   /*void TextRenderer::SubmitText(const Text& text)
   {

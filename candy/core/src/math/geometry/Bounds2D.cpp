@@ -3,35 +3,49 @@
 namespace Candy::Math
 {
   Bounds2D::Bounds2D() = default;
-  Bounds2D::Bounds2D(const Vector2& pos, const Vector2& sizeValue) : position(pos), size(sizeValue){}
-  Bounds2D::Bounds2D(const Vector2& pos, float width, float height) : position(pos), size(width, height){}
-  Bounds2D::Bounds2D(float positionX, float positionY, float width, float height) : position(positionX, positionY), size(width, height)
-  {
   
-  }
-  
+  Bounds2D::Bounds2D(const Vector2& min, const Vector2& max) : min(min), max(max){}
+  Bounds2D::Bounds2D(float minX, float minY, float maxX, float maxY) : min(minX, minY), max(maxX, maxY){}
   bool Bounds2D::Contains(const Vector2& point)const
   {
     bool xWithin = point.x >= GetMin().x && point.x <= GetMax().x;
     bool yWithin = point.y >= GetMin().y && point.y <= GetMax().y;
     return xWithin && yWithin;
-    //return Contains(point.x, point.y);
+    
   }
   bool Bounds2D::Contains(float x, float y)const
   {
     return Contains({x, y});
-    //return x >= position.x && x <= (position.x + size.width) && y >= position.y && y <= (position.y + size.width);
   }
   bool Bounds2D::Contains(const Bounds2D& other)const
   {
-    return Contains(other.position) && Contains(other.GetMax());
+    return Contains(other.min) && Contains(other.max);
   }
   
   bool Bounds2D::Overlaps(const Bounds2D& other)const
   {
-    return Contains(other.position) || Contains(other.GetMax());
+    return Contains(other.min) || Contains(other.max);
+  }
+  void Bounds2D::Translate(const Vector2& translation)
+  {
+    min += translation;
+    max += translation;
   }
   
+  void Bounds2D::TranslateCenter(const Vector2& centerPos)
+  {
+    Vector2 center = GetCenter();
+    Vector2 translation = centerPos - center;
+    Translate(translation);
+  }
+  void Bounds2D::Translate(float x, float y)
+  {
+    Translate({x, y});
+  }
+  void Bounds2D::TranslateCenter(float centerX, float centerY)
+  {
+    TranslateCenter({centerX, centerY});
+  }
   std::vector<Vector2> Bounds2D::GetCorners()const
   {
     std::vector<Vector2> corners;
@@ -40,48 +54,40 @@ namespace Candy::Math
     corners.push_back(GetTopLeft());
     corners.push_back(GetTopRight());
     return corners;
-    
   }
-  void Bounds2D::SetPosition(const Vector2& pos)
+  
+  void Bounds2D::SetFromOrigin(const Vector2& origin, const Vector2& size)
   {
-    position = pos;
-  }
-  void Bounds2D::SetCenter(const Vector2& center)
-  {
-    SetCenter(center.x, center.y);
-  }
-  void Bounds2D::SetCenter(float centerX, float centerY)
-  {
-    position.x = centerX - size.width * 0.5f;
-    position.y = centerY - size.height * 0.5f;
+    min = origin;
+    max = origin + size;
   }
   void Bounds2D::SetWidth(float value)
   {
-    size.width = value;
+    max.x = min.x + value;
   }
   void Bounds2D::SetHeight(float value)
   {
-    size.height = value;
+    max.y = min.y + value;
   }
   void Bounds2D::SetSize(const Vector2& sizeValue)
   {
-    size = sizeValue;
+    max = min + sizeValue;
   }
-  void Bounds2D::SetMin(const Vector2& min)
+  void Bounds2D::SetMin(const Vector2& value)
   {
-    position = min;
+    min = value;
   }
-  void Bounds2D::SetMax(const Vector2& max)
+  void Bounds2D::SetMax(const Vector2& value)
   {
-    size = max - position;
+    max = value;
   }
   void Bounds2D::SetMin(float x, float y)
   {
-    position.Set(x, y);
+    min.Set(x, y);
   }
   void Bounds2D::SetMax(float x, float y)
   {
-    size.Set(x - position.x, y - position.y);
+    max.Set(x, y);
   }
   
   std::vector<Bounds2D> Bounds2D::Split()const
@@ -95,70 +101,74 @@ namespace Candy::Math
   }
   Bounds2D Bounds2D::GetBottomLeftQuad()const
   {
-    return Bounds2D(position, size * 0.5f);
+    return {min, GetCenter()};
   }
   Bounds2D Bounds2D::GetBottomRightQuad()const
   {
-    return Bounds2D(position + Vector2(size.width * 0.5f, 0), size * 0.5f);
+    return Bounds2D{{max.x, min.y}, GetCenter()};
   }
   Bounds2D Bounds2D::GetTopLeftQuad()const
   {
-    return Bounds2D(position + Vector2(0, size.height * 0.5f), size * 0.5f);
+    return Bounds2D{{min.x, max.y}, GetCenter()};
   }
   Bounds2D Bounds2D::GetTopRightQuad()const
   {
-    return Bounds2D(position + size * 0.5f, size * 0.5f);
+    return {GetCenter(), max};
   }
   Vector2 Bounds2D::GetBottomLeft()const
   {
-    return position;
+    return min;
   }
   Vector2 Bounds2D::GetBottomRight()const
   {
-    return position + Vector2(size.width, 0);
+    return {max.x, min.y};
   }
   Vector2 Bounds2D::GetTopLeft()const
   {
-    return position + Vector2(0, size.height);
+    return {min.x, max.y};
   }
   Vector2 Bounds2D::GetTopRight()const
   {
-    return position + size;
+    return max;
   }
   Vector2 Bounds2D::GetPosition()const
   {
-    return position;
+    return min;
   }
   Vector2 Bounds2D::GetCenter()const
   {
-     return position + size * 0.5f;
+    return min + GetHalfSize();
   }
   float Bounds2D::GetWidth()const
   {
-    return size.width;
+    return GetSize().width;
   }
   float Bounds2D::GetHeight()const
   {
-    return size.height;
+    return GetSize().height;
   }
   Vector2 Bounds2D::GetMin()const
   {
-    return position;
+    return min;
   }
   Vector2 Bounds2D::GetMax()const
   {
-    return position + size;
+    return max;
   }
   Vector2 Bounds2D::GetSize()const
   {
-    return size;
+    return max-min;
+  }
+  Vector2 Bounds2D::GetHalfSize()const
+  {
+    return GetSize() * 0.5f;
   }
   float Bounds2D::GetArea()const
   {
-    return size.width * size.height;
+    return GetSize().Product();
   }
   float Bounds2D::GetPerimeter()const
   {
-    return 2.0f * (size.width + size.height);
+    return 2.0f * (GetSize().Sum());
   }
 }

@@ -5,14 +5,15 @@ namespace Candy::Math
   class Bounds2D
   {
   private:
-    Vector2 position;
-    Vector2 size;
+    Vector2 min;
+    Vector2 max;
     
   public:
     Bounds2D();
-    Bounds2D(const Vector2& position, const Vector2& size);
-    Bounds2D(const Vector2& position, float width, float height);
-    Bounds2D(float positionX, float positionY, float width, float height);
+    Bounds2D(const Vector2& min, const Vector2& max);
+    Bounds2D(float minX, float minY, float maxX, float maxY);
+    Bounds2D(const Bounds2D& other)=default;
+    
     
   public:
     [[nodiscard]] bool Contains(const Vector2& point)const;
@@ -21,12 +22,15 @@ namespace Candy::Math
     
     [[nodiscard]] bool Overlaps(const Bounds2D& other)const;
     
+    void Translate(const Vector2& translation);
+    void Translate(float x, float y);
+    void TranslateCenter(float centerX, float centerY);
+    void TranslateCenter(const Vector2& centerPos);
+    
     
   public:
     [[nodiscard]] std::vector<Vector2> GetCorners()const;
-    void SetPosition(const Vector2& position);
-    void SetCenter(const Vector2& center);
-    void SetCenter(float centerX, float centerY);
+    void SetFromOrigin(const Vector2& origin, const Vector2& size);
     void SetWidth(float value);
     void SetHeight(float value);
     void SetSize(const Vector2& size);
@@ -52,6 +56,7 @@ namespace Candy::Math
     [[nodiscard]] Vector2 GetMin()const;
     [[nodiscard]] Vector2 GetMax()const;
     [[nodiscard]] Vector2 GetSize()const;
+    [[nodiscard]] Vector2 GetHalfSize()const;
     [[nodiscard]] float GetArea()const;
     [[nodiscard]] float GetPerimeter()const;
     

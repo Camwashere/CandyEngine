@@ -2,8 +2,8 @@
 #include <candy/math/Matrix.hpp>
 #include <candy/graphics/Renderer.hpp>
 #include <candy/graphics/Vulkan.hpp>
-#include <candy/graphics/font/Font.hpp>
-#include <candy/graphics/font/MSDFData.hpp>
+//#include <candy/graphics/font/Font.hpp>
+//#include <candy/graphics/font/MSDFData.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
 #include "gum/GumSystem.hpp"
 #include <gum/render/RectRenderer.hpp>
@@ -22,7 +22,8 @@ namespace Candy::Gum
     
     SharedPtr<Graphics::Texture> whiteTexture;
     std::array<SharedPtr<Graphics::Texture>, maxTextureSlots> textureSlots;
-    SharedPtr<Graphics::Font> font;
+    //SharedPtr<Graphics::Font> font;
+    SharedPtr<FontInternal> font;
     //SharedPtr<Graphics::Texture> fontAtlasTexture;
     uint32_t textureSlotIndex = 1; // 0 = white texture, 1 = statue texture
     SceneGraph* currentScene=nullptr;
@@ -37,7 +38,7 @@ namespace Candy::Gum
   {
     CANDY_CORE_INFO("Initializing Renderer");
     data.whiteTexture = Graphics::Texture::White();
-    data.font = Graphics::Font::Default();
+    //data.font = Graphics::Font::Default();
     //data.fontAtlasTexture = Graphics::Font::Default()->GetAtlasTexture();
     
     data.textureSlots[0] = data.whiteTexture;
@@ -75,7 +76,7 @@ namespace Candy::Gum
       SharedPtr<Graphics::Texture> atlasTexture = data.font->GetAtlasTexture();
       if (atlasTexture)
       {
-        CANDY_CORE_INFO("FONT ATLAS TEXTURE EXISTS");
+        //CANDY_CORE_INFO("FONT ATLAS TEXTURE EXISTS");
         VkDescriptorImageInfo imageInfo = atlasTexture->GetDescriptorImageInfo();
         textureBuilder.AddImageWrite(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, Graphics::MATERIAL_SET);
       }
@@ -105,6 +106,10 @@ namespace Candy::Gum
   TextRenderer& Renderer::GetTextRenderer()
   {
     return *data.textRenderer;
+  }
+  void Renderer::SetFont(const SharedPtr<FontInternal>& font)
+  {
+    data.font = font;
   }
   void Renderer::SubmitShape(const Math::Matrix3& transform, const Shape& shape, int depthIndex)
   {

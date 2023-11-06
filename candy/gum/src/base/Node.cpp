@@ -143,13 +143,9 @@ namespace Candy::Gum
   
   void Node::CalculateBounds(Math::Vector2 parentPositionInScene)
   {
-    boundsInSelf.SetSize(size);
-    boundsInParent.SetSize(size);
-    boundsInScene.SetSize(size);
-    
-    boundsInSelf.SetPosition({0, 0});
-    boundsInParent.SetPosition(layoutPosition);
-    boundsInScene.SetPosition(parentPositionInScene + layoutPosition);
+    boundsInSelf.SetFromOrigin({0, 0}, size);
+    boundsInParent.SetFromOrigin(layoutPosition, size);
+    boundsInScene.SetFromOrigin(parentPositionInScene + layoutPosition, size);
     
     OnBoundsCalculated();
   }

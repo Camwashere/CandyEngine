@@ -106,6 +106,9 @@ set(CANDY_MATH_HEADERS candy/core/include/candy/math/Vector.hpp
         candy/core/include/candy/math/curve/BezierCurve.hpp
         candy/core/include/candy/math/curve/BezierCurveQuadratic.hpp
         candy/core/include/candy/math/curve/BezierCurveCubic.hpp
+        candy/core/include/candy/math/curve/BezierCurveFixed.hpp
+        candy/core/include/candy/math/geometry/Contour.hpp
+        candy/core/include/candy/math/geometry/Line.hpp
 )
 
 set(CANDY_MATH_SOURCES
@@ -117,7 +120,8 @@ set(CANDY_MATH_SOURCES
         candy/core/src/math/geometry/Bounds2D.cpp
         candy/core/src/math/curve/BezierCurve.cpp
         candy/core/src/math/curve/BezierCurveQuadratic.cpp
-        candy/core/src/math/curve/BezierCurveCubic.cpp)
+        candy/core/src/math/curve/BezierCurveCubic.cpp
+        candy/core/src/math/geometry/Line.cpp)
 
 set(CANDY_MATH_FILES ${CANDY_MATH_HEADERS} ${CANDY_MATH_SOURCES})
 
@@ -429,7 +433,10 @@ set(CANDY_GUM_HEADERS
         candy/gum/include/gum/style/Paint.hpp
         candy/gum/include/gum/widget/Label.hpp
         candy/gum/include/gum/text/Text.hpp
-        candy/gum/include/gum/text/CharData.hpp
+        candy/gum/include/gum/font/FontInternal.hpp
+        candy/gum/include/gum/font/Glyph.hpp
+        candy/gum/include/gum/font/Charset.hpp
+        candy/gum/include/gum/font/BitmapAtlas.hpp
 )
 
 set(CANDY_GUM_SOURCES
@@ -454,6 +461,10 @@ set(CANDY_GUM_SOURCES
         candy/gum/src/widget/Label.cpp
         candy/gum/src/render/TextRenderer.cpp
         candy/gum/src/text/Text.cpp
+        candy/gum/src/font/FontInternal.cpp
+        candy/gum/src/font/Glyph.cpp
+        candy/gum/src/font/Charset.cpp
+        candy/gum/src/font/BitmapAtlas.cpp
 )
 
 set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
@@ -462,6 +473,8 @@ set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FIL
         candy/core/include/CandyEngine.hpp
         candy/core/include/CandyEngine.cpp
         candy/core/include/candy/engine/FileStructureValidator.hpp
+        candy/core/include/candy/engine/AssetManager.hpp
+        candy/core/include/candy/engine/Asset.hpp
 )
 
 
@@ -514,6 +527,7 @@ target_include_directories(CandyEngine PRIVATE lib/stb/include)
 target_include_directories(CandyEngine PRIVATE lib/antlr/runtime/src)
 target_include_directories(CandyEngine PRIVATE ${ASSIMP_INCLUDE_DIRS})
 target_include_directories(CandyEngine PRIVATE tools)
+target_include_directories(CandyEngine PRIVATE lib/fontatlas/lib/freetype2/include/)
 
 
 target_link_libraries(CandyEngine PRIVATE shaderc_shared ryml::ryml assimp::assimp antlr4_static)

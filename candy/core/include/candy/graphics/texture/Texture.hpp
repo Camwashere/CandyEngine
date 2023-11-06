@@ -50,8 +50,7 @@ namespace Candy::Graphics
     
   public:
     void SetData(void* data, uint32_t size);
-    //void Bind(uint32_t slot = 0)const;
-    //void Bind(uint32_t slot, uint32_t arrayIndex);
+    
     [[nodiscard]] uint32_t GetWidth()const;
     [[nodiscard]] uint32_t GetHeight()const;
     [[nodiscard]] Math::Vector2u GetSize()const;

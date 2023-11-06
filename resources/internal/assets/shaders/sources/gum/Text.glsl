@@ -50,26 +50,30 @@ float median(vec3 color) {
 void main()
 {
 
-    vec4 texColor = inColor * texture(u_FontAtlas, inTexCoord);
+    vec4 texColor =  texture(u_FontAtlas, inTexCoord);
+    outValue = texColor;
 
-    vec3 sdTri = texture(u_FontAtlas, inTexCoord).rgb;
-    float minSd = texture(u_FontAtlas, inTexCoord).a;
+    //vec3 sdTri = texture(u_FontAtlas, inTexCoord).rgb;
+    //float minSd = texture(u_FontAtlas, inTexCoord).a;
 
     // Since MT-SDF encodes distance in alpha, use it directly
-    float screenPxDistance = screenPxRange()*(minSd - 0.5);
+    //float screenPxDistance = screenPxRange()*(minSd - 0.5);
 
     //float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
 
     // Make softness depend on alpha
-    float opacity = smoothstep(0.2, 0.8, screenPxDistance + 0.5);
+    //float opacity = smoothstep(0.2, 0.8, screenPxDistance + 0.5);
 
-    if (opacity == 0.0)
-    discard;
+    //if (opacity == 0.0)
+    //discard;
 
-    outValue = mix(vec4(0.0), inColor, opacity);
+    //outValue = mix(vec4(0.0), inColor, opacity);
 
-    if (outValue.a == 0.0)
-    discard;
+    /*if (outValue.a == 0.0)
+    {
+        outValue = vec4(0.0, 1.0, 0.0, 1.0f);
+    }*/
+
 
 
 }
