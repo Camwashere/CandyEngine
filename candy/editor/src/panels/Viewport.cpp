@@ -86,7 +86,7 @@ namespace Candy
     isFocused = ImGui::IsWindowFocused();
     isHovered = ImGui::IsWindowHovered();
     
-    Application::GetUILayer().BlockEvents(!isHovered);
+    //Application::GetUILayer().BlockEvents(!isHovered);
     
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     size = { viewportPanelSize.x, viewportPanelSize.y };

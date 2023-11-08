@@ -13,6 +13,7 @@
 #include <candy/graphics/model/ModelLoader.hpp>
 #include <candy/graphics/model/MeshPrimitive.hpp>
 #include <candy/project/ProjectManager.hpp>
+#include <CandyEngine.hpp>
 using namespace Candy::Math;
 using namespace Candy::Graphics;
 using namespace Candy::ECS;
@@ -41,11 +42,8 @@ namespace Candy
     circ.color = Color::teal;
     circle.AddComponent<CircleRendererComponent>(circ);
     
-    
-    
-
-    
-    
+    //ModelLoader loader(activeScene);
+    //loader.LoadModel(ProjectManager::GetAssetsDirectory() / "models/backpack/Survival_BackPack_2.fbx");
   }
   
   
@@ -134,7 +132,7 @@ namespace Candy
     
     debugPanel.OnRenderUI();
     scenePanel->OnRenderUI();
-    contentBrowserPanel->OnRenderUI();
+    //contentBrowserPanel->OnRenderUI();
     viewport->OnRenderUI();
     
 

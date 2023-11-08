@@ -2,6 +2,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <CandyPch.hpp>
+#include <CandyEngine.hpp>
 namespace Candy::Gum
 {
   struct FontInternalData
@@ -22,30 +23,53 @@ namespace Candy::Gum
       CANDY_CORE_ERROR("Error: {}, Could not load font file: {}", FT_Error_String(error), path.string());
       CANDY_CORE_ASSERT(false);
     }
+    SetPixelSize(128.f);
     
-    FT_Set_Pixel_Sizes(face, 0, 48);
-    
+    FontAttributes attr;
+    attr.pointSize = GetPointSize();
+    CreateGlyphCache(attr);
     atlas.Load(face, Charset::ASCII);
-    Graphics::TextureSpecification spec;
-    spec.format = Graphics::ImageFormat::R8;
-    spec.size = atlas.GetSize();
-    spec.generateMipmaps = false;
-    atlasTexture = Graphics::Texture::Create(spec);
-    atlasTexture->SetData((void*) atlas.GetData().data(), atlas.GetData().size());
+    
+    
+    
   }
   void FontInternal::Init(uint32_t dpi)
   {
     data.dpi = dpi;
-    FT_Init_FreeType(&data.library);
+    FT_Error error = FT_Init_FreeType(&data.library);
+    if (error != 0)
+    {
+      CANDY_CORE_ERROR("Error: {}, Could not initialize FreeType", FT_Error_String(error));
+      CANDY_CORE_ASSERT(false);
+    }
   }
+  void FontInternal::CreateGlyphCache(const FontAttributes& attributes)
+  {
+    auto it = glyphCaches.find(attributes);
+    if (it == glyphCaches.end())
+    {
+      glyphCaches.emplace(attributes, GlyphCache(face, attributes));
+    }
+  }
+  SharedPtr<FontInternal> FontInternal::Default()
+  {
+    static SharedPtr<FontInternal> defaultFont;
+    
+    if (defaultFont)
+    {
+      return defaultFont;
+    }
+    defaultFont = CreateSharedPtr<FontInternal>(CandyEngine::GetInternalAssetsDirectory() / "fonts" / "raleway" / "Raleway-Regular.ttf");
+    return defaultFont;
   
+  }
   void FontInternal::Shutdown()
   {
     FT_Done_FreeType(data.library);
   }
   SharedPtr<Graphics::Texture> FontInternal::GetAtlasTexture()const
   {
-    return atlasTexture;
+    return atlas.GetTexture();
   }
   void FontInternal::SetPointSize(float value)
   {
@@ -66,7 +90,31 @@ namespace Candy::Gum
     pixelSize = value;
     FT_Set_Pixel_Sizes(face, 0, static_cast<int>(pixelSize));
   }
-  
+  const BitmapAtlas& FontInternal::GetAtlas()const
+  {
+    return atlas;
+  }
+  BitmapAtlas& FontInternal::GetAtlas()
+  {
+    return atlas;
+  }
+  const Glyph* FontInternal::GetGlyph(unicode_t codepoint)
+  {
+    FontAttributes attr{};
+    attr.pointSize = GetPointSize();
+    return GetGlyph(codepoint, attr);
+  }
+  const Glyph* FontInternal::GetGlyph(unicode_t codepoint, const FontAttributes& attributes)
+  {
+    auto it = glyphCaches.find(attributes);
+    if (it == glyphCaches.end())
+    {
+      CreateGlyphCache(attributes);
+      it = glyphCaches.find(attributes);
+    }
+    const Glyph* glyph = it->second.GetGlyph(codepoint);
+    return glyph;
+  }
   float FontInternal::GetPixelSize()const
   {
     return pixelSize;
@@ -109,7 +157,6 @@ namespace Candy::Gum
   
   uint16_t FontInternal::GetUnitsPerEM()const
   {
-    face->bbox;
     return face->units_per_EM;
   }
   Math::Bounds2D FontInternal::GetMaxGlyphPixelBounds()const

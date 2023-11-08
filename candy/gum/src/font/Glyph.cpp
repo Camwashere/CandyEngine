@@ -10,7 +10,7 @@ namespace Candy::Gum
   {
     return { static_cast<float>(value.x), static_cast<float>(value.y) };
   }
-  GlyphCache::GlyphCache(FT_Face face, const Charset& charset, const FontAttributes& attributes) : fontAttributes(attributes)
+  GlyphCache::GlyphCache(FT_Face face, const FontAttributes& attributes, const Charset& charset) : fontAttributes(attributes)
   {
     for (unicode_t c : charset)
     {
@@ -26,12 +26,13 @@ namespace Candy::Gum
       glyph.advance = face->glyph->advance.x / 64.0f;
       glyph.bounds.SetMin(0, -face->glyph->metrics.height / 64.0f);
       glyph.bounds.SetMax(face->glyph->metrics.width / 64.0f, 0);
-      LoadGlyphContours(glyph, outline);
+      glyphs[c] = glyph;
+      //LoadGlyphContours(glyph, outline);
       
     }
   }
   
-  void GlyphCache::LoadGlyphContours(Glyph& glyph, const FT_Outline_& outline)
+  /*void GlyphCache::LoadGlyphContours(Glyph& glyph, const FT_Outline_& outline)
   {
     std::vector<Contour> contours;
     
@@ -98,7 +99,7 @@ namespace Candy::Gum
     }
     
     glyph.contours = contours;
-  }
+  }*/
   const Glyph* GlyphCache::GetGlyph(unicode_t codepoint)const
   {
     auto it = glyphs.find(codepoint);

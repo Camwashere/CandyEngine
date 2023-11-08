@@ -21,7 +21,7 @@ namespace Candy::Math
     [[nodiscard]] bool Contains(const Bounds2D& other)const;
     
     [[nodiscard]] bool Overlaps(const Bounds2D& other)const;
-    
+    void Move(const Vector2& position);
     void Translate(const Vector2& translation);
     void Translate(float x, float y);
     void TranslateCenter(float centerX, float centerY);

@@ -8,6 +8,7 @@ namespace Candy::Gum
   {
     data.clear();
   }
+  
   void BitmapAtlas::CalculateSize(FT_FaceRec_* face, const Charset& charset)
   {
     size = Math::Vector2u(0, 0);
@@ -27,23 +28,34 @@ namespace Candy::Gum
   {
     CalculateSize(face, charset);
     data.resize(size.x * size.y);
-    size_t x = 0;
+    size_t offsetX = 0;
     for (unsigned char c = 0; c<128; c++) {
       if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
         continue;  // Skip glyphs that can't be loaded
       }
       Math::Bounds2D bounds;
-      bounds.SetMin(static_cast<float>(x) / size.x, 0.0f);
-      bounds.SetMax(static_cast<float>(x + face->glyph->bitmap.width) / size.x, 1.0f);
+      bounds.SetMin(static_cast<float>(offsetX) / size.x, 0.0f);
+      bounds.SetMax(static_cast<float>(offsetX + face->glyph->bitmap.width) / size.x, 1.0f);
       glyphUVs[c] = bounds;
       
-      for (int i = face->glyph->bitmap.rows - 1; i >= 0; --i) {
-        for (int j = 0; j < face->glyph->bitmap.width; ++j) {
-          data[x + j + (face->glyph->bitmap.rows - 1 - i) * size.width] = face->glyph->bitmap.buffer[j + face->glyph->bitmap.width * i];
+      for(int y = 0; y < face->glyph->bitmap.rows; y++) {
+        for(int x = 0; x < face->glyph->bitmap.width; x++) {
+          int destIdx = offsetX + x + (this->size.y - y - 1) * this->size.x;
+          int srcIdx = x + y * face->glyph->bitmap.pitch;
+          this->data[destIdx] = face->glyph->bitmap.buffer[srcIdx];
         }
       }
-      x += face->glyph->bitmap.width;
+      offsetX += face->glyph->bitmap.width;
     }
+    
+    
+    Graphics::TextureSpecification spec;
+    
+    spec.format = Graphics::ImageFormat::R8;
+    spec.size = size;
+    spec.generateMipmaps = false;
+    texture = Graphics::Texture::Create(spec);
+    texture->SetData((void*) data.data(), data.size());
   }
   Math::Bounds2D BitmapAtlas::GetUV(unicode_t codepoint)const
   {
@@ -54,6 +66,10 @@ namespace Candy::Gum
     }
     CANDY_CORE_ERROR("Could not find glyph uv for codepoint: {}", codepoint);
     return {};
+  }
+  SharedPtr<Graphics::Texture> BitmapAtlas::GetTexture()const
+  {
+    return texture;
   }
   [[nodiscard]] const Math::Vector2u& BitmapAtlas::GetSize()const
   {

@@ -29,7 +29,6 @@ namespace Candy::Graphics
     CANDY_CORE_ASSERT(specification.Valid(), "Invalid texture specification!");
     internal = TextureManager::GetInternalTexture(id);
     
-    //imageView.Set(internal->GetImage());
     
     
     

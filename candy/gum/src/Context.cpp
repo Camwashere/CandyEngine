@@ -27,14 +27,11 @@ namespace Candy::Gum
     glfwGetWindowSize(windowHandle, &windowSize.x, &windowSize.y);
     Math::Vector2i frameBufferSize;
     glfwGetFramebufferSize(windowHandle, &frameBufferSize.x, &frameBufferSize.y);
-    //contextSize.Set(static_cast<float>(frameBufferSize.x), static_cast<float>(frameBufferSize.y));
     sceneGraph.SetSceneSize({static_cast<float>(frameBufferSize.x), static_cast<float>(frameBufferSize.y)});
     sceneGraph.SetWindowSize(windowSize);
     contextMap[handle] = this;
     WindowCallbackInit();
-    FontInternal::Init();
     testObject = CreateSharedPtr<Button>();
-    //Paint paint(Color{0.4f, 0.2f, 0.7f, 1.0f}, Graphics::Texture::Create(ProjectManager::GetAssetsDirectory() / "textures" / "statue.jpg"));
     testObject->SetNormalFill(Paint{Color{0.4f, 0.2f, 0.7f, 1.0f}, Graphics::Texture::Create(ProjectManager::GetAssetsDirectory() / "textures" / "statue.jpg")});
     
     testObject->SetPrefSize({200, 200});
@@ -43,30 +40,23 @@ namespace Candy::Gum
     
     testObject2 = CreateSharedPtr<Button>();
     testObject2->SetNormalFill(Color{0.4f, 0.2f, 0.7f, 1.0f});
-    //testObject2->SetFillColor(Color::blue);
-    //testObject2->SetArcSize({0.2f, 0.8f});
     testObject2->SetPrefSize({250, 200});
     testObject2->SetName("Btn 2");
     
     testObject3 = CreateSharedPtr<Button>();
     testObject3->SetNormalFill(Color{0.4f, 0.2f, 0.7f, 1.0f});
-    //testObject3->SetFillColor(Color::yellow);
-    //testObject3->SetArcSize({0.8f, 0.2f});
     testObject3->SetPrefSize({300, 200});
     testObject3->SetName("Btn 3");
     
     testObject4 = CreateSharedPtr<Button>();
     testObject4->SetNormalFill(Color{0.4f, 0.2f, 0.7f, 1.0f});
-    //testObject4->SetFillColor(Color::magenta);
-    //testObject4->SetArcSize({0.4f, 0.7f});
     testObject4->SetPrefSize({150, 200});
     testObject4->SetName("Btn 4");
     
-    testLabel = CreateSharedPtr<Label>("LabelBoi");
-    SharedPtr<FontInternal> font = CreateSharedPtr<FontInternal>(CandyEngine::GetInternalAssetsDirectory() / "fonts" / "opensans" / "OpenSans-Regular.ttf");
-    testLabel->text.SetFont(font);
-    testLabel->text.SetFontSize(100);
-    testLabel->SetSize({500, 500});
+    testLabel = CreateSharedPtr<Label>("A");
+    //testLabel->text.SetFont(font);
+    //testLabel->text.SetFontSize(100);
+    testLabel->SetSize({50, 50});
     testLabel->SetName("Test Label");
     
     

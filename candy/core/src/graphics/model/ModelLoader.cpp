@@ -5,6 +5,7 @@
 #include <assimp/postprocess.h>
 #include <candy/ecs/Entity.hpp>
 #include <candy/ecs/BaseComponents.hpp>
+#include <candy/project/ProjectManager.hpp>
 namespace Candy::Graphics
 {
   using namespace ECS;
@@ -184,33 +185,14 @@ namespace Candy::Graphics
     
     CANDY_CORE_INFO("Children: {0}, Meshes: {1}", rootNode->mNumChildren, aiScene->mNumMeshes);
     
-    //SharedPtr<Texture> texture = Texture::Create("assets/models/backpack/1001_albedo.jpg");
+    SharedPtr<Texture> texture = Texture::Create(ProjectManager::GetAssetsDirectory() / "models" / "backpack" / "1001_albedo.jpg");
     
     CANDY_CORE_INFO("Material count: {}", aiScene->mNumMaterials);
     
     
-    /*for (uint32_t i=0; i<aiScene->mNumMaterials; i++)
-    {
-      aiMaterial* material = aiScene->mMaterials[i];
-      
-      if (material)
-      {
-        aiString name;
-        material->Get(AI_MATKEY_NAME, name);
-        
-        CANDY_CORE_INFO("MATERIAL: {}", name.C_Str());
-      }
-      
-      
-      for (aiTextureType type = aiTextureType_NONE; type<=aiTextureType_UNKNOWN; type = (aiTextureType)(type+1))
-      {
-        //LoadMaterialTextures(type, material);
-      }
-      
-    }*/
     
     
-    ProcessNode(rootNode, aiScene, Entity{}, nullptr);
+    ProcessNode(rootNode, aiScene, Entity{}, texture);
     
     
   }

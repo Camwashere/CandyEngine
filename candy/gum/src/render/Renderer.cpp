@@ -38,7 +38,9 @@ namespace Candy::Gum
   {
     CANDY_CORE_INFO("Initializing Renderer");
     data.whiteTexture = Graphics::Texture::White();
-    //data.font = Graphics::Font::Default();
+    FontInternal::Init();
+    
+    data.font = FontInternal::Default();
     //data.fontAtlasTexture = Graphics::Font::Default()->GetAtlasTexture();
     
     data.textureSlots[0] = data.whiteTexture;
@@ -109,7 +111,7 @@ namespace Candy::Gum
   }
   void Renderer::SetFont(const SharedPtr<FontInternal>& font)
   {
-    data.font = font;
+    //data.font = font;
   }
   void Renderer::SubmitShape(const Math::Matrix3& transform, const Shape& shape, int depthIndex)
   {

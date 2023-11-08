@@ -26,6 +26,12 @@ namespace Candy::Math
   {
     return Contains(other.min) || Contains(other.max);
   }
+  void Bounds2D::Move(const Vector2& position)
+  {
+    Vector2 size = GetSize();
+    min = position;
+    max = position + size;
+  }
   void Bounds2D::Translate(const Vector2& translation)
   {
     min += translation;

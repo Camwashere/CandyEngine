@@ -40,15 +40,13 @@ namespace Candy
     
     mainWindow = CreateUniquePtr<Window>(WindowData(ProjectManager::ProjectName(), 3000, 1500));
     mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
-    
+    Gum::FontInternal::Init();
     
     uiLayer = new UILayer();
     PushOverlay(uiLayer);
     
     gumLayer = new GumLayer(mainWindow->GetGumContext());
     PushOverlay(gumLayer);
-    
-    
   }
   
   void Application::InitGLFW()
@@ -74,8 +72,8 @@ namespace Candy
     double widthInches = (widthMM / 25.4) * scaleX;  // Adjust width to take into account OS scaling
     double heightInches = (heightMM / 25.4) * scaleY;  // Adjust height for OS scaling
     
-    double diagonalSizeInches = sqrt(widthInches * widthInches + heightInches * heightInches);
-    double diagonalSizePixels = sqrt( (mode->width * scaleX) * (mode->width * scaleX) + (mode->height * scaleY) * (mode->height * scaleY) );  // Adjust pixel dimensions for OS scaling
+    double diagonalSizeInches = Math::Sqrt(widthInches * widthInches + heightInches * heightInches);
+    double diagonalSizePixels = Math::Sqrt( (mode->width * scaleX) * (mode->width * scaleX) + (mode->height * scaleY) * (mode->height * scaleY) );  // Adjust pixel dimensions for OS scaling
     
     double PPI = diagonalSizePixels / diagonalSizeInches;
     
@@ -193,10 +191,10 @@ namespace Candy
   }
   
   
-  UILayer& Application::GetUILayer()
+  /*UILayer& Application::GetUILayer()
   {
     return *instance->uiLayer;
-  }
+  }*/
   GumLayer& Application::GetGumLayer()
   {
     return *instance->gumLayer;

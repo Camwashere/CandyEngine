@@ -5,6 +5,7 @@
 #include <gum/render/TextRenderer.hpp>
 #include <candy/app/Application.hpp>
 #include <gum/GumSystem.hpp>
+#include <utility>
 namespace Candy::Gum
 {
   using namespace Math;
@@ -60,16 +61,28 @@ namespace Candy::Gum
     Renderer::GetTextRenderer().BeginText(position, fill);
     Vector2 currentPos = position;
     float pixelSize = font->GetPixelSize();
+    size.y = pixelSize;
     Vector2 glyphSize = {pixelSize, pixelSize};
     for (int i=0; i<text.size(); i++)
     {
       char character = text[i];
+      const Glyph* glyph = font->GetGlyph(character);
+      if (glyph == nullptr)
+      {
+        continue;
+      }
+      //CANDY_CORE_INFO("Advance for glyph: {} is {}", character, glyph->advance);
+      Math::Bounds2D glyphQuadBounds = glyph->bounds;
+      glyphQuadBounds.Move(currentPos);
+      CANDY_CORE_INFO("Bounds for: {} = {}", character, glyphQuadBounds);
       
-      Renderer::GetTextRenderer().SubmitCharacter(Math::Bounds2D{currentPos, size}, font->atlas.GetUV(character));
-      //currentPos += s;
+      Renderer::GetTextRenderer().SubmitCharacter(glyphQuadBounds, font->GetAtlas().GetUV(character));
       
+      currentPos.x += glyph->advance;
+      //size = glyphQuadBounds.GetSize();
     }
     
+    size.x = currentPos.x - position.x;
     Renderer::GetTextRenderer().EndText(size);
   }
   /*void Text::Render(float wrap)
@@ -286,14 +299,18 @@ namespace Candy::Gum
   {
     return font;
   }
-  void Text::SetFont(const SharedPtr<FontInternal>& value)
+  void Text::SetFont(SharedPtr<FontInternal> value)
   {
-    font = value;
+    font = std::move(value);
     Renderer::SetFont(font);
   }
   float Text::GetFontSize()const
   {
-    return fontSize;
+    return font->GetPixelSize();
+  }
+  void Text::SetFontSize(float value)
+  {
+    font->SetPixelSize(value);
   }
   Math::Vector2 Text::GetSize()const
   {

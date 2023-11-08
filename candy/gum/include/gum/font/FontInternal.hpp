@@ -15,21 +15,30 @@ namespace Candy::Gum
   public:
     static void Init(uint32_t dpi = 96);
     static void Shutdown();
-    static void LoadFont(const std::filesystem::path& path);
+    static SharedPtr<FontInternal> Default();
+    
+    
   
   private:
-    
-    FT_FaceRec_* face;
-    float pixelSize;
-    std::map<FontAttributes, GlyphCache> glyphCaches;
-    
-  public:
+    FT_FaceRec_* face=nullptr;
+    float pixelSize=0.0f;
+    std::map<FontAttributes, GlyphCache> glyphCaches{};
     BitmapAtlas atlas;
-    SharedPtr<Graphics::Texture> atlasTexture;
+    
+    
+    //SharedPtr<Graphics::Texture> atlasTexture;
     
   public:
-    FontInternal(const std::filesystem::path& path);
+    explicit FontInternal(const std::filesystem::path& path);
+    
+  private:
+    void CreateGlyphCache(const FontAttributes& attributes);
+  public:
     SharedPtr<Graphics::Texture> GetAtlasTexture()const;
+    const BitmapAtlas& GetAtlas()const;
+    BitmapAtlas& GetAtlas();
+    const Glyph* GetGlyph(unicode_t codepoint);
+    const Glyph* GetGlyph(unicode_t codepoint, const FontAttributes& attributes);
     void SetPointSize(float value);
     void SetPixelSize(float value);
     [[nodiscard]] float GetPixelSize()const;

@@ -10,10 +10,11 @@ namespace Candy::Gum
 {
   struct FontAttributes
   {
-    int pointSize;
-    bool bold;
-    bool italic;
+    int pointSize=0;
+    bool bold=false;
+    bool italic=false;
     
+    FontAttributes() : pointSize(0), bold(false), italic(false){}
     // You'll need to specify a less-than operator for std::map keys
     bool operator<(const FontAttributes& other) const {
       return std::tie(pointSize, bold, italic) < std::tie(other.pointSize, other.bold, other.italic);
@@ -23,7 +24,7 @@ namespace Candy::Gum
   {
     float advance;
     Math::Bounds2D bounds;
-    std::vector<Math::Contour> contours;
+    //std::vector<Math::Contour> contours;
   };
   
   class GlyphCache
@@ -33,9 +34,9 @@ namespace Candy::Gum
     std::unordered_map<unicode_t, Glyph> glyphs;
     
   private:
-    void LoadGlyphContours(Glyph& glyph, const FT_Outline_& outline);
+    //void LoadGlyphContours(Glyph& glyph, const FT_Outline_& outline);
   public:
-    GlyphCache(FT_FaceRec_* face, const Charset& charset, const FontAttributes& attributes);
+    GlyphCache(FT_FaceRec_* face, const FontAttributes& attributes, const Charset& charset=Charset::ASCII);
     const Glyph* GetGlyph(unicode_t codepoint)const;
   };
 }

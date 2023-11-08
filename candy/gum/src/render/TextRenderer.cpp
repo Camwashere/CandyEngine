@@ -1,6 +1,8 @@
 #include <gum/render/TextRenderer.hpp>
 #include <candy/graphics/font/MSDFData.hpp>
 #include <candy/graphics/shader/ShaderLibrary.hpp>
+#include <gum/GumSystem.hpp>
+#include <candy/app/Application.hpp>
 namespace Candy::Gum
 {
   using namespace Math;
@@ -51,22 +53,18 @@ namespace Candy::Gum
     shader->Bind();
     vertexBuffer->SetData(verts.data(), verts.size()*sizeof(TextVertex));
     vertexArray->Bind();
-    
+    sceneSize = Application::ScreenSizeInPixels();
     for (const auto& text : textData)
     {
       Vector2 sizeInShaderCoordinates = ((text.size/sceneSize));
       
-      // Adjust the position so that an object's lower left corner corresponds to positionInParent
-      //Vector2 positionInSceneOffset = text.positionInScene + (text.size*0.5f);
-      //Vector2 positionInSceneOffset = text.positionInScene/sceneSize;
       Vector2 positionInShaderCoordinates = ((text.positionInScene/sceneSize)*2.0f)-Vector2(1.0f);
       
       
       Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
       Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
-      //scale = Matrix3::IDENTITY;
       Math::Matrix3 model = translate * scale;
-      //model = translate;
+      
       
       
       for (int i=0; i<text.quadCount; i++)
@@ -87,6 +85,15 @@ namespace Candy::Gum
   void TextRenderer::SubmitCharacter(const Math::Bounds2D& quad, const Math::Bounds2D& uv)
   {
     CANDY_PROFILE_FUNCTION();
+    //Math::Vector2 sceneSize = GumSystem::GetCurrentContext().sceneGraph.GetSceneSize();
+    //Vector2 sizeInShaderCoordinates = ((quad.GetSize()/sceneSize));
+    
+    //Vector2 positionInShaderCoordinates = ((quad.GetPosition()/sceneSize)*2.0f)-Vector2(1.0f);
+    
+    
+    //Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
+    //Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
+    //Math::Matrix3 model = translate * scale;
     Math::Vector2 positions[4] = {quad.GetMin(), quad.GetTopLeft(), quad.GetTopRight(), quad.GetBottomRight()};
     textData.back().size = quad.GetMax();
     Math::Vector2 texCoords[4] = {

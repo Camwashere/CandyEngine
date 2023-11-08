@@ -15,8 +15,6 @@ namespace Candy::Gum
   private:
     std::string text;
     Paint fill;
-    float fontSize;
-    //SharedPtr<Graphics::Font> font;
     SharedPtr<FontInternal> font;
     float kerning = 0.0f;
     float letterSpacing = 0.0f;
@@ -29,12 +27,10 @@ namespace Candy::Gum
     
   public:
     void Render(float wrap);
-    //void SetFont(const SharedPtr<Graphics::Font>& font);
-    //[[nodiscard]] SharedPtr<Graphics::Font> GetFont()const;
     SharedPtr<FontInternal> GetFont()const;
-    void SetFont(const SharedPtr<FontInternal>& font);
+    void SetFont(SharedPtr<FontInternal> font);
     [[nodiscard]] float GetFontSize()const;
-    void SetFontSize(float value){fontSize = value;}
+    void SetFontSize(float value);
     
     [[nodiscard]] float GetFontSizeScale()const;
     [[nodiscard]] Math::Vector2 GetTexelSize()const;

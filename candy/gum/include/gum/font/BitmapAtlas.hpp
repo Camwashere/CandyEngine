@@ -5,6 +5,7 @@
 #include <gum/font/Charset.hpp>
 #include <candy/math/geometry/Bounds2D.hpp>
 #include <unordered_map>
+#include <candy/graphics/texture/Texture.hpp>
 struct FT_FaceRec_;
 namespace Candy::Gum
 {
@@ -12,12 +13,13 @@ namespace Candy::Gum
   {
   private:
     Math::Vector2u size;
-    std::vector<uint8_t> data;
+    std::vector<uint8_t> data{};
     std::unordered_map<unicode_t, Math::Bounds2D> glyphUVs;
-    
+    SharedPtr<Graphics::Texture> texture;
     void CalculateSize(FT_FaceRec_* face, const Charset& charset);
     
   public:
+    SharedPtr<Graphics::Texture> GetTexture()const;
     void Clear();
     void Load(FT_FaceRec_* face, const Charset& charset);
     Math::Bounds2D GetUV(unicode_t codepoint)const;

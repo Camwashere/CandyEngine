@@ -16,13 +16,15 @@ namespace Candy::Gum
   void Label::OnRender()
   {
     //SetBackgroundFill(text.GetFont()->GetAtlasTexture());
-    SetBackgroundFill(text.GetFont()->GetAtlasTexture());
+    
+    if (text.GetFont() == nullptr)
+      text.SetFont(FontInternal::Default());
+    
+    //SetBackgroundFill(text.GetFont()->GetAtlasTexture());
     Renderer::SubmitShape(GetTransform(), GetShape());
     text.position = GetBoundsInScene().GetPosition() + text.position;
-    text.size = Math::Vector2(text.GetFont()->GetPixelSize());
     text.size = GetBoundsInScene().GetSize();
-    /*if (text.GetFont() == nullptr)
-      text.SetFont(Graphics::Font::Default());*/
+    
     text.Render(wrap);
     text.position -= GetBoundsInScene().GetPosition();
   }
