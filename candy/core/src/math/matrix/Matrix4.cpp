@@ -3,7 +3,10 @@
 #include <candy/math/Quaternion.hpp>
 #include <candy/math/Random.hpp>
 
+#ifdef CANDY_PLATFORM_WINDOWS
 #pragma GCC target("sse4.1")
+#endif
+
 #include <immintrin.h>
 #include <emmintrin.h>
 #include <xmmintrin.h>

@@ -2,8 +2,14 @@
 #include <candy/app/Application.hpp>
 #include <fstream>
 #include <GLFW/glfw3.h>
+
+#ifdef CANDY_PLATFORM_WINDOWS
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#elifdef CANDY_PLATFORM_LINUX
+  #include <nfd.h>
+#endif
+
 namespace Candy::Utils{
     Buffer FileUtils::ReadFileBinary(const std::filesystem::path& filepath)
     {
@@ -44,6 +50,7 @@ namespace Candy::Utils{
   
   std::string FileDialogs::OpenFile(const char* filter)
   {
+    #ifdef CANDY_PLATFORM_WINDOWS
     OPENFILENAMEA ofn;
     CHAR szFile[260] = { 0 };
     CHAR currentDir[256] = { 0 };
@@ -62,10 +69,30 @@ namespace Candy::Utils{
       return ofn.lpstrFile;
     
     return std::string();
+    #elifdef CANDY_PLATFORM_LINUX
+    nfdchar_t *outPath = NULL;
+    nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
+
+    if (result == NFD_OKAY)
+    {
+      std::string filePath(outPath);
+      free(outPath); // don't forget to free the path string
+      return filePath;
+    }
+    else if (result == NFD_CANCEL) return std::string();
+    else
+    {
+      std::cout << "Error: " << NFD_GetError() << std::endl;
+      return std::string();
+    }
+    #endif
+    
   }
   
   std::string FileDialogs::SaveFile(const char* filter)
   {
+    #ifdef CANDY_PLATFORM_WINDOWS
+    
     OPENFILENAMEA ofn;
     CHAR szFile[260] = { 0 };
     CHAR currentDir[256] = { 0 };
@@ -87,5 +114,25 @@ namespace Candy::Utils{
       return ofn.lpstrFile;
     
     return std::string();
+    
+    #elifdef CANDY_PLATFORM_LINUX
+    nfdchar_t *outPath = NULL;
+    nfdresult_t result = NFD_SaveDialog(filter, NULL, &outPath);
+
+    if (result == NFD_OKAY)
+    {
+      std::string filePath(outPath);
+      free(outPath); // don't forget to free the path string
+      return filePath;
+    }
+    else if (result == NFD_CANCEL) return std::string();
+    else
+    {
+      std::cout << "Error: " << NFD_GetError() << std::endl;
+      return std::string();
+    }
+    #endif
+    
   }
 }
+
