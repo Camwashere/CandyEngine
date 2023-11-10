@@ -26,16 +26,27 @@ namespace Candy::Gum
   }
   void BitmapAtlas::Load(FT_FaceRec_* face, const Charset& charset)
   {
+    
     CalculateSize(face, charset);
     data.resize(size.x * size.y);
     size_t offsetX = 0;
-    for (unsigned char c = 0; c<128; c++) {
-      if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+    for (const auto& c : charset)
+    {
+      if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+      {
         continue;  // Skip glyphs that can't be loaded
       }
+      
+      //float glyphHeight = static_cast<float>(face->glyph->metrics.height) / (64.0f) / size.y;
+      //float glyphTop = static_cast<float>(face->glyph->metrics.horiBearingY) / (64.0f) / size.y;
+      float glyphHeight = static_cast<float>(face->glyph->metrics.height) / 64.0f;
+      float glyphTop = (static_cast<float>(face->glyph->metrics.horiBearingY) / (64.0f));
       Math::Bounds2D bounds;
-      bounds.SetMin(static_cast<float>(offsetX) / size.x, 0.0f);
+      
+      
+      bounds.SetMin(static_cast<float>(offsetX) / size.x, 1.0f - glyphTop/size.y);
       bounds.SetMax(static_cast<float>(offsetX + face->glyph->bitmap.width) / size.x, 1.0f);
+      
       glyphUVs[c] = bounds;
       
       for(int y = 0; y < face->glyph->bitmap.rows; y++) {

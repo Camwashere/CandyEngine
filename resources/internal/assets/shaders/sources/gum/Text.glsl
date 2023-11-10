@@ -51,7 +51,8 @@ void main()
 
     vec4 texColor =  texture(u_FontAtlas, inTexCoord);
     float intensity = texColor.r;
-    outValue = vec4(inColor.rgb, intensity);
+    outValue = texColor;
+    //outValue = vec4(inColor.rgb, intensity);
 
 
 

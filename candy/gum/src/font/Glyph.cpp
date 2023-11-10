@@ -57,6 +57,7 @@ namespace Candy::Gum
       FT_Get_Kerning(face, glyph_index1, glyph_index2, FT_KERNING_DEFAULT, &kerning);
       return kerning.x / 64.0f; // convert kerning to float
     }
+    //CANDY_CORE_ERROR("Has no kerning");
     return 0.0f;
   }
   /*void GlyphCache::LoadGlyphContours(Glyph& glyph, const FT_Outline_& outline)

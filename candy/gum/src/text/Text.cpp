@@ -29,11 +29,12 @@ namespace Candy::Gum
   {
     Renderer::GetTextRenderer().BeginText(position, fill);
     Vector2 currentPos = position;
-    float pixelSize = font->GetPixelSize();
-    size.y = pixelSize;
-    Vector2 glyphSize = {pixelSize, pixelSize};
     
-    const GlyphCache& glyphCache = font->GetGlyphCache(pixelSize);
+    
+    float ascender = font->GetAscenderPixelSize();
+    float descender = font->GetDescenderPixelSize();
+    float lineHeight = font->GetLineHeightPixelSize();
+    const GlyphCache& glyphCache = font->GetGlyphCache(font->GetPixelSize());
     for (int i=0; i<text.size(); i++)
     {
       char character = text[i];
@@ -42,14 +43,23 @@ namespace Candy::Gum
       {
         continue;
       }
+      
+      if (character == '\n') {
+        // Handle newline
+        currentPos.x = position.x;
+        currentPos.y += lineHeight; // Move the current Y position upwards by the line height
+        continue;
+      }
       float kern = 0.0f;
       
       if (i < text.size()-1)
       {
         kern = glyphCache.GetKerning(character, text[i+1]);
       }
+      
+      float aligned_y = currentPos.y + ascender - glyph->bearing.y;
       Math::Bounds2D glyphQuadBounds = glyph->bounds;
-      glyphQuadBounds.Translate({currentPos.x, currentPos.y});
+      glyphQuadBounds.Move({currentPos.x, currentPos.y});
       Renderer::GetTextRenderer().SubmitCharacter(glyphQuadBounds, font->GetAtlas().GetUV(character));
       currentPos.x += glyph->advance + kern;
     }
