@@ -18,8 +18,8 @@ namespace Candy::Graphics
     void SetProjection(float left, float right, float bottom, float top);
     
   public:
+    OrthographicCamera();
     explicit OrthographicCamera(const Math::Vector2& viewportSize, float zoomLevel=1.0f, float rotation = 0.0f);
-    //OrthographicCamera(float left, float right, float bottom, float top);
     
   public:
     void SetZoomLevel(float value);
@@ -28,6 +28,7 @@ namespace Candy::Graphics
     
     void SetPosition(const Math::Vector3& pos);
     void SetRotation(float rotation);
+    [[nodiscard]] Math::Vector2 GetViewportSize()const;
     [[nodiscard]] float GetRotation()const;
     [[nodiscard]] float GetAspectRatio()const;
     

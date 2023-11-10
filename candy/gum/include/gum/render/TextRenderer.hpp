@@ -3,6 +3,7 @@
 #include <candy/graphics/font/Font.hpp>
 #include <gum/widget/Label.hpp>
 #include <gum/text/Text.hpp>
+#include <candy/graphics/camera/OrthographicCamera.hpp>
 namespace Candy::Gum
 {
   class TextRenderer
@@ -15,6 +16,7 @@ namespace Candy::Gum
     SharedPtr<Graphics::VertexArray> vertexArray;
     SharedPtr<Graphics::VertexBuffer> vertexBuffer;
     SharedPtr<Graphics::IndexBuffer> indexBuffer;
+    const Graphics::OrthographicCamera* camera=nullptr;
     
     struct TextVertex;
     struct TextData;
@@ -25,9 +27,10 @@ namespace Candy::Gum
     TextRenderer(uint32_t gumRenderPassIndex, uint32_t maxQuads);
     
   public:
+    void BeginScene(const Graphics::OrthographicCamera& camera);
     void BeginText(Math::Vector2 position, const Paint& fill);
     void SubmitCharacter(const Math::Bounds2D& quad, const Math::Bounds2D& uv);
-    void EndText(Math::Vector2 size);
+    void EndText();
     //void SubmitText(const Text& text);
     //void SubmitLabel(const Label& label, const SharedPtr<Graphics::Font>& font);
     

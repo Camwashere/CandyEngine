@@ -98,6 +98,19 @@ namespace Candy::Gum
   {
     return atlas;
   }
+  
+  const GlyphCache& FontInternal::GetGlyphCache(float pixSize)
+  {
+    FontAttributes attributes{};
+    attributes.pointSize = pixSize * 72 / static_cast<float>(data.dpi);
+    auto it = glyphCaches.find(attributes);
+    if (it == glyphCaches.end())
+    {
+      CreateGlyphCache(attributes);
+      it = glyphCaches.find(attributes);
+    }
+    return it->second;
+  }
   const Glyph* FontInternal::GetGlyph(unicode_t codepoint)
   {
     FontAttributes attr{};

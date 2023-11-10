@@ -24,45 +24,16 @@ namespace Candy::Gum
   
   }
   
-  Bounds2D GetUVBounds(const msdf_atlas::GlyphGeometry* glyph, Math::Vector2 texelSize)
-  {
-    float al, ab, ar, at;
-    glyph->getQuadAtlasBounds(al, ab, ar, at);
-    
-    Vector2 texCoordMin(al, ab);
-    Vector2 texCoordMax(ar, at);
-    
-    texCoordMin *= texelSize;
-    texCoordMax *= texelSize;
-    
-    Bounds2D uvBounds;
-    uvBounds.SetMin(texCoordMin);
-    uvBounds.SetMax(texCoordMax);
-    return uvBounds;
-  }
-  Bounds2D GetQuadBounds(const msdf_atlas::GlyphGeometry* glyph, float fsScale)
-  {
-    float pl, pb, pr, pt;
-    glyph->getQuadPlaneBounds(pl, pb, pr, pt);
-    Vector2 bottomLeft = {pl, pb};
-    Vector2 topRight = {pr, pt};
-    
-    bottomLeft *= (fsScale);
-    topRight *= (fsScale);
-    
-    Bounds2D quadBounds;
-    quadBounds.SetMin(bottomLeft);
-    quadBounds.SetMax(topRight);
-    return quadBounds;
-  }
+  
   void Text::Render(float wrap)
   {
-    
     Renderer::GetTextRenderer().BeginText(position, fill);
     Vector2 currentPos = position;
     float pixelSize = font->GetPixelSize();
     size.y = pixelSize;
     Vector2 glyphSize = {pixelSize, pixelSize};
+    
+    const GlyphCache& glyphCache = font->GetGlyphCache(pixelSize);
     for (int i=0; i<text.size(); i++)
     {
       char character = text[i];
@@ -71,229 +42,21 @@ namespace Candy::Gum
       {
         continue;
       }
-      //CANDY_CORE_INFO("Advance for glyph: {} is {}", character, glyph->advance);
+      float kern = 0.0f;
+      
+      if (i < text.size()-1)
+      {
+        kern = glyphCache.GetKerning(character, text[i+1]);
+      }
       Math::Bounds2D glyphQuadBounds = glyph->bounds;
-      glyphQuadBounds.Move(currentPos);
-      CANDY_CORE_INFO("Bounds for: {} = {}", character, glyphQuadBounds);
-      
+      glyphQuadBounds.Translate({currentPos.x, currentPos.y});
       Renderer::GetTextRenderer().SubmitCharacter(glyphQuadBounds, font->GetAtlas().GetUV(character));
-      
-      currentPos.x += glyph->advance;
-      //size = glyphQuadBounds.GetSize();
+      currentPos.x += glyph->advance + kern;
     }
     
     size.x = currentPos.x - position.x;
-    Renderer::GetTextRenderer().EndText(size);
-  }
-  /*void Text::Render(float wrap)
-  {
-   Renderer::GetTextRenderer().BeginText(position, fill);
-    const auto& fontGeometry = font->GetMSDFData()->fontGeometry;
-    const auto& metrics = fontGeometry.getMetrics();
-    
-    SharedPtr<Graphics::Texture> fontAtlas = font->GetAtlasTexture();
-    
-    
-    Vector2 texelSize = GetTexelSize();
-    Vector2 currentPos = Vector2::zero;
-    
-    Vector2 sceneSize = GumSystem::GetCurrentContext().sceneGraph.GetSceneSize();
-   
-    float fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
-    //fsScale *= fontGeometry.getGeometryScale();
-    //CANDY_CORE_INFO("FS Scale: {}", fsScale);
-    float runningWidth = 0.0f;
-    float characterHeightInPixels = (metrics.ascenderY - metrics.descenderY) * fsScale;
-    for (int i=0; i<text.size(); i++)
-    {
-      char character = text[i];
-      
-      const msdf_atlas::GlyphGeometry* glyph = fontGeometry.getGlyph(character);
-      float advance = glyph->getAdvance();
-      
-      float character_width_pixels = glyph->getAdvance() * fsScale;
-      
-      
-      Bounds2D uvBounds = GetUVBounds(glyph, texelSize);
-      Bounds2D quadBounds = GetQuadBounds(glyph, fsScale);
-      //runningWidth += quadBounds.GetWidth();
-      quadBounds.SetMin(currentPos);
-      runningWidth += (quadBounds.GetPosition().x - runningWidth) + quadBounds.GetWidth();
-      //size.width += (size.width - quadBounds.GetPosition().x) + quadBounds.GetWidth();
-      
-      // render here
-      Renderer::GetTextRenderer().SubmitCharacter(quadBounds, uvBounds);
-      
-      // advance the current position by the geometryScale * fontSizeInPixels * glyph advance
-      
-      
-      if (i < text.size() - 1)
-      {
-        
-        char nextCharacter = text[i + 1];
-        //float advance = glyph->getAdvance();
-        fontGeometry.getAdvance(advance, character, nextCharacter);
-       
-        currentPos.x += advance * fsScale + kerning;
-      }
-      
-      
-      
-     
-    }
-    
-    //runningWidth *= sceneSize.width;
-    //characterHeightInPixels *= sceneSize.height;
-    
-    CANDY_CORE_INFO("Running width: {}", runningWidth);
-   
-    
-    //runningWidth *= 0.5f;
-    //size.y = fsScale * metrics.lineHeight;
-    //size *= Application::PixelsPerPoint();
-    //CANDY_CORE_INFO("TEXT SIZE IN PIXELS: {}", size);
-    Renderer::GetTextRenderer().EndText({runningWidth, characterHeightInPixels});
-    
-  }*/
-  /*void Text::Render(float wrap)
-  {
-    Renderer::GetTextRenderer().BeginText(position, fill);
-    const auto& fontGeometry = font->GetMSDFData()->fontGeometry;
-    
-    const auto& metrics = fontGeometry.getMetrics();
-    SharedPtr<Graphics::Texture> fontAtlas = font->GetAtlasTexture();
-    
-    
-    float x = 0.0f;
-    //float fontSizeInPoints = fontSize * (Application::PPI() / 72);
-    //float fsScale = fontSizeInPoints * (Application::PPI()/72);
-    float fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
-    float y = 0.0f;
-    
-    // Convert the fontSize from pixels to points
-    
-    const float spaceGlyphAdvance = fontGeometry.getGlyph(' ')->getAdvance();
-    Vector2 texelSize = GetTexelSize();
-    
-    for (size_t i = 0; i < text.size(); i++)
-    {
-      char character = text[i];
-      
-      if (character == '\r')
-        continue;
-      
-      if (character == '\n')
-      {
-        x = 0;
-        y -= fsScale * metrics.lineHeight + lineSpacing;
-        continue;
-      }
-      
-      if (character == ' ')
-      {
-        float advance = spaceGlyphAdvance;
-        if (i < text.size() - 1)
-        {
-          char nextCharacter = text[i + 1];
-          float dAdvance;
-          fontGeometry.getAdvance(dAdvance, character, nextCharacter);
-          
-          advance = (float)dAdvance;
-        }
-        
-        x += fsScale * advance + kerning;
-        continue;
-      }
-      
-      if (character == '\t')
-      {
-        // NOTE(Yan): is this right?
-        x += 4.0f * (fsScale * spaceGlyphAdvance + kerning);
-        continue;
-      }
-      
-      auto glyph = fontGeometry.getGlyph(character);
-      
-      if (!glyph)
-      {
-        glyph = fontGeometry.getGlyph('?');
-        
-      }
-      
-      if (!glyph)
-      {
-        return;
-      }
-      
-      
-      float al, ab, ar, at;
-      glyph->getQuadAtlasBounds(al, ab, ar, at);
-      
-      Vector2 texCoordMin(al, ab);
-      Vector2 texCoordMax(ar, at);
-      
-      float pl, pb, pr, pt;
-      glyph->getQuadPlaneBounds(pl, pb, pr, pt);
-      
-      Vector2 quadMin(pl, pb);
-      Vector2 quadMax(pr, pt);
-      
-      quadMin *= fsScale, quadMax *= fsScale;
-      quadMin += Vector2(x, y);
-      quadMax += Vector2(x, y);
-      
-      
-      texCoordMin *= texelSize;
-      texCoordMax *= texelSize;
-      
-      Bounds2D quadBounds;
-      quadBounds.SetMin(quadMin);
-      quadBounds.SetMax(quadMax);
-      
-      
-      
-      Bounds2D uvBounds;
-      uvBounds.SetMin(texCoordMin);
-      uvBounds.SetMax(texCoordMax);
-      
-      // render here
-      Renderer::GetTextRenderer().SubmitCharacter(quadBounds, uvBounds);
-      
-      if (i < text.size() - 1)
-      {
-        float advance = glyph->getAdvance();
-        
-        char nextCharacter = text[i + 1];
-        fontGeometry.getAdvance(advance, character, nextCharacter);
-        x += fsScale * advance + kerning;
-      }
-      
-      
-      
-    }
-    
-    CANDY_CORE_INFO("X: {}, Y: {}", x, y);
-    
     Renderer::GetTextRenderer().EndText();
-  }*/
-  
-  
- 
-  Math::Vector2 Text::GetTexelSize()const
-  {
-    SharedPtr<Graphics::Texture> fontAtlas = font->GetAtlasTexture();
-    float texelWidth = 1.0f / fontAtlas->GetWidth();
-    float texelHeight = 1.0f / fontAtlas->GetHeight();
-    return {texelWidth, texelHeight};
   }
-  float Text::GetFontSizeScale()const
-  {
-    //const auto& fontGeometry = font->GetMSDFData()->fontGeometry;
-    //const auto& metrics = fontGeometry.getMetrics();
-    //return 1.0f / (metrics.ascenderY - metrics.descenderY);
-    return 1.0f;
-  }
-  
   
   SharedPtr<FontInternal> Text::GetFont()const
   {

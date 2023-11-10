@@ -73,6 +73,7 @@ namespace Candy::Gum
     testLayout->SetName("Box Layout");
     sceneGraph.Root().AddChild(testLayout);
     sceneGraph.Root().AddChild(testLabel);
+    
     CANDY_CORE_INFO("Initialized GumSystem Context");
   }
   void Context::BeginScene()
@@ -230,8 +231,8 @@ namespace Candy::Gum
       Context* context = contextMap[window];
       //Math::Vector2 prevPos = context->mousePositionContext;
       //context->sceneGraph.previousMousePosition = context->sceneGraph.mousePosition;
-      float xScaleFactor = static_cast<float>(context->sceneGraph.sceneSize.width) / static_cast<float>(context->windowSize.width);
-      float yScaleFactor = static_cast<float>(context->sceneGraph.sceneSize.height) / static_cast<float>(context->windowSize.height);
+      float xScaleFactor = static_cast<float>(context->sceneGraph.GetSceneSize().width) / static_cast<float>(context->windowSize.width);
+      float yScaleFactor = static_cast<float>(context->sceneGraph.GetSceneSize().height) / static_cast<float>(context->windowSize.height);
       context->mousePositionWindow = {static_cast<float>(xPos), static_cast<float>(context->windowSize.height) - static_cast<float>(yPos)};
       Math::Vector2 contextMousePosition = {context->mousePositionWindow.x * xScaleFactor, context->mousePositionWindow.y * yScaleFactor};
       context->sceneGraph.SetMousePosition(contextMousePosition);

@@ -22,9 +22,7 @@ namespace Candy::Gum
     
     SharedPtr<Graphics::Texture> whiteTexture;
     std::array<SharedPtr<Graphics::Texture>, maxTextureSlots> textureSlots;
-    //SharedPtr<Graphics::Font> font;
     SharedPtr<FontInternal> font;
-    //SharedPtr<Graphics::Texture> fontAtlasTexture;
     uint32_t textureSlotIndex = 1; // 0 = white texture, 1 = statue texture
     SceneGraph* currentScene=nullptr;
     RectRenderer* rectRenderer=nullptr;
@@ -99,6 +97,7 @@ namespace Candy::Gum
     data.currentScene = &sceneGraph;
     data.rectRenderer->Reset();
     data.textRenderer->Reset();
+    data.textRenderer->BeginScene(data.currentScene->GetCamera());
   }
   void Renderer::EndScene()
   {
@@ -149,9 +148,4 @@ namespace Candy::Gum
     data.rectRenderer->Submit(rectangle.GetBoundsInScene().GetBottomLeft(), rectangle.GetSize(), rectangle.strokeWidth, rectangle.stroke, rectangle.fill, rectangle.arcSize, textureIndex);
   }
   
-  /*void Renderer::SubmitLabel(const Label& label, int depthIndex)
-  {
-    data.
-    data.textRenderer->SubmitLabel(label, data.font);
-  }*/
 }

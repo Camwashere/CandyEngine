@@ -26,7 +26,6 @@ namespace Candy::Gum
     BitmapAtlas atlas;
     
     
-    //SharedPtr<Graphics::Texture> atlasTexture;
     
   public:
     explicit FontInternal(const std::filesystem::path& path);
@@ -37,6 +36,7 @@ namespace Candy::Gum
     SharedPtr<Graphics::Texture> GetAtlasTexture()const;
     const BitmapAtlas& GetAtlas()const;
     BitmapAtlas& GetAtlas();
+    const GlyphCache& GetGlyphCache(float pixelSize);
     const Glyph* GetGlyph(unicode_t codepoint);
     const Glyph* GetGlyph(unicode_t codepoint, const FontAttributes& attributes);
     void SetPointSize(float value);

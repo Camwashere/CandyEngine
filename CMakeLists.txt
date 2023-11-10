@@ -24,6 +24,7 @@ endif()
 set(INTERNAL_SOURCE_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources/internal)
 set(INTERNAL_BINARY_RESOURCES_DIR ${CMAKE_BINARY_DIR}/resources/internal)
 
+
 set(TEST_PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/resources/projects/TestProject)
 set(TEST_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR}/projects/TestProject)
 
@@ -437,6 +438,7 @@ set(CANDY_GUM_HEADERS
         candy/gum/include/gum/font/Glyph.hpp
         candy/gum/include/gum/font/Charset.hpp
         candy/gum/include/gum/font/BitmapAtlas.hpp
+        candy/gum/include/gum/font/Font.hpp
 )
 
 set(CANDY_GUM_SOURCES

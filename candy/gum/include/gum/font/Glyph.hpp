@@ -23,8 +23,10 @@ namespace Candy::Gum
   struct Glyph
   {
     float advance;
+    Math::Vector2 bearing;
     Math::Bounds2D bounds;
-    //std::vector<Math::Contour> contours;
+    
+    
   };
   
   class GlyphCache
@@ -32,11 +34,12 @@ namespace Candy::Gum
   private:
     FontAttributes fontAttributes;
     std::unordered_map<unicode_t, Glyph> glyphs;
-    
+    FT_FaceRec_* face;
   private:
     //void LoadGlyphContours(Glyph& glyph, const FT_Outline_& outline);
   public:
     GlyphCache(FT_FaceRec_* face, const FontAttributes& attributes, const Charset& charset=Charset::ASCII);
     const Glyph* GetGlyph(unicode_t codepoint)const;
+    float GetKerning(unicode_t left, unicode_t right)const;
   };
 }

@@ -11,6 +11,8 @@ layout (location = 3) out vec2 outArcSize;
 layout (location = 4) out vec4 outStrokeColor;
 layout (location = 5) flat out int outTextureIndex;
 
+
+
 layout(push_constant) uniform PushConstants {
     float strokeWidth;
     int textureIndex;

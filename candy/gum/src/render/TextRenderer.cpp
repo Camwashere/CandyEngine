@@ -32,8 +32,6 @@ namespace Candy::Gum
     profileSettings.renderPassIndex = gumRenderPassIndex;
     profileSettings.SetDepthStencil(false);
     profileSettings.AddBlendAttachment(true);
-    SpecializationConstantInput input("pxRange", Font::GetAtlasGeneratorSettings().pixelRange);
-    profileSettings.constantInputs.push_back(input);
     
     shader=Shader::Create(shaderSettings);
     
@@ -53,24 +51,11 @@ namespace Candy::Gum
     shader->Bind();
     vertexBuffer->SetData(verts.data(), verts.size()*sizeof(TextVertex));
     vertexArray->Bind();
-    sceneSize = Application::ScreenSizeInPixels();
     for (const auto& text : textData)
     {
-      Vector2 sizeInShaderCoordinates = ((text.size/sceneSize));
-      
-      Vector2 positionInShaderCoordinates = ((text.positionInScene/sceneSize)*2.0f)-Vector2(1.0f);
-      
-      
-      Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
-      Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
-      Math::Matrix3 model = translate * scale;
-      
-      
-      
       for (int i=0; i<text.quadCount; i++)
       {
         shader->PushVector4("fillColor", text.fill.color);
-        shader->PushMatrix3("model", model);
         RenderCommand::DrawIndexed(6, 1, 0, text.vertexOffset+i*4, 0);
       }
     }
@@ -85,30 +70,21 @@ namespace Candy::Gum
   void TextRenderer::SubmitCharacter(const Math::Bounds2D& quad, const Math::Bounds2D& uv)
   {
     CANDY_PROFILE_FUNCTION();
-    //Math::Vector2 sceneSize = GumSystem::GetCurrentContext().sceneGraph.GetSceneSize();
-    //Vector2 sizeInShaderCoordinates = ((quad.GetSize()/sceneSize));
     
-    //Vector2 positionInShaderCoordinates = ((quad.GetPosition()/sceneSize)*2.0f)-Vector2(1.0f);
-    
-    
-    //Math::Matrix3 translate = Matrix3::Translate(Matrix3::IDENTITY, positionInShaderCoordinates);
-    //Math::Matrix3 scale = Matrix3::Scale(Matrix3::IDENTITY, sizeInShaderCoordinates);
-    //Math::Matrix3 model = translate * scale;
     Math::Vector2 positions[4] = {quad.GetMin(), quad.GetTopLeft(), quad.GetTopRight(), quad.GetBottomRight()};
-    textData.back().size = quad.GetMax();
     Math::Vector2 texCoords[4] = {
     {uv.GetBottomLeft()}, // Bottom-left
     {uv.GetTopLeft()},  // Top-left
     {uv.GetTopRight()}, // Top-right
     {uv.GetBottomRight()} // Bottom-right
-    
-    
     };
     
     for (int i=0; i<4; i++)
     {
       TextVertex vertex;
-      vertex.position = positions[i];
+      Vector2 normalized = positions[i] / camera->GetViewportSize();
+      Vector2 clipSpace = normalized * 2.0f - Vector2(1.0f);
+      vertex.position = clipSpace;
       vertex.uv = texCoords[i];
       verts.push_back(vertex);
     }
@@ -116,7 +92,10 @@ namespace Candy::Gum
     
     
   }
-  
+  void TextRenderer::BeginScene(const Graphics::OrthographicCamera& cam)
+  {
+    camera = &cam;
+  }
   void TextRenderer::BeginText(Math::Vector2 position, const Paint& fill)
   {
     TextData txtData;
@@ -127,11 +106,9 @@ namespace Candy::Gum
     txtData.quadCount = 0;
     textData.push_back(txtData);
   }
-  void TextRenderer::EndText(Vector2 size)
+  void TextRenderer::EndText()
   {
-    //textData.back().size = textData.back().size - textData.back().positionInScene;
-    textData.back().size = size;
-    //textData.back().size *= 0.5f;
+    textData.back().size = textData.back().size - textData.back().positionInScene;
     currentVertexOffset += textData.back().quadCount * 4;
   }
   /*void TextRenderer::SubmitText(const Text& text)

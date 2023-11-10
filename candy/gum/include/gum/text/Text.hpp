@@ -32,8 +32,6 @@ namespace Candy::Gum
     [[nodiscard]] float GetFontSize()const;
     void SetFontSize(float value);
     
-    [[nodiscard]] float GetFontSizeScale()const;
-    [[nodiscard]] Math::Vector2 GetTexelSize()const;
     [[nodiscard]] Math::Vector2 GetSize()const;
     [[nodiscard]] Math::Vector2 GetPosition()const;
     [[nodiscard]] std::string GetText()const;

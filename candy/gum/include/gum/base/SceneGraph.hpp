@@ -13,6 +13,7 @@ namespace Candy::Gum
   {
   private:
     Context* context;
+    Graphics::OrthographicCamera camera;
     Root root;
     bool blockCaptureEvents=false;
     std::queue<Node*> layoutQueue;
@@ -21,7 +22,7 @@ namespace Candy::Gum
     Node* focusedNode=nullptr;
     Math::Vector2 previousMousePosition;
     Math::Vector2 mousePosition;
-    Math::Vector2 sceneSize;
+    //Math::Vector2 sceneSize;
     std::list<Node*> hoveredNodes;
     Node* hoveredNode=nullptr;
     
@@ -55,7 +56,6 @@ namespace Candy::Gum
     
     
   private:
-    
     void RenderNode(Node& node);
     void CalculateLayouts();
     void CalculateTransforms();
@@ -70,6 +70,7 @@ namespace Candy::Gum
     void Render();
     
   public:
+    const Graphics::OrthographicCamera& GetCamera()const;
     Root& Root();
     [[nodiscard]] Math::Vector2 GetSceneSize()const;
     friend class Context;

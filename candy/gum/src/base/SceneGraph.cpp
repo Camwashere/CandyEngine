@@ -8,11 +8,12 @@
 #include <gum/event/MouseEvent.hpp>
 namespace Candy::Gum
 {
-  SceneGraph::SceneGraph(Context* gumContext) : context(gumContext)
+  SceneGraph::SceneGraph(Context* gumContext) : context(gumContext), camera()
   {
     CANDY_PROFILE_FUNCTION();
     CANDY_CORE_ASSERT(context != nullptr);
     GumSystem::SetCurrentContext(context);
+    
     Node::SCENE_GRAPH_PTR = this;
     SetFocusedNode(&root);
     hoveredNode = &root;
@@ -131,17 +132,23 @@ namespace Candy::Gum
     
     node.CalculateBounds(parentPositionInScene);
   }
+  const Graphics::OrthographicCamera& SceneGraph::GetCamera()const
+  {
+    return camera;
+  }
   Root& SceneGraph::Root()
   {
     return root;
   }
   Math::Vector2 SceneGraph::GetSceneSize()const
   {
-    return sceneSize;
+    return camera.GetViewportSize();
   }
   void SceneGraph::SetSceneSize(Math::Vector2 size)
   {
-    sceneSize = size;
+    
+    camera.SetViewportSize(size);
+    
     QueueContextResized();
   }
   void SceneGraph::SetWindowSize(Math::Vector2i size)
@@ -233,7 +240,7 @@ namespace Candy::Gum
   }
   void SceneGraph::QueueContextResized()
   {
-    QueueEvent(CreateSharedPtr<ContextResizedEvent>(sceneSize));
+    QueueEvent(CreateSharedPtr<ContextResizedEvent>(GetSceneSize()));
   }
   void SceneGraph::QueueKeyPressed(KeyCode key, KeyCode mods)
   {

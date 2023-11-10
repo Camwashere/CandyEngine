@@ -24,6 +24,11 @@ namespace Candy::Graphics
     SetProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
     
   }
+  OrthographicCamera::OrthographicCamera() : viewportSize(0.0f, 0.0f), zoomLevel(1.0f), rotation(0.0f)
+  {
+    CANDY_PROFILE_FUNCTION();
+    UpdateMatrices();
+  }
   OrthographicCamera::OrthographicCamera(const Math::Vector2& viewSize, float zoom, float rot) : CameraBase(Math::Vector3::zero), viewportSize(viewSize), zoomLevel(zoom), rotation(rot)
   {
     CANDY_PROFILE_FUNCTION();
@@ -35,6 +40,10 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     viewportSize.Set(width, height);
     UpdateProjectionMatrix();
+  }
+  Math::Vector2 OrthographicCamera::GetViewportSize()const
+  {
+    return viewportSize;
   }
   void OrthographicCamera::SetViewportSize(const Math::Vector2& value)
   {
