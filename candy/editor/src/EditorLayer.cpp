@@ -28,19 +28,10 @@ namespace Candy
     gizmo = CreateSharedPtr<Gizmo>();
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
     OpenScene(ProjectManager::GetActiveProject()->GetStartScenePath());
-    //OpenScene(Project::GetActive()->GetConfiguration().startScene);
     CANDY_CORE_INFO("Content Browser Dir: {}", ProjectManager::GetAssetsDirectory().string());
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(ProjectManager::GetAssetsDirectory());
-    
-    
-    
     viewport = CreateSharedPtr<Viewport>(this);
     
-    Gizmo meshGizmo;
-    
-    
-    //ModelLoader loader(activeScene);
-    //loader.LoadModel(ProjectManager::GetAssetsDirectory() / "models/backpack/Survival_BackPack_2.fbx");
   }
   
   
@@ -258,7 +249,9 @@ namespace Candy
   void EditorLayer::OpenScene()
   {
     CANDY_PROFILE_FUNCTION();
-    std::string filepath = Utils::FileDialogs::OpenFile("Candy Scene (*.scene)\0*.scene\0");
+    Utils::FileDialog dialog({Utils::FileDialogFilter::Scenes});
+    std::filesystem::path filepath = dialog.SaveFile();
+    //std::string filepath = Utils::FileDialogs::OpenFile("Candy Scene (*.scene)\0*.scene\0");
     if (!filepath.empty())
     {
       OpenScene(filepath);
@@ -299,7 +292,9 @@ namespace Candy
   void EditorLayer::SaveSceneAs()
   {
     CANDY_PROFILE_FUNCTION();
-    std::string filepath = Utils::FileDialogs::SaveFile("Candy Scene (*.scene)\0*.scene\0");
+    Utils::FileDialog dialog({Utils::FileDialogFilter::Scenes});
+    std::filesystem::path filepath = dialog.SaveFile();
+    //std::string filepath = Utils::FileDialogs::SaveFile("Candy Scene (*.scene)\0*.scene\0");
     if (!filepath.empty())
     {
       SerializeScene(activeScene, filepath);

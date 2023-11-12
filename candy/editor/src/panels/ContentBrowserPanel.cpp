@@ -60,7 +60,7 @@ namespace Candy
     RenderFileModifyMenu();
     popupPath = currentDirectory;
     filePopupType = FileMenuPopupType::None;
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+    if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
     {
       filePopupType = FileMenuPopupType::CreateFile;
     }

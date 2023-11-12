@@ -1,14 +1,9 @@
 #include <candy/utils/FileUtils.hpp>
 #include <candy/app/Application.hpp>
 #include <fstream>
-#include <GLFW/glfw3.h>
+#include <utility>
+#include <nativefiledialog/src/include/nfd.h>
 
-#ifdef CANDY_PLATFORM_WINDOWS
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
-#elifdef CANDY_PLATFORM_LINUX
-  #include <nfd.h>
-#endif
 
 namespace Candy::Utils{
     Buffer FileUtils::ReadFileBinary(const std::filesystem::path& filepath)
@@ -47,92 +42,126 @@ namespace Candy::Utils{
     auto count = lastDot == std::string::npos ? path.string().size() - lastSlash : lastDot - lastSlash;
     return path.string().substr(lastSlash, count);
   }
-  
-  std::string FileDialogs::OpenFile(const char* filter)
+  FileDialogFilter::FileDialogFilter()
   {
-    #ifdef CANDY_PLATFORM_WINDOWS
-    OPENFILENAMEA ofn;
-    CHAR szFile[260] = { 0 };
-    CHAR currentDir[256] = { 0 };
-    ZeroMemory(&ofn, sizeof(OPENFILENAME));
-    ofn.lStructSize = sizeof(OPENFILENAME);
-    ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::GetMainWindowReference().handle);
-    ofn.lpstrFile = szFile;
-    ofn.nMaxFile = sizeof(szFile);
-    if (GetCurrentDirectoryA(256, currentDir))
-      ofn.lpstrInitialDir = currentDir;
-    ofn.lpstrFilter = filter;
-    ofn.nFilterIndex = 1;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+  
+  }
+  FileDialogFilter::FileDialogFilter(std::string name) : name(std::move(name))
+  {
+  
+  }
+  FileDialogFilter::FileDialogFilter(std::string  name, const std::vector<std::string>& extensions) : name(std::move(name))
+  {
+    AddExtensions(extensions);
+  }
+  void FileDialogFilter::AddExtension(const std::string& extension)
+  {
+    if (!extension.empty())
+    {
+      std::string ext = extension;
+      // Remove '.' from start of extension if exists
+      if (ext[0] == '.')
+      {
+        ext.erase(0, 1);
+      }
+      // Append to the types string separated by comma
+      if (!types.empty())
+      {
+        types += ",";
+      }
+      types += ext;
+    }
+  }
+  void FileDialogFilter::AddExtensions(const std::vector<std::string>& extensions)
+  {
+    for (const auto& ext : extensions)
+    {
+      // Call AddExtension method for each extension
+      AddExtension(ext);
+    }
+  }
+  const std::string& FileDialogFilter::GetTypes()const
+  {
+      return types;
+  }
+  const std::string& FileDialogFilter::GetName()const
+  {
+      return name;
+  }
+  const FileDialogFilter FileDialogFilter::Images("Images", {"png", "jpg", "jpeg", "bmp", "tga"});
+  const FileDialogFilter FileDialogFilter::Scenes("Candy Scenes", {"scene"});
+  const FileDialogFilter FileDialogFilter::Shaders("Shaders", {"vert", "frag", "comp", "glsl", "hlsl", "spv"});
+  
+  FileDialog::FileDialog()=default;
+  FileDialog::FileDialog(const std::filesystem::path& startPath) : startPath(startPath), currentPath(startPath)
+  {
+  
+  }
+  FileDialog::FileDialog(const std::vector<FileDialogFilter>& filters) : filters(filters)
+  {
+  
+  }
+  FileDialog::FileDialog(const std::filesystem::path& startPath, const std::vector<FileDialogFilter>& filters) : startPath(startPath), currentPath(startPath), filters(filters)
+  {
+  
+  }
+  void FileDialog::AddFilter(const FileDialogFilter& filter)
+  {
+    filters.push_back(filter);
+  }
+  std::string FileDialog::GetFilterString()const
+  {
+    std::string filterString;
+    for (const auto& filter : filters)
+    {
+      if (!filterString.empty())
+      {
+        filterString += ";";
+      }
+      filterString += filter.GetTypes();
+    }
+    return filterString;
+  }
+  std::filesystem::path FileDialog::OpenFile()
+  {
+    nfdchar_t *outPath = nullptr;
+    std::string filterString = GetFilterString();
+    const char* filter = filterString.empty() ? nullptr : filterString.c_str();
+    nfdresult_t result = NFD_OpenDialog(filter, startPath.string().c_str(), &outPath);
+   
+    if (result == NFD_OKAY)
+    {
+      std::filesystem::path filePath(outPath);
+      free(outPath); // don't forget to free the path string
+      return filePath;
+    }
+    else if (result == NFD_CANCEL) return {};
+    else
+    {
+      CANDY_CORE_ERROR("Error '{}'", NFD_GetError());
+      return {};
+    }
+  }
+  std::filesystem::path FileDialog::SaveFile()
+  {
+    nfdchar_t *outPath = nullptr;
+    std::string filterString = GetFilterString();
+    const char* filter = filterString.empty() ? nullptr : filterString.c_str();
+    nfdresult_t result = NFD_SaveDialog(filter, startPath.string().c_str(), &outPath);
     
-    if (GetOpenFileNameA(&ofn) == TRUE)
-      return ofn.lpstrFile;
-    
-    return std::string();
-    #elifdef CANDY_PLATFORM_LINUX
-    nfdchar_t *outPath = NULL;
-    nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
-
     if (result == NFD_OKAY)
     {
       std::string filePath(outPath);
       free(outPath); // don't forget to free the path string
       return filePath;
     }
-    else if (result == NFD_CANCEL) return std::string();
+    else if (result == NFD_CANCEL) return {};
     else
     {
-      std::cout << "Error: " << NFD_GetError() << std::endl;
-      return std::string();
+      CANDY_CORE_ERROR("Error '{}'", NFD_GetError());
+      return {};
     }
-    #endif
-    
   }
   
-  std::string FileDialogs::SaveFile(const char* filter)
-  {
-    #ifdef CANDY_PLATFORM_WINDOWS
-    
-    OPENFILENAMEA ofn;
-    CHAR szFile[260] = { 0 };
-    CHAR currentDir[256] = { 0 };
-    ZeroMemory(&ofn, sizeof(OPENFILENAME));
-    ofn.lStructSize = sizeof(OPENFILENAME);
-    ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::GetMainWindowReference().handle);
-    ofn.lpstrFile = szFile;
-    ofn.nMaxFile = sizeof(szFile);
-    if (GetCurrentDirectoryA(256, currentDir))
-      ofn.lpstrInitialDir = currentDir;
-    ofn.lpstrFilter = filter;
-    ofn.nFilterIndex = 1;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
-    
-    // Sets the default extension by extracting it from the filter
-    ofn.lpstrDefExt = strchr(filter, '\0') + 1;
-    
-    if (GetSaveFileNameA(&ofn) == TRUE)
-      return ofn.lpstrFile;
-    
-    return std::string();
-    
-    #elifdef CANDY_PLATFORM_LINUX
-    nfdchar_t *outPath = NULL;
-    nfdresult_t result = NFD_SaveDialog(filter, NULL, &outPath);
-
-    if (result == NFD_OKAY)
-    {
-      std::string filePath(outPath);
-      free(outPath); // don't forget to free the path string
-      return filePath;
-    }
-    else if (result == NFD_CANCEL) return std::string();
-    else
-    {
-      std::cout << "Error: " << NFD_GetError() << std::endl;
-      return std::string();
-    }
-    #endif
-    
-  }
 }
 

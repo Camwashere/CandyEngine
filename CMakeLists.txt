@@ -14,6 +14,7 @@ add_subdirectory(lib/shaderc)
 add_subdirectory(lib/SPIRV-Cross)
 add_subdirectory(lib/antlr)
 add_subdirectory(lib/fontatlas)
+add_subdirectory(lib/nativefiledialog)
 
 if(TARGET assimp::assimp)
     message(STATUS "assimp package found!")
@@ -537,7 +538,7 @@ target_include_directories(CandyEngine PRIVATE tools)
 target_include_directories(CandyEngine PRIVATE lib/fontatlas/lib/freetype2/include/)
 
 
-target_link_libraries(CandyEngine PRIVATE shaderc_shared ryml::ryml assimp::assimp antlr4_static)
+target_link_libraries(CandyEngine PRIVATE shaderc_shared ryml::ryml assimp::assimp antlr4_static nfd)
 target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan spirv-cross-c EnTT::EnTT FontAtlas)
 
 
