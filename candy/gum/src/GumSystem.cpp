@@ -53,12 +53,12 @@ namespace Candy::Gum
   void GumSystem::BeginPass()
   {
     CANDY_PROFILE_FUNCTION();
-    Graphics::Renderer::BeginGumPass();
+    //Graphics::Renderer::BeginGumPass();
     //Renderer::BeginEditorChain();
   }
   void GumSystem::EndPass()
   {
-    Graphics::Renderer::EndGumPass();
+    //Graphics::Renderer::EndGumPass();
   }
   void GumSystem::Render()
   {

@@ -40,12 +40,12 @@ namespace Candy::Gum
       //float glyphHeight = static_cast<float>(face->glyph->metrics.height) / (64.0f) / size.y;
       //float glyphTop = static_cast<float>(face->glyph->metrics.horiBearingY) / (64.0f) / size.y;
       float glyphHeight = static_cast<float>(face->glyph->metrics.height) / 64.0f;
-      float glyphTop = (static_cast<float>(face->glyph->metrics.horiBearingY) / (64.0f));
+      float glyphTop = (static_cast<float>(face->glyph->metrics.horiBearingY) / 64.0f);
       Math::Bounds2D bounds;
       
-      
-      bounds.SetMin(static_cast<float>(offsetX) / size.x, 1.0f - glyphTop/size.y);
-      bounds.SetMax(static_cast<float>(offsetX + face->glyph->bitmap.width) / size.x, 1.0f);
+      float glyphOffsetY = (glyphHeight-glyphTop);
+      bounds.SetMin(static_cast<float>(offsetX) / static_cast<float>(size.x), (static_cast<float>(size.y) - (glyphOffsetY + static_cast<float>(face->glyph->bitmap.rows)))/static_cast<float>(size.y));
+      bounds.SetMax(static_cast<float>(offsetX + face->glyph->bitmap.width) / static_cast<float>(size.x), 1.0f);
       
       glyphUVs[c] = bounds;
       

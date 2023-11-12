@@ -130,7 +130,7 @@ namespace Candy::Graphics
     Renderer2D::Init();
     Renderer3D::Init();
     
-    Gum::GumSystem::Init();
+    //Gum::GumSystem::Init();
     ShaderLibrary::Bake();
     
     CANDY_CORE_INFO("Initialized Vulkan");

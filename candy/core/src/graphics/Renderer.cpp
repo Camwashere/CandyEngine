@@ -85,7 +85,7 @@ namespace Candy::Graphics
     
     
     data.chains.AddPass("Viewport", "2D", builder.GetConfig());
-    data.chains.AddPass("Viewport", "GumSystem", builder.GetConfig());
+    //data.chains.AddPass("Viewport", "GumSystem", builder.GetConfig());
     
     RenderPassConfig selectionConfig = RenderPassBuilder::FastBuild(VK_FORMAT_R32_SINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     selectionConfig.defaultClearValues.resize(2);
@@ -196,7 +196,7 @@ namespace Candy::Graphics
     
     data.chains[viewportChainIndex, viewportPassIndex].SetRenderTarget(GetViewportTarget());
     data.chains[viewportChainIndex, overlayPassIndex].SetRenderTarget(GetViewportTarget());
-    data.chains[viewportChainIndex, gumPassIndex].SetRenderTarget(GetViewportTarget());
+   // data.chains[viewportChainIndex, gumPassIndex].SetRenderTarget(GetViewportTarget());
     //data.chains[viewportChainIndex, selectionPassIndex].SetRenderTarget(GetSelectionTarget());
     
     data.chains.Begin({data.target->swapChain->extent.width, data.target->swapChain->extent.height});
@@ -209,7 +209,7 @@ namespace Candy::Graphics
     bool success = data.chains.NextChain();
     CANDY_CORE_ASSERT(success, "Failed to begin editor chain");
   }
-  void Renderer::BeginGumPass()
+  /*void Renderer::BeginGumPass()
   {
     bool beganGum = data.chains.NextPass();
     CANDY_CORE_ASSERT(beganGum, "Failed to begin gum pass");
@@ -219,7 +219,7 @@ namespace Candy::Graphics
     CANDY_PROFILE_FUNCTION();
     //CANDY_CORE_ASSERT(data.chains.NextPass());
     
-  }
+  }*/
   void Renderer::EndChains()
   {
     data.chains.End();
@@ -328,6 +328,7 @@ namespace Candy::Graphics
   uint8_t Renderer::GetGumPassIndex()
   {
     return gumPassIndex;
+    //return gumPassIndex;
   }
   uint8_t Renderer::GetSelectionPassIndex()
   {

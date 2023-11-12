@@ -201,13 +201,13 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     if (enabled)
     {
-      Gum::Root& root = Gum::GumSystem::GetCurrentContext().sceneGraph.Root();
+      /*Gum::Root& root = Gum::GumSystem::GetCurrentContext().sceneGraph.Root();
       Gum::Paint backgroundFill = root.GetBackgroundFill();
       
-      /*SharedPtr<Gum::Rectangle> rect = Gum::GumSystem::GetCurrentContext().testObject;
+      *//*SharedPtr<Gum::Rectangle> rect = Gum::GumSystem::GetCurrentContext().testObject;
       SharedPtr<Gum::Rectangle> rect1 = Gum::GumSystem::GetCurrentContext().testObject2;
       SharedPtr<Gum::Rectangle> rect2 = Gum::GumSystem::GetCurrentContext().testObject3;
-      SharedPtr<Gum::Rectangle> rect3 = Gum::GumSystem::GetCurrentContext().testObject4;*/
+      SharedPtr<Gum::Rectangle> rect3 = Gum::GumSystem::GetCurrentContext().testObject4;*//*
       
       SharedPtr<Gum::Button> rect = Gum::GumSystem::GetCurrentContext().testObject;
       SharedPtr<Gum::Button> rect1 = Gum::GumSystem::GetCurrentContext().testObject2;
@@ -218,29 +218,29 @@ namespace Candy
       SharedPtr<Gum::Label> label = Gum::GumSystem::GetCurrentContext().testLabel;
       
       SharedPtr<Gum::BoxLayout> layout = Gum::GumSystem::GetCurrentContext().testLayout;
-     /* Math::Vector2 shapePos = rect->GetPosition();
+     *//* Math::Vector2 shapePos = rect->GetPosition();
       Math::Vector2 shapeSize = rect->GetSize();
       Math::Vector2 arcSize = rect->GetArcSize();
       float strokeWidth = rect->GetStrokeWidth();
       Color fillColor = rect->GetFillColor();
-      Color strokeColor = rect->GetStrokeColor();*/
+      Color strokeColor = rect->GetStrokeColor();*//*
       
       ImGui::Begin("Debug");
       ImGui::SeparatorText("Root");
       ImGui::ColorEdit4("Background Color", &backgroundFill.color.r);
       
       
-      /*RenderRect(rect);
+      *//*RenderRect(rect);
       RenderRect(rect1);
       RenderRect(rect2);
-      RenderRect(rect3);*/
+      RenderRect(rect3);*//*
       RenderLabel(label, step);
       
       RenderButton(rect);
       RenderButton(rect1);
       RenderButton(rect2);
       RenderButton(rect3);
-      RenderLayout(layout);
+      RenderLayout(layout);*/
       /*ImGui::SeparatorText("Rectangle");
       ImGui::DragFloat("Step", &step, 0.01f, 0.0f, FLT_MAX);
       ImGui::DragFloat2("Shape Position", &shapePos.x, step, 0.0f, FLT_MAX);
@@ -249,7 +249,7 @@ namespace Candy
       ImGui::DragFloat("Stroke Width", &strokeWidth, step, 0.0f, FLT_MAX);
       ImGui::ColorEdit4("Fill Color", &fillColor.r);
       ImGui::ColorEdit4("Stroke Color", &strokeColor.r);*/
-      
+      ImGui::Begin("Debug");
       ImGui::SeparatorText("Application Stats");
       
       ImGui::Text("FPS: %d", (int)Application::AverageFPS());
@@ -268,7 +268,7 @@ namespace Candy
       
       ImGui::End();
       
-      root.SetBackgroundFill(backgroundFill);
+      //root.SetBackgroundFill(backgroundFill);
       /*rect->SetPosition(shapePos);
       rect->SetSize(shapeSize);
       rect->SetArcSize(arcSize);

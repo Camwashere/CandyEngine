@@ -35,8 +35,8 @@ namespace Candy
       
       
       
-      gumContext = new Gum::Context(handle);
-      Gum::GumSystem::SetCurrentContext(gumContext);
+      //gumContext = new Gum::Context(handle);
+      //Gum::GumSystem::SetCurrentContext(gumContext);
         
       
     }
@@ -219,10 +219,10 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
       glfwHideWindow(handle);
   }
-  Gum::Context* Window::GetGumContext()
+  /*Gum::Context* Window::GetGumContext()
   {
       return gumContext;
-  }
+  }*/
   
   
 }

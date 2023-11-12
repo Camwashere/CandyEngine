@@ -42,7 +42,7 @@ namespace Candy
     bool minimized;
     FrameTime frameTime;
     UILayer* uiLayer;
-    GumLayer* gumLayer;
+    //GumLayer* gumLayer;
     LayerStack layerStack;
   
   private:
@@ -70,8 +70,7 @@ namespace Candy
   
   public:
     static void RunTests();
-    static UILayer& GetUILayer();
-    static GumLayer& GetGumLayer();
+    //static GumLayer& GetGumLayer();
     static inline Window &GetMainWindowReference() {return *instance->mainWindow;}
     static Application &Instance() {return *instance;}
     static float DeltaTime();

@@ -477,6 +477,11 @@ set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FIL
         candy/core/include/candy/engine/FileStructureValidator.hpp
         candy/core/include/candy/engine/AssetManager.hpp
         candy/core/include/candy/engine/Asset.hpp
+        candy/core/include/candy/engine/FileManager.hpp
+        candy/core/include/candy/engine/AssetFileManager.hpp
+        candy/core/src/engine/AssetFileManager.cpp
+        candy/core/include/candy/engine/FileWatcher.hpp
+        candy/core/src/engine/FileWatcher.cpp
 )
 
 

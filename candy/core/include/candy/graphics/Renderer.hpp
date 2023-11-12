@@ -34,7 +34,7 @@ namespace Candy::Graphics
     static constexpr uint8_t viewportPassIndex=0;
     static constexpr uint8_t overlayPassIndex=1;
     static constexpr uint8_t gumPassIndex=2;
-    static constexpr uint8_t selectionPassIndex=3;
+    static constexpr uint8_t selectionPassIndex=2;
     
     static constexpr uint8_t editorChainIndex=1;
     static constexpr uint8_t uiPassIndex=0;
@@ -57,8 +57,8 @@ namespace Candy::Graphics
     static void BeginViewportChain();
   
     static void BeginEditorChain();
-    static void BeginGumPass();
-    static void EndGumPass();
+    //static void BeginGumPass();
+    //static void EndGumPass();
     static void EndChains();
     
    

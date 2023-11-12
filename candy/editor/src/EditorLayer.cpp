@@ -29,7 +29,7 @@ namespace Candy
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
     OpenScene(ProjectManager::GetActiveProject()->GetStartScenePath());
     //OpenScene(Project::GetActive()->GetConfiguration().startScene);
-    
+    CANDY_CORE_INFO("Content Browser Dir: {}", ProjectManager::GetAssetsDirectory().string());
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(ProjectManager::GetAssetsDirectory());
     
     
@@ -37,10 +37,7 @@ namespace Candy
     viewport = CreateSharedPtr<Viewport>(this);
     
     Gizmo meshGizmo;
-    Entity circle = activeScene->CreateEntity("Circle");
-    CircleRendererComponent circ{};
-    circ.color = Color::teal;
-    circle.AddComponent<CircleRendererComponent>(circ);
+    
     
     //ModelLoader loader(activeScene);
     //loader.LoadModel(ProjectManager::GetAssetsDirectory() / "models/backpack/Survival_BackPack_2.fbx");
@@ -132,7 +129,7 @@ namespace Candy
     
     debugPanel.OnRenderUI();
     scenePanel->OnRenderUI();
-    //contentBrowserPanel->OnRenderUI();
+    contentBrowserPanel->OnRenderUI();
     viewport->OnRenderUI();
     
 

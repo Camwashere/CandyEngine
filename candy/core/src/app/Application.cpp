@@ -40,13 +40,13 @@ namespace Candy
     
     mainWindow = CreateUniquePtr<Window>(WindowData(ProjectManager::ProjectName(), 3000, 1500));
     mainWindow->SetEventCallback(CANDY_BIND_EVENT_FUNCTION(Application::OnEvent));
-    Gum::FontInternal::Init();
+    //Gum::FontInternal::Init();
     
     uiLayer = new UILayer();
     PushOverlay(uiLayer);
     
-    gumLayer = new GumLayer(mainWindow->GetGumContext());
-    PushOverlay(gumLayer);
+    //gumLayer = new GumLayer(mainWindow->GetGumContext());
+    //PushOverlay(gumLayer);
   }
   
   void Application::InitGLFW()
@@ -117,12 +117,12 @@ namespace Candy
       layer->OnUpdate();
     }
     
-    gumLayer->Begin();
+    /*gumLayer->Begin();
     for (Layer* layer: layerStack)
     {
       layer->OnRenderGum();
     }
-    gumLayer->End();
+    gumLayer->End();*/
     
     uiLayer->Begin();
     for (Layer* layer: layerStack)
@@ -195,10 +195,10 @@ namespace Candy
   {
     return *instance->uiLayer;
   }*/
-  GumLayer& Application::GetGumLayer()
+  /*GumLayer& Application::GetGumLayer()
   {
     return *instance->gumLayer;
-  }
+  }*/
   float Application::DeltaTime()
   {
     return instance->frameTime.GetDeltaTime();

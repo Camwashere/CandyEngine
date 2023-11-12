@@ -27,7 +27,7 @@ namespace Candy::Gum
     
   public:
     void Render(float wrap);
-    SharedPtr<FontInternal> GetFont()const;
+    [[nodiscard]] SharedPtr<FontInternal> GetFont()const;
     void SetFont(SharedPtr<FontInternal> font);
     [[nodiscard]] float GetFontSize()const;
     void SetFontSize(float value);
