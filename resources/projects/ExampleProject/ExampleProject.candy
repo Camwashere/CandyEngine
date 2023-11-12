@@ -1,4 +1,4 @@
 Project:
-  StartScene: 'C:/Users/perso/CLionProjects/CandyEngine/build/debug/resources/internal\assets\scenes\EmptyScene.scene'
+  StartScene: 'assets/scenes/StartScene.scene'
   EngineVersion: '[0,0,0]'
   ApplicationVersion: '[0,0,0]'
