@@ -44,24 +44,31 @@ namespace Candy
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1)
       columnCount = 1;
-    if (ImGui::BeginTable("##content_browser", columnCount, 0))
+    
+    if (showFileMenuPopup)
     {
-      if (showFileMenuPopup)
-      {
-        ImGui::OpenPopup("File Options");
-        showFileMenuPopup=false;
-      }
-      RenderFileMenu();
+      ImGui::OpenPopup("File Options");
+      showFileMenuPopup=false;
+    }
+    RenderFileMenu();
+    
+    if (ImGui::BeginTable("##content_browser", columnCount, ImGuiTableFlags_Reorderable))
+    {
+     
+      int column = 0;
       for (const auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory))
       {
+        if(column % columnCount == 0)
+          ImGui::TableNextRow();
+        
+        ImGui::TableSetColumnIndex(column % columnCount);
         const auto& path = directoryEntry.path();
         std::string fileName = path.filename().string();
-        CANDY_CORE_INFO("Filename: {}", fileName);
         ImGui::PushID(fileName.c_str());
+        
         VkDescriptorSet icon = directoryEntry.is_directory() ? descriptorSets[0] : descriptorSets[1];
         
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        //ImGui::ImageButton(descriptorSets[0], ImVec2{thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
         ImGui::ImageButton(fileName.c_str(), icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
         
         ImGui::PopStyleColor();
@@ -88,10 +95,9 @@ namespace Candy
           }
         }
         
-        
         ImGui::TextWrapped(fileName.c_str());
-        ImGui::TableNextColumn();
         ImGui::PopID();
+        column++;
       }
       ImGui::EndTable();
     }
