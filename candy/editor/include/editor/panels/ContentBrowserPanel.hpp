@@ -10,25 +10,37 @@ namespace Candy
   private:
     std::filesystem::path rootDirectory;
     std::filesystem::path currentDirectory;
-    //Graphics::Texture* directoryImage;
-    //Graphics::Texture* fileImage;
-    
-    //SharedPtr<Graphics::ImageView> directoryIcon;
-    //SharedPtr<Graphics::ImageView> fileIcon;
     SharedPtr<Graphics::Texture> directoryIcon;
     SharedPtr<Graphics::Texture> fileIcon;
     std::vector<VkDescriptorSet> descriptorSets;
     
     std::filesystem::path popupPath;
-    bool showFileMenuPopup=false;
+    
+    float thumbnailSize = 128.0f;
+    float padding = 16.0f;
+    
+    enum class FileMenuPopupType
+    {
+      None=0,
+      CreateFile=1,
+      ModifyFile=2,
+    };
+    
+    FileMenuPopupType filePopupType = FileMenuPopupType::None;
     
   private:
-    void ShowFileMenu(const std::filesystem::path& path);
-    void RenderFileMenu();
+    void RenderFileModifyMenu();
+    void RenderFileCreateMenu();
+    
   public:
     explicit ContentBrowserPanel(std::filesystem::path  contentRoot);
-    
     void OnRenderUI();
     void OnDetach();
+    
+  public:
+    void SetThumbnailSize(float value);
+    void SetPaddingSize(float value);
+    [[nodiscard]] float GetThumbnailSize()const;
+    [[nodiscard]] float GetPaddingSize()const;
   };
 }

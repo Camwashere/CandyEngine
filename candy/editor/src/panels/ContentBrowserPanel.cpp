@@ -37,21 +37,33 @@ namespace Candy
         currentDirectory = currentDirectory.parent_path();
       }
     }
-    static float padding = 16.0f;
-    static float thumbnailSize = 128.0f;
     float cellSize = thumbnailSize + padding;
     float panelWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(panelWidth / cellSize);
     if (columnCount < 1)
       columnCount = 1;
     
-    if (showFileMenuPopup)
+    switch(filePopupType)
     {
-      ImGui::OpenPopup("File Options");
-      showFileMenuPopup=false;
+      case FileMenuPopupType::None:
+        break;
+      case FileMenuPopupType::CreateFile:
+        ImGui::OpenPopup("File Create Menu");
+        filePopupType = FileMenuPopupType::None;
+        break;
+      case FileMenuPopupType::ModifyFile:
+        ImGui::OpenPopup("File Modify Menu");
+        filePopupType = FileMenuPopupType::None;
+        break;
     }
-    RenderFileMenu();
-    
+    RenderFileCreateMenu();
+    RenderFileModifyMenu();
+    popupPath = currentDirectory;
+    filePopupType = FileMenuPopupType::None;
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+    {
+      filePopupType = FileMenuPopupType::CreateFile;
+    }
     if (ImGui::BeginTable("##content_browser", columnCount, ImGuiTableFlags_Reorderable))
     {
      
@@ -71,29 +83,29 @@ namespace Candy
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
         ImGui::ImageButton(fileName.c_str(), icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
         
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+          CANDY_CORE_INFO("Right clicked path: {}", path.string());
+          filePopupType = FileMenuPopupType::ModifyFile;
+          popupPath = path;
+        }
+        else if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        {
+          if (directoryEntry.is_directory())
+          {
+            currentDirectory /= path.filename();
+            
+          }
+        }
+        if (ImGui::BeginDragDropSource())
+        {
+          const wchar_t* itemPath = path.c_str();
+          ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+          ImGui::EndDragDropSource();
+        }
         ImGui::PopStyleColor();
         
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-        {
-          ShowFileMenu(currentDirectory / path.filename());
-        }
         
-        
-        if (ImGui::IsItemHovered())
-        {
-          if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-          {
-            ShowFileMenu(currentDirectory / path.filename());
-          }
-          if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-          {
-            if (directoryEntry.is_directory())
-            {
-              currentDirectory /= path.filename();
-              
-            }
-          }
-        }
         
         ImGui::TextWrapped(fileName.c_str());
         ImGui::PopID();
@@ -106,41 +118,19 @@ namespace Candy
     
   }
   
-  void ContentBrowserPanel::ShowFileMenu(const std::filesystem::path& path)
+ 
+  void ContentBrowserPanel::RenderFileModifyMenu()
   {
     CANDY_PROFILE_FUNCTION();
-    //CANDY_CORE_INFO("SHOW FILE MENU FOR PATH: {}", path.string());
-    CANDY_CORE_ASSERT(std::filesystem::exists(path));
-    popupPath = path;
-    showFileMenuPopup=true;
-    
-  }
-  void ContentBrowserPanel::RenderFileMenu()
-  {
-    CANDY_PROFILE_FUNCTION();
-    if (ImGui::BeginPopup("File Options"))
+    if (ImGui::BeginPopup("File Modify Menu"))
     {
-      if (std::filesystem::is_directory(popupPath))
+      if (ImGui::MenuItem("Delete"))
       {
-        if (ImGui::BeginMenu("New"))
-        {
-          if (ImGui::MenuItem("File"))
-          {
-            std::ofstream(popupPath / "New File").close();
-          }
-          if (ImGui::MenuItem("Folder"))
-          {
-            std::filesystem::create_directory(popupPath / "New Folder");
-          }
-          ImGui::EndMenu();
-        }
+        std::filesystem::remove_all(popupPath);
       }
-      else
+      if (ImGui::MenuItem("Rename"))
       {
-        if (ImGui::MenuItem("Delete"))
-        {
-          std::filesystem::remove_all(popupPath);
-        }
+        CANDY_CORE_INFO("Rename file: {}", popupPath.string());
       }
       
       
@@ -148,9 +138,48 @@ namespace Candy
     }
   }
   
+  void ContentBrowserPanel::RenderFileCreateMenu()
+  {
+    if (ImGui::BeginPopup("File Create Menu"))
+    {
+      if (ImGui::BeginMenu("New"))
+      {
+        if (ImGui::MenuItem("File"))
+        {
+          std::ofstream(popupPath / "New File").close();
+        }
+        if (ImGui::MenuItem("Folder"))
+        {
+          std::filesystem::create_directory(popupPath / "New Folder");
+        }
+        ImGui::EndMenu();
+      }
+      
+      ImGui::EndPopup();
+    }
+    
+  }
+  
   void ContentBrowserPanel::OnDetach()
   {
     //Vulkan::DeletionQueue().Delete(directoryIcon.get());
     //Vulkan::DeletionQueue().Delete(fileIcon.get());
+  }
+  
+  void ContentBrowserPanel::SetThumbnailSize(float value)
+  {
+    thumbnailSize = value;
+  }
+  void ContentBrowserPanel::SetPaddingSize(float value)
+  {
+    padding = value;
+  }
+  float ContentBrowserPanel::GetThumbnailSize()const
+  {
+    return thumbnailSize;
+  }
+  float ContentBrowserPanel::GetPaddingSize()const
+  {
+    return padding;
   }
 }
