@@ -127,10 +127,7 @@ namespace Candy
   
   bool ProjectManager::Init()
   {
-    //return NewProject("ExampleProject");
-    //return LoadProject(CandyEngine::GetProjectsDirectory() / "TestProject" / "testProject.candy");
     return LoadProject(CandyEngine::GetProjectsDirectory() / "ExampleProject");
-    
   }
   bool ProjectManager::NewProject(const std::string& projectName)
   {

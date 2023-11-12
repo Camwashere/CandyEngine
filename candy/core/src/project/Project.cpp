@@ -33,9 +33,9 @@ namespace Candy
   {
     return assetsDirectory;
   }
-  const std::filesystem::path& Project::GetStartScenePath()const
+  std::filesystem::path Project::GetStartScenePath()const
   {
-    return metaData.startScenePath;
+    return rootDirectory / metaData.startScenePath;
   }
   
 }

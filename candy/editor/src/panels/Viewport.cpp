@@ -47,7 +47,6 @@ namespace Candy
     mousePos.y -= bounds.min.y;
     Math::Vector2 viewSize = bounds.max - bounds.min;
     mousePos.y = viewSize.y - mousePos.y;
-    //Math::Vector2u imageSize = Renderer::GetCurrentFrame().viewportData.selectionPixelBuffer->GetImageSize();
     Math::Vector2u imageSize = Renderer::GetViewportImageSize();
     float scaleX = (float)imageSize.width / viewSize.x;      // original image width / displayed width
     float scaleY = (float)imageSize.height / viewSize.y;      // original image height / displayed height

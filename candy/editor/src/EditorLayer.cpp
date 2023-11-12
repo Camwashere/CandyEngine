@@ -27,7 +27,8 @@ namespace Candy
     CANDY_PROFILE_FUNCTION();
     gizmo = CreateSharedPtr<Gizmo>();
     scenePanel = CreateSharedPtr<SceneHierarchyPanel>();
-    OpenScene(ProjectManager::GetActiveProject()->GetStartScenePath());
+    bool openedScene = OpenScene(ProjectManager::GetActiveProject()->GetStartScenePath());
+    CANDY_CORE_ASSERT(openedScene, "Failed to open start scene");
     CANDY_CORE_INFO("Content Browser Dir: {}", ProjectManager::GetAssetsDirectory().string());
     contentBrowserPanel = CreateUniquePtr<ContentBrowserPanel>(ProjectManager::GetAssetsDirectory());
     viewport = CreateSharedPtr<Viewport>(this);
@@ -68,7 +69,6 @@ namespace Candy
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-    ImGuiWindowFlags_NoCollapse;
     
     // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
     // because it would be confusing to have two docking targets within each others.
@@ -260,11 +260,17 @@ namespace Candy
   bool EditorLayer::OpenScene(const std::filesystem::path& path)
   {
     CANDY_PROFILE_FUNCTION();
-    if (path.extension().string() != ".scene" || !std::filesystem::exists(path))
+    if (!std::filesystem::exists(path))
     {
-      CANDY_WARN("Could not load {0} - not a scene file", path.filename().string());
+      CANDY_WARN("Could not load {0} - file does not exist", path.string());
       return false;
     }
+    else if (path.extension().string() != ".scene")
+    {
+      CANDY_CORE_ERROR("Could not load scene, '{0}' is not a valid scene file", path.filename().string());
+      return false;
+    }
+    
     
     SharedPtr<Scene> newScene = Scene::Create();
     SceneSerializer serializer(newScene);

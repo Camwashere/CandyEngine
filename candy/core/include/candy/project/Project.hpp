@@ -40,7 +40,7 @@ namespace Candy
     [[nodiscard]] const std::filesystem::path& GetProjectFilePath()const;
     [[nodiscard]] const ProjectMetaData& GetMetaData()const;
     [[nodiscard]] const std::filesystem::path& GetAssetsDirectory()const;
-    [[nodiscard]] const std::filesystem::path& GetStartScenePath()const;
+    [[nodiscard]] std::filesystem::path GetStartScenePath()const;
     
     friend class ProjectManager;
   };
