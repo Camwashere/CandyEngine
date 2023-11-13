@@ -44,6 +44,8 @@ add_custom_target(
         COMMENT "Copying internal config files if they don't exist..."
 )
 
+
+set(TINYXML_FILES lib/tinyxml2/tinyxml2.h lib/tinyxml2/tinyxml2.cpp)
 #[[add_custom_target(
         CopyProjects ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -402,7 +404,7 @@ set(STB_LIB_FILES lib/stb/include/stb/stb_image.h
 
 set(VMA_LIB_FILES lib/vma/vk_mem_alloc.h)
 
-set(CANDY_BUNDLED_LIB_FILES ${IM_GUI_SOURCES} ${IM_GUIZMO_SOURCES} ${STB_LIB_FILES} ${VMA_LIB_FILES})
+set(CANDY_BUNDLED_LIB_FILES ${IM_GUI_SOURCES} ${IM_GUIZMO_SOURCES} ${STB_LIB_FILES} ${VMA_LIB_FILES} ${TINYXML_FILES})
 
 set(CANDY_GUM_HEADERS
         candy/gum/include/gum/GumTransform.hpp
@@ -483,6 +485,13 @@ set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FIL
         candy/core/src/engine/AssetFileManager.cpp
         candy/core/include/candy/engine/FileWatcher.hpp
         candy/core/src/engine/FileWatcher.cpp
+        candy/core/include/candy/resource/ResourceManager.hpp
+        candy/core/include/candy/resource/InternalResource.hpp
+        candy/core/include/candy/resource/ResourceType.hpp
+        candy/core/src/resource/ResourceManager.cpp
+        candy/core/include/candy/resource/ResourceDatabase.hpp
+        candy/core/src/resource/ResourceDatabase.cpp
+        candy/core/src/resource/InternalResource.cpp
 )
 
 

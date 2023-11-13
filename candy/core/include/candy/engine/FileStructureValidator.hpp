@@ -6,7 +6,7 @@ namespace Candy::FileSystem
 {
   
   
-  struct DirectoryValidationNode
+  struct DirectoryNode
   {
   private:
     std::filesystem::path path;
@@ -15,12 +15,28 @@ namespace Candy::FileSystem
     bool optional;
     bool allowEmptyChildren;
     std::string name;
-    std::vector<std::string> childNames;
+    DirectoryNode* parent = nullptr;
+    std::vector<DirectoryNode> children;
     
+  public:
+    DirectoryNode(const std::filesystem::path& path);
+    DirectoryNode(DirectoryNode& parent, const std::string& name);
     
+  public:
+  
+  };
+  
+  struct DirectoryValidator
+  {
+  private:
+    DirectoryNode root;
     
+  public:
+    DirectoryValidator(const std::filesystem::path& rootPath);
     
     
   };
+  
+  
   
 }
