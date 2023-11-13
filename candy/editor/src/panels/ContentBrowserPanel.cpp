@@ -11,19 +11,24 @@ namespace Candy
   ContentBrowserPanel::ContentBrowserPanel(std::filesystem::path  contentRoot) : rootDirectory(std::move(contentRoot)), currentDirectory(rootDirectory)
   {
     CANDY_PROFILE_FUNCTION();
-    directoryIcon = Texture::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/DirectoryIcon.png");
-    fileIcon = Texture::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/FileIcon.png");
-    descriptorSets.resize(2);
+    directoryIcon = IconData::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/DirectoryIcon.png");
+    fileIcon = IconData::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/FileIcon.png");
+    imageIcon = IconData::Create(CandyEngine::GetInternalAssetsDirectory() / "icons/ImageIcon.png");
     
+    CANDY_CORE_INFO("Root Directory: {}, current directory: {}", rootDirectory.string(), currentDirectory.string());
     
-    descriptorSets[0] = ImGui_ImplVulkan_AddTexture(directoryIcon->GetSampler(), directoryIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    descriptorSets[1] = ImGui_ImplVulkan_AddTexture(fileIcon->GetSampler(), fileIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    
-    
-    
-  
   }
   
+  ContentBrowserPanel::IconData::IconData(const std::filesystem::path& iconPath)
+  {
+    CANDY_PROFILE_FUNCTION();
+    texture = Texture::Create(iconPath);
+    descriptorSet = ImGui_ImplVulkan_AddTexture(texture->GetSampler(), texture->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+  }
+  SharedPtr<ContentBrowserPanel::IconData> ContentBrowserPanel::IconData::Create(const std::filesystem::path& iconPath)
+  {
+    return CreateSharedPtr<IconData>(iconPath);
+  }
   void ContentBrowserPanel::OnRenderUI()
   {
     CANDY_PROFILE_FUNCTION();
@@ -70,36 +75,49 @@ namespace Candy
       int column = 0;
       for (const auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory))
       {
+        const std::filesystem::path& path = directoryEntry.path();
+        std::string fileName = path.filename().string();
         if(column % columnCount == 0)
           ImGui::TableNextRow();
         
         ImGui::TableSetColumnIndex(column % columnCount);
-        const auto& path = directoryEntry.path();
-        std::string fileName = path.filename().string();
+        
         ImGui::PushID(fileName.c_str());
         
-        VkDescriptorSet icon = directoryEntry.is_directory() ? descriptorSets[0] : descriptorSets[1];
+        //VkDescriptorSet icon = directoryEntry.is_directory() ? descriptorSets[0] : descriptorSets[1];
+        VkDescriptorSet icon = DetermineIconForFile(directoryEntry);
         
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        ImGui::ImageButton(fileName.c_str(), icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+        bool clickedImgBtn = ImGui::ImageButton(fileName.c_str(), icon, ImVec2{thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
         
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-        {
-          CANDY_CORE_INFO("Right clicked path: {}", path.string());
-          filePopupType = FileMenuPopupType::ModifyFile;
-          popupPath = path;
-        }
-        else if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
         {
           if (directoryEntry.is_directory())
           {
-            currentDirectory /= path.filename();
+            std::filesystem::path potentialPath = currentDirectory / fileName;
+            if (std::filesystem::exists(potentialPath))
+            {
+              currentDirectory = potentialPath;
+            }
+            else
+            {
+              CANDY_CORE_WARN("Directory does not exist: {}", potentialPath.string());
+            }
+            
             
           }
         }
+        
+        
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+          filePopupType = FileMenuPopupType::ModifyFile;
+          popupPath = path;
+        }
+        
         if (ImGui::BeginDragDropSource())
         {
-          const wchar_t* itemPath = path.c_str();
+          const auto* itemPath = path.c_str();
           ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
           ImGui::EndDragDropSource();
         }
@@ -109,6 +127,7 @@ namespace Candy
         
         ImGui::TextWrapped(fileName.c_str());
         ImGui::PopID();
+        
         column++;
       }
       ImGui::EndTable();
@@ -159,7 +178,20 @@ namespace Candy
     }
     
   }
+  VkDescriptorSet ContentBrowserPanel::DetermineIconForFile(const std::filesystem::directory_entry& entry)
+  {
+    if (entry.is_directory())
+    {
+      return directoryIcon->descriptorSet;
+    }
+    std::string ext = entry.path().extension().string();
+    if (ext == ".png" || ext == ".jpg" || ext == ".jpeg")
+    {
+      return imageIcon->descriptorSet;
+    }
+    return fileIcon->descriptorSet;
   
+  }
   void ContentBrowserPanel::OnDetach()
   {
     //Vulkan::DeletionQueue().Delete(directoryIcon.get());

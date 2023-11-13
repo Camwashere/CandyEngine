@@ -8,11 +8,23 @@ namespace Candy
   class ContentBrowserPanel
   {
   private:
+    struct IconData
+    {
+      SharedPtr<Graphics::Texture> texture;
+      VkDescriptorSet descriptorSet;
+      
+      explicit IconData(const std::filesystem::path& iconPath);
+      
+      
+      static SharedPtr<IconData> Create(const std::filesystem::path& iconPath);
+      
+    };
     std::filesystem::path rootDirectory;
     std::filesystem::path currentDirectory;
-    SharedPtr<Graphics::Texture> directoryIcon;
-    SharedPtr<Graphics::Texture> fileIcon;
-    std::vector<VkDescriptorSet> descriptorSets;
+    SharedPtr<IconData> directoryIcon;
+    SharedPtr<IconData> fileIcon;
+    SharedPtr<IconData> imageIcon;
+    //std::vector<VkDescriptorSet> descriptorSets;
     
     std::filesystem::path popupPath;
     
@@ -31,6 +43,7 @@ namespace Candy
   private:
     void RenderFileModifyMenu();
     void RenderFileCreateMenu();
+    VkDescriptorSet DetermineIconForFile(const std::filesystem::directory_entry& entry);
     
   public:
     explicit ContentBrowserPanel(std::filesystem::path  contentRoot);
