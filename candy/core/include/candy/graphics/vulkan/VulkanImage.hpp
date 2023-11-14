@@ -4,7 +4,7 @@
 #include <candy/math/Vector.hpp>
 namespace Candy::Graphics
 {
-  class Image
+  class VulkanImage
   {
   private:
     VkImage image;
@@ -13,9 +13,8 @@ namespace Candy::Graphics
     
     
   public:
-    Image();
-    Image(Math::Vector2u size, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags);
-    //~Image();
+    VulkanImage();
+    VulkanImage(Math::Vector2u size, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags);
   public:
     operator VkImage()const{return image;}
     operator VkImage(){return image;}
@@ -26,7 +25,6 @@ namespace Candy::Graphics
     VkFormat GetFormatHandle()const {return format;}
     VmaAllocation GetAllocation(){return allocation;}
     bool IsValid()const{return image!=VK_NULL_HANDLE;}
-    //void Destroy();
     
     
     

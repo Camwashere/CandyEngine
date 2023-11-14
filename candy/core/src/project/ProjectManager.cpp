@@ -159,11 +159,11 @@ namespace Candy
     }
     SharedPtr<Project> project = CreateSharedPtr<Project>(projectFile);
     
-    if (! CreateProjectDirectories(*project))
+    /*if (! CreateProjectDirectories(*project))
     {
       CANDY_CORE_ERROR("Failed to create new project. Failed to create project directories");
       return false;
-    }
+    }*/
     
     std::filesystem::path scenesPath = project->GetAssetsDirectory() / "scenes";
     if (!std::filesystem::create_directory(scenesPath))
@@ -208,7 +208,7 @@ namespace Candy
     
   }
   
-  bool ProjectManager::CreateProjectDirectories(const Project& project)
+  /*bool ProjectManager::CreateProjectDirectories(const Project& project)
   {
     if (!std::filesystem::create_directory(project.assetsDirectory))
     {
@@ -246,7 +246,7 @@ namespace Candy
       return false;
     }
     return true;
-  }
+  }*/
   bool ProjectManager::SaveProject()
   {
     if (data.activeProject)
@@ -409,7 +409,7 @@ namespace Candy
   const std::filesystem::path& ProjectManager::GetConfigDirectory()
   {
     CANDY_CORE_ASSERT(data.activeProject, "Cannot get project config directory, no active project");
-    return data.activeProject->configDirectory;
+    return data.activeProject->GetResourceManager().GetConfigDirectory();
   }
   const std::filesystem::path& ProjectManager::GetStartScenePath()
   {

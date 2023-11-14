@@ -5,8 +5,8 @@
 #include "candy/graphics/Color.hpp"
 #include <filesystem>
 #include "candy/graphics/vulkan/CommandBuffer.hpp"
-#include "candy/graphics/vulkan/Image.hpp"
-#include "candy/graphics/vulkan/ImageView.hpp"
+#include "candy/graphics/vulkan/VulkanImage.hpp"
+#include "candy/graphics/vulkan/VulkanImageView.hpp"
 #include "ImageFormat.hpp"
 #include "InternalTexture.hpp"
 #include <candy/base/Base.hpp>
@@ -30,7 +30,7 @@ namespace Candy::Graphics
   private:
     const uint32_t id;
     TextureSpecification specification;
-    ImageView imageView;
+    VulkanImageView imageView;
     VkDescriptorImageInfo descriptorImageInfo;
     InternalTexture* internal=nullptr;
     
@@ -56,10 +56,10 @@ namespace Candy::Graphics
     [[nodiscard]] Math::Vector2u GetSize()const;
     [[nodiscard]] const TextureSpecification& GetSpecification()const;
     [[nodiscard]] const std::filesystem::path& GetPath()const;
-    Image& GetImage();
-    [[nodiscard]] const Image& GetImage()const;
-    ImageView& GetImageView();
-    [[nodiscard]] const ImageView& GetImageView()const;
+    VulkanImage& GetImage();
+    [[nodiscard]] const VulkanImage& GetImage()const;
+    VulkanImageView& GetImageView();
+    [[nodiscard]] const VulkanImageView& GetImageView()const;
     [[nodiscard]] VkSampler GetSampler()const;
     [[nodiscard]] const VkDescriptorImageInfo& GetDescriptorImageInfo();
     

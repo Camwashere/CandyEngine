@@ -59,7 +59,7 @@ namespace Candy::Graphics
     }
     renderPasses.clear();
 
-// 8. ImageView objects
+// 8. VulkanImageView objects
     
     for(auto imageView : imageViews) {
       vkDestroyImageView(Vulkan::LogicalDevice(), *imageView, nullptr);
@@ -153,7 +153,7 @@ namespace Candy::Graphics
     buffers.erase(vulkanObject);
   }
   template<>
-  void DeletionQueue::Delete<Image*>(Image* vulkanObject)
+  void DeletionQueue::Delete<VulkanImage*>(VulkanImage* vulkanObject)
   {
     CANDY_PROFILE_FUNCTION();
     vmaDestroyImage(Vulkan::Allocator(), *vulkanObject, vulkanObject->GetAllocation());
@@ -161,7 +161,7 @@ namespace Candy::Graphics
     
   }
   template<>
-  void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject)
+  void DeletionQueue::Delete<VulkanImageView*>(VulkanImageView* vulkanObject)
   {
     CANDY_PROFILE_FUNCTION();
     vkDestroyImageView(Vulkan::LogicalDevice(), *vulkanObject, nullptr);
@@ -210,12 +210,12 @@ namespace Candy::Graphics
   }
   
   template<>
-  void DeletionQueue::Push<Image*>(Image* vulkanObject)
+  void DeletionQueue::Push<VulkanImage*>(VulkanImage* vulkanObject)
   {
     images.insert(vulkanObject);
   }
   template<>
-  void DeletionQueue::Push<ImageView*>(ImageView* vulkanObject)
+  void DeletionQueue::Push<VulkanImageView*>(VulkanImageView* vulkanObject)
   {
     imageViews.insert(vulkanObject);
   }

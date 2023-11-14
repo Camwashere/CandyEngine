@@ -19,7 +19,6 @@ namespace Candy
     [[nodiscard]] ResourceType GetType()const;
     [[nodiscard]] const std::filesystem::path& GetPath()const;
     
-    static std::string ResourceTypeToString(ResourceType type);
     
     
   };

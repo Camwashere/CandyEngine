@@ -185,7 +185,7 @@ namespace Candy::Graphics
     return VK_PRESENT_MODE_FIFO_KHR;
   }
   
-  ImageView &SwapChain::GetCurrentImageView()
+  VulkanImageView &SwapChain::GetCurrentImageView()
   {
     return buffers[imageIndex].view;
   }

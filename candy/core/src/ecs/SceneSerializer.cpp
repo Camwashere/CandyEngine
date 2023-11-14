@@ -277,10 +277,7 @@ namespace Candy::ECS
       {
         roots.push_back(entity);
       }
-      /*if (entity)
-      {
-        SerializeEntity(entitiesNode, entity);
-      }*/
+      
     }
     
     for (auto& r : roots)

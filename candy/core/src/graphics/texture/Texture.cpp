@@ -92,19 +92,19 @@ namespace Candy::Graphics
     
     return size.width > 0 && size.height > 0 && format.Valid();
   }
-  Image& Texture::GetImage()
+  VulkanImage& Texture::GetImage()
   {
     return internal->GetImage();
   }
-  const Image& Texture::GetImage()const
+  const VulkanImage& Texture::GetImage()const
   {
     return internal->GetImage();
   }
-  ImageView& Texture::GetImageView()
+  VulkanImageView& Texture::GetImageView()
   {
     return imageView;
   }
-  const ImageView& Texture::GetImageView()const
+  const VulkanImageView& Texture::GetImageView()const
   {
     return imageView;
   }

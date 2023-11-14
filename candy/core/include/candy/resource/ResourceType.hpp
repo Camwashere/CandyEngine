@@ -1,10 +1,10 @@
 #pragma once
-
+#include <cstdint>
 namespace Candy
 {
-  enum class ResourceType
+  enum class ResourceType : uint32_t
   {
-    Image,
+    Image=0,
     Texture,
     Font,
     Mesh,
@@ -13,7 +13,6 @@ namespace Candy
     Model,
     Script,
     Scene,
-    Project,
     Unknown,
   };
 }

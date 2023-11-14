@@ -1,20 +1,15 @@
 #include "candy/project/Project.hpp"
 #include <utility>
 #include "CandyPch.hpp"
-#include "candy/project/ProjectSerializer.hpp"
+
 
 namespace Candy
 {
   
-  Project::Project(std::filesystem::path  filePath) : projectFilePath(std::move(filePath)), rootDirectory(projectFilePath.parent_path())
+  Project::Project(std::filesystem::path  filePath) : projectFilePath(std::move(filePath)), rootDirectory(projectFilePath.parent_path()), resourceManager(rootDirectory)
   {
-    assetsDirectory = rootDirectory / "assets";
-    cacheDirectory = rootDirectory / "cache";
-    packagesDirectory = rootDirectory / "packages";
-    libraryDirectory = rootDirectory / "library";
-    logsDirectory = rootDirectory / "logs";
-    configDirectory = rootDirectory / "config";
-    metaDirectory = rootDirectory / "meta";
+    resourceManager.ValidateAll(true);
+    resourceManager.BuildDatabase();
   }
   
   std::string Project::GetName()const
@@ -31,7 +26,16 @@ namespace Candy
   }
   const std::filesystem::path& Project::GetAssetsDirectory()const
   {
-    return assetsDirectory;
+    return resourceManager.GetAssetsDirectory();
+  }
+  ResourceManager& Project::GetResourceManager()
+  {
+    return resourceManager;
+  }
+  
+  const ResourceManager& Project::GetResourceManager()const
+  {
+    return resourceManager;
   }
   std::filesystem::path Project::GetStartScenePath()const
   {

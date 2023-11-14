@@ -147,22 +147,22 @@ namespace Candy::Graphics
   
   
   
-  Image &InternalTexture::GetImage()
+  VulkanImage &InternalTexture::GetImage()
   {
     return image;
   }
   
-  const Image &InternalTexture::GetImage() const
+  const VulkanImage &InternalTexture::GetImage() const
   {
     return image;
   }
   
-  /*ImageView &InternalTexture::GetImageView()
+  /*VulkanImageView &InternalTexture::GetImageView()
   {
     return imageView;
   }
   
-  const ImageView &InternalTexture::GetImageView() const
+  const VulkanImageView &InternalTexture::GetImageView() const
   {
     return imageView;
   }

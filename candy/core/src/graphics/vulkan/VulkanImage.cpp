@@ -1,12 +1,12 @@
-#include <candy/graphics/vulkan/Image.hpp>
+#include <candy/graphics/vulkan/VulkanImage.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
-  Image::Image() : image(VK_NULL_HANDLE), format(VK_FORMAT_UNDEFINED), allocation(VK_NULL_HANDLE)
+  VulkanImage::VulkanImage() : image(VK_NULL_HANDLE), format(VK_FORMAT_UNDEFINED), allocation(VK_NULL_HANDLE)
   {
   }
-  Image::Image(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags) : image(VK_NULL_HANDLE), format(imgFormat), allocation(VK_NULL_HANDLE)
+  VulkanImage::VulkanImage(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags) : image(VK_NULL_HANDLE), format(imgFormat), allocation(VK_NULL_HANDLE)
   {
     
     Create(size, imgFormat, tiling, usageFlags, requiredFlags, allocationCreateFlags);
@@ -14,7 +14,7 @@ namespace Candy::Graphics
   
   
   
-  void Image::Create(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags)
+  void VulkanImage::Create(Math::Vector2u size, VkFormat imgFormat, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkMemoryPropertyFlagBits requiredFlags, VmaAllocationCreateFlagBits allocationCreateFlags)
   {
     CANDY_PROFILE_FUNCTION();
     format = imgFormat;

@@ -6,7 +6,6 @@
 #include <candy/event/Events.hpp>
 #include <imgui/imgui.h>
 #include <imguizmo/ImGuizmo.h>
-#include "candy/project/ProjectSerializer.hpp"
 #include <candy/ecs/SceneSerializer.hpp>
 #include <candy/utils/FileUtils.hpp>
 #include <utility>

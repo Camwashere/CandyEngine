@@ -7,7 +7,7 @@ namespace Candy
   private:
     static bool Serialize(const ProjectMetaData& metaData, const std::filesystem::path& filepath);
     static bool Deserialize(ProjectMetaData* metaData, const std::filesystem::path& filepath);
-    static bool CreateProjectDirectories(const Project& project);
+    //static bool CreateProjectDirectories(const Project& project);
     
     static bool LoadProjectDirectory(const std::filesystem::path& projectDirectoryPath);
     static bool LoadProjectFile(const std::filesystem::path& projectFilePath);

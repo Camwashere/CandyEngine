@@ -3,8 +3,8 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "device/VulkanDeviceManager.hpp"
-#include "Image.hpp"
-#include "ImageView.hpp"
+#include "VulkanImage.hpp"
+#include "VulkanImageView.hpp"
 #include "../FrameBuffer.hpp"
 
 struct GLFWwindow;
@@ -14,7 +14,7 @@ namespace Candy::Graphics
   
   struct SwapChainBuffer
   {
-    ImageView view;
+    VulkanImageView view;
     FrameBuffer frameBuffer;
   };
   
@@ -28,8 +28,8 @@ namespace Candy::Graphics
     std::vector<SwapChainBuffer> buffers;
     VkFormat imageFormat;
     VkExtent2D extent;
-    Image depthImage;
-    ImageView depthImageView;
+    VulkanImage depthImage;
+    VulkanImageView depthImageView;
     VkPresentModeKHR preferredPresentMode;
     uint32_t imageIndex = 0;
   
@@ -54,7 +54,7 @@ namespace Candy::Graphics
     void SetPreferredPresentMode(VkPresentModeKHR mode);
     VkPresentModeKHR GetPreferredPresentMode()const;
     FrameBuffer &GetCurrentFrameBuffer();
-    ImageView &GetCurrentImageView();
+    VulkanImageView &GetCurrentImageView();
     VkImage GetCurrentImage();
   
   private:

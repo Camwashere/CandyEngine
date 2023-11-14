@@ -1,6 +1,6 @@
 #pragma once
 #include "candy/graphics/texture/Texture.hpp"
-#include "candy/graphics/vulkan/ImageView.hpp"
+#include "candy/graphics/vulkan/VulkanImageView.hpp"
 namespace Candy::Graphics
 {
   class MaterialParameter
@@ -67,7 +67,7 @@ namespace Candy::Graphics
     uint32_t binding;
     uint32_t set;
     SharedPtr<Texture> texture;
-    //ImageView textureImageView;
+    //VulkanImageView textureImageView;
   
   public:
     MaterialTextureParameter(std::string name, uint32_t binding, uint32_t set);

@@ -3,6 +3,7 @@
 #include "candy/utils/Version.hpp"
 #include "candy/base/Base.hpp"
 #include <vector>
+#include <candy/resource/ResourceManager.hpp>
 namespace Candy
 {
 
@@ -20,15 +21,8 @@ namespace Candy
   private:
     std::filesystem::path projectFilePath;
     std::filesystem::path rootDirectory;
+    ResourceManager resourceManager;
     
-    
-    std::filesystem::path assetsDirectory;
-    std::filesystem::path cacheDirectory;
-    std::filesystem::path packagesDirectory;
-    std::filesystem::path libraryDirectory;
-    std::filesystem::path logsDirectory;
-    std::filesystem::path configDirectory;
-    std::filesystem::path metaDirectory;
     
     ProjectMetaData metaData;
     
@@ -41,6 +35,9 @@ namespace Candy
     [[nodiscard]] const ProjectMetaData& GetMetaData()const;
     [[nodiscard]] const std::filesystem::path& GetAssetsDirectory()const;
     [[nodiscard]] std::filesystem::path GetStartScenePath()const;
+    ResourceManager& GetResourceManager();
+    const ResourceManager& GetResourceManager()const;
+    
     
     friend class ProjectManager;
   };

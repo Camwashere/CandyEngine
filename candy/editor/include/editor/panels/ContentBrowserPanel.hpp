@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <CandyPch.hpp>
 #include "candy/graphics/texture/Texture.hpp"
-#include <candy/graphics/vulkan/ImageView.hpp>
+#include <candy/graphics/vulkan/VulkanImageView.hpp>
 namespace Candy
 {
   class ContentBrowserPanel

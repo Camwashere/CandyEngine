@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 #include "InternalResource.hpp"
-
+#include <unordered_map>
 namespace c4::yml
 {
   class Tree;
@@ -18,6 +18,7 @@ namespace Candy
     explicit ResourceDatabase(const std::filesystem::path& rootDirectory);
     
   public:
+    void Build(const std::unordered_map<ResourceType, std::vector<uint32_t>>& resourceMap, const std::unordered_map<uint32_t, InternalResource>& resources);
     [[nodiscard]] bool ValidFile()const;
     bool CreateFile(bool replaceExisting = false);
     bool ValidateResource(const InternalResource& resource);

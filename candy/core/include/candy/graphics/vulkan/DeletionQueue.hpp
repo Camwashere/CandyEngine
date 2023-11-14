@@ -3,8 +3,8 @@
 #include <functional>
 #include <vulkan/vulkan.h>
 #include <CandyPch.hpp>
-#include <candy/graphics/vulkan/Image.hpp>
-#include <candy/graphics/vulkan/ImageView.hpp>
+#include <candy/graphics/vulkan/VulkanImage.hpp>
+#include <candy/graphics/vulkan/VulkanImageView.hpp>
 #include <candy/graphics/GraphicsContext.hpp>
 #include <candy/graphics/StorageBuffer.hpp>
 #include <list>
@@ -22,8 +22,8 @@ namespace Candy::Graphics
   private:
     std::set<VkSwapchainKHR> swapChains;
     std::set<FrameBuffer*> frameBuffers;
-    std::set<Image*> images;
-    std::set<ImageView*> imageViews;
+    std::set<VulkanImage*> images;
+    std::set<VulkanImageView*> imageViews;
     std::set<VkRenderPass> renderPasses;
     std::set<VkPipelineLayout> pipelineLayouts;
     std::set<VkPipeline> pipelines;
@@ -64,9 +64,9 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Push<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
   template<>
-  void DeletionQueue::Push<Image*>(Image* vulkanObject);
+  void DeletionQueue::Push<VulkanImage*>(VulkanImage* vulkanObject);
   template<>
-  void DeletionQueue::Push<ImageView*>(ImageView* vulkanObject);
+  void DeletionQueue::Push<VulkanImageView*>(VulkanImageView* vulkanObject);
   template<>
   void DeletionQueue::Push<VkRenderPass>(VkRenderPass vulkanObject);
   template<>
@@ -99,9 +99,9 @@ namespace Candy::Graphics
   template<>
   void DeletionQueue::Delete<VkSwapchainKHR>(VkSwapchainKHR vulkanObject);
   template<>
-  void DeletionQueue::Delete<Image*>(Image* vulkanObject);
+  void DeletionQueue::Delete<VulkanImage*>(VulkanImage* vulkanObject);
   template<>
-  void DeletionQueue::Delete<ImageView*>(ImageView* vulkanObject);
+  void DeletionQueue::Delete<VulkanImageView*>(VulkanImageView* vulkanObject);
   template<>
   void DeletionQueue::Delete<FrameBuffer*>(FrameBuffer* vulkanObject);
   template<>

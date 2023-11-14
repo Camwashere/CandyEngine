@@ -13,6 +13,8 @@ namespace Candy
     std::filesystem::path rootDirectory;
     std::filesystem::path assetsDirectory;
     std::filesystem::path cacheDirectory;
+    std::filesystem::path configDirectory;
+    std::filesystem::path logsDirectory;
     ResourceDatabase database;
     
     std::deque<uint32_t> freeIDs;
@@ -20,17 +22,22 @@ namespace Candy
     std::unordered_map<uint32_t, InternalResource> resources;
     std::unordered_map<ResourceType, std::vector<uint32_t>> resourceTypeMap;
     
-  private:
+    
+  public:
+    explicit ResourceManager(std::filesystem::path  rootDirectory);
+    
+  public:
     void BuildDatabase();
-    bool ValidateRootDirectory(bool createIfMissing = true);
-    
-  public:
-    explicit ResourceManager(std::filesystem::path  rootDirectory, bool createMissing);
-    
-  public:
+    bool ValidateAll(bool createIfMissing = true);
     void AddResource(ResourceType resourceType, const std::filesystem::path& resourceFilePath);
     const std::filesystem::path& GetRootDirectory()const;
-    static ResourceType ResourceTypeFromExtension(const std::string& extension);
+    const std::filesystem::path& GetAssetsDirectory()const;
+    const std::filesystem::path& GetCacheDirectory()const;
+    const std::filesystem::path& GetConfigDirectory()const;
+    const std::filesystem::path& GetLogsDirectory()const;
+    
+    
+    
     static ResourceType DetermineResourceType(const std::filesystem::path& path);
     
     

@@ -183,8 +183,8 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/Vulkan.hpp
         candy/core/include/candy/graphics/vulkan/CommandBuffer.hpp
         candy/core/include/candy/graphics/vulkan/DeletionQueue.hpp
-        candy/core/include/candy/graphics/vulkan/Image.hpp
-        candy/core/include/candy/graphics/vulkan/ImageView.hpp
+        candy/core/include/candy/graphics/vulkan/VulkanImage.hpp
+        candy/core/include/candy/graphics/vulkan/VulkanImageView.hpp
         candy/core/include/candy/graphics/vulkan/RenderPass.hpp
         candy/core/include/candy/graphics/vulkan/SwapChain.hpp
         candy/core/include/candy/graphics/vulkan/VulkanBuffer.hpp
@@ -284,7 +284,7 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/StorageBuffer.cpp
         candy/core/src/graphics/vulkan/device/VulkanDeviceManager.cpp
         candy/core/src/graphics/shader/ShaderProperty.cpp
-        candy/core/src/graphics/vulkan/ImageView.cpp
+        candy/core/src/graphics/vulkan/VulkanImageView.cpp
         candy/core/src/graphics/shader/Shader.cpp
         candy/core/src/graphics/IndexBuffer.cpp
         candy/core/src/graphics/vulkan/SwapChain.cpp
@@ -292,7 +292,7 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/vulkan/RenderPass.cpp
         candy/core/src/graphics/shader/ShaderLayout.cpp
         candy/core/src/graphics/VertexArray.cpp
-        candy/core/src/graphics/vulkan/Image.cpp
+        candy/core/src/graphics/vulkan/VulkanImage.cpp
         candy/core/src/graphics/shader/processing/ShaderPostProcessor.cpp
         candy/core/src/graphics/vulkan/DeletionQueue.cpp
         candy/core/src/graphics/material/MaterialData.cpp
@@ -358,17 +358,14 @@ set(CANDY_APP_HEADERS candy/core/include/candy/app/Application.hpp
 set(CANDY_APP_SOURCES candy/core/src/app/Application.cpp
         candy/core/src/app/LayerStack.cpp
         candy/core/src/project/Project.cpp
-        candy/core/src/project/ProjectSerializer.cpp
         candy/core/src/app/Window.cpp)
 
 set(CANDY_APP_FILES ${CANDY_APP_HEADERS} ${CANDY_APP_SOURCES})
 
 set(CANDY_PROJECT_HEADERS candy/core/include/candy/project/Project.hpp
-        candy/core/include/candy/project/ProjectSerializer.hpp
         candy/core/include/candy/project/ProjectManager.hpp)
 
 set(CANDY_PROJECT_SOURCES candy/core/src/project/Project.cpp
-        candy/core/src/project/ProjectSerializer.cpp
         candy/core/src/project/ProjectManager.cpp)
 
 set(CANDY_PROJECT_FILES ${CANDY_PROJECT_HEADERS} ${CANDY_PROJECT_SOURCES})
@@ -492,6 +489,9 @@ set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FIL
         candy/core/include/candy/resource/ResourceDatabase.hpp
         candy/core/src/resource/ResourceDatabase.cpp
         candy/core/src/resource/InternalResource.cpp
+        candy/core/include/candy/resource/Resource.hpp
+        candy/core/src/resource/Resource.cpp
+        candy/core/include/candy/resource/ImageResourceManager.hpp
 )
 
 

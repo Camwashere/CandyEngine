@@ -1,11 +1,17 @@
 #include <candy/resource/ResourceManager.hpp>
 #include <CandyPch.hpp>
+#include <candy/resource/Resource.hpp>
 namespace Candy
 {
-  ResourceManager::ResourceManager(std::filesystem::path  dir, bool createMissing) : rootDirectory(std::move(dir)), database(rootDirectory)
+  ResourceManager::ResourceManager(std::filesystem::path  dir) : rootDirectory(std::move(dir)), database(rootDirectory)
   {
-    bool validated = ValidateRootDirectory(createMissing);
-    CANDY_CORE_ASSERT_MSG(validated, "Failed to validate resource manager directory structure for directory '{}'", rootDirectory.string());
+    assetsDirectory = rootDirectory / "assets";
+    cacheDirectory = rootDirectory / "cache";
+    configDirectory = rootDirectory / "config";
+    logsDirectory = rootDirectory / "logs";
+    
+    
+    
     
   
   }
@@ -18,9 +24,13 @@ namespace Candy
         const auto& path = dirEntry.path();
         ResourceType resourceType = DetermineResourceType(path);
         
-        AddResource(resourceType, path);
+        if (resourceType != ResourceType::Unknown)
+        {
+          AddResource(resourceType, path);
+        }
       }
     }
+    database.Build(resourceTypeMap, resources);
   }
   
   void ResourceManager::AddResource(ResourceType resourceType, const std::filesystem::path& resourceFilePath)
@@ -60,35 +70,42 @@ namespace Candy
     
     }
   }
-  bool ResourceManager::ValidateRootDirectory(bool createIfMissing)
+  
+  static bool ValidateDirectory(const std::filesystem::path& dir, bool createIfMissing)
+  {
+    if (! std::filesystem::exists(dir))
+    {
+      if (createIfMissing)
+      {
+        std::filesystem::create_directory(dir);
+      }
+      else
+      {
+        return false;
+        
+      }
+    }
+    return true;
+  }
+  bool ResourceManager::ValidateAll(bool createIfMissing)
   {
     CANDY_CORE_ASSERT(std::filesystem::exists(rootDirectory) && std::filesystem::is_directory(rootDirectory));
     
-    assetsDirectory = rootDirectory / "assets";
-    if (! std::filesystem::exists(assetsDirectory))
+    if (! ValidateDirectory(assetsDirectory, createIfMissing))
     {
-      if (createIfMissing)
-      {
-        std::filesystem::create_directory(assetsDirectory);
-      }
-      else
-      {
-        return false;
-      
-      }
+      return false;
     }
-    cacheDirectory = rootDirectory / "cache";
-    if (! std::filesystem::exists(cacheDirectory))
+    if (! ValidateDirectory(cacheDirectory, createIfMissing))
     {
-      if (createIfMissing)
-      {
-        std::filesystem::create_directory(cacheDirectory);
-      }
-      else
-      {
-        return false;
-      
-      }
+      return false;
+    }
+    if (! ValidateDirectory(configDirectory, createIfMissing))
+    {
+      return false;
+    }
+    if (! ValidateDirectory(logsDirectory, createIfMissing))
+    {
+      return false;
     }
     if (! database.ValidFile())
     {
@@ -106,51 +123,34 @@ namespace Candy
     {
       if (path.has_extension())
       {
-        return ResourceTypeFromExtension(path.extension().string());
+        return Resource::TypeFromExtension(path.extension().string());
       }
       
     }
     return ResourceType::Unknown;
   }
-  ResourceType ResourceManager::ResourceTypeFromExtension(const std::string& extension)
-  {
-    if (extension == ".ttf" || extension == ".otf" || extension == ".woff")
-    {
-      return ResourceType::Font;
-    }
-    if (extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".bmp" || extension == ".tga")
-    {
-      return ResourceType::Image;
-    }
-    if (extension == ".tex")
-    {
-      return ResourceType::Texture;
-    }
-    if (extension == ".glsl" || extension == ".hlsl" || extension == ".spv")
-    {
-      return ResourceType::Shader;
-    }
-    if (extension == ".mesh")
-    {
-      return ResourceType::Mesh;
-    }
-    if (extension == ".anim")
-    {
-      return ResourceType::Animation;
-    }
-    if (extension == ".model" || extension == ".fbx" || extension == ".obj")
-    {
-      return ResourceType::Model;
-    }
-    if (extension == ".cs")
-    {
-      return ResourceType::Script;
-    }
-    return ResourceType::Unknown;
-  }
+  
   const std::filesystem::path& ResourceManager::GetRootDirectory()const
   {
     return rootDirectory;
+  }
+  
+  const std::filesystem::path& ResourceManager::GetAssetsDirectory()const
+  {
+    return assetsDirectory;
+  }
+  const std::filesystem::path& ResourceManager::GetCacheDirectory()const
+  {
+    return cacheDirectory;
+  }
+  
+  const std::filesystem::path& ResourceManager::GetConfigDirectory()const
+  {
+    return configDirectory;
+  }
+  const std::filesystem::path& ResourceManager::GetLogsDirectory()const
+  {
+    return logsDirectory;
   }
   
   

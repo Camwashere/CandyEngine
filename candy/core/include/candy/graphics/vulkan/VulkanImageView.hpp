@@ -4,22 +4,22 @@
 namespace Candy::Graphics
 {
   class Texture;
-  class Image;
+  class VulkanImage;
 }
 namespace Candy::Graphics
 {
-  class ImageView
+  class VulkanImageView
   {
   private:
     VkImageView imageView;
     VkSampler sampler;
     
   public:
-    ImageView();
-    //explicit ImageView(Texture& texture, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
-    ImageView(const Image& image, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
-    //ImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
-    //~ImageView();
+    VulkanImageView();
+    //explicit VulkanImageView(Texture& texture, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
+    VulkanImageView(const VulkanImage& image, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
+    //VulkanImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
+    //~VulkanImageView();
     
   public:
     operator VkImageView(){return imageView;}
@@ -29,7 +29,7 @@ namespace Candy::Graphics
     void CreateSampler();
     void SetSwapChainImage(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     //void Set(Texture& texture, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
-    void Set(const Image& image, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
+    void Set(const VulkanImage& image, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     //void Set(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
     [[nodiscard]] bool IsValid()const;
     [[nodiscard]] VkSampler GetSampler()const{return sampler;}

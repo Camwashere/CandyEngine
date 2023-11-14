@@ -1,15 +1,15 @@
-#include <candy/graphics/vulkan/ImageView.hpp>
+#include <candy/graphics/vulkan/VulkanImageView.hpp>
 #include <candy/graphics/Vulkan.hpp>
 #include "candy/graphics/texture/Texture.hpp"
 #include <candy/graphics/vulkan/DeletionQueue.hpp>
 namespace Candy::Graphics
 {
-  ImageView::ImageView() : imageView(VK_NULL_HANDLE)
+  VulkanImageView::VulkanImageView() : imageView(VK_NULL_HANDLE)
   {
   
   }
   
-  ImageView::ImageView(const Image& image, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
+  VulkanImageView::VulkanImageView(const VulkanImage& image, VkImageAspectFlags aspectFlags) : imageView(VK_NULL_HANDLE)
   {
     CANDY_PROFILE_FUNCTION();
     VkImageViewCreateInfo viewInfo{};
@@ -30,7 +30,7 @@ namespace Candy::Graphics
   }
   
   
-  void ImageView::CreateSampler()
+  void VulkanImageView::CreateSampler()
   {
     CANDY_PROFILE_FUNCTION();
     VkSamplerCreateInfo samplerInfo{};
@@ -60,7 +60,7 @@ namespace Candy::Graphics
     CANDY_VULKAN_CHECK(vkCreateSampler(Vulkan::LogicalDevice(), &samplerInfo, nullptr, &sampler));
   }
   
-  void ImageView::Set(const Image& image, VkImageAspectFlags aspectFlags)
+  void VulkanImageView::Set(const VulkanImage& image, VkImageAspectFlags aspectFlags)
   {
     CANDY_PROFILE_FUNCTION();
     VkImageViewCreateInfo viewInfo{};
@@ -81,7 +81,7 @@ namespace Candy::Graphics
     Vulkan::DeletionQueue().Push(this);
     
   }
-  void ImageView::SetSwapChainImage(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+  void VulkanImageView::SetSwapChainImage(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
   {
     CANDY_PROFILE_FUNCTION();
     VkImageViewCreateInfo viewInfo{};
@@ -100,7 +100,7 @@ namespace Candy::Graphics
     Vulkan::DeletionQueue().Push(this);
   }
   
-  bool ImageView::IsValid()const
+  bool VulkanImageView::IsValid()const
   {
     return imageView != VK_NULL_HANDLE;
   }

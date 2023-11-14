@@ -1,6 +1,6 @@
 #pragma once
-#include "candy/graphics/vulkan/Image.hpp"
-#include "candy/graphics/vulkan/ImageView.hpp"
+#include "candy/graphics/vulkan/VulkanImage.hpp"
+#include "candy/graphics/vulkan/VulkanImageView.hpp"
 #include <filesystem>
 #include "ImageFormat.hpp"
 namespace Candy::Graphics
@@ -9,7 +9,7 @@ namespace Candy::Graphics
   {
   private:
     
-    Image image;
+    VulkanImage image;
     std::filesystem::path path;
     Math::Vector2u size{1, 1};
     ImageFormat format = ImageFormat::RGBA8;
@@ -35,8 +35,8 @@ namespace Candy::Graphics
     void ResetRef();
     [[nodiscard]] int64_t GetRefCount()const;
     [[nodiscard]] const std::filesystem::path& GetPath()const;
-    Image& GetImage();
-    [[nodiscard]] const Image& GetImage()const;
+    VulkanImage& GetImage();
+    [[nodiscard]] const VulkanImage& GetImage()const;
     
     [[nodiscard]] uint32_t GetWidth()const;
     [[nodiscard]] uint32_t GetHeight()const;

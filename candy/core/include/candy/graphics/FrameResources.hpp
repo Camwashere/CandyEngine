@@ -3,8 +3,8 @@
 #include <array>
 #include <candy/graphics/UniformBuffer.hpp>
 #include <candy/graphics/StorageBuffer.hpp>
-#include <candy/graphics/vulkan/Image.hpp>
-#include <candy/graphics/vulkan/ImageView.hpp>
+#include <candy/graphics/vulkan/VulkanImage.hpp>
+#include <candy/graphics/vulkan/VulkanImageView.hpp>
 #include <candy/graphics/FrameBuffer.hpp>
 #include <candy/graphics/PixelBuffer.hpp>
 #include <candy/graphics/vulkan/RenderTarget.hpp>
