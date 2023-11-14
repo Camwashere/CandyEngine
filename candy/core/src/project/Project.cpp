@@ -10,6 +10,7 @@ namespace Candy
   {
     resourceManager.ValidateAll(true);
     resourceManager.BuildDatabase();
+    resourceManager.StartFileWatcher();
   }
   
   std::string Project::GetName()const

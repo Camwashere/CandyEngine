@@ -1,8 +1,11 @@
-#include <candy/resource/AssetManager.hpp>
+#include "candy/resource/asset/AssetManager.hpp"
 #include <CandyPch.hpp>
-#include "candy/resource/Asset.hpp"
+#include "candy/resource/asset/Asset.hpp"
+
+
 namespace Candy
 {
+  
   AssetManager::AssetManager(std::filesystem::path  dir) : rootDirectory(std::move(dir)), database(rootDirectory)
   {
     assetsDirectory = rootDirectory / "assets";
@@ -12,9 +15,37 @@ namespace Candy
     
     
     
+    efsw::WatchID watchID = fileWatcher.addWatch(assetsDirectory.string(), this, true);
+    watchIDs.push_back(watchID);
     
-  
   }
+  
+  
+  void AssetManager::handleFileAction(efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename)
+  {
+    
+    switch(action)
+    {
+      case efsw::Actions::Add:
+        CANDY_CORE_INFO("File added: '{}', '{}'", dir, filename);
+        break;
+      case efsw::Actions::Delete:
+        CANDY_CORE_INFO("File removed: '{}', '{}'", dir, filename);
+        break;
+      case efsw::Actions::Modified:
+        CANDY_CORE_INFO("File modified: '{}', '{}'", dir, filename);
+        break;
+      case efsw::Actions::Moved:
+        CANDY_CORE_INFO("File moved: '{}', '{}', Old filename: '{}'", dir, filename, oldFilename);
+        break;
+      default:
+        CANDY_CORE_INFO("File action: '{}', '{}'", dir, filename);
+        break;
+    }
+    CANDY_CORE_INFO("Dir: '{}', filename: '{}', Old filename: '{}'", dir, filename, oldFilename);
+  }
+  
+  
   void AssetManager::BuildDatabase()
   {
     for (const auto& dirEntry : std::filesystem::recursive_directory_iterator(assetsDirectory))
@@ -128,6 +159,15 @@ namespace Candy
       
     }
     return AssetType::Unknown;
+  }
+  
+  void AssetManager::StartFileWatcher()
+  {
+    fileWatcherThread = std::thread([&] { fileWatcher.watch(); });
+  }
+  void AssetManager::StopFileWatcher()
+  {
+    fileWatcherThread.join();
   }
   
   const std::filesystem::path& AssetManager::GetRootDirectory()const

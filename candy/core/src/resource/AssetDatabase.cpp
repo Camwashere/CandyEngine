@@ -1,6 +1,6 @@
-#include <candy/resource/AssetDatabase.hpp>
+#include "candy/resource/asset/AssetDatabase.hpp"
 #include <fstream>
-#include "candy/resource/Asset.hpp"
+#include "candy/resource/asset/Asset.hpp"
 #include <CandyPch.hpp>
 #include <ryml_std.hpp>
 #include <ryml.hpp>

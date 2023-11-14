@@ -15,6 +15,7 @@ add_subdirectory(lib/SPIRV-Cross)
 add_subdirectory(lib/antlr)
 add_subdirectory(lib/fontatlas)
 add_subdirectory(lib/nativefiledialog)
+add_subdirectory(lib/efsw)
 
 if(TARGET assimp::assimp)
     message(STATUS "assimp package found!")
@@ -474,12 +475,12 @@ set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
         candy/core/include/CandyEngine.hpp
         candy/core/include/CandyEngine.cpp
-        candy/core/include/candy/resource/AssetManager.hpp
-        candy/core/include/candy/resource/AssetType.hpp
+        candy/core/include/candy/resource/asset/AssetManager.hpp
+        candy/core/include/candy/resource/asset/AssetType.hpp
         candy/core/src/resource/AssetManager.cpp
-        candy/core/include/candy/resource/AssetDatabase.hpp
+        candy/core/include/candy/resource/asset/AssetDatabase.hpp
         candy/core/src/resource/AssetDatabase.cpp
-        candy/core/include/candy/resource/Asset.hpp
+        candy/core/include/candy/resource/asset/Asset.hpp
         candy/core/src/resource/Asset.cpp
 )
 
@@ -537,7 +538,7 @@ target_include_directories(CandyEngine PRIVATE lib/fontatlas/lib/freetype2/inclu
 
 
 target_link_libraries(CandyEngine PRIVATE shaderc_shared ryml::ryml assimp::assimp antlr4_static nfd)
-target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan spirv-cross-c EnTT::EnTT FontAtlas)
+target_link_libraries(CandyEngine PUBLIC spdlog::spdlog glfw Vulkan::Vulkan spirv-cross-c EnTT::EnTT FontAtlas efsw)
 
 
 
