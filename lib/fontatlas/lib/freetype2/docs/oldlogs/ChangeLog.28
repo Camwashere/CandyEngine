@@ -99,7 +99,7 @@
 	[base] Remove a check for resource ID in the resource fork driver.
 
 	LastResort.dfont has a marginal resource ID 0xFFFF for sfnt
-	resource.  Inside Macintosh: More Macintosh Toolbox, `Resource IDs'
+	resource.  Inside Macintosh: More Macintosh Toolbox, `Asset IDs'
 	(1-46), tells that some IDs are reserved and should not be used.
 	FreeType2 just uses resource ID to sort the fragmented resource.
 	To accept the marginal fonts, the checking is removed.

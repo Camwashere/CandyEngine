@@ -342,7 +342,7 @@ SOURCE=..\..\..\include\freetype\config\ftoption.h
 SOURCE=..\..\..\include\freetype\config\ftstdlib.h
 # End Source File
 # End Group
-# Begin Group "Resource Files"
+# Begin Group "Asset Files"
 
 # PROP Default_Filter "rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 # Begin Source File

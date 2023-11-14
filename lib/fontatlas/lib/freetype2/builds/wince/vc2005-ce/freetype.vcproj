@@ -868,7 +868,7 @@
       <File RelativePath="..\..\..\include\freetype\config\ftstdlib.h">
       </File>
     </Filter>
-    <Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx">
+    <Filter Name="Asset Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx">
       <File RelativePath="..\..\..\src\base\ftver.rc">
       </File>
     </Filter>

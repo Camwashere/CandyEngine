@@ -97,7 +97,7 @@ ANSIFLAGS := @XX_ANSIFLAGS@
 CCraw       := $(CC)
 override CC := $(LIBTOOL) --mode=compile $(CCraw)
 
-# Resource compiler to use on Cygwin/MinGW, usually windres.
+# Asset compiler to use on Cygwin/MinGW, usually windres.
 #
 RCraw := @RC@
 ifneq ($(RCraw),)

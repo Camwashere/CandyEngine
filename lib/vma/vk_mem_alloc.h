@@ -38,7 +38,7 @@ License: MIT
   - \subpage quick_start
     - [Project setup](@ref quick_start_project_setup)
     - [Initialization](@ref quick_start_initialization)
-    - [Resource allocation](@ref quick_start_resource_allocation)
+    - [Asset allocation](@ref quick_start_resource_allocation)
   - \subpage choosing_memory_type
     - [Usage](@ref choosing_memory_type_usage)
     - [Required and preferred flags](@ref choosing_memory_type_required_preferred_flags)
@@ -3455,7 +3455,7 @@ Returns true if two memory blocks occupy overlapping pages.
 ResourceA must be in less memory offset than ResourceB.
 
 Algorithm is based on "Vulkan 1.0.39 - A Specification (with all registered Vulkan extensions)"
-chapter 11.6 "Resource Memory Association", paragraph "Buffer-Image Granularity".
+chapter 11.6 "Asset Memory Association", paragraph "Buffer-Image Granularity".
 */
 static inline bool VmaBlocksOnSamePage(
     VkDeviceSize resourceAOffset,
@@ -17720,7 +17720,7 @@ vmaCreateAllocator(&allocatorCreateInfo, &allocator);
 \endcode
 
 
-\section quick_start_resource_allocation Resource allocation
+\section quick_start_resource_allocation Asset allocation
 
 When you want to create a buffer or image:
 
@@ -18131,7 +18131,7 @@ set to more than 0 will currently try to allocate memory blocks without checking
 fit within budget.
 
 
-\page resource_aliasing Resource aliasing (overlap)
+\page resource_aliasing Asset aliasing (overlap)
 
 New explicit graphics APIs (Vulkan and Direct3D 12), thanks to manual memory
 management, give an opportunity to alias (overlap) multiple resources in the
@@ -18143,7 +18143,7 @@ are going to use some intermediate textures or buffers only during a small range
 and you know these ranges don't overlap in time, you can bind these resources to
 the same place in memory, even if they have completely different parameters (width, height, format etc.).
 
-![Resource aliasing (overlap)](../gfx/Aliasing.png)
+![Asset aliasing (overlap)](../gfx/Aliasing.png)
 
 Such scenario is possible using VMA, but you need to create your images manually.
 Then you need to calculate parameters of an allocation to be made using formula:

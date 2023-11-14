@@ -2,7 +2,7 @@
 #include <cstdint>
 namespace Candy
 {
-  enum class ResourceType : uint32_t
+  enum class AssetType : uint32_t
   {
     Image=0,
     Texture,

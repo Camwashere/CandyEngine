@@ -1,13 +1,12 @@
 #pragma once
 #include <filesystem>
-#include "InternalResource.hpp"
 #include <unordered_map>
 #include <vector>
-#include "ResourceDatabase.hpp"
+#include "AssetDatabase.hpp"
 #include <deque>
 namespace Candy
 {
-  class ResourceManager
+  class AssetManager
   {
   private:
     std::filesystem::path rootDirectory;
@@ -15,21 +14,21 @@ namespace Candy
     std::filesystem::path cacheDirectory;
     std::filesystem::path configDirectory;
     std::filesystem::path logsDirectory;
-    ResourceDatabase database;
+    AssetDatabase database;
     
     std::deque<uint32_t> freeIDs;
     uint32_t currentMaxID=0;
-    std::unordered_map<uint32_t, InternalResource> resources;
-    std::unordered_map<ResourceType, std::vector<uint32_t>> resourceTypeMap;
+    std::unordered_map<uint32_t, Asset> assets;
+    std::unordered_map<AssetType, std::vector<uint32_t>> assetTypeMap;
     
     
   public:
-    explicit ResourceManager(std::filesystem::path  rootDirectory);
+    explicit AssetManager(std::filesystem::path  rootDirectory);
     
   public:
     void BuildDatabase();
     bool ValidateAll(bool createIfMissing = true);
-    void AddResource(ResourceType resourceType, const std::filesystem::path& resourceFilePath);
+    void AddAsset(AssetType assetType, const std::filesystem::path& resourceFilePath);
     const std::filesystem::path& GetRootDirectory()const;
     const std::filesystem::path& GetAssetsDirectory()const;
     const std::filesystem::path& GetCacheDirectory()const;
@@ -38,7 +37,7 @@ namespace Candy
     
     
     
-    static ResourceType DetermineResourceType(const std::filesystem::path& path);
+    static AssetType DetermineAssetType(const std::filesystem::path& path);
     
     
   };

@@ -177,7 +177,7 @@ namespace Candy::Graphics
     ReflectStageUniformBuffers(shaderLayout, compiler, stage, resources.uniform_buffers);
     ReflectStageSampledImages(shaderLayout, compiler, stage, resources.sampled_images);
     ReflectStagePushConstants(shaderLayout, compiler, stage);
-    //spirv_cross::SmallVector<spirv_cross::Resource> stageInputs;
+    //spirv_cross::SmallVector<spirv_cross::Asset> stageInputs;
   }
   void ShaderPostProcessor::ReflectSpecializationConstants(ShaderLayout& shaderLayout, const spirv_cross::CompilerGLSL& compiler, ShaderData::Stage stage, const spirv_cross::SmallVector<spirv_cross::SpecializationConstant, 8>& specConstants)
   {

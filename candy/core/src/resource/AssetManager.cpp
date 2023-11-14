@@ -1,9 +1,9 @@
-#include <candy/resource/ResourceManager.hpp>
+#include <candy/resource/AssetManager.hpp>
 #include <CandyPch.hpp>
-#include <candy/resource/Resource.hpp>
+#include "candy/resource/Asset.hpp"
 namespace Candy
 {
-  ResourceManager::ResourceManager(std::filesystem::path  dir) : rootDirectory(std::move(dir)), database(rootDirectory)
+  AssetManager::AssetManager(std::filesystem::path  dir) : rootDirectory(std::move(dir)), database(rootDirectory)
   {
     assetsDirectory = rootDirectory / "assets";
     cacheDirectory = rootDirectory / "cache";
@@ -15,57 +15,57 @@ namespace Candy
     
   
   }
-  void ResourceManager::BuildDatabase()
+  void AssetManager::BuildDatabase()
   {
     for (const auto& dirEntry : std::filesystem::recursive_directory_iterator(assetsDirectory))
     {
       if (dirEntry.is_regular_file())
       {
         const auto& path = dirEntry.path();
-        ResourceType resourceType = DetermineResourceType(path);
+        AssetType resourceType = DetermineAssetType(path);
         
-        if (resourceType != ResourceType::Unknown)
+        if (resourceType != AssetType::Unknown)
         {
-          AddResource(resourceType, path);
+          AddAsset(resourceType, path);
         }
       }
     }
-    database.Build(resourceTypeMap, resources);
+    database.Build(assetTypeMap, assets);
   }
   
-  void ResourceManager::AddResource(ResourceType resourceType, const std::filesystem::path& resourceFilePath)
+  void AssetManager::AddAsset(AssetType assetType, const std::filesystem::path& assetFilePath)
   {
     if (freeIDs.empty())
     {
       uint32_t currentID = currentMaxID;
       
-      auto it = resources.find(currentID);
-      if (it != resources.end())
+      auto it = assets.find(currentID);
+      if (it != assets.end())
       {
-        CANDY_CORE_ERROR("Add resource ID assignment error with id: '{}', filepath: '{}'", currentID, resourceFilePath.string());
+        CANDY_CORE_ERROR("Add asset ID assignment error with id: '{}', filepath: '{}'", currentID, assetFilePath.string());
         return;
       }
       
       currentMaxID++;
-      InternalResource resource(currentID, resourceType, resourceFilePath);
-      resources.insert({currentID, resource});
-      resourceTypeMap[resourceType].push_back(currentID);
+      Asset asset(currentID, assetType, assetFilePath);
+      assets.insert({currentID, asset});
+      assetTypeMap[assetType].push_back(currentID);
     }
     else
     {
       uint32_t currentID = freeIDs.front();
       freeIDs.pop_front();
       
-      auto it = resources.find(currentID);
-      if (it != resources.end())
+      auto it = assets.find(currentID);
+      if (it != assets.end())
       {
-        CANDY_CORE_ERROR("Add resource ID assignment error with id: '{}', filepath: '{}'", currentID, resourceFilePath.string());
+        CANDY_CORE_ERROR("Add asset ID assignment error with id: '{}', filepath: '{}'", currentID, assetFilePath.string());
         return;
       }
       
-      InternalResource resource(currentID, resourceType, resourceFilePath);
-      resources.insert({currentID, resource});
-      resourceTypeMap[resourceType].push_back(currentID);
+      Asset asset(currentID, assetType, assetFilePath);
+      assets.insert({currentID, asset});
+      assetTypeMap[assetType].push_back(currentID);
       
     
     }
@@ -87,7 +87,7 @@ namespace Candy
     }
     return true;
   }
-  bool ResourceManager::ValidateAll(bool createIfMissing)
+  bool AssetManager::ValidateAll(bool createIfMissing)
   {
     CANDY_CORE_ASSERT(std::filesystem::exists(rootDirectory) && std::filesystem::is_directory(rootDirectory));
     
@@ -117,38 +117,38 @@ namespace Candy
     return true;
   }
   
-  ResourceType ResourceManager::DetermineResourceType(const std::filesystem::path& path)
+  AssetType AssetManager::DetermineAssetType(const std::filesystem::path& path)
   {
     if (std::filesystem::is_regular_file(path))
     {
       if (path.has_extension())
       {
-        return Resource::TypeFromExtension(path.extension().string());
+        return Asset::TypeFromExtension(path.extension().string());
       }
       
     }
-    return ResourceType::Unknown;
+    return AssetType::Unknown;
   }
   
-  const std::filesystem::path& ResourceManager::GetRootDirectory()const
+  const std::filesystem::path& AssetManager::GetRootDirectory()const
   {
     return rootDirectory;
   }
   
-  const std::filesystem::path& ResourceManager::GetAssetsDirectory()const
+  const std::filesystem::path& AssetManager::GetAssetsDirectory()const
   {
     return assetsDirectory;
   }
-  const std::filesystem::path& ResourceManager::GetCacheDirectory()const
+  const std::filesystem::path& AssetManager::GetCacheDirectory()const
   {
     return cacheDirectory;
   }
   
-  const std::filesystem::path& ResourceManager::GetConfigDirectory()const
+  const std::filesystem::path& AssetManager::GetConfigDirectory()const
   {
     return configDirectory;
   }
-  const std::filesystem::path& ResourceManager::GetLogsDirectory()const
+  const std::filesystem::path& AssetManager::GetLogsDirectory()const
   {
     return logsDirectory;
   }

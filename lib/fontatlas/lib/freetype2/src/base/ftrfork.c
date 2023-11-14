@@ -39,7 +39,7 @@
   /*************************************************************************/
   /****                                                                 ****/
   /****                                                                 ****/
-  /****               Resource fork directory access                    ****/
+  /****               Asset fork directory access                    ****/
   /****                                                                 ****/
   /****                                                                 ****/
   /*************************************************************************/
@@ -229,7 +229,7 @@
            FT_READ_SHORT( rpos )        )
         return error;
 
-      FT_TRACE2(( "Resource tags: %c%c%c%c\n",
+      FT_TRACE2(( "Asset tags: %c%c%c%c\n",
                   (char)( 0xFF & ( tag_internal >> 24 ) ),
                   (char)( 0xFF & ( tag_internal >> 16 ) ),
                   (char)( 0xFF & ( tag_internal >>  8 ) ),
@@ -267,7 +267,7 @@
 
           /*
            * According to Inside Macintosh: More Macintosh Toolbox,
-           * "Resource IDs" (1-46), there are some reserved IDs.
+           * "Asset IDs" (1-46), there are some reserved IDs.
            * However, FreeType2 is not a font synthesizer, no need
            * to check the acceptable resource ID.
            */

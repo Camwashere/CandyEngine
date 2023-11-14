@@ -28,12 +28,12 @@ namespace Candy
   {
     return resourceManager.GetAssetsDirectory();
   }
-  ResourceManager& Project::GetResourceManager()
+  AssetManager& Project::GetResourceManager()
   {
     return resourceManager;
   }
   
-  const ResourceManager& Project::GetResourceManager()const
+  const AssetManager& Project::GetResourceManager()const
   {
     return resourceManager;
   }

@@ -474,24 +474,13 @@ set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
         candy/core/include/CandyEngine.hpp
         candy/core/include/CandyEngine.cpp
-        candy/core/include/candy/engine/FileStructureValidator.hpp
-        candy/core/include/candy/engine/AssetManager.hpp
-        candy/core/include/candy/engine/Asset.hpp
-        candy/core/include/candy/engine/FileManager.hpp
-        candy/core/include/candy/engine/AssetFileManager.hpp
-        candy/core/src/engine/AssetFileManager.cpp
-        candy/core/include/candy/engine/FileWatcher.hpp
-        candy/core/src/engine/FileWatcher.cpp
-        candy/core/include/candy/resource/ResourceManager.hpp
-        candy/core/include/candy/resource/InternalResource.hpp
-        candy/core/include/candy/resource/ResourceType.hpp
-        candy/core/src/resource/ResourceManager.cpp
-        candy/core/include/candy/resource/ResourceDatabase.hpp
-        candy/core/src/resource/ResourceDatabase.cpp
-        candy/core/src/resource/InternalResource.cpp
-        candy/core/include/candy/resource/Resource.hpp
-        candy/core/src/resource/Resource.cpp
-        candy/core/include/candy/resource/ImageResourceManager.hpp
+        candy/core/include/candy/resource/AssetManager.hpp
+        candy/core/include/candy/resource/AssetType.hpp
+        candy/core/src/resource/AssetManager.cpp
+        candy/core/include/candy/resource/AssetDatabase.hpp
+        candy/core/src/resource/AssetDatabase.cpp
+        candy/core/include/candy/resource/Asset.hpp
+        candy/core/src/resource/Asset.cpp
 )
 
 

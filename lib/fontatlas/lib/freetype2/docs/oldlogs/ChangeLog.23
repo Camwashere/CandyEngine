@@ -4974,7 +4974,7 @@
 
 	* src/base/ftmac.c (FT_New_Face_From_SFNT): Check the sfnt resource
 	handle by its value instead of ResError(), fix provided by Deron
-	Kazmaier.  According to the Resource Manager Reference,
+	Kazmaier.  According to the Asset Manager Reference,
 	GetResource(), Get1Resource(), GetNamedResource(),
 	Get1NamedResource() and RGetResource() set noErr but return NULL
 	handle when they can not find the requested resource.  These

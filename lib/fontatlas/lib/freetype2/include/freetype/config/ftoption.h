@@ -370,7 +370,7 @@ FT_BEGIN_HEADER
    *
    *   Enable extra Mac fonts support on non-Mac platforms (e.g., GNU/Linux).
    *
-   *   Resource forks which include fonts data are stored sometimes in
+   *   Asset forks which include fonts data are stored sometimes in
    *   locations which users or developers don't expected.  In some cases,
    *   resource forks start with some offset from the head of a file.  In
    *   other cases, the actual resource fork is stored in file different from
