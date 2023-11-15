@@ -198,7 +198,7 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/vulkan/descriptor/DescriptorBuilder.hpp
         candy/core/include/candy/graphics/vulkan/descriptor/DescriptorAllocatorPool.hpp
         candy/core/include/candy/graphics/vulkan/descriptor/DescriptorAllocator.hpp
-        candy/core/include/candy/graphics/texture/ImageFormat.hpp
+        candy/core/include/candy/graphics/image/ImageFormat.hpp
         candy/core/include/candy/graphics/model/ModelLoader.hpp
         candy/core/include/candy/graphics/shader/Shader.hpp
         candy/core/include/candy/graphics/color/ColorRGBA.hpp
@@ -247,10 +247,12 @@ set(CANDY_GRAPHICS_HEADERS candy/core/include/candy/graphics/BufferLayout.hpp
         candy/core/include/candy/graphics/shader/config/ShaderDynamicState.hpp
         candy/core/include/candy/graphics/shader/config/ShaderProfileSettings.hpp
         candy/core/include/candy/graphics/vulkan/RenderChainScheduler.hpp
-        candy/core/include/candy/graphics/vulkan/RenderTarget.hpp)
+        candy/core/include/candy/graphics/vulkan/RenderTarget.hpp
+        candy/core/include/candy/graphics/image/Image.hpp
+        candy/core/include/candy/graphics/image/ImageBase.hpp)
 
 set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
-        candy/core/src/graphics/texture/ImageFormat.cpp
+        candy/core/src/graphics/image/ImageFormat.cpp
         candy/core/src/graphics/vulkan/descriptor/DescriptorAllocator.cpp
         candy/core/src/graphics/vulkan/descriptor/DescriptorLayoutCache.cpp
         candy/core/src/graphics/vulkan/VulkanBuffer.cpp
@@ -319,7 +321,8 @@ set(CANDY_GRAPHICS_SOURCES candy/core/src/graphics/shader/ShaderData.cpp
         candy/core/src/graphics/shader/config/ShaderProfile.cpp
         candy/core/src/graphics/shader/config/ShaderDynamicState.cpp
         candy/core/src/graphics/shader/config/ShaderEnums.cpp
-        candy/core/src/graphics/vulkan/RenderChainScheduler.cpp)
+        candy/core/src/graphics/vulkan/RenderChainScheduler.cpp
+        candy/core/src/graphics/image/ImageBase.cpp)
 
 set(CANDY_GRAPHICS_FILES ${CANDY_GRAPHICS_HEADERS} ${CANDY_GRAPHICS_SOURCES})
 
@@ -475,13 +478,15 @@ set(CANDY_GUM_FILES ${CANDY_GUM_HEADERS} ${CANDY_GUM_SOURCES})
 set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FILES} ${CANDY_BUNDLED_LIB_FILES}
         candy/core/include/CandyEngine.hpp
         candy/core/include/CandyEngine.cpp
-        candy/core/include/candy/resource/asset/AssetManager.hpp
-        candy/core/include/candy/resource/asset/AssetType.hpp
-        candy/core/src/resource/AssetManager.cpp
-        candy/core/include/candy/resource/asset/AssetDatabase.hpp
-        candy/core/src/resource/AssetDatabase.cpp
-        candy/core/include/candy/resource/asset/Asset.hpp
-        candy/core/src/resource/Asset.cpp
+        candy/core/include/candy/memory/asset/AssetManager.hpp
+        candy/core/include/candy/memory/asset/AssetType.hpp
+        candy/core/src/memory/asset/AssetManager.cpp
+        candy/core/include/candy/memory/asset/AssetDatabase.hpp
+        candy/core/src/memory/asset/AssetDatabase.cpp
+        candy/core/include/candy/memory/asset/Asset.hpp
+        candy/core/src/memory/asset/Asset.cpp
+        candy/core/include/candy/memory/resource/ResourceManager.hpp
+        candy/core/include/candy/memory/resource/ShaderManager.hpp
 )
 
 

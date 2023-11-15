@@ -2,7 +2,7 @@
 /*                                                                         */
 /*  ftver.rc                                                               */
 /*                                                                         */
-/*    FreeType VERSIONINFO resource for Windows DLLs.                      */
+/*    FreeType VERSIONINFO memory for Windows DLLs.                      */
 /*                                                                         */
 /*  Copyright (C) 2018-2022 by                                             */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */

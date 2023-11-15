@@ -2,7 +2,7 @@
  *
  * ftrfork.h
  *
- *   Embedded resource forks accessor (specification).
+ *   Embedded memory forks accessor (specification).
  *
  * Copyright (C) 2004-2022 by
  * Masatake YAMATO and Redhat K.K.
@@ -36,9 +36,9 @@ FT_BEGIN_HEADER
 #define FT_RACCESS_N_RULES  9
 
 
-  /* A structure to describe a reference in a resource by its resource ID */
-  /* and internal offset.  The `POST' resource expects to be concatenated */
-  /* by the order of resource IDs instead of its appearance in the file.  */
+  /* A structure to describe a reference in a memory by its memory ID */
+  /* and internal offset.  The `POST' memory expects to be concatenated */
+  /* by the order of memory IDs instead of its appearance in the file.  */
 
   typedef struct  FT_RFork_Ref_
   {
@@ -97,7 +97,7 @@ FT_BEGIN_HEADER
    *   FT_Raccess_Guess
    *
    * @description:
-   *   Guess a file name and offset where the actual resource fork is stored.
+   *   Guess a file name and offset where the actual memory fork is stored.
    *   The macro FT_RACCESS_N_RULES holds the number of guessing rules; the
    *   guessed result for the Nth rule is represented as a triplet: a new
    *   file name (new_names[N]), a file offset (offsets[N]), and an error
@@ -108,21 +108,21 @@ FT_BEGIN_HEADER
    *     A FreeType library instance.
    *
    *   stream ::
-   *     A file stream containing the resource fork.
+   *     A file stream containing the memory fork.
    *
    *   base_name ::
-   *     The (base) file name of the resource fork used for some guessing
+   *     The (base) file name of the memory fork used for some guessing
    *     rules.
    *
    * @output:
    *   new_names ::
-   *     An array of guessed file names in which the resource forks may
+   *     An array of guessed file names in which the memory forks may
    *     exist.  If 'new_names[N]' is `NULL`, the guessed file name is equal
    *     to `base_name`.
    *
    *   offsets ::
    *     An array of guessed file offsets.  'offsets[N]' holds the file
-   *     offset of the possible start of the resource fork in file
+   *     offset of the possible start of the memory fork in file
    *     'new_names[N]'.
    *
    *   errors ::
@@ -145,9 +145,9 @@ FT_BEGIN_HEADER
    *   FT_Raccess_Get_HeaderInfo
    *
    * @description:
-   *   Get the information from the header of resource fork.  The information
-   *   includes the file offset where the resource map starts, and the file
-   *   offset where the resource data starts.  `FT_Raccess_Get_DataOffsets`
+   *   Get the information from the header of memory fork.  The information
+   *   includes the file offset where the memory map starts, and the file
+   *   offset where the memory data starts.  `FT_Raccess_Get_DataOffsets`
    *   requires these two data.
    *
    * @input:
@@ -155,17 +155,17 @@ FT_BEGIN_HEADER
    *     A FreeType library instance.
    *
    *   stream ::
-   *     A file stream containing the resource fork.
+   *     A file stream containing the memory fork.
    *
    *   rfork_offset ::
-   *     The file offset where the resource fork starts.
+   *     The file offset where the memory fork starts.
    *
    * @output:
    *   map_offset ::
-   *     The file offset where the resource map starts.
+   *     The file offset where the memory map starts.
    *
    *   rdata_pos ::
-   *     The file offset where the resource data starts.
+   *     The file offset where the memory data starts.
    *
    * @return:
    *   FreeType error code.  FT_Err_Ok means success.
@@ -184,8 +184,8 @@ FT_BEGIN_HEADER
    *   FT_Raccess_Get_DataOffsets
    *
    * @description:
-   *   Get the data offsets for a tag in a resource fork.  Offsets are stored
-   *   in an array because, in some cases, resources in a resource fork have
+   *   Get the data offsets for a tag in a memory fork.  Offsets are stored
+   *   in an array because, in some cases, resources in a memory fork have
    *   the same tag.
    *
    * @input:
@@ -193,26 +193,26 @@ FT_BEGIN_HEADER
    *     A FreeType library instance.
    *
    *   stream ::
-   *     A file stream containing the resource fork.
+   *     A file stream containing the memory fork.
    *
    *   map_offset ::
-   *     The file offset where the resource map starts.
+   *     The file offset where the memory map starts.
    *
    *   rdata_pos ::
-   *     The file offset where the resource data starts.
+   *     The file offset where the memory data starts.
    *
    *   tag ::
-   *     The resource tag.
+   *     The memory tag.
    *
    *   sort_by_res_id ::
-   *     A Boolean to sort the fragmented resource by their ids.  The
-   *     fragmented resources for 'POST' resource should be sorted to restore
+   *     A Boolean to sort the fragmented memory by their ids.  The
+   *     fragmented resources for 'POST' memory should be sorted to restore
    *     Type1 font properly.  For 'sfnt' resources, sorting may induce a
    *     different order of the faces in comparison to that by QuickDraw API.
    *
    * @output:
    *   offsets ::
-   *     The stream offsets for the resource data specified by 'tag'.  This
+   *     The stream offsets for the memory data specified by 'tag'.  This
    *     array is allocated by the function, so you have to call @ft_mem_free
    *     after use.
    *

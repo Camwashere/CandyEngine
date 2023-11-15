@@ -245,7 +245,7 @@ $(FTINIT_OBJ): $(FTINIT_SRC) $(FREETYPE_H)
 
 # ftver component
 #
-#  The VERSIONINFO resource `ftver.rc' contains version and copyright
+#  The VERSIONINFO memory `ftver.rc' contains version and copyright
 #  to be compiled by windres and tagged into DLL usually.
 #
 ifneq ($(RC),)

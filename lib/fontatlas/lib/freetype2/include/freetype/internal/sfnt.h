@@ -268,7 +268,7 @@ FT_BEGIN_HEADER
    *   TT_Load_SBit_Image_Func
    *
    * @description:
-   *   Load a given glyph sbit image from the font resource.  This also
+   *   Load a given glyph sbit image from the font memory.  This also
    *   returns its metrics.
    *
    * @input:

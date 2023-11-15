@@ -914,7 +914,7 @@ class FooTest : public testing::Test {
   // You can define per-test tear-down logic as usual.
   void TearDown() override { ... }
 
-  // Some expensive resource shared by all tests.
+  // Some expensive memory shared by all tests.
   static T* shared_resource_;
 };
 

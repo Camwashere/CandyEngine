@@ -598,7 +598,7 @@ FT_BEGIN_HEADER
    *
    * @description:
    *   Discard a given library object.  This closes all drivers and discards
-   *   all resource objects.
+   *   all memory objects.
    *
    * @input:
    *   library ::

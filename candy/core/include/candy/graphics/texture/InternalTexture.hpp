@@ -2,7 +2,7 @@
 #include "candy/graphics/vulkan/VulkanImage.hpp"
 #include "candy/graphics/vulkan/VulkanImageView.hpp"
 #include <filesystem>
-#include "ImageFormat.hpp"
+#include "candy/graphics/image/ImageFormat.hpp"
 namespace Candy::Graphics
 {
   class InternalTexture

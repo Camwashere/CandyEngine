@@ -42,7 +42,7 @@ FT_TRACE_DEF( bitmap )    /* bitmap manipulation     (ftbitmap.c) */
 FT_TRACE_DEF( checksum )  /* bitmap checksum         (ftobjs.c)   */
 FT_TRACE_DEF( mm )        /* MM interface            (ftmm.c)     */
 FT_TRACE_DEF( psprops )   /* PS driver properties    (ftpsprop.c) */
-FT_TRACE_DEF( raccess )   /* resource fork accessor  (ftrfork.c)  */
+FT_TRACE_DEF( raccess )   /* memory fork accessor  (ftrfork.c)  */
 FT_TRACE_DEF( synth )     /* bold/slant synthesizer  (ftsynth.c)  */
 
   /* rasterizers */

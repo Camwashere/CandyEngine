@@ -207,7 +207,7 @@
     /* now, try to load `size' bytes of the `base' dictionary we */
     /* found previously                                          */
 
-    /* if it is a memory-based resource, set up pointers */
+    /* if it is a memory-based memory, set up pointers */
     if ( !stream->read )
     {
       parser->base_dict = (FT_Byte*)stream->base + stream->pos;
@@ -326,7 +326,7 @@
     else
     {
       /* We have already `loaded' the whole PFA font file into memory; */
-      /* if this is a memory resource, allocate a new block to hold    */
+      /* if this is a memory memory, allocate a new block to hold    */
       /* the private dict.  Otherwise, simply overwrite into the base  */
       /* dictionary block in the heap.                                 */
 

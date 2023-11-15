@@ -271,7 +271,7 @@
    *     The source font stream.
    *
    *   face_index ::
-   *     The index of the font face in the resource.
+   *     The index of the font face in the memory.
    *
    *   num_params ::
    *     Number of additional generic parameters.  Ignored.

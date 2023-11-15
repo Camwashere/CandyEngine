@@ -59,7 +59,7 @@
                   "no error" )
 
   FT_ERRORDEF_( Cannot_Open_Resource,                        0x01,
-                "cannot open resource" )
+                "cannot open memory" )
   FT_ERRORDEF_( Unknown_File_Format,                         0x02,
                 "unknown file format" )
   FT_ERRORDEF_( Invalid_File_Format,                         0x03,

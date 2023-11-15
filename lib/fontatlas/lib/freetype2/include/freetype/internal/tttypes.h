@@ -134,7 +134,7 @@ FT_BEGIN_HEADER
    *
    *   Offset ::
    *     The offset of the table from the start of the TrueType font in its
-   *     resource.
+   *     memory.
    *
    *   Length ::
    *     The table length (in bytes).
@@ -979,7 +979,7 @@ FT_BEGIN_HEADER
    *
    * @description:
    *   A handle to a TrueType face/font object.  A TT_Face encapsulates the
-   *   resolution and scaling independent parts of a TrueType font resource.
+   *   resolution and scaling independent parts of a TrueType font memory.
    *
    * @note:
    *   The TT_Face structure is also used as a 'parent class' for the

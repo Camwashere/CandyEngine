@@ -1,6 +1,6 @@
-#include "candy/resource/asset/AssetManager.hpp"
-#include <CandyPch.hpp>
-#include "candy/resource/asset/Asset.hpp"
+#include "candy/memory/asset/AssetManager.hpp"
+#include "CandyPch.hpp"
+#include "candy/memory/asset/Asset.hpp"
 
 
 namespace Candy
@@ -17,7 +17,6 @@ namespace Candy
     
     efsw::WatchID watchID = fileWatcher.addWatch(assetsDirectory.string(), this, true);
     watchIDs.push_back(watchID);
-    
   }
   
   

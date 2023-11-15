@@ -234,7 +234,7 @@ const atn::ATN& Parser::getATNWithBypassAlts() {
   if (serializedAtn.empty()) {
     throw UnsupportedOperationException("The current parser does not support an ATN with bypass alternatives.");
   }
-  // XXX: using the entire serialized ATN as key into the map is a big resource waste.
+  // XXX: using the entire serialized ATN as key into the map is a big memory waste.
   //      How large can that thing become?
   auto *cache = getBypassAltsAtnCache();
   {

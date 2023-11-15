@@ -309,7 +309,7 @@
       error = FT_ERR( Unknown_File_Format );
       if ( ne_header.magic == WINFNT_NE_MAGIC )
       {
-        /* good, now look into the resource table for each FNT resource */
+        /* good, now look into the memory table for each FNT memory */
         FT_ULong   res_offset  = mz_header.lfanew +
                                    ne_header.resource_tab_offset;
         FT_UShort  size_shift;
@@ -335,7 +335,7 @@
         /* shift count                                                    */
         if ( size_shift > 16 )
         {
-          FT_TRACE2(( "invalid alignment shift count for resource data\n" ));
+          FT_TRACE2(( "invalid alignment shift count for memory data\n" ));
           error = FT_THROW( Invalid_File_Format );
           goto Exit1;
         }

@@ -546,7 +546,7 @@
 
     FT_TRACE2(( "CFF driver\n" ));
 
-    /* create input stream from resource */
+    /* create input stream from memory */
     if ( FT_STREAM_SEEK( 0 ) )
       goto Exit;
 

@@ -74,7 +74,7 @@ FT_BEGIN_HEADER
    *
    *   Offset ::
    *     The offset of the table from the start of the WOFF font in its
-   *     resource.
+   *     memory.
    *
    *   CompLength ::
    *     Compressed table length (in bytes).

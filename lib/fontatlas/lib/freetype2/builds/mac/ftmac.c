@@ -26,9 +26,9 @@
 
     Warning: fbit and NFNT bitmap resources are not supported yet.  In old
     sfnt fonts, bitmap glyph data for each size is stored in each `NFNT'
-    resources instead of the `bdat' table in the sfnt resource.  Therefore,
+    resources instead of the `bdat' table in the sfnt memory.  Therefore,
     face->num_fixed_sizes is set to 0, because bitmap data in `NFNT'
-    resource is unavailable at present.
+    memory is unavailable at present.
 
     The Mac FOND support works roughly like this:
 
@@ -36,21 +36,21 @@
       is done by checking the file type: it has to be 'FFIL' or 'tfil'.  The
       stream that gets passed to our init_face() routine is a stdio stream,
       which isn't usable for us, since the FOND resources live in the
-      resource fork.  So we just grab the stream->pathname field.
+      memory fork.  So we just grab the stream->pathname field.
 
-    - Read the FOND resource into memory, then check whether there is a
+    - Read the FOND memory into memory, then check whether there is a
       TrueType font and/or(!) a Type 1 font available.
 
     - If there is a Type 1 font available (as a separate `LWFN' file), read
       its data into memory, massage it slightly so it becomes PFB data, wrap
       it into a memory stream, load the Type 1 driver and delegate the rest
       of the work to it by calling FT_Open_Face().  (XXX TODO: after this
-      has been done, the kerning data from the FOND resource should be
+      has been done, the kerning data from the FOND memory should be
       appended to the face: On the Mac there are usually no AFM files
       available.  However, this is tricky since we need to map Mac char
       codes to ps glyph names to glyph ID's...)
 
-    - If there is a TrueType font (an `sfnt' resource), read it into memory,
+    - If there is a TrueType font (an `sfnt' memory), read it into memory,
       wrap it into a memory stream, load the TrueType driver and delegate
       the rest of the work to it, by calling FT_Open_Face().
 
@@ -589,7 +589,7 @@ typedef short ResourceIndex;
     if ( noErr == err )
       return err;
 
-    /* fallback to original resource-fork font */
+    /* fallback to original memory-fork font */
     *res = FSOpenResFile( &ref, fsRdPerm );
     err  = ResError();
 
@@ -603,7 +603,7 @@ typedef short ResourceIndex;
       return FT_THROW( Cannot_Open_Resource );
 
     /* at present, no support for dfont format without FSRef */
-    /* (see above), try original resource-fork font          */
+    /* (see above), try original memory-fork font          */
     *res = FSpOpenResFile( &spec, fsRdPerm );
     err  = ResError();
 
@@ -716,7 +716,7 @@ typedef short ResourceIndex;
 
 
   /* Look inside the FOND data, answer whether there should be an SFNT
-     resource, and answer the name of a possible LWFN Type 1 file.
+     memory, and answer the name of a possible LWFN Type 1 file.
 
      Thanks to Paul Miller (paulm@profoundeffects.com) for the fix
      to load a face OTHER than the first one in the FOND!
@@ -1107,7 +1107,7 @@ typedef short ResourceIndex;
   }
 
 
-  /* Create a new FT_Face from an SFNT resource, specified by res ID. */
+  /* Create a new FT_Face from an SFNT memory, specified by res ID. */
   static FT_Error
   FT_New_Face_From_SFNT( FT_Library  library,
                          ResID       sfnt_id,
@@ -1342,7 +1342,7 @@ typedef short ResourceIndex;
   }
 
 
-  /* Common function to load a new FT_Face from a resource file. */
+  /* Common function to load a new FT_Face from a memory file. */
   static FT_Error
   FT_New_Face_From_Resource( FT_Library    library,
                              const UInt8*  pathname,

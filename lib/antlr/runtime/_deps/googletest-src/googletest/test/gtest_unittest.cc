@@ -5447,7 +5447,7 @@ class SetUpTestCaseTest : public Test {
   static void SetUpTestCase() {
     printf("Setting up the test case . . .\n");
 
-    // Initializes some shared resource.  In this simple example, we
+    // Initializes some shared memory.  In this simple example, we
     // just create a C string.  More complex stuff can be done if
     // desired.
     shared_resource_ = "123";
@@ -5470,7 +5470,7 @@ class SetUpTestCaseTest : public Test {
     // TearDownTestCase() should be called only once.
     EXPECT_EQ(0, counter_);
 
-    // Cleans up the shared resource.
+    // Cleans up the shared memory.
     shared_resource_ = nullptr;
   }
 
@@ -5484,17 +5484,17 @@ class SetUpTestCaseTest : public Test {
   // Number of test cases that have been set up.
   static int counter_;
 
-  // Some resource to be shared by all tests in this test case.
+  // Some memory to be shared by all tests in this test case.
   static const char* shared_resource_;
 };
 
 int SetUpTestCaseTest::counter_ = 0;
 const char* SetUpTestCaseTest::shared_resource_ = nullptr;
 
-// A test that uses the shared resource.
+// A test that uses the shared memory.
 TEST_F(SetUpTestCaseTest, Test1) { EXPECT_STRNE(nullptr, shared_resource_); }
 
-// Another test that uses the shared resource.
+// Another test that uses the shared memory.
 TEST_F(SetUpTestCaseTest, Test2) {
   EXPECT_STREQ("123", shared_resource_);
 }
@@ -5508,7 +5508,7 @@ class SetUpTestSuiteTest : public Test {
   static void SetUpTestSuite() {
     printf("Setting up the test suite . . .\n");
 
-    // Initializes some shared resource.  In this simple example, we
+    // Initializes some shared memory.  In this simple example, we
     // just create a C string.  More complex stuff can be done if
     // desired.
     shared_resource_ = "123";
@@ -5531,7 +5531,7 @@ class SetUpTestSuiteTest : public Test {
     // TearDownTestSuite() should be called only once.
     EXPECT_EQ(0, counter_);
 
-    // Cleans up the shared resource.
+    // Cleans up the shared memory.
     shared_resource_ = nullptr;
   }
 
@@ -5545,19 +5545,19 @@ class SetUpTestSuiteTest : public Test {
   // Number of test suites that have been set up.
   static int counter_;
 
-  // Some resource to be shared by all tests in this test case.
+  // Some memory to be shared by all tests in this test case.
   static const char* shared_resource_;
 };
 
 int SetUpTestSuiteTest::counter_ = 0;
 const char* SetUpTestSuiteTest::shared_resource_ = nullptr;
 
-// A test that uses the shared resource.
+// A test that uses the shared memory.
 TEST_F(SetUpTestSuiteTest, TestSetupTestSuite1) {
   EXPECT_STRNE(nullptr, shared_resource_);
 }
 
-// Another test that uses the shared resource.
+// Another test that uses the shared memory.
 TEST_F(SetUpTestSuiteTest, TestSetupTestSuite2) {
   EXPECT_STREQ("123", shared_resource_);
 }

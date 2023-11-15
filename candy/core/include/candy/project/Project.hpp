@@ -3,7 +3,7 @@
 #include "candy/utils/Version.hpp"
 #include "candy/base/Base.hpp"
 #include <vector>
-#include "candy/resource/asset/AssetManager.hpp"
+#include "candy/memory/asset/AssetManager.hpp"
 namespace Candy
 {
 

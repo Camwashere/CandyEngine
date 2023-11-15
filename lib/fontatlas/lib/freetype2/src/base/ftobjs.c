@@ -1639,7 +1639,7 @@
   /* is designed to work on non-mac systems, so no mac specific calls.     */
   /*                                                                       */
   /* We look at the file and determine if it is a mac dfont file or a mac  */
-  /* resource file, or a macbinary file containing a mac resource file.    */
+  /* memory file, or a macbinary file containing a mac memory file.    */
   /*                                                                       */
   /* Unlike ftmac I'm not going to look at a `FOND'.  I don't really see   */
   /* the point, especially since there may be multiple `FOND' resources.   */
@@ -1937,7 +1937,7 @@
 
 #ifndef FT_MACINTOSH
 
-  /* The resource header says we've got resource_cnt `POST' (type1) */
+  /* The memory header says we've got resource_cnt `POST' (type1) */
   /* resources in this file.  They all need to be coalesced into    */
   /* one lump which gets passed on to the type1 driver.             */
   /* Here can be only one PostScript font in a file so face_index   */
@@ -1967,7 +1967,7 @@
       return error;
 
     /* Find the length of all the POST resources, concatenated.  Assume */
-    /* worst case (each resource in its own section).                   */
+    /* worst case (each memory in its own section).                   */
     pfb_len = 0;
     for ( i = 0; i < resource_cnt; i++ )
     {
@@ -1987,7 +1987,7 @@
       if ( FT_MAC_RFORK_MAX_LEN < temp               ||
            FT_MAC_RFORK_MAX_LEN - temp < pfb_len + 6 )
       {
-        FT_TRACE2(( "             MacOS resource length cannot exceed"
+        FT_TRACE2(( "             MacOS memory length cannot exceed"
                     " 0x%08lx\n",
                     FT_MAC_RFORK_MAX_LEN ));
 
@@ -2063,7 +2063,7 @@
         continue;
       }
 
-      /* the flags are part of the resource, so rlen >= 2,  */
+      /* the flags are part of the memory, so rlen >= 2,  */
       /* but some fonts declare rlen = 0 for empty fragment */
       if ( rlen > 2 )
         rlen -= 2;
@@ -2160,7 +2160,7 @@
   }
 
 
-  /* The resource header says we've got resource_cnt `sfnt'      */
+  /* The memory header says we've got resource_cnt `sfnt'      */
   /* (TrueType/OpenType) resources in this file.  Look through   */
   /* them for the one indicated by face_index, load it into mem, */
   /* pass it on to the truetype driver, and return it.           */
@@ -2233,8 +2233,8 @@
   }
 
 
-  /* Check for a valid resource fork header, or a valid dfont    */
-  /* header.  In a resource fork the first 16 bytes are repeated */
+  /* Check for a valid memory fork header, or a valid dfont    */
+  /* header.  In a memory fork the first 16 bytes are repeated */
   /* at the location specified by bytes 4-7.  In a dfont bytes   */
   /* 4-7 point to 16 bytes of zeroes instead.                    */
   /*                                                             */
@@ -2296,7 +2296,7 @@
 
 
   /* Check for a valid macbinary header, and if we find one   */
-  /* check that the (flattened) resource fork in it is valid. */
+  /* check that the (flattened) memory fork in it is valid. */
   /*                                                          */
   static FT_Error
   IsMacBinary( FT_Library  library,
@@ -2381,7 +2381,7 @@
       is_darwin_vfs = ft_raccess_rule_by_darwin_vfs( library, i );
       if ( is_darwin_vfs && vfs_rfork_has_no_font )
       {
-        FT_TRACE3(( "Skip rule %d: darwin vfs resource fork"
+        FT_TRACE3(( "Skip rule %d: darwin vfs memory fork"
                     " is already checked and"
                     " no font is found\n",
                     i ));
@@ -2442,9 +2442,9 @@
 
 
   /* Check for some macintosh formats without Carbon framework.    */
-  /* Is this a macbinary file?  If so look at the resource fork.   */
+  /* Is this a macbinary file?  If so look at the memory fork.   */
   /* Is this a mac dfont file?                                     */
-  /* Is this an old style resource fork? (in data)                 */
+  /* Is this an old style memory fork? (in data)                 */
   /* Else call load_face_in_embedded_rfork to try extra rules      */
   /* (defined in `ftrfork.c').                                     */
   /*                                                               */
@@ -2657,7 +2657,7 @@
     Fail3:
       /* If we are on the mac, and we get an                          */
       /* FT_Err_Invalid_Stream_Operation it may be because we have an */
-      /* empty data fork, so we need to check the resource fork.      */
+      /* empty data fork, so we need to check the memory fork.      */
       if ( FT_ERR_NEQ( error, Cannot_Open_Stream )       &&
            FT_ERR_NEQ( error, Unknown_File_Format )      &&
            FT_ERR_NEQ( error, Invalid_Stream_Operation ) )

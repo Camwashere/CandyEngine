@@ -588,7 +588,7 @@
    * @description:
    *   A macro used in `#include` statements to name the file containing the
    *   Macintosh-specific FreeType~2 API.  The latter is used to access fonts
-   *   embedded in resource forks.
+   *   embedded in memory forks.
    *
    *   This header file must be explicitly included by client applications
    *   compiled on the Mac (note that the base API still works though).

@@ -22,7 +22,6 @@ namespace Candy::Graphics
     int bytesPerChannel=0;
     ImageFormatPrimitiveType primitiveType=ImageFormatPrimitiveType(0);
     VkFormat vulkanFormat=VK_FORMAT_UNDEFINED;
-    //ImageFormatType formatType=ImageFormatType::None;
     
     
   

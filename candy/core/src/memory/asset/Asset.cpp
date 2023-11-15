@@ -1,4 +1,4 @@
-#include "candy/resource/asset/Asset.hpp"
+#include "candy/memory/asset/Asset.hpp"
 
 namespace Candy
 {

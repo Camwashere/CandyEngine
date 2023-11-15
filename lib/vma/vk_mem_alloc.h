@@ -74,7 +74,7 @@ License: MIT
     - [Corruption detection](@ref debugging_memory_usage_corruption_detection)
   - \subpage opengl_interop
 - \subpage usage_patterns
-    - [GPU-only resource](@ref usage_patterns_gpu_only)
+    - [GPU-only memory](@ref usage_patterns_gpu_only)
     - [Staging copy for upload](@ref usage_patterns_staging_copy_upload)
     - [Readback](@ref usage_patterns_readback)
     - [Advanced data uploading](@ref usage_patterns_advanced_data_uploading)
@@ -1365,10 +1365,10 @@ typedef struct VmaAllocationInfo
     It never changes.
 
     \note Allocation size returned in this variable may be greater than the size
-    requested for the resource e.g. as `VkBufferCreateInfo::size`. Whole size of the
+    requested for the memory e.g. as `VkBufferCreateInfo::size`. Whole size of the
     allocation is accessible for operations on memory e.g. using a pointer after
-    mapping with vmaMapMemory(), but operations on the resource e.g. using
-    `vkCmdCopyBuffer` must be limited to the size of the resource.
+    mapping with vmaMapMemory(), but operations on the memory e.g. using
+    `vkCmdCopyBuffer` must be limited to the size of the memory.
     */
     VkDeviceSize size;
     /** \brief Pointer to the beginning of this allocation as mapped data.
@@ -1672,8 +1672,8 @@ This algorithm tries to find a memory type that:
 \return Returns VK_ERROR_FEATURE_NOT_PRESENT if not found. Receiving such result
 from this function or any other allocating function probably means that your
 device doesn't support any memory type with requested features for the specific
-type of resource you want to use it for. Please check parameters of your
-resource, like image layout (OPTIMAL versus LINEAR) or mip level count.
+type of memory you want to use it for. Please check parameters of your
+memory, like image layout (OPTIMAL versus LINEAR) or mip level count.
 */
 VMA_CALL_PRE VkResult VMA_CALL_POST vmaFindMemoryTypeIndex(
     VmaAllocator VMA_NOT_NULL allocator,
@@ -1915,7 +1915,7 @@ Current parameters of given allocation are returned in `pAllocationInfo`.
 
 Although this function doesn't lock any mutex, so it should be quite efficient,
 you should avoid calling it too often.
-You can retrieve same VmaAllocationInfo structure while creating your resource, from function
+You can retrieve same VmaAllocationInfo structure while creating your memory, from function
 vmaCreateBuffer(), vmaCreateImage(). You can remember it if you are sure parameters don't change
 (e.g. due to defragmentation).
 */
@@ -3679,7 +3679,7 @@ static bool FindMemoryPreferences(
     {
         if(bufImgUsage == UINT32_MAX)
         {
-            VMA_ASSERT(0 && "VMA_MEMORY_USAGE_AUTO* values can only be used with functions like vmaCreateBuffer, vmaCreateImage so that the details of the created resource are known.");
+            VMA_ASSERT(0 && "VMA_MEMORY_USAGE_AUTO* values can only be used with functions like vmaCreateBuffer, vmaCreateImage so that the details of the created memory are known.");
             return false;
         }
         // This relies on values of VK_IMAGE_USAGE_TRANSFER* being the same VK_BUFFER_IMAGE_TRANSFER*.
@@ -17754,7 +17754,7 @@ vmaDestroyAllocator(allocator);
 
 Physical devices in Vulkan support various combinations of memory heaps and
 types. Help with choosing correct and optimal memory type for your specific
-resource is one of the key features of this library. You can use it by filling
+memory is one of the key features of this library. You can use it by filling
 appropriate members of VmaAllocationCreateInfo structure, as described below.
 You can also combine multiple methods.
 
@@ -17792,7 +17792,7 @@ It is valid, although not very useful.
 The easiest way to specify memory requirements is to fill member
 VmaAllocationCreateInfo::usage using one of the values of enum #VmaMemoryUsage.
 It defines high level, common usage types.
-Since version 3 of the library, it is recommended to use #VMA_MEMORY_USAGE_AUTO to let it select best memory type for your resource automatically.
+Since version 3 of the library, it is recommended to use #VMA_MEMORY_USAGE_AUTO to let it select best memory type for your memory automatically.
 
 For example, if you want to create a uniform buffer that will be filled using
 transfer only once or infrequently and then used for rendering every frame as a uniform buffer, you can
@@ -17812,7 +17812,7 @@ VmaAllocation allocation;
 vmaCreateBuffer(allocator, &bufferInfo, &allocInfo, &buffer, &allocation, nullptr);
 \endcode
 
-If you have a preference for putting the resource in GPU (device) memory or CPU (host) memory
+If you have a preference for putting the memory in GPU (device) memory or CPU (host) memory
 on systems with discrete graphics card that have the memories separate, you can use
 #VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE or #VMA_MEMORY_USAGE_AUTO_PREFER_HOST.
 
@@ -17844,7 +17844,7 @@ vmaCreateBuffer(allocator, &stagingBufferInfo, &stagingAllocInfo, &stagingBuffer
 For more examples of creating different kinds of resources, see chapter \ref usage_patterns.
 
 Usage values `VMA_MEMORY_USAGE_AUTO*` are legal to use only when the library knows
-about the resource being created by having `VkBufferCreateInfo` / `VkImageCreateInfo` passed,
+about the memory being created by having `VkBufferCreateInfo` / `VkImageCreateInfo` passed,
 so they work with functions like: vmaCreateBuffer(), vmaCreateImage(), vmaFindMemoryTypeIndexForBufferInfo() etc.
 If you allocate raw memory using function vmaAllocateMemory(), you have to use other means of selecting
 memory type, as described below.
@@ -17928,7 +17928,7 @@ The library can also internally decide to use dedicated allocation in some cases
 
 - When the size of the allocation is large.
 - When [VK_KHR_dedicated_allocation](@ref vk_khr_dedicated_allocation) extension is enabled
-  and it reports that dedicated allocation is required or recommended for the resource.
+  and it reports that dedicated allocation is required or recommended for the memory.
 - When allocation of next big memory block fails due to not enough device memory,
   but allocation with the exact requested size succeeds.
 
@@ -18100,9 +18100,9 @@ There are many ways in which you can try to stay within the budget.
 First, when making new allocation requires allocating a new memory block, the library
 tries not to exceed the budget automatically. If a block with default recommended size
 (e.g. 256 MB) would go over budget, a smaller block is allocated, possibly even
-dedicated memory for just this resource.
+dedicated memory for just this memory.
 
-If the size of the requested resource plus current memory usage is more than the
+If the size of the requested memory plus current memory usage is more than the
 budget, by default the library still tries to create it, leaving it to the Vulkan
 implementation whether the allocation succeeds or fails. You can change this behavior
 by using #VMA_ALLOCATION_CREATE_WITHIN_BUDGET_BIT flag. With it, the allocation is
@@ -18225,7 +18225,7 @@ Versions with "2" offer additional parameter `allocationLocalOffset`.
 Remember that using resources that alias in memory requires proper synchronization.
 You need to issue a memory barrier to make sure commands that use `img1` and `img2`
 don't overlap on GPU timeline.
-You also need to treat a resource after aliasing as uninitialized - containing garbage data.
+You also need to treat a memory after aliasing as uninitialized - containing garbage data.
 For example, if you use `img1` and then want to use `img2`, you need to issue
 an image memory barrier for `img2` with `oldLayout` = `VK_IMAGE_LAYOUT_UNDEFINED`.
 
@@ -18236,10 +18236,10 @@ See chapter 11.8. "Memory Aliasing" of Vulkan specification or `VK_IMAGE_CREATE_
 - You can create more complex layout where different images and buffers are bound
 at different offsets inside one large allocation. For example, one can imagine
 a big texture used in some render passes, aliasing with a set of many small buffers
-used between in some further passes. To bind a resource at non-zero offset in an allocation,
+used between in some further passes. To bind a memory at non-zero offset in an allocation,
 use vmaBindBufferMemory2() / vmaBindImageMemory2().
 - Before allocating memory for the resources you want to alias, check `memoryTypeBits`
-returned in memory requirements of each resource to make sure the bits overlap.
+returned in memory requirements of each memory to make sure the bits overlap.
 Some GPUs may expose multiple memory types suitable e.g. only for buffers or
 images with `COLOR_ATTACHMENT` usage, so the sets of memory types supported by your
 resources may be disjoint. Aliasing them is not possible in that case.
@@ -18525,7 +18525,7 @@ vmaEndDefragmentation(allocator, defragCtx, nullptr);
 
 Although functions like vmaCreateBuffer(), vmaCreateImage(), vmaDestroyBuffer(), vmaDestroyImage()
 create/destroy an allocation and a buffer/image at once, these are just a shortcut for
-creating the resource, allocating memory, and binding them together.
+creating the memory, allocating memory, and binding them together.
 Defragmentation works on memory allocations only. You must handle the rest manually.
 Defragmentation is an iterative process that should repreat "passes" as long as related functions
 return `VK_INCOMPLETE` not `VK_SUCCESS`.
@@ -18557,10 +18557,10 @@ Inside a pass, for each allocation that should be moved:
 
 - You should copy its data from the source to the destination place by calling e.g. `vkCmdCopyBuffer()`, `vkCmdCopyImage()`.
   - You need to make sure these commands finished executing before destroying the source buffers/images and before calling vmaEndDefragmentationPass().
-- If a resource doesn't contain any meaningful data, e.g. it is a transient color attachment image to be cleared,
+- If a memory doesn't contain any meaningful data, e.g. it is a transient color attachment image to be cleared,
   filled, and used temporarily in each rendering frame, you can just recreate this image
   without copying its data.
-- If the resource is in `HOST_VISIBLE` and `HOST_CACHED` memory, you can copy its data on the CPU
+- If the memory is in `HOST_VISIBLE` and `HOST_CACHED` memory, you can copy its data on the CPU
   using `memcpy()`.
 - If you cannot move the allocation, you can set `pass.pMoves[i].operation` to #VMA_DEFRAGMENTATION_MOVE_OPERATION_IGNORE.
   This will cancel the move.
@@ -19015,7 +19015,7 @@ If you want to create a buffer with a specific minimum alignment out of default 
 use special function vmaCreateBufferWithAlignment(), which takes additional parameter `minAlignment`.
 
 Note the problem of alignment affects only resources placed inside bigger `VkDeviceMemory` blocks and not dedicated
-allocations, as these, by definition, always have alignment = 0 because the resource is bound to the beginning of its dedicated block.
+allocations, as these, by definition, always have alignment = 0 because the memory is bound to the beginning of its dedicated block.
 Contrary to Direct3D 12, Vulkan doesn't have a concept of alignment of the entire memory block passed on its allocation.
 
 
@@ -19028,7 +19028,7 @@ See also slides from talk:
 [Sawicki, Adam. Advanced Graphics Techniques Tutorial: Memory management in Vulkan and DX12. Game Developers Conference, 2018](https://www.gdcvault.com/play/1025458/Advanced-Graphics-Techniques-Tutorial-New)
 
 
-\section usage_patterns_gpu_only GPU-only resource
+\section usage_patterns_gpu_only GPU-only memory
 
 <b>When:</b>
 Any resources that you frequently write and read on GPU,
@@ -19074,7 +19074,7 @@ to decrease chances to be evicted to system memory by the operating system.
 
 <b>When:</b>
 A "staging" buffer than you want to map and fill from CPU code, then use as a source of transfer
-to some GPU resource.
+to some GPU memory.
 
 <b>What to do:</b>
 Use flag #VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT.
@@ -19142,16 +19142,16 @@ const float* downloadedData = (const float*)allocInfo.pMappedData;
 For resources that you frequently write on CPU via mapped pointer and
 frequently read on GPU e.g. as a uniform buffer (also called "dynamic"), multiple options are possible:
 
--# Easiest solution is to have one copy of the resource in `HOST_VISIBLE` memory,
+-# Easiest solution is to have one copy of the memory in `HOST_VISIBLE` memory,
    even if it means system RAM (not `DEVICE_LOCAL`) on systems with a discrete graphics card,
-   and make the device reach out to that resource directly.
+   and make the device reach out to that memory directly.
    - Reads performed by the device will then go through PCI Express bus.
      The performance of this access may be limited, but it may be fine depending on the size
-     of this resource (whether it is small enough to quickly end up in GPU cache) and the sparsity
+     of this memory (whether it is small enough to quickly end up in GPU cache) and the sparsity
      of access.
 -# On systems with unified memory (e.g. AMD APU or Intel integrated graphics, mobile chips),
    a memory type may be available that is both `HOST_VISIBLE` (available for mapping) and `DEVICE_LOCAL`
-   (fast to access from the GPU). Then, it is likely the best choice for such type of resource.
+   (fast to access from the GPU). Then, it is likely the best choice for such type of memory.
 -# Systems with a discrete graphics card and separate video memory may or may not expose
    a memory type that is both `HOST_VISIBLE` and `DEVICE_LOCAL`, also known as Base Address Register (BAR).
    If they do, it represents a piece of VRAM (or entire VRAM, if ReBAR is enabled in the motherboard BIOS)
@@ -19159,7 +19159,7 @@ frequently read on GPU e.g. as a uniform buffer (also called "dynamic"), multipl
    - Writes performed by the host to that memory go through PCI Express bus.
      The performance of these writes may be limited, but it may be fine, especially on PCIe 4.0,
      as long as rules of using uncached and write-combined memory are followed - only sequential writes and no reads.
--# Finally, you may need or prefer to create a separate copy of the resource in `DEVICE_LOCAL` memory,
+-# Finally, you may need or prefer to create a separate copy of the memory in `DEVICE_LOCAL` memory,
    a separate "staging" copy in `HOST_VISIBLE` memory and perform an explicit transfer command between them.
 
 Thankfully, VMA offers an aid to create and use such resources in the the way optimal

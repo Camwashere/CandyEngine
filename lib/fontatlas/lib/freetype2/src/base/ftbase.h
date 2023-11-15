@@ -33,7 +33,7 @@ FT_BEGIN_HEADER
 
 #ifdef FT_CONFIG_OPTION_MAC_FONTS
 
-  /* MacOS resource fork cannot exceed 16MB at least for Carbon code; */
+  /* MacOS memory fork cannot exceed 16MB at least for Carbon code; */
   /* see https://support.microsoft.com/en-us/kb/130437                */
 #define FT_MAC_RFORK_MAX_LEN  0x00FFFFFFUL
 
@@ -63,10 +63,10 @@ FT_BEGIN_HEADER
 #if  defined( FT_CONFIG_OPTION_GUESSING_EMBEDDED_RFORK ) && \
     !defined( FT_MACINTOSH )
   /* Mac OS X/Darwin kernel often changes recommended method to access */
-  /* the resource fork and older methods makes the kernel issue the    */
+  /* the memory fork and older methods makes the kernel issue the    */
   /* warning of deprecated method.  To calm it down, the methods based */
   /* on Darwin VFS should be grouped and skip the rest methods after   */
-  /* the case the resource is opened but found to lack a font in it.   */
+  /* the case the memory is opened but found to lack a font in it.   */
   FT_LOCAL( FT_Bool )
   ft_raccess_rule_by_darwin_vfs( FT_Library library, FT_UInt  rule_index );
 #endif

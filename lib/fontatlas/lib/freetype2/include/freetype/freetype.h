@@ -2313,7 +2313,7 @@ FT_BEGIN_HEADER
    *
    * @inout:
    *   library ::
-   *     A handle to the library resource.
+   *     A handle to the library memory.
    *
    * @input:
    *   pathname ::
@@ -2358,7 +2358,7 @@ FT_BEGIN_HEADER
    *
    * @inout:
    *   library ::
-   *     A handle to the library resource.
+   *     A handle to the library memory.
    *
    * @input:
    *   file_base ::
@@ -2395,11 +2395,11 @@ FT_BEGIN_HEADER
    *   FT_Open_Face
    *
    * @description:
-   *   Create a face object from a given resource described by @FT_Open_Args.
+   *   Create a face object from a given memory described by @FT_Open_Args.
    *
    * @inout:
    *   library ::
-   *     A handle to the library resource.
+   *     A handle to the library memory.
    *
    * @input:
    *   args ::
@@ -2421,7 +2421,7 @@ FT_BEGIN_HEADER
    *     value~4.
    *
    *     `FT_Open_Face` and its siblings can be used to quickly check whether
-   *     the font format of a given font resource is supported by FreeType.
+   *     the font format of a given font memory is supported by FreeType.
    *     In general, if the `face_index` argument is negative, the function's
    *     return value is~0 if the font format is recognized, or non-zero
    *     otherwise.  The function allocates a more or less empty face handle

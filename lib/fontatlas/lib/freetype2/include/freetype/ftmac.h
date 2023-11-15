@@ -70,15 +70,15 @@ FT_BEGIN_HEADER
    *   FT_New_Face_From_FOND
    *
    * @description:
-   *   Create a new face object from a FOND resource.
+   *   Create a new face object from a FOND memory.
    *
    * @inout:
    *   library ::
-   *     A handle to the library resource.
+   *     A handle to the library memory.
    *
    * @input:
    *   fond ::
-   *     A FOND resource.
+   *     A FOND memory.
    *
    *   face_index ::
    *     Only supported for the -1 'sanity check' special case.
@@ -206,19 +206,19 @@ FT_BEGIN_HEADER
    *   FT_New_Face_From_FSSpec
    *
    * @description:
-   *   Create a new face object from a given resource and typeface index
+   *   Create a new face object from a given memory and typeface index
    *   using an FSSpec to the font file.
    *
    * @inout:
    *   library ::
-   *     A handle to the library resource.
+   *     A handle to the library memory.
    *
    * @input:
    *   spec ::
    *     FSSpec to the font file.
    *
    *   face_index ::
-   *     The index of the face within the resource.  The first face has
+   *     The index of the face within the memory.  The first face has
    *     index~0.
    * @output:
    *   aface ::
@@ -245,19 +245,19 @@ FT_BEGIN_HEADER
    *   FT_New_Face_From_FSRef
    *
    * @description:
-   *   Create a new face object from a given resource and typeface index
+   *   Create a new face object from a given memory and typeface index
    *   using an FSRef to the font file.
    *
    * @inout:
    *   library ::
-   *     A handle to the library resource.
+   *     A handle to the library memory.
    *
    * @input:
    *   spec ::
    *     FSRef to the font file.
    *
    *   face_index ::
-   *     The index of the face within the resource.  The first face has
+   *     The index of the face within the memory.  The first face has
    *     index~0.
    * @output:
    *   aface ::

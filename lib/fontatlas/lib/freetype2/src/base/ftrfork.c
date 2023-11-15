@@ -2,7 +2,7 @@
  *
  * ftrfork.c
  *
- *   Embedded resource forks accessor (body).
+ *   Embedded memory forks accessor (body).
  *
  * Copyright (C) 2004-2022 by
  * Masatake YAMATO and Redhat K.K.
@@ -146,11 +146,11 @@
     if ( !allzeros && !allmatch )
       return FT_THROW( Unknown_File_Format );
 
-    /* If we have reached this point then it is probably a mac resource */
+    /* If we have reached this point then it is probably a mac memory */
     /* file.  Now, does it contain any interesting resources?           */
 
-    (void)FT_STREAM_SKIP( 4        /* skip handle to next resource map */
-                          + 2      /* skip file resource number */
+    (void)FT_STREAM_SKIP( 4        /* skip handle to next memory map */
+                          + 2      /* skip file memory number */
                           + 2 );   /* skip attributes */
 
     if ( FT_READ_SHORT( type_list ) )
@@ -203,8 +203,8 @@
       return error;
     cnt++;
 
-    /* `rpos' is a signed 16bit integer offset to resource records; the    */
-    /* size of a resource record is 12 bytes.  The map header is 28 bytes, */
+    /* `rpos' is a signed 16bit integer offset to memory records; the    */
+    /* size of a memory record is 12 bytes.  The map header is 28 bytes, */
     /* and a type list needs 10 bytes or more.  If we assume that the name */
     /* list is empty and we have only a single entry in the type list,     */
     /* there can be at most                                                */
@@ -242,7 +242,7 @@
         *count = subcnt + 1;
         rpos  += map_offset;
 
-        /* a zero count might be valid in the resource specification, */
+        /* a zero count might be valid in the memory specification, */
         /* however, it is completely useless to us                    */
         if ( *count < 1 || *count > 2727 )
           return FT_THROW( Invalid_Table );
@@ -258,7 +258,7 @@
         {
           if ( FT_READ_SHORT( ref[j].res_id ) )
             goto Exit;
-          if ( FT_STREAM_SKIP( 2 ) )  /* resource name offset */
+          if ( FT_STREAM_SKIP( 2 ) )  /* memory name offset */
             goto Exit;
           if ( FT_READ_LONG( temp ) ) /* attributes (8bit), offset (24bit) */
             goto Exit;
@@ -269,7 +269,7 @@
            * According to Inside Macintosh: More Macintosh Toolbox,
            * "Asset IDs" (1-46), there are some reserved IDs.
            * However, FreeType2 is not a font synthesizer, no need
-           * to check the acceptable resource ID.
+           * to check the acceptable memory ID.
            */
           if ( temp < 0 )
           {
@@ -667,7 +667,7 @@
     memory = library->memory;
 
     newpath = raccess_make_file_name( memory, base_file_name,
-                                      "resource.frk/" );
+                                      "memory.frk/" );
     if ( !newpath )
       return FT_THROW( Out_Of_Memory );
 
@@ -693,7 +693,7 @@
 
     memory = library->memory;
 
-    newpath = raccess_make_file_name( memory, base_file_name, ".resource/" );
+    newpath = raccess_make_file_name( memory, base_file_name, ".memory/" );
     if ( !newpath )
       return FT_THROW( Out_Of_Memory );
 

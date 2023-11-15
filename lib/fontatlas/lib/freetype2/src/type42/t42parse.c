@@ -183,7 +183,7 @@
     /* now, try to load `size' bytes of the `base' dictionary we */
     /* found previously                                          */
 
-    /* if it is a memory-based resource, set up pointers */
+    /* if it is a memory-based memory, set up pointers */
     if ( !stream->read )
     {
       parser->base_dict = (FT_Byte*)stream->base + stream->pos;

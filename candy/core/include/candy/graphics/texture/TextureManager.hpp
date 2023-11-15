@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 #include <candy/math/Vector.hpp>
-#include "ImageFormat.hpp"
+#include "candy/graphics/image/ImageFormat.hpp"
 #include "candy/graphics/texture/InternalTexture.hpp"
 namespace Candy::Graphics
 {

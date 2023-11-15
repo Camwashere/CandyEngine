@@ -1,9 +1,9 @@
-#include "candy/resource/asset/AssetDatabase.hpp"
+#include "candy/memory/asset/AssetDatabase.hpp"
 #include <fstream>
-#include "candy/resource/asset/Asset.hpp"
-#include <CandyPch.hpp>
-#include <ryml_std.hpp>
-#include <ryml.hpp>
+#include "candy/memory/asset/Asset.hpp"
+#include "CandyPch.hpp"
+#include "rapidyaml/src/ryml_std.hpp"
+#include "rapidyaml/src/ryml.hpp"
 
 
 namespace Candy

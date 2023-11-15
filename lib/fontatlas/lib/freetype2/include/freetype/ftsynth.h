@@ -37,7 +37,7 @@
   /* Main reason for not lifting the functions in this module to a  */
   /* 'standard' API is that the used parameters for emboldening and */
   /* slanting are not configurable.  Consider the functions as a    */
-  /* code resource that should be copied into the application and   */
+  /* code memory that should be copied into the application and   */
   /* adapted to the particular needs.                               */
 
 

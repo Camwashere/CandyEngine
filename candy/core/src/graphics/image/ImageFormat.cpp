@@ -1,4 +1,4 @@
-#include "candy/graphics/texture/ImageFormat.hpp"
+#include "candy/graphics/image/ImageFormat.hpp"
 #include "CandyPch.hpp"
 namespace Candy::Graphics
 {

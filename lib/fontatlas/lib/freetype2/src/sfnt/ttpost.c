@@ -376,7 +376,7 @@
     FT_ULong   post_len;
 
 
-    /* get a stream for the face's resource */
+    /* get a stream for the face's memory */
     stream = face->root.stream;
 
     /* seek to the beginning of the PS names table */
