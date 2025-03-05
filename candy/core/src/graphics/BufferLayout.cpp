@@ -78,23 +78,7 @@ namespace Candy::Graphics
     {
         return elements[index];
     }
-   /* std::vector<VkVertexInputAttributeDescription> BufferLayout::GetAttributeDescriptions()const
-    {
-        std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-        
-        for (const auto& element : elements)
-        {
-            VkVertexInputAttributeDescription attributeDescription;
-            attributeDescription.binding = binding;
-            attributeDescription.location = attributeDescriptions.size();
-            attributeDescription.format = element.GetFormat();
-            attributeDescription.offset = element.offset;
-            
-            attributeDescriptions.push_back(attributeDescription);
-        }
-        return attributeDescriptions;
-        
-    }*/
+   
     uint32_t BufferLayout::GetStride()const
     {
         return stride;
@@ -105,14 +89,7 @@ namespace Candy::Graphics
         return elements.size();
     }
     
-    /*VkVertexInputBindingDescription BufferLayout::GetBindingDescription()const
-    {
-        VkVertexInputBindingDescription desc{};
-        desc.binding = binding;
-        desc.stride = stride;
-        desc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        return desc;
-    }*/
+    
     
     const std::vector<BufferElement>& BufferLayout::GetElements()const{return elements;}
     

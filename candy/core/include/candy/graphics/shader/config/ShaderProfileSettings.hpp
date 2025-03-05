@@ -23,6 +23,7 @@ namespace Candy::Graphics
     bool depthBufferReading = true;
     bool depthBufferWriting = true;
     VkCompareOp depthCompareOp = VK_COMPARE_OP_LESS;
+    
     bool stencilTest=false;
     VkStencilOpState front{};
     VkStencilOpState back{};
@@ -30,6 +31,7 @@ namespace Candy::Graphics
   
   struct ShaderBlendAttachmentConfig
   {
+    
     /// NOTE: Setting enabled color channels to NONE is same as disabling blending
     ColorChannels enabledChannels = ColorChannels::NONE;
     bool enableBlending=false;

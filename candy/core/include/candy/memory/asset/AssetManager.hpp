@@ -38,12 +38,17 @@ namespace Candy
   private:
     void handleFileAction(efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename) override;
     
+    void BuildDatabase();
+    bool ValidateAll(bool createIfMissing = true);
+    
+    
+    
   public:
     void StartFileWatcher();
     void StopFileWatcher();
-    void BuildDatabase();
-    bool ValidateAll(bool createIfMissing = true);
-    void AddAsset(AssetType assetType, const std::filesystem::path& resourceFilePath);
+    bool AddAsset(const std::filesystem::path& assetFilePath);
+    
+    
     const std::filesystem::path& GetRootDirectory()const;
     const std::filesystem::path& GetAssetsDirectory()const;
     const std::filesystem::path& GetCacheDirectory()const;
@@ -53,6 +58,8 @@ namespace Candy
     
     
     static AssetType DetermineAssetType(const std::filesystem::path& path);
+    
+    friend class Project;
     
     
   };

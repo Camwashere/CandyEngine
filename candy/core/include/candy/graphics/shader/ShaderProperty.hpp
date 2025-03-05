@@ -49,7 +49,7 @@ namespace Candy::Graphics
     std::string name;
     ShaderData::Type type;
     
-    uint32_t GlobalOffset()const;
+    [[nodiscard]] uint32_t GlobalOffset()const;
     
   };
   

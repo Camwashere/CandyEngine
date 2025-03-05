@@ -60,44 +60,8 @@ void main()
 
     vec4 texColor = inColor;
 
-    switch(int(inTexIndex))
-    {
-        case  0: texColor *= texture(u_Textures[ 0], fragTexCoord * inTilingFactor); break;
-        case  1: texColor *= texture(u_Textures[ 1], fragTexCoord * inTilingFactor); break;
-        case  2: texColor *= texture(u_Textures[ 2], fragTexCoord * inTilingFactor); break;
-        case  3: texColor *= texture(u_Textures[ 3], fragTexCoord * inTilingFactor); break;
-        case  4: texColor *= texture(u_Textures[ 4], fragTexCoord * inTilingFactor); break;
-        case  5: texColor *= texture(u_Textures[ 5], fragTexCoord * inTilingFactor); break;
-        case  6: texColor *= texture(u_Textures[ 6], fragTexCoord * inTilingFactor); break;
-        case  7: texColor *= texture(u_Textures[ 7], fragTexCoord * inTilingFactor); break;
-        case  8: texColor *= texture(u_Textures[ 8], fragTexCoord * inTilingFactor); break;
-        case  9: texColor *= texture(u_Textures[ 9], fragTexCoord * inTilingFactor); break;
-        case 10: texColor *= texture(u_Textures[10], fragTexCoord * inTilingFactor); break;
-        case 11: texColor *= texture(u_Textures[11], fragTexCoord * inTilingFactor); break;
-        case 12: texColor *= texture(u_Textures[12], fragTexCoord * inTilingFactor); break;
-        case 13: texColor *= texture(u_Textures[13], fragTexCoord * inTilingFactor); break;
-        case 14: texColor *= texture(u_Textures[14], fragTexCoord * inTilingFactor); break;
-        case 15: texColor *= texture(u_Textures[15], fragTexCoord * inTilingFactor); break;
-        case 16: texColor *= texture(u_Textures[16], fragTexCoord * inTilingFactor); break;
-        case 17: texColor *= texture(u_Textures[17], fragTexCoord * inTilingFactor); break;
-        case 18: texColor *= texture(u_Textures[18], fragTexCoord * inTilingFactor); break;
-        case 19: texColor *= texture(u_Textures[19], fragTexCoord * inTilingFactor); break;
-        case 20: texColor *= texture(u_Textures[20], fragTexCoord * inTilingFactor); break;
-        case 21: texColor *= texture(u_Textures[21], fragTexCoord * inTilingFactor); break;
-        case 22: texColor *= texture(u_Textures[22], fragTexCoord * inTilingFactor); break;
-        case 23: texColor *= texture(u_Textures[23], fragTexCoord * inTilingFactor); break;
-        case 24: texColor *= texture(u_Textures[24], fragTexCoord * inTilingFactor); break;
-        case 25: texColor *= texture(u_Textures[25], fragTexCoord * inTilingFactor); break;
-        case 26: texColor *= texture(u_Textures[26], fragTexCoord * inTilingFactor); break;
-        case 27: texColor *= texture(u_Textures[27], fragTexCoord * inTilingFactor); break;
-        case 28: texColor *= texture(u_Textures[28], fragTexCoord * inTilingFactor); break;
-        case 29: texColor *= texture(u_Textures[29], fragTexCoord * inTilingFactor); break;
-        case 30: texColor *= texture(u_Textures[30], fragTexCoord * inTilingFactor); break;
-        case 31: texColor *= texture(u_Textures[31], fragTexCoord * inTilingFactor); break;
-    }
+    texColor *= texture(u_Textures[inTexIndex], fragTexCoord * inTilingFactor);
 
-    if (texColor.a == 0.0)
-    discard;
 
     outColor = texColor;
 }

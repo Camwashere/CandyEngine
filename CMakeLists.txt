@@ -487,6 +487,7 @@ set(CANDY_ENGINE_FILES ${CANDY_CORE_FILES} ${CANDY_EDITOR_FILES} ${CANDY_GUM_FIL
         candy/core/src/memory/asset/Asset.cpp
         candy/core/include/candy/memory/resource/ResourceManager.hpp
         candy/core/include/candy/memory/resource/ShaderManager.hpp
+        candy/core/include/candy/memory/resource/Resource.hpp
 )
 
 

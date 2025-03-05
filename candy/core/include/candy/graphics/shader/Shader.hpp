@@ -27,7 +27,7 @@ namespace Candy::Graphics
       void BakeConfiguration(const std::vector<VkPipelineShaderStageCreateInfo>& createInfos);
     
     public:
-      explicit Shader(ShaderSettings   settings);
+      explicit Shader(ShaderSettings settings);
       
     public:
       void Reload();

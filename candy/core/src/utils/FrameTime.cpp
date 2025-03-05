@@ -1,7 +1,6 @@
 #include <candy/utils/FrameTime.hpp>
 #include <chrono>
-#include <GLFW/glfw3.h>
-#include <CandyPch.hpp>
+
 namespace Candy
 {
   

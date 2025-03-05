@@ -149,9 +149,6 @@ namespace Candy::Graphics
       }
     }
     
-    
-    
-    
   }
   
   
@@ -159,11 +156,9 @@ namespace Candy::Graphics
   {
     CANDY_PROFILE_FUNCTION();
     spirv_cross::CompilerGLSL compiler(std::move(spirvBinary));
-    //spirv_cross::CompilerGLSL::Options options = compiler.get_common_options();
-    //std::string decompiledGLSL = compiler.compile();
-    //CANDY_CORE_INFO("Decompiled GLSL: \n\n\n{0}\n\n\n", decompiledGLSL);
     auto resources = compiler.get_shader_resources();
     auto specConstants = compiler.get_specialization_constants();
+    
     
     if (!specConstants.empty())
     {

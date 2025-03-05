@@ -49,22 +49,23 @@ namespace Candy
   {
     for (const auto& dirEntry : std::filesystem::recursive_directory_iterator(assetsDirectory))
     {
-      if (dirEntry.is_regular_file())
-      {
-        const auto& path = dirEntry.path();
-        AssetType resourceType = DetermineAssetType(path);
-        
-        if (resourceType != AssetType::Unknown)
-        {
-          AddAsset(resourceType, path);
-        }
-      }
+      AddAsset(dirEntry);
     }
     database.Build(assetTypeMap, assets);
   }
   
-  void AssetManager::AddAsset(AssetType assetType, const std::filesystem::path& assetFilePath)
+  bool AssetManager::AddAsset(const std::filesystem::path& assetFilePath)
   {
+    if (!std::filesystem::is_regular_file(assetFilePath))
+    {
+      return false;
+    }
+    AssetType assetType = DetermineAssetType(assetFilePath);
+    
+    if (assetType == AssetType::Unknown)
+    {
+      return false;
+    }
     if (freeIDs.empty())
     {
       uint32_t currentID = currentMaxID;
@@ -73,7 +74,7 @@ namespace Candy
       if (it != assets.end())
       {
         CANDY_CORE_ERROR("Add asset ID assignment error with id: '{}', filepath: '{}'", currentID, assetFilePath.string());
-        return;
+        return false;
       }
       
       currentMaxID++;
@@ -90,7 +91,7 @@ namespace Candy
       if (it != assets.end())
       {
         CANDY_CORE_ERROR("Add asset ID assignment error with id: '{}', filepath: '{}'", currentID, assetFilePath.string());
-        return;
+        return false;
       }
       
       Asset asset(currentID, assetType, assetFilePath);
@@ -99,6 +100,8 @@ namespace Candy
       
     
     }
+    
+    return true;
   }
   
   static bool ValidateDirectory(const std::filesystem::path& dir, bool createIfMissing)
